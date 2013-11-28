@@ -1,5 +1,4 @@
 # libraries
-*.so
 *.o
 *.o.d
 
