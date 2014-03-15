@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="kamcordYoutube">YouTube</string>
-    <string name="kamcordTitleHint">Write a title...</string>
-    <string name="kamcordTwitter">Twitter</string>
-    <string name="kamcordMiddleText">Share</string>
-    <string name="kamcordShareTitle">SHARE</string>
-    <string name="kamcordFooter">Powered by Kamcord</string>
+    
+    <string name="kamcordShare">Share</string>
+    <string name="kamcordWatch">Watch</string>
+    <string name="kamcordWatchVideo">Watch Video</string>
+    <string name="kamcordWriteATitle">Write a title...</string>
     <string name="kamcordFacebook">Facebook</string>
+    <string name="kamcordYoutube">YouTube</string>
+    <string name="kamcordTwitter">Twitter</string>
     <string name="kamcordEmail">Email</string>
-    <string name="kamcordShare">Share Replay</string>
-</resources>
+    <string name="kamcordShareReplay">Share Replay</string>
+    <string name="kamcordRetry">Retry</string>
+    <string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
+    <string name="kamcordMediaDescription">Media Controls</string>
 
+    <string name="kamcordUploadFinished">Upload Finished!</string>
+    <string name="kamcordUploadFailed">Upload Failed</string>
+    <string name="kamcordUploading">Uploading...</string>
+    
+    <string name="kamcordCannotLoad">Cannot Load.</string>
+    <string name="kamcordNoCompleteVideoAvailable">No complete video available.</string>
+    <string name="kamcordOk">Ok</string>
+    
+</resources>

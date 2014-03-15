@@ -1,49 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-  <application>
-    
-    <activity
-		android:name="com.kamcord.android.ShareActivity"
-		android:configChanges="keyboardHidden|orientation|screenSize"
-		android:launchMode="singleTask"
-		android:label="Share"
-		android:parentActivityName="com.example.YourActivity"
-		android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-		android:windowSoftInputMode="stateHidden|adjustResize"
-		android:windowActionBar="false" >
-		<meta-data
-			android:name="android.support.PARENT_ACTIVITY"
-			android:value="com.example.YourActivity" />
-	</activity>
-	<activity
-		android:name="com.kamcord.android.WebActivity"
-		android:configChanges="keyboardHidden|orientation|screenSize"
-		android:launchMode="singleTask"
-		android:label="Login"
-		android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-		android:parentActivityName="com.kamcord.android.ShareActivity" >
-		<meta-data
-			android:name="android.support.PARENT_ACTIVITY"
-			android:value="com.kamcord.android.ShareActivity" />
-	</activity>
-	<activity
-		android:name="com.kamcord.android.PlayerActivity"
-		android:label="Watch"
-		android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-		android:launchMode="singleTask"
-		android:parentActivityName="com.kamcord.android.ShareActivity" >
-		<meta-data
-			android:name="android.support.PARENT_ACTIVITY"
-			android:value="com.kamcord.android.ShareActivity" />
-    </activity>
-    
-  </application>
-  
-  <uses-feature android:glEsVersion="0x00020000" />
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-  <uses-feature android:name="android.hardware.touchscreen" />
-  <uses-permission android:name="android.permission.WAKE_LOCK" />
-  
+
+    <!-- KEEP permissions -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- END KEEP permissions -->
+
+    <!-- KEEP features -->
+    <uses-feature android:glEsVersion="0x00020000" />
+    <!-- END KEEP features -->
+
+    <application>
+
+        <!-- KEEP activities -->
+        <activity
+            android:name="com.kamcord.android.KamcordActivity"
+            android:configChanges="keyboardHidden"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:windowActionBar="false" >
+        </activity>
+
+        <activity
+            android:name="com.kamcord.android.ReplayActivity"
+            android:label="Watch"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTask"
+            android:parentActivityName="com.kamcord.android.KamcordActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.kamcord.android.KamcordActivity" />
+        </activity>
+
+        <activity
+            android:name="com.kamcord.android.WebActivity"
+            android:label="Login"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:launchMode="singleTask"
+            android:parentActivityName="com.kamcord.android.KamcordActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.kamcord.android.KamcordActivity" />
+        </activity>
+        <!-- END KEEP activities -->
+
+    </application>
 </manifest>
