@@ -1,16 +1,13 @@
 <?xml version="1.0" ?>
 <resources>
 	<string name="kamcordShare">
-		공유
+		分享
 	</string>
 	<string name="kamcordWatch">
-		보기
-	</string>
-	<string name="kamcordWatchVideo">
-		비디오 보기
+		观看
 	</string>
 	<string name="kamcordWriteATitle">
-		제목을 입력하세요...
+		写一个标题...
 	</string>
 	<string name="kamcordFacebook">
 		Facebook
@@ -22,24 +19,24 @@
 		Twitter
 	</string>
 	<string name="kamcordEmail">
-		이메일
+		电子邮件
 	</string>
 	<string name="kamcordShareReplay">
-		리플레이 공유
+		分享视频
 	</string>
 	<string name="kamcordPoweredByKamcord">
-		Kamcord
+		Kamcord提供技术支持
 	</string>
 	<string name="kamcordUploadFinished">
-		업로드 완료!
+		上传完毕!
 	</string>
 	<string name="kamcordUploadFailed">
-		업로드 실패
+		上传失败
 	</string>
 	<string name="kamcordUploading">
-		업로드 중 ...
+		上传中 ...
 	</string>
 	<string name="kamcordOk">
-		확인
+		确定
 	</string>
 </resources>
