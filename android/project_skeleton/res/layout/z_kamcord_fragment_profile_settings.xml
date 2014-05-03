@@ -38,9 +38,9 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="@dimen/kamcordProfileSettingsNextIconWidth"
+                    android:layout_width="wrap_content"
                     android:layout_height="@dimen/kamcordProfileSettingsNextIconHeight"
-                    android:background="@drawable/kamcord_player_next_icon" />
+                    android:src="@drawable/kamcord_player_next_icon" />
             </LinearLayout>
 
             <View
@@ -51,7 +51,7 @@
                 android:layout_marginRight="@dimen/kamcordProfileSettingsItemPadding"
                 android:background="@color/kamcordDividerColor" />
 
-            <!-- Kamcord -->
+            <!-- Social Platform 0 (always Kamcord) -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -67,9 +67,9 @@
                     android:gravity="center" >
 
                     <ImageView
-                        android:layout_width="@dimen/kamcordProfileSettingsKamcordIconWidth"
-                        android:layout_height="@dimen/kamcordProfileSettingsKamcordIconHeight"
-                        android:background="@drawable/kamcord" />
+                        android:id="@+id/icon_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/kamcordProfileSettingsIconHeight" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -79,22 +79,22 @@
                     android:orientation="vertical" >
 
                     <TextView
+                        android:id="@+id/networkName_0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/kamcord"
                         android:textColor="@color/kamcordProfileSettingsTextColor"
                         android:textSize="@dimen/kamcordProfileSettingsTextsize"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/kamcordUsernameText"
+                        android:id="@+id/username_0"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/kamcordProfileSettingsSmallTextsize" />
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/kamcordSignOutButton"
+                    android:id="@+id/signOut_0"
                     android:layout_width="@dimen/kamcordProfileSettingsSignInButtonWidth"
                     android:layout_height="@dimen/kamcordButtonHeight"
                     android:background="@color/kamcordButtonActive"
@@ -110,7 +110,7 @@
                 android:layout_marginRight="@dimen/kamcordProfileSettingsItemPadding"
                 android:background="@color/kamcordDividerColor" />
 
-            <!-- Facebook -->
+            <!-- Social Platform 1 -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -126,9 +126,9 @@
                     android:gravity="center" >
 
                     <ImageView
-                        android:layout_width="@dimen/kamcordProfileSettingsFacebookIconWidth"
-                        android:layout_height="@dimen/kamcordProfileSettingsFacebookIconHeight"
-                        android:background="@drawable/kamcord_facebook" />
+                        android:id="@+id/icon_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/kamcordProfileSettingsIconHeight" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -138,22 +138,22 @@
                     android:orientation="vertical" >
 
                     <TextView
+                        android:id="@+id/networkName_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/kamcordFacebook"
                         android:textColor="@color/kamcordProfileSettingsTextColor"
                         android:textSize="@dimen/kamcordProfileSettingsTextsize"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/facebookUsernameText"
+                        android:id="@+id/username_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/kamcordProfileSettingsSmallTextsize" />
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/facebookSignOutButton"
+                    android:id="@+id/signOut_1"
                     android:layout_width="@dimen/kamcordProfileSettingsSignInButtonWidth"
                     android:layout_height="@dimen/kamcordButtonHeight"
                     android:background="@color/kamcordButtonActive"
@@ -169,7 +169,7 @@
                 android:layout_marginRight="@dimen/kamcordProfileSettingsItemPadding"
                 android:background="@color/kamcordDividerColor" />
 
-            <!-- Twitter -->
+            <!-- Social Platform 2 -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -185,9 +185,9 @@
                     android:gravity="center" >
 
                     <ImageView
-                        android:layout_width="@dimen/kamcordProfileSettingsTwitterIconWidth"
-                        android:layout_height="@dimen/kamcordProfileSettingsTwitterIconHeight"
-                        android:background="@drawable/kamcord_twitter" />
+                        android:id="@+id/icon_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/kamcordProfileSettingsIconHeight" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -197,22 +197,22 @@
                     android:orientation="vertical" >
 
                     <TextView
+                        android:id="@+id/networkName_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/kamcordTwitter"
                         android:textColor="@color/kamcordProfileSettingsTextColor"
                         android:textSize="@dimen/kamcordProfileSettingsTextsize"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/twitterUsernameText"
+                        android:id="@+id/username_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/kamcordProfileSettingsSmallTextsize" />
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/twitterSignOutButton"
+                    android:id="@+id/signOut_2"
                     android:layout_width="@dimen/kamcordProfileSettingsSignInButtonWidth"
                     android:layout_height="@dimen/kamcordButtonHeight"
                     android:background="@color/kamcordButtonActive"
@@ -228,7 +228,7 @@
                 android:layout_marginRight="@dimen/kamcordProfileSettingsItemPadding"
                 android:background="@color/kamcordDividerColor" />
 
-            <!-- Youtube -->
+            <!-- Social Platform 3 -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -244,9 +244,9 @@
                     android:gravity="center" >
 
                     <ImageView
-                        android:layout_width="@dimen/kamcordProfileSettingsYoutubeIconWidth"
-                        android:layout_height="@dimen/kamcordProfileSettingsYoutubeIconHeight"
-                        android:background="@drawable/kamcord_youtube" />
+                        android:id="@+id/icon_3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/kamcordProfileSettingsIconHeight" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -256,22 +256,22 @@
                     android:orientation="vertical" >
 
                     <TextView
+                        android:id="@+id/networkName_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/kamcordYoutube"
                         android:textColor="@color/kamcordProfileSettingsTextColor"
                         android:textSize="@dimen/kamcordProfileSettingsTextsize"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/youtubeUsernameText"
+                        android:id="@+id/username_3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/kamcordProfileSettingsSmallTextsize" />
                 </LinearLayout>
 
                 <TextView
-                    android:id="@+id/youtubeSignOutButton"
+                    android:id="@+id/signOut_3"
                     android:layout_width="@dimen/kamcordProfileSettingsSignInButtonWidth"
                     android:layout_height="@dimen/kamcordButtonHeight"
                     android:background="@color/kamcordButtonActive"
@@ -307,9 +307,9 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="@dimen/kamcordProfileSettingsNextIconWidth"
+                    android:layout_width="wrap_content"
                     android:layout_height="@dimen/kamcordProfileSettingsNextIconHeight"
-                    android:background="@drawable/kamcord_player_next_icon" />
+                    android:src="@drawable/kamcord_player_next_icon" />
             </LinearLayout>
 
             <View
@@ -337,9 +337,9 @@
                     android:textStyle="bold" />
 
                 <ImageView
-                    android:layout_width="@dimen/kamcordProfileSettingsNextIconWidth"
+                    android:layout_width="wrap_content"
                     android:layout_height="@dimen/kamcordProfileSettingsNextIconHeight"
-                    android:background="@drawable/kamcord_player_next_icon" />
+                    android:src="@drawable/kamcord_player_next_icon" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

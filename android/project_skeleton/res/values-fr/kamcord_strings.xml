@@ -4,20 +4,22 @@
 		Kamcord
 	</string>
 	<string name="kamcordShare">
-		공유
+		Partager
 	</string>
 	<string name="kamcordWatch">
-		보기
+		Regarder
 	</string>
 	<string name="kamcordProfile">
-		프로필
+		Profil
 	</string>
 	<string name="kamcordClose">
-		닫기
+		Fermer
 	</string>
-	<string name="kamcordWatchVideo"/>
+	<string name="kamcordWatchVideo">
+		Regarder Vidéo
+	</string>
 	<string name="kamcordWriteATitle">
-		제목을 입력하세요...
+		Écrire un titre...
 	</string>
 	<string name="kamcordFacebook">
 		Facebook
@@ -29,165 +31,165 @@
 		Twitter
 	</string>
 	<string name="kamcordEmail">
-		이메일
+		Adresse e-mail
 	</string>
 	<string name="kamcordShareReplay">
-		리플레이 공유
+		Partager Replay
 	</string>
 	<string name="kamcordRetry">
-		재시도
+		Réessayer
 	</string>
 	<string name="kamcordPoweredByKamcord">
-		Kamcord
+		Offert par Kamcord
 	</string>
 	<string name="kamcordUploadFinished">
-		업로드 완료!
+		Transfert terminé !
 	</string>
 	<string name="kamcordUploadFailed">
-		업로드 실패
+		Échec du transfert
 	</string>
 	<string name="kamcordUploading">
-		업로드 중 ...
-	</string>
-	<string name="kamcordNoInternet">
-		인터넷 연결이 없음
-	</string>
-	<string name="kamcordRequiresInternet">
-		Kamcord는 인터넷 연결이 필요합니다
+		Transfert...
 	</string>
 	<string name="kamcordOk">
-		확인
+		Ok
 	</string>
 	<string name="kamcordYes">
-		예
+		Oui
 	</string>
 	<string name="kamcordNo">
-		아니요
+		Non
 	</string>
 	<string name="kamcordUsername">
-		사용자 이름
+		Nom d\'utilisateur
 	</string>
 	<string name="kamcordPassword">
-		비밀번호
+		Mot de passe
 	</string>
 	<string name="kamcordImReady">
-		준비 완료!
+		J\'ai terminé !
 	</string>
 	<string name="kamcordCreateProfile">
-		프로필 만들기
+		Créer profil
 	</string>
 	<string name="kamcordPrivacyPolicy">
-		개인정보보호 정책
+		Politique de confidentialité
 	</string>
 	<string name="kamcordTermsOfService">
-		서비스 약관
+		Conditions de service
 	</string>
 	<string name="kamcordAgreementBlurb">
-		프로필 만들기를 클릭하면 개인정보보호 정책과 서비스 약관을 읽고 동의하는 것입니다
+		En cliquant sur Créer profil, tu indiques avoir lu et accepter la Politique de confidentialité et les Conditions de service.
 	</string>
-	<string name="kamcordUsernameMinCharacters"/>
+	<string name="kamcordUsernameMinCharacters">
+		Le nom d\'utilisateur doit mesurer au moins 5 caractères de long
+	</string>
 	<string name="kamcordUsernameIllegalCharacters">
-		사용자 이름에 허용되지 않은 문자가 있음
+		Caractères interdit dans le nom d\'utilisateur
 	</string>
 	<string name="kamcordUsernameEnter">
-		유효한 사용자 이름을 입력하세요
+		Merci d\'entrer un nom d\'utilisateur valide
 	</string>
 	<string name="kamcordPasswordMinCharacters">
-		비밀번호는 최소 6자입니나
+		Le mot de passe doit mesurer au moins 6 caractères de long
 	</string>
 	<string name="kamcordPasswordEnter">
-		비밀번호를 입력해야 합니다
+		Tu dois entrer un mot de passe
 	</string>
 	<string name="kamcordEmailInvalid">
-		유효하지 않은 이메일
+		Adresse e-mail invalide
 	</string>
 	<string name="kamcordEmailEnter">
-		이메일을 입력하세요
+		Tu dois entrer une adresse e-mail
 	</string>
 	<string name="kamcordProfileErrorTitle">
-		프로필 만들기 오류
+		Erreur de création de profil
 	</string>
 	<string name="kamcordProfileErrorMessage">
-		프로필 만들기에 실패하였습니다. 잠시후 다시 시도하세요
+		Impossible de créer le profil, réessaie plus tard
 	</string>
 	<string name="kamcordEmailCorrect">
-		이메일이 정확합니까?
+		Ton adresse e-mail est-elle correcte ?
 	</string>
 	<string name="kamcordEmailEntered">
-		입력된 이메일은 %@입니다
+		L\'adresse e-mail que tu as entrée est %@
 	</string>
 	<string name="kamcordUnclaimedVideos">
-		소유자가 없는 비디오
+		Vidéos non propriétaires
 	</string>
 	<string name="kamcordAnyUnclaimedVideos">
-		소유자가 없는 모든 비디오는 귀하의 프로필과 연계됩니다.
+		Toutes les vidéos non propriétaires seront associées à ton profil.
 	</string>
 	<string name="kamcordUsernameEmail">
-		사용자 이름 또는 이메일
+		Nom d\'utilisateur ou adresse e-mail
 	</string>
 	<string name="kamcordSignIn">
-		로그인
+		S\'enregistrer
 	</string>
 	<string name="kamcordSignOut">
-		로그아웃
+		Se déconnecter
 	</string>
 	<string name="kamcordForgotYourPassword">
-		비밀번호를 잊으셨습니까?
+		Mot de passe oublié ?
 	</string>
 	<string name="kamcordNoAccountFound">
-		계정을 발견할 수 없음
+		Aucun compte trouvé
 	</string>
 	<string name="kamcordSorryMatchingAccounts">
-		죄송합니다. 일치되는 계정을 찾지 못했습니다.
+		Désolé, impossible de trouver de comptes correspondants.
 	</string>
 	<string name="kamcordEditProfile">
-		프로필 수정
+		Modifier profil
 	</string>
 	<string name="kamcordNoAccountLinked">
-		연결된 계정 없음
+		Pas de compte lié
 	</string>
 	<string name="kamcordConfirmFacebookSignOut">
-		Facebook 로그아웃 확인
+		Confirmer déconnexion Facebook
 	</string>
 	<string name="kamcordConfirmTwitterSignOut">
-		Twitter 로그아웃 확인
+		Confirmer déconnexion de Twitter
 	</string>
-	<string name="kamcordConfirmYouTubeSignOut"/>
+	<string name="kamcordConfirmYouTubeSignOut">
+		Confirmer déconnexion de YouTube
+	</string>
 	<string name="kamcordConfirmKamcordSignOut">
-		Kamcord 로그아웃 확인
+		Confirmer déconnexion de Kamcord
 	</string>
 	<string name="kamcordAreYouSure">
-		정말 로그아웃하시겠습니까?
+		Tu es sûr de vouloir te déconnecter ?
 	</string>
 	<string name="kamcordEnterUsernameOrEmail">
-		Kamcord 프로필의 사용자 이름이나 이메일 주소를 입력해 주세요.
+		Entre le nom d\'utilisateur ou l\'adresse e-mail de ton profil Kamcord.
 	</string>
 	<string name="kamcordResetPassword">
-		비밀번호 초기화
+		Réinitialiser mot de passe
 	</string>
 	<string name="kamcordEmailNotSent">
-		이메일이 전송되지 않음
+		E-mail pas envoyé
 	</string>
-	<string name="kamcordAnotherPasswordReset"/>
+	<string name="kamcordAnotherPasswordReset">
+		Une autre demande de réinitialisation de mot de passe est déjà en cours.
+	</string>
 	<string name="kamcordEmailSent">
-		이메일이 전송됨
+		E-mail envoyé
 	</string>
 	<string name="kamcordWeveEmailedYou">
-		비밀번호 초기화 링크가 이메일로 전송되었습니다
+		Nous t\'avons envoyé un lien pour réinitialiser ton mot de passe !
 	</string>
 	<string name="kamcordChangePassword">
-		비밀번호 변경
+		Modifier mot de passe
 	</string>
 	<string name="kamcordCurrentPassword">
-		현재 비밀번호
+		Mot de passe actuel
 	</string>
 	<string name="kamcordNewPassword">
-		새로운 비밀번호
+		Nouveau mot de passe
 	</string>
 	<string name="kamcordNewPasswordAgain">
-		새로운 비밀번호(재입력)
+		Nouveau mot de passe (encore)
 	</string>
 	<string name="kamcordNewPasswordsDoNotMatch">
-		새로운 비밀번호가 일치하지 않습니다
+		Les nouveaux mots de passe sont différents 
 	</string>
 </resources>

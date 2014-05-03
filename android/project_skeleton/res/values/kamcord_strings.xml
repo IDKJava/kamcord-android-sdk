@@ -14,7 +14,7 @@
     <string name="kamcordWatchVideo">Watch Video</string>
     <string name="kamcordWriteATitle">Write a title...</string>
     <string name="kamcordFacebook">Facebook</string>
-    <string name="kamcordYoutube">YouTube</string>
+    <string name="kamcordYouTube">YouTube</string>
     <string name="kamcordTwitter">Twitter</string>
     <string name="kamcordEmail">Email</string>
     <string name="kamcordShareReplay">Share Replay</string>
@@ -131,6 +131,11 @@
     <!-- Change credentials. -->
     <color name="kamcordChangeCredsBackground">#808080</color>
     
+    <!-- Media controls. -->
+    <color name="kamcordMediaControlsSeeThrough">#CC000000</color>
+    <color name="kamcordMediaControlsTitleTextColor">#fff</color>
+    <color name="kamcordMediaControlsTimeTextColor">#FCCC</color>
+    
     
     
     <!-- ********** Dimensions ********** -->
@@ -149,16 +154,8 @@
     <dimen name="kamcordProfileSettingsSignInButtonWidth">90dp</dimen>
     <dimen name="kamcordProfileSettingsSignInButtonTextsize">17dp</dimen>
     
-    <dimen name="kamcordProfileSettingsNextIconWidth">11dp</dimen> <!-- The raw icon is 22x40 -->
     <dimen name="kamcordProfileSettingsNextIconHeight">20dp</dimen>
-    <dimen name="kamcordProfileSettingsKamcordIconWidth">29.85dp</dimen> <!-- The raw icon is 50x67 -->
-    <dimen name="kamcordProfileSettingsKamcordIconHeight">40dp</dimen>
-    <dimen name="kamcordProfileSettingsFacebookIconWidth">39.18dp</dimen> <!-- The raw icon is 144x147 -->
-    <dimen name="kamcordProfileSettingsFacebookIconHeight">40dp</dimen>
-    <dimen name="kamcordProfileSettingsTwitterIconWidth">39.18dp</dimen> <!-- The raw icon is 144x147 -->
-    <dimen name="kamcordProfileSettingsTwitterIconHeight">40dp</dimen>
-    <dimen name="kamcordProfileSettingsYoutubeIconWidth">40dp</dimen> <!-- The raw icon is 160x160 -->
-    <dimen name="kamcordProfileSettingsYoutubeIconHeight">40dp</dimen>
+    <dimen name="kamcordProfileSettingsIconHeight">40dp</dimen>
     
     <!-- Forgot password. -->
     <dimen name="kamcordForgotPasswordButtonTextsize">17dp</dimen>
@@ -178,5 +175,12 @@
     
     <!-- Change credentials -->
     <dimen name="kamcordChangeCredsPadding">10dp</dimen>
+    
+    <!-- Media Controls -->
+    <dimen name="kamcordMediaControlsSpacing">15dp</dimen>
+    <dimen name="kamcordMediaControlsTitleTextSize">20dp</dimen>
+    <dimen name="kamcordMediaControlsTimeTextSize">14dp</dimen>
+    <dimen name="kamcordMediaControlsIconSize">20dp</dimen>
+    <dimen name="kamcordMediaControlsSeekbarHeight">4dp</dimen>
     
 </resources>

@@ -3,7 +3,7 @@ Kamcord Android Framework
 
 <h3>The documentation can be found at the <a href="https://github.com/kamcord/kamcord-android-sdk/wiki">wiki</a>.</h3>
 
-This repository contains a build of Kamcord for integrating into a Unity 4.2+ game or a generic Android project. The current version is 1.2.1. Please visit the <a href="https://github.com/kamcord/kamcord-android-sdk/wiki/Change-log">Change Log</a> to see a history of changes.
+This repository contains a build of Kamcord for integrating into a Unity 4.2+ game or a generic Android project. The current version is 1.2.7. Please visit the <a href="https://github.com/kamcord/kamcord-android-sdk/wiki/Change-log">Change Log</a> to see a history of changes.
 
 If you're using Unity, use the Unity package at `unity/Kamcord.unitypackage`.
 

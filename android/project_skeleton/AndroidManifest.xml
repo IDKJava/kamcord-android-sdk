@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.kamcord.android" android:versionName="1.0" android:versionCode="1">
 
-    <!-- KEEP permissions -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!-- END KEEP permissions -->
+    
 
+    
     <application>
 
-        <!-- KEEP activities -->
         <activity
             android:name="com.kamcord.android.KamcordActivity"
             android:launchMode="singleTask"
@@ -19,7 +18,7 @@
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:windowActionBar="false" >
         </activity>
-
+        
         <activity
             android:name="com.kamcord.android.ReplayActivity"
             android:label="Watch"
@@ -31,7 +30,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.kamcord.android.KamcordActivity" />
         </activity>
-
+        
         <activity
             android:name="com.kamcord.android.WebActivity"
             android:label="Login"
@@ -43,7 +42,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.kamcord.android.KamcordActivity" />
         </activity>
-        <!-- END KEEP activities -->
-
+        
     </application>
 </manifest>

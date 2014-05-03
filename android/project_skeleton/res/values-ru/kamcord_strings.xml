@@ -4,22 +4,22 @@
 		Kamcord
 	</string>
 	<string name="kamcordShare">
-		シェアする
+		Поделиться
 	</string>
 	<string name="kamcordWatch">
-		見る
+		Смотреть
 	</string>
 	<string name="kamcordProfile">
-		プロフィール
+		Профиль
 	</string>
 	<string name="kamcordClose">
-		閉じる
+		Закрыть
 	</string>
 	<string name="kamcordWatchVideo">
-		ビデオを見る
+		Просмотреть видео
 	</string>
 	<string name="kamcordWriteATitle">
-		タイトルを書いて下さい...
+		Введи заголовок...
 	</string>
 	<string name="kamcordFacebook">
 		Facebook
@@ -31,171 +31,165 @@
 		Twitter
 	</string>
 	<string name="kamcordEmail">
-		Eメール
+		Эл. почта
 	</string>
 	<string name="kamcordShareReplay">
-		リプレイをシェアする
+		Поделиться повтором
 	</string>
 	<string name="kamcordRetry">
-		もう一度試す
+		Повторить
 	</string>
 	<string name="kamcordPoweredByKamcord">
-		Kamcordを装備しています
+		На базе ПО Kamcord
 	</string>
 	<string name="kamcordUploadFinished">
-		アップロード完了!
+		Загрузка завершена
 	</string>
 	<string name="kamcordUploadFailed">
-		アップロードが失敗しました
+		Ошибка загрузки
 	</string>
 	<string name="kamcordUploading">
-		アップロード中 ...
-	</string>
-	<string name="kamcordNoInternet">
-		インターネット接続なし
-	</string>
-	<string name="kamcordRequiresInternet">
-		Kamcordを使用するにはインターネット接続が必要です
+		Идет загрузка в систему ...
 	</string>
 	<string name="kamcordOk">
-		オーケー
+		OK
 	</string>
 	<string name="kamcordYes">
-		はい
+		Да
 	</string>
 	<string name="kamcordNo">
-		いいえ
+		Нет
 	</string>
 	<string name="kamcordUsername">
-		ユーザーネーム
+		Имя пользователя
 	</string>
 	<string name="kamcordPassword">
-		パスワード
+		Пароль
 	</string>
 	<string name="kamcordImReady">
-		準備ができている!
+		Я готов(а)!
 	</string>
 	<string name="kamcordCreateProfile">
-		プロフィールを作成する
+		Создать профиль
 	</string>
 	<string name="kamcordPrivacyPolicy">
-		プライバシー・ポリシー
+		Политика конфиденциальности
 	</string>
 	<string name="kamcordTermsOfService">
-		サービス規約
+		Условия обслуживания
 	</string>
 	<string name="kamcordAgreementBlurb">
-		「プロフィールを作成する」ボタンをクリックした後は、プライバシー・ポリシーとサービス規約を読み、それらに同意したものとみなされます
+		Нажимая на \'Создать профиль\', ты подтверждаешь, что прочитал(а) и согласен(на) с Политикой конфиденциальности и Условиями обслуживания.
 	</string>
 	<string name="kamcordUsernameMinCharacters">
-		ユーザーネームは少なくとも5文字以上にして下さい
+		Имя пользователя должно содержать не менее 5 символов
 	</string>
 	<string name="kamcordUsernameIllegalCharacters">
-		ユーザーネームに違法な文字が含まれています
+		Недопустимые символы в имени пользователя
 	</string>
 	<string name="kamcordUsernameEnter">
-		有効なユーザーネームを入力して下さい
+		Введи действительное имя пользователя
 	</string>
 	<string name="kamcordPasswordMinCharacters">
-		パスワードは少なくとも6文字以上にして下さい。
+		Пароль должен содержать не менее 6 символов
 	</string>
 	<string name="kamcordPasswordEnter">
-		パスワードを入力しなければなりません
+		Ты должен ввести пароль
 	</string>
 	<string name="kamcordEmailInvalid">
-		無効なEメール
+		Неверная эл.почта
 	</string>
 	<string name="kamcordEmailEnter">
-		Eメールアドレスの入力が必要です
+		Тебе нужно ввести эл. почту
 	</string>
 	<string name="kamcordProfileErrorTitle">
-		プロフィール作成エラー
+		Ошибка создания профиля
 	</string>
 	<string name="kamcordProfileErrorMessage">
-		プロフィール作成が出来ませんでした、後で再度トライしてみて下さい
+		Создание профиля не работает. Повтори попытку позднее
 	</string>
 	<string name="kamcordEmailCorrect">
-		あなたのEメールアドレスは正しいですか？
+		Это твой верный адрес эл.почты?
 	</string>
 	<string name="kamcordEmailEntered">
-		あなたが入力したEメールは%@
+		Введенная тобой эл. почта — %@
 	</string>
 	<string name="kamcordUnclaimedVideos">
-		所有権の主張されていないビデオ
+		Невостребованные видео
 	</string>
 	<string name="kamcordAnyUnclaimedVideos">
-		所有権が主張されていないビデオは全て、あなたのプロフィールと関連づけられることになります。
+		Все невостребованные видео будут связаны с твоим профилем.
 	</string>
 	<string name="kamcordUsernameEmail">
-		ユーザーネームまたはメールアドレス
+		Имя пользователя или эл. почта
 	</string>
 	<string name="kamcordSignIn">
-		サインイン
+		Вход
 	</string>
 	<string name="kamcordSignOut">
-		サインアウト
+		Выход
 	</string>
 	<string name="kamcordForgotYourPassword">
-		パスワードをお忘れですか？
+		Забыл(а) пароль?
 	</string>
 	<string name="kamcordNoAccountFound">
-		アカウントが見つかりません
+		Аккаунт не найден
 	</string>
 	<string name="kamcordSorryMatchingAccounts">
-		すみません、合致するアカウントが見つかりません
+		К сожалению, мы не смогли найти никаких совпадающих аккаунтов.
 	</string>
 	<string name="kamcordEditProfile">
-		プロフィールを編集する
+		Изменить профиль
 	</string>
 	<string name="kamcordNoAccountLinked">
-		リンクされたアカウントなし
+		Нет связанных аккаунтов
 	</string>
 	<string name="kamcordConfirmFacebookSignOut">
-		Facebookをサインアウトしたことを確認して下さい
+		Подтвердить выход из Facebook
 	</string>
 	<string name="kamcordConfirmTwitterSignOut">
-		Twitterをサインアウトしたことを確認して下さい
+		Подтвердить выход из Twitter
 	</string>
 	<string name="kamcordConfirmYouTubeSignOut">
-		YouTubeのサインアウトを確認して下さい
+		Подтвердить выход из YouTube
 	</string>
 	<string name="kamcordConfirmKamcordSignOut">
-		Kamcordをサインアウトしたことを確認して下さい
+		Подтвердить выход из Kamcord
 	</string>
 	<string name="kamcordAreYouSure">
-		本当にサインアウトしますか？
+		Уверен(а), что хочешь выйти?
 	</string>
 	<string name="kamcordEnterUsernameOrEmail">
-		Kamcordプロフィールのユーザー名かメールアドレスを入力してください。
+		Введи имя пользователя или адрес эл. почты своего профиля Kamcord.
 	</string>
 	<string name="kamcordResetPassword">
-		パスワードをリセットする
+		Изменить пароль
 	</string>
 	<string name="kamcordEmailNotSent">
-		Eメールは送れませんでした
+		Письмо не отправлено
 	</string>
 	<string name="kamcordAnotherPasswordReset">
-		再度のパスワードのリセットリクエストが、ペンディング中です。
+		Еще один запрос на сброс пароля уже находится на рассмотрении.
 	</string>
 	<string name="kamcordEmailSent">
-		Eメールが送られました
+		Письмо отправлено
 	</string>
 	<string name="kamcordWeveEmailedYou">
-		パスワードをリセットするためのリンクを、あなたのEメールにお送りしました!
+		Мы выслали тебе по эл.почте ссылку для восстановления твоего пароля.
 	</string>
 	<string name="kamcordChangePassword">
-		パスワード変更
+		Изменить пароль
 	</string>
 	<string name="kamcordCurrentPassword">
-		現在のパスワード
+		Текущий пароль 
 	</string>
 	<string name="kamcordNewPassword">
-		新しいパスワード
+		Новый пароль
 	</string>
 	<string name="kamcordNewPasswordAgain">
-		新しいパスワード（再度）
+		Новый пароль (повторно)
 	</string>
 	<string name="kamcordNewPasswordsDoNotMatch">
-		新しいパスワードはマッチしません
+		Новые пароли не совпадают
 	</string>
 </resources>

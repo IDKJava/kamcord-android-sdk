@@ -4,190 +4,192 @@
 		Kamcord
 	</string>
 	<string name="kamcordShare">
-		공유
+		Paylaş
 	</string>
 	<string name="kamcordWatch">
-		보기
+		İzle
 	</string>
 	<string name="kamcordProfile">
-		프로필
+		Profil
 	</string>
 	<string name="kamcordClose">
-		닫기
+		Kapat
 	</string>
-	<string name="kamcordWatchVideo"/>
+	<string name="kamcordWatchVideo">
+		Video\'yu Ýzle
+	</string>
 	<string name="kamcordWriteATitle">
-		제목을 입력하세요...
+		Başlık yaz
 	</string>
 	<string name="kamcordFacebook">
 		Facebook
 	</string>
 	<string name="kamcordYouTube">
-		YouTube
+		Youtube
 	</string>
 	<string name="kamcordTwitter">
 		Twitter
 	</string>
 	<string name="kamcordEmail">
-		이메일
+		Email
 	</string>
 	<string name="kamcordShareReplay">
-		리플레이 공유
+		Videoları Paylaş
 	</string>
 	<string name="kamcordRetry">
-		재시도
+		Yeniden dene
 	</string>
 	<string name="kamcordPoweredByKamcord">
 		Kamcord
 	</string>
 	<string name="kamcordUploadFinished">
-		업로드 완료!
+		Yükleme Bitti!
 	</string>
 	<string name="kamcordUploadFailed">
-		업로드 실패
+		Yükleme Başarısız
 	</string>
 	<string name="kamcordUploading">
-		업로드 중 ...
-	</string>
-	<string name="kamcordNoInternet">
-		인터넷 연결이 없음
-	</string>
-	<string name="kamcordRequiresInternet">
-		Kamcord는 인터넷 연결이 필요합니다
+		Yükleniyor...
 	</string>
 	<string name="kamcordOk">
-		확인
+		Tamam
 	</string>
 	<string name="kamcordYes">
-		예
+		Evet
 	</string>
 	<string name="kamcordNo">
-		아니요
+		Hayır
 	</string>
 	<string name="kamcordUsername">
-		사용자 이름
+		Kullanıcı adı
 	</string>
 	<string name="kamcordPassword">
-		비밀번호
+		Şifre
 	</string>
 	<string name="kamcordImReady">
-		준비 완료!
+		Hazırım!
 	</string>
 	<string name="kamcordCreateProfile">
-		프로필 만들기
+		Profil Oluştur
 	</string>
 	<string name="kamcordPrivacyPolicy">
-		개인정보보호 정책
+		Gizlilik Politikası
 	</string>
 	<string name="kamcordTermsOfService">
-		서비스 약관
+		Hizmet Koşulları
 	</string>
 	<string name="kamcordAgreementBlurb">
-		프로필 만들기를 클릭하면 개인정보보호 정책과 서비스 약관을 읽고 동의하는 것입니다
+		Profil Oluştur tuşuna basarak Gizlilik Politikası ve Hizmet Koşullarını okuyup kabul ettiğini onaylıyorsun.
 	</string>
-	<string name="kamcordUsernameMinCharacters"/>
+	<string name="kamcordUsernameMinCharacters">
+		Kullanıcı adı en az 5 karakter olmalıdır
+	</string>
 	<string name="kamcordUsernameIllegalCharacters">
-		사용자 이름에 허용되지 않은 문자가 있음
+		Kullanıcı adında uygunsuz karakterler
 	</string>
 	<string name="kamcordUsernameEnter">
-		유효한 사용자 이름을 입력하세요
+		Lütfen geçerli bir kullanıcı adı gir
 	</string>
 	<string name="kamcordPasswordMinCharacters">
-		비밀번호는 최소 6자입니나
+		Şifre en az 6 karakter olmalı
 	</string>
 	<string name="kamcordPasswordEnter">
-		비밀번호를 입력해야 합니다
+		Şifre girmelisin
 	</string>
 	<string name="kamcordEmailInvalid">
-		유효하지 않은 이메일
+		Geçersiz email
 	</string>
 	<string name="kamcordEmailEnter">
-		이메일을 입력하세요
+		Email adresi girmelisin
 	</string>
 	<string name="kamcordProfileErrorTitle">
-		프로필 만들기 오류
+		Profil Oluşturma Hatası
 	</string>
 	<string name="kamcordProfileErrorMessage">
-		프로필 만들기에 실패하였습니다. 잠시후 다시 시도하세요
+		Profil oluşturulamadı, lütfen daha sonra tekrar dene
 	</string>
 	<string name="kamcordEmailCorrect">
-		이메일이 정확합니까?
+		Email adresin doğru mu?
 	</string>
 	<string name="kamcordEmailEntered">
-		입력된 이메일은 %@입니다
+		Girdiğin email adresi %@
 	</string>
 	<string name="kamcordUnclaimedVideos">
-		소유자가 없는 비디오
+		Sahipsiz Videolar
 	</string>
 	<string name="kamcordAnyUnclaimedVideos">
-		소유자가 없는 모든 비디오는 귀하의 프로필과 연계됩니다.
+		Tüm sahipsiz videolar profilinle ilişkilendirilecek.
 	</string>
 	<string name="kamcordUsernameEmail">
-		사용자 이름 또는 이메일
+		Kullanıcı adı veya Email
 	</string>
 	<string name="kamcordSignIn">
-		로그인
+		Giriş Yap
 	</string>
 	<string name="kamcordSignOut">
-		로그아웃
+		Çıkış Yap
 	</string>
 	<string name="kamcordForgotYourPassword">
-		비밀번호를 잊으셨습니까?
+		Şifreni mi unuttun?
 	</string>
 	<string name="kamcordNoAccountFound">
-		계정을 발견할 수 없음
+		Hesap Bulunamadı
 	</string>
 	<string name="kamcordSorryMatchingAccounts">
-		죄송합니다. 일치되는 계정을 찾지 못했습니다.
+		Üzgünüz, eşleşen hesap bulamadık.
 	</string>
 	<string name="kamcordEditProfile">
-		프로필 수정
+		Profili Düzenle
 	</string>
 	<string name="kamcordNoAccountLinked">
-		연결된 계정 없음
+		Bağlı hesap yok
 	</string>
 	<string name="kamcordConfirmFacebookSignOut">
-		Facebook 로그아웃 확인
+		Facebook Çıkışını Onayla
 	</string>
 	<string name="kamcordConfirmTwitterSignOut">
-		Twitter 로그아웃 확인
+		Twitter Çıkışını Onayla
 	</string>
-	<string name="kamcordConfirmYouTubeSignOut"/>
+	<string name="kamcordConfirmYouTubeSignOut">
+		Youtube Çıkışını Onayla
+	</string>
 	<string name="kamcordConfirmKamcordSignOut">
-		Kamcord 로그아웃 확인
+		Kamcord Çıkışını Onayla
 	</string>
 	<string name="kamcordAreYouSure">
-		정말 로그아웃하시겠습니까?
+		Çıkış yapmak istediğinden emin misin?
 	</string>
 	<string name="kamcordEnterUsernameOrEmail">
-		Kamcord 프로필의 사용자 이름이나 이메일 주소를 입력해 주세요.
+		Kamcord profilinin kullanıcı adını veya email adresini gir.
 	</string>
 	<string name="kamcordResetPassword">
-		비밀번호 초기화
+		Şifreyi Sıfırla
 	</string>
 	<string name="kamcordEmailNotSent">
-		이메일이 전송되지 않음
+		Email Gönderilmedi
 	</string>
-	<string name="kamcordAnotherPasswordReset"/>
+	<string name="kamcordAnotherPasswordReset">
+		Başka bir şifre sıfırlama isteği zaten gönderildi.
+	</string>
 	<string name="kamcordEmailSent">
-		이메일이 전송됨
+		Email gönderildi
 	</string>
 	<string name="kamcordWeveEmailedYou">
-		비밀번호 초기화 링크가 이메일로 전송되었습니다
+		Şifreni sıfırlaman için sana email ile bir link yolladık!
 	</string>
 	<string name="kamcordChangePassword">
-		비밀번호 변경
+		Şifreyi Değiştir
 	</string>
 	<string name="kamcordCurrentPassword">
-		현재 비밀번호
+		Geçerli şifre
 	</string>
 	<string name="kamcordNewPassword">
-		새로운 비밀번호
+		Yeni şifre
 	</string>
 	<string name="kamcordNewPasswordAgain">
-		새로운 비밀번호(재입력)
+		Yeni şifre (tekrar)
 	</string>
 	<string name="kamcordNewPasswordsDoNotMatch">
-		새로운 비밀번호가 일치하지 않습니다
+		Yeni şifreler eşleşmiyor
 	</string>
 </resources>
