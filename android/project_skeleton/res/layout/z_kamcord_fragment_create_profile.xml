@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/kamcordCreateProfileBackground"
+    android:background="@android:color/transparent"
     android:orientation="vertical"
     android:padding="10dp" >
 
@@ -71,14 +71,8 @@
 
     <Button
         android:id="@+id/createProfile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/kamcord_share_button"
         android:text="@string/kamcordCreateProfile"
-        android:textColor="#ffffff"
-        android:textSize="20sp" />
+        style="@style/KamcordButton" />
 
     <com.kamcord.android.ClickCorrectWebView
         android:id="@+id/privacyAndTerms"

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/kamcordChangeCredsBackground"
+    android:background="@android:color/transparent"
     android:orientation="vertical"
     android:padding="@dimen/kamcordChangeCredsPadding" >
 
@@ -17,17 +17,10 @@
 
         <EditText
             android:id="@+id/currentPasswordEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
+            style="@style/KamcordEditText"
             android:hint="@string/kamcordCurrentPassword"
             android:imeOptions="actionNext"
-            android:inputType="textPassword"
-            android:maxLines="1"
-            android:padding="@dimen/kamcordChangeCredsPadding"
-            android:singleLine="true"
-            android:textColor="#000"
-            android:textCursorDrawable="@null" />
+            android:inputType="textPassword" />
     </LinearLayout>
 
     <LinearLayout
@@ -41,15 +34,8 @@
 
         <EditText
             android:id="@+id/newCredEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
             android:imeOptions="actionNext"
-            android:maxLines="1"
-            android:padding="@dimen/kamcordChangeCredsPadding"
-            android:singleLine="true"
-            android:textColor="#000"
-            android:textCursorDrawable="@null" />
+            style="@style/KamcordEditText" />
 
         <View
             android:layout_width="match_parent"
@@ -58,24 +44,12 @@
 
         <EditText
             android:id="@+id/newCredAgainEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
             android:imeOptions="actionDone"
-            android:maxLines="1"
-            android:padding="@dimen/kamcordChangeCredsPadding"
-            android:singleLine="true"
-            android:textColor="#000"
-            android:textCursorDrawable="@null" />
+            style="@style/KamcordEditText" />
     </LinearLayout>
 
-    <TextView
+    <Button
         android:id="@+id/changeCredButton"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/kamcordButtonHeight"
-        android:background="@color/kamcordButtonActive"
-        android:gravity="center"
-        android:textColor="@color/kamcordButtonTextColor"
-        android:textSize="@dimen/kamcordButtonTextsize" />
+        style="@style/KamcordButton" />
 
 </LinearLayout>

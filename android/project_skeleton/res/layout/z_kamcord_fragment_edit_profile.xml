@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/kamcordCreateProfileBackground"
+    android:background="@android:color/transparent"
     android:padding="@dimen/kamcordEditProfilePadding" >
 
     <LinearLayout
@@ -13,20 +13,11 @@
 
         <LinearLayout
             android:id="@+id/changeEmailLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/kamcordEditProfileItemHeight"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="@dimen/kamcordEditProfileItemPadding" >
+            style="@style/KamcordProfileSettingsItemContainer" >
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/kamcordChangeEmail"
-                android:textColor="@color/kamcordEditProfileTextColor"
-                android:textSize="@dimen/kamcordEditProfileTextsize"
-                android:textStyle="bold" />
+                style="@style/KamcordProfileSettingsItemText" />
 
             <ImageView
                 android:layout_width="@dimen/kamcordEditProfileNextIconWidth"
@@ -35,28 +26,15 @@
         </LinearLayout>
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/kamcordEditProfileDividerWidth"
-            android:layout_marginLeft="@dimen/kamcordEditProfileItemPadding"
-            android:layout_marginRight="@dimen/kamcordEditProfileItemPadding"
-            android:background="@color/kamcordDividerColor" />
+            style="@style/KamcordProfileSettingsDivider" />
 
         <LinearLayout
             android:id="@+id/changePasswordLayout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/kamcordEditProfileItemHeight"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="@dimen/kamcordEditProfileItemPadding" >
+            style="@style/KamcordProfileSettingsItemContainer" >
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/kamcordChangePassword"
-                android:textColor="@color/kamcordEditProfileTextColor"
-                android:textSize="@dimen/kamcordEditProfileTextsize"
-                android:textStyle="bold" />
+                style="@style/KamcordProfileSettingsItemText" />
 
             <ImageView
                 android:layout_width="@dimen/kamcordEditProfileNextIconWidth"
