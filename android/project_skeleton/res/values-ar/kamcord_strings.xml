@@ -51,6 +51,9 @@
 	<string name="kamcordUploading">
 		جار التحميل...
 	</string>
+	<string name="kamcordWorking">
+		جارِ العمل...
+	</string>
 	<string name="kamcordOk">
 		Ok
 	</string>

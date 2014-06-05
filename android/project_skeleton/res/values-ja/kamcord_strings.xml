@@ -51,6 +51,9 @@
 	<string name="kamcordUploading">
 		アップロード中 ...
 	</string>
+	<string name="kamcordWorking">
+		処理しています...
+	</string>
 	<string name="kamcordNoInternet">
 		インターネット接続なし
 	</string>

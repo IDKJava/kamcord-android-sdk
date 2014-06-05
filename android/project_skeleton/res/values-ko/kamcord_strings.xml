@@ -49,6 +49,9 @@
 	<string name="kamcordUploading">
 		업로드 중 ...
 	</string>
+	<string name="kamcordWorking">
+		작업 중...
+	</string>
 	<string name="kamcordNoInternet">
 		인터넷 연결이 없음
 	</string>

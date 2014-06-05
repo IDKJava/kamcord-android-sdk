@@ -51,6 +51,9 @@
 	<string name="kamcordUploading">
 		Yükleniyor...
 	</string>
+	<string name="kamcordWorking">
+		İşlem yapılıyor...
+	</string>
 	<string name="kamcordOk">
 		Tamam
 	</string>

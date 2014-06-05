@@ -51,6 +51,9 @@
 	<string name="kamcordUploading">
 		Идет загрузка в систему ...
 	</string>
+	<string name="kamcordWorking">
+		Работает...
+	</string>
 	<string name="kamcordOk">
 		OK
 	</string>

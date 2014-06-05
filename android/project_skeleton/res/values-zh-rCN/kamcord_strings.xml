@@ -51,6 +51,9 @@
 	<string name="kamcordUploading">
 		上传中 ...
 	</string>
+	<string name="kamcordWorking">
+		处理中...
+	</string>
 	<string name="kamcordNoInternet">
 		没有联网
 	</string>

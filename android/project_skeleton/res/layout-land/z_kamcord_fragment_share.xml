@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mainlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,8 +12,10 @@
     <!-- Thumbnail ImageButton, play button overlay ImageView, and title EditText. -->
 
     <LinearLayout
+        android:id="@+id/thumbnailAndDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_margin="@dimen/kamcordShareSpacing"
         android:background="@drawable/kamcord_share_edit_background"
         android:orientation="horizontal" >
@@ -81,6 +83,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/thumbnailAndDescription"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="@dimen/kamcordShareSpacing"
         android:layout_marginLeft="@dimen/kamcordShareSpacing"
@@ -161,18 +164,14 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-    
     <!-- Share button -->
 
     <Button
         android:id="@+id/share"
+        android:layout_alignParentBottom="true"
         style="@style/KamcordButton.Share.Landscape"
         android:layout_marginLeft="@dimen/kamcordShareSpacing"
         android:layout_marginRight="@dimen/kamcordShareSpacing"
         android:text="@string/kamcordShare" />
 
-</LinearLayout>
+</RelativeLayout>

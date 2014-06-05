@@ -25,6 +25,7 @@
     <string name="kamcordUploadFinished">Upload Finished!</string>
     <string name="kamcordUploadFailed">Upload Failed</string>
     <string name="kamcordUploading">Uploading...</string>
+    <string name="kamcordWorking">Working...</string>
     
     <!-- Dialogs. -->
     <string name="kamcordCannotLoad">Cannot Load.</string>
@@ -180,7 +181,9 @@
     <!-- Tab bar. -->
     <dimen name="kamcordTabbarHeight">48dp</dimen>
     <dimen name="kamcordTabbarItemSeparation">0.5dp</dimen>
+    <dimen name="kamcordTabbarBackPadding">11.5dp</dimen> <!-- This should be (tabbarHeight - tabbarBackSize) / 2 -->
     <dimen name="kamcordTabbarBackSize">25dp</dimen>
+    <dimen name="kamcordTabbarProgressSize">3.5dp</dimen>
     
     <!-- Profile settings. -->
     <dimen name="kamcordProfileSettingsSpacing">10dp</dimen>
