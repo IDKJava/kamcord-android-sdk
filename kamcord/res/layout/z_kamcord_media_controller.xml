@@ -62,8 +62,7 @@
                 android:id="@+id/prevImage"
                 android:layout_width="@dimen/kamcordMediaControlsIconSize"
                 android:layout_height="@dimen/kamcordMediaControlsIconSize"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/kamcordMediaDescription" />
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
         <LinearLayout
@@ -78,8 +77,7 @@
                 android:id="@+id/nextImage"
                 android:layout_width="@dimen/kamcordMediaControlsIconSize"
                 android:layout_height="@dimen/kamcordMediaControlsIconSize"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/kamcordMediaDescription" />
+                android:background="@android:color/transparent" />
         </LinearLayout>
     </RelativeLayout>
 
@@ -102,8 +100,7 @@
                 android:id="@+id/pauseImage"
                 android:layout_width="@dimen/kamcordMediaControlsIconSize"
                 android:layout_height="@dimen/kamcordMediaControlsIconSize"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/kamcordMediaDescription" />
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
         <TextView
@@ -111,7 +108,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/kamcordMediaControlsTimeTextColor"
-            android:textSize="@dimen/kamcordMediaControlsTimeTextSize" />
+            android:textSize="@dimen/kamcordMediaControlsTimeTextSize"
+            android:typeface="monospace" />
 
         <SeekBar
             android:id="@+id/mediacontroller_progress"
@@ -120,10 +118,7 @@
             android:layout_weight="1"
             android:maxHeight="@dimen/kamcordMediaControlsSeekbarHeight"
             android:minHeight="@dimen/kamcordMediaControlsSeekbarHeight"
-            android:paddingBottom="@dimen/kamcordMediaControlsSpacing"
-            android:paddingLeft="@dimen/kamcordMediaControlsSpacing"
-            android:paddingRight="@dimen/kamcordMediaControlsSpacing"
-            android:paddingTop="@dimen/kamcordMediaControlsSpacing"
+            android:padding="@dimen/kamcordMediaControlsSpacing"
             android:progressDrawable="@drawable/kamcord_seekbar_progress_style"
             android:thumb="@drawable/kamcord_seekbar_thumb_style" />
 
@@ -131,9 +126,9 @@
             android:id="@+id/time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="@dimen/kamcordMediaControlsSpacing"
             android:textColor="@color/kamcordMediaControlsTimeTextColor"
-            android:textSize="@dimen/kamcordMediaControlsTimeTextSize" />
+            android:textSize="@dimen/kamcordMediaControlsTimeTextSize"
+            android:typeface="monospace" />
 
         <LinearLayout
             android:id="@+id/fullscreenButton"
@@ -146,8 +141,7 @@
                 android:id="@+id/fullscreenImage"
                 android:layout_width="@dimen/kamcordMediaControlsIconSize"
                 android:layout_height="@dimen/kamcordMediaControlsIconSize"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/kamcordMediaDescription" />
+                android:background="@android:color/transparent" />
         </LinearLayout>
     </LinearLayout>
 

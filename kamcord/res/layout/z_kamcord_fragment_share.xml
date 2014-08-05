@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:padding="@dimen/kamcordShareRectStroke">
+            android:padding="@dimen/kamcordShareRectStroke" >
 
             <ImageButton
                 android:id="@+id/thumbnailButton"
@@ -62,18 +62,59 @@
             android:focusable="true"
             android:focusableInTouchMode="true" />
 
-        <EditText
-            android:id="@+id/description"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/kamcordShareSpacing"
-            android:background="@null"
-            android:hint="@string/kamcordWriteATitle"
-            android:inputType="textMultiLine|textCapSentences"
-            android:nextFocusLeft="@id/description"
-            android:nextFocusUp="@id/description"
-            android:textColor="@color/kamcordShareTitleEditTextColor" >
-        </EditText>
+            android:layout_height="match_parent" >
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/voiceOverlayStatus"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="@dimen/kamcordShareSpacing"
+                android:background="@null"
+                android:hint="@string/kamcordWriteATitle"
+                android:inputType="textMultiLine|textCapSentences"
+                android:nextFocusLeft="@id/description"
+                android:nextFocusUp="@id/description"
+                android:paddingRight="@dimen/kamcordShareSpacing"
+                android:textColor="@color/kamcordShareTitleEditTextColor" >
+            </EditText>
+            
+            <View 
+                android:id="@+id/voiceOverlayDivider"
+                android:layout_alignBottom="@id/description"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/kamcordShareRectStroke"
+                android:background="@color/kamcordShareRectStroke" />
+
+            <TextView
+                android:id="@id/voiceOverlayStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/voiceOverlayToggle"
+                android:padding="@dimen/kamcordShareSpacing"
+                android:text="@string/kamcordVoiceOverlay"
+                android:textColor="@color/kamcordShareTitleEditTextColor"
+                android:gravity="center" />
+
+            <ToggleButton
+                android:id="@id/voiceOverlayToggle"
+                android:layout_width="@dimen/kamcordShareToggleWidth"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@id/voiceOverlayStatus"
+                android:layout_margin="@dimen/kamcordShareWidgetNudge"
+                android:background="@drawable/kamcord_toggle_selector"
+                android:textColor="@color/kamcordShareWidgetTextSelected" />
+
+        </RelativeLayout>
     </LinearLayout>
 
     <!-- Social platform grid. -->
@@ -91,22 +132,23 @@
 
         <!-- Strut -->
 
-        <View android:id="@+id/strut"
+        <View
+            android:id="@+id/strut"
             android:layout_width="0dp"
-            android:layout_height="0dp" 
-            android:layout_centerHorizontal="true"/>
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true" />
 
         <!-- Top left social platform. -->
 
         <LinearLayout
             android:id="@+id/share_0_0"
+            style="@style/KamcordShareWidgetContainer"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_alignRight="@id/strut"
-            android:background="@drawable/kamcord_rounded_top_left_selector"
-            android:layout_marginRight="@dimen/kamcordShareWidgetSpacing"
             android:layout_marginBottom="@dimen/kamcordShareWidgetSpacing"
-            style="@style/KamcordShareWidgetContainer" >
+            android:layout_marginRight="@dimen/kamcordShareWidgetSpacing"
+            android:background="@drawable/kamcord_rounded_top_left_selector" >
 
             <TextView
                 android:id="@+id/share_0_0_text"
@@ -117,12 +159,12 @@
 
         <LinearLayout
             android:id="@+id/share_0_1"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
+            style="@style/KamcordShareWidgetContainer"
             android:layout_alignLeft="@id/strut"
-            android:background="@drawable/kamcord_rounded_top_right_selector"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:layout_marginBottom="@dimen/kamcordShareWidgetSpacing"
-            style="@style/KamcordShareWidgetContainer" >
+            android:background="@drawable/kamcord_rounded_top_right_selector" >
 
             <TextView
                 android:id="@+id/share_0_1_text"
@@ -133,12 +175,12 @@
 
         <LinearLayout
             android:id="@+id/share_1_0"
+            style="@style/KamcordShareWidgetContainer"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/share_0_0"
             android:layout_alignRight="@id/strut"
-            android:background="@drawable/kamcord_rounded_bottom_left_selector"
+            android:layout_below="@id/share_0_0"
             android:layout_marginRight="@dimen/kamcordShareWidgetSpacing"
-            style="@style/KamcordShareWidgetContainer" >
+            android:background="@drawable/kamcord_rounded_bottom_left_selector" >
 
             <TextView
                 android:id="@+id/share_1_0_text"
@@ -149,12 +191,12 @@
 
         <LinearLayout
             android:id="@+id/share_1_1"
-            android:layout_below="@id/share_0_1"
-            android:layout_toRightOf="@id/share_1_0"
+            style="@style/KamcordShareWidgetContainer"
             android:layout_alignLeft="@id/strut"
             android:layout_alignParentRight="true"
-            android:background="@drawable/kamcord_rounded_bottom_right_selector"
-            style="@style/KamcordShareWidgetContainer" >
+            android:layout_below="@id/share_0_1"
+            android:layout_toRightOf="@id/share_1_0"
+            android:background="@drawable/kamcord_rounded_bottom_right_selector" >
 
             <TextView
                 android:id="@+id/share_1_1_text"
@@ -172,20 +214,20 @@
         android:gravity="center"
         android:padding="0dp"
         android:text="@string/kamcordPoweredByKamcord"
+        android:textAllCaps="true"
         android:textColor="#a5aaae"
-        android:textSize="12dp"
-        android:textAllCaps="true" />
+        android:textSize="12dp" />
 
     <!-- Share button -->
 
     <Button
         android:id="@+id/share"
-        android:layout_alignParentBottom="true"
         style="@style/KamcordButton.Share"
-        android:text="@string/kamcordShare"
-        android:layout_marginTop="20dp" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/kamcordShare" />
 
-    <FrameLayout 
+    <FrameLayout
         android:id="@+id/touchInterceptor"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

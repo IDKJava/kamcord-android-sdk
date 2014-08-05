@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="@android:color/transparent" >
+    android:background="@android:color/transparent"
+    android:fillViewport="true" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,12 +25,13 @@
                 style="@style/KamcordProfileSettingsItemContainer" >
 
                 <TextView
-                    android:text="@string/kamcordEditProfile"
-                    style="@style/KamcordProfileSettingsItemText" />
+                    style="@style/KamcordProfileSettingsItemText"
+                    android:text="@string/kamcordEditProfile" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/kamcordProfileSettingsNextIconHeight"
+                    android:layout_marginLeft="@dimen/kamcordProfileSettingsSpacing"
                     android:src="@drawable/kamcord_player_next_icon" />
             </LinearLayout>
 
@@ -40,8 +41,7 @@
 
             <!-- Social Platform 0 (always Kamcord) -->
 
-            <LinearLayout
-                style="@style/KamcordProfileSettingsItemContainer" >
+            <LinearLayout style="@style/KamcordProfileSettingsItemContainer" >
 
                 <ImageView
                     android:id="@+id/icon_0"
@@ -67,13 +67,11 @@
                     style="@style/KamcordButton.Small" />
             </LinearLayout>
 
-            <View
-                style="@style/KamcordProfileSettingsDivider" />
+            <View style="@style/KamcordProfileSettingsDivider" />
 
             <!-- Social Platform 1 -->
 
-            <LinearLayout
-                style="@style/KamcordProfileSettingsItemContainer" >
+            <LinearLayout style="@style/KamcordProfileSettingsItemContainer" >
 
                 <ImageView
                     android:id="@+id/icon_1"
@@ -99,13 +97,11 @@
                     style="@style/KamcordButton.Small" />
             </LinearLayout>
 
-            <View
-                style="@style/KamcordProfileSettingsDivider" />
+            <View style="@style/KamcordProfileSettingsDivider" />
 
             <!-- Social Platform 2 -->
 
-            <LinearLayout
-                style="@style/KamcordProfileSettingsItemContainer" >
+            <LinearLayout style="@style/KamcordProfileSettingsItemContainer" >
 
                 <ImageView
                     android:id="@+id/icon_2"
@@ -131,13 +127,11 @@
                     style="@style/KamcordButton.Small" />
             </LinearLayout>
 
-            <View
-                style="@style/KamcordProfileSettingsDivider" />
+            <View style="@style/KamcordProfileSettingsDivider" />
 
             <!-- Social Platform 3 -->
 
-            <LinearLayout
-                style="@style/KamcordProfileSettingsItemContainer" >
+            <LinearLayout style="@style/KamcordProfileSettingsItemContainer" >
 
                 <ImageView
                     android:id="@+id/icon_3"
@@ -162,6 +156,40 @@
                     android:id="@+id/signOut_3"
                     style="@style/KamcordButton.Small" />
             </LinearLayout>
+
+            <View 
+                android:id="@+id/voice_overlay_divider"
+                style="@style/KamcordProfileSettingsDivider" />
+
+            <!-- Voice Overlay -->
+
+            <LinearLayout 
+                android:id="@+id/voice_overlay_container"
+                style="@style/KamcordProfileSettingsItemContainer" >
+
+                <ImageView
+                    android:src="@drawable/kamcord_mic"
+                    style="@style/KamcordProfileSettingsItemIcon" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:text="@string/kamcordVoiceOverlay"
+                        style="@style/KamcordProfileSettingsNetworkText" />
+
+                    <TextView
+                        android:id="@+id/voice_overlay_status_text"
+                        style="@style/KamcordProfileSettingsUsernameText" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/voice_overlay_button"
+                    style="@style/KamcordButton.Small" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Terms of Service and Privacy Policy -->
@@ -177,29 +205,30 @@
                 style="@style/KamcordProfileSettingsItemContainer" >
 
                 <TextView
-                    android:text="@string/kamcordTermsOfService"
-                    style="@style/KamcordProfileSettingsItemText" />
+                    style="@style/KamcordProfileSettingsItemText"
+                    android:text="@string/kamcordTermsOfService" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/kamcordProfileSettingsNextIconHeight"
+                    android:layout_marginLeft="@dimen/kamcordProfileSettingsSpacing"
                     android:src="@drawable/kamcord_player_next_icon" />
             </LinearLayout>
 
-            <View
-                style="@style/KamcordProfileSettingsDivider" />
+            <View style="@style/KamcordProfileSettingsDivider" />
 
             <LinearLayout
                 android:id="@+id/privacyPolicyLayout"
                 style="@style/KamcordProfileSettingsItemContainer" >
 
                 <TextView
-                    android:text="@string/kamcordPrivacyPolicy"
-                    style="@style/KamcordProfileSettingsItemText" />
+                    style="@style/KamcordProfileSettingsItemText"
+                    android:text="@string/kamcordPrivacyPolicy" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/kamcordProfileSettingsNextIconHeight"
+                    android:layout_marginLeft="@dimen/kamcordProfileSettingsSpacing"
                     android:src="@drawable/kamcord_player_next_icon" />
             </LinearLayout>
         </LinearLayout>

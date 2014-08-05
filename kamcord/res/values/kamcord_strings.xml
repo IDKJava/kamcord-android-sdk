@@ -20,7 +20,6 @@
     <string name="kamcordShareReplay">Share Replay</string>
     <string name="kamcordRetry">Retry</string>
     <string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
-    <string name="kamcordMediaDescription">Media Controls</string>
     
     <string name="kamcordUploadFinished">Upload Finished!</string>
     <string name="kamcordUploadFailed">Upload Failed</string>
@@ -28,15 +27,11 @@
     <string name="kamcordWorking">Working...</string>
     
     <!-- Dialogs. -->
-    <string name="kamcordCannotLoad">Cannot Load.</string>
-    <string name="kamcordNoCompleteVideoAvailable">No complete video available.</string>
-    <string name="kamcordNoInternet">No Internet</string>
-    <string name="kamcordRequiresInternet">Kamcord requires an internet connection</string>
+    <string name="kamcordNoInternet">No Internet Connection</string>
     <string name="kamcordOk">Ok</string>
     <string name="kamcordYes">Yes</string>
     <string name="kamcordNo">No</string>
     <string name="kamcordNoVideoAvailable">No Video Available</string>
-    <string name="kamcordCantBeLoaded">That video can\'t be loaded right now.</string>
     
     <!-- Create profile tab. -->
     <string name="kamcordUsername">Username</string>
@@ -110,7 +105,21 @@
     <string name="kamcordSuccessfullyChangedEmail">Your preferred email was successfully changed.</string>
     <string name="kamcordSuccessfullyChangedPassword">Your password was successfully changed.</string>
     <string name="kamcordSuccess">Success!</string>
-    <string name="kamcordIncorrectPassword">Incorrect password.</string>
+
+    <!-- Voice Overlay -->
+    <string name="kamcordOn">On</string>
+    <string name="kamcordOff">Off</string>
+    <string name="kamcordEnable">Enable</string>
+    <string name="kamcordDisable">Disable</string>
+    <string name="kamcordVoiceOverlay">Voice Overlay</string>
+    <string name="kamcordEnableVoiceOverlayQuestion">Enable Voice Overlay?</string>
+    <string name="kamcordVoiceOverlayDisabledDevice">Voice overlay is disabled on this device.</string>
+    <string name="kamcordVoiceOverlayDisabled">Voice Overlay Disabled</string>
+    <string name="kamcordEnableVoiceOverlay">Enable Voice Overlay</string>
+    <string name="kamcordYouCanEnableVoiceOverlay">You can enable voice overlay by going to Profile => Settings or pressing Enable below.</string>
+    <string name="kamcordVoiceOverlayEnabledFuture">Voice Overlay will be enabled for future videos.</string>
+    <string name="kamcordVoiceOverlayEnabledExclamation">Voice Overlay Enabled!</string>
+    <string name="kamcordNotNow">Not Now</string>
     
     
     
@@ -138,6 +147,7 @@
     <color name="kamcordShareWidgetText">#8c8f91</color>
     <color name="kamcordShareWidgetTextSelected">#ffffff</color>
     <color name="kamcordShareRectStroke">#d7d9db</color>
+    <color name="kamcordVoiceOverlayStatusBackground">#e0e0e0</color>
     
     <!-- Create profile. -->
     <color name="kamcordCreateProfileBackground">#808080</color>
@@ -177,6 +187,7 @@
     <dimen name="kamcordShareWidgetImageSize">17dp</dimen>
     <dimen name="kamcordShareWidgetTextSize">16dp</dimen>
     <dimen name="kamcordShareWidgetNudge">5dp</dimen>
+    <dimen name="kamcordShareToggleWidth">55dp</dimen>
     
     <!-- Tab bar. -->
     <dimen name="kamcordTabbarHeight">48dp</dimen>

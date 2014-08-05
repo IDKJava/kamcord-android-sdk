@@ -22,7 +22,8 @@
             <ImageView
                 android:layout_width="@dimen/kamcordEditProfileNextIconWidth"
                 android:layout_height="@dimen/kamcordEditProfileNextIconHeight"
-                android:background="@drawable/kamcord_player_next_icon" />
+                android:background="@drawable/kamcord_player_next_icon"
+                android:layout_marginLeft="@dimen/kamcordProfileSettingsSpacing" />
         </LinearLayout>
 
         <View
@@ -39,7 +40,8 @@
             <ImageView
                 android:layout_width="@dimen/kamcordEditProfileNextIconWidth"
                 android:layout_height="@dimen/kamcordEditProfileNextIconHeight"
-                android:background="@drawable/kamcord_player_next_icon" />
+                android:background="@drawable/kamcord_player_next_icon"
+                android:layout_marginLeft="@dimen/kamcordProfileSettingsSpacing" />
         </LinearLayout>
     </LinearLayout>
 
