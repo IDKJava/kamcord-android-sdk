@@ -202,6 +202,23 @@ bool Kamcord_IsPaused();
 
 /*
  *
+ * Enable or disable the live voice overlay.
+ *
+ * @param   enabled             Whether to enable or disable the live voiced overlay feature.
+ *                              By default, this is disabled.
+ *
+ */
+void Kamcord_SetVoiceOverlayEnabled(bool eanbled);
+
+/*
+ *
+ * Returns true if live voice overlay has been enabled.
+ *
+ */
+bool Kamcord_VoiceOverlayEnabled();
+
+/*
+ *
  * Call this function to force the OpenGL framebuffers Kamcord uses to capture frames of
  * video to allocate.  If you omit this call, they will allocate automatically just in
  * time.
