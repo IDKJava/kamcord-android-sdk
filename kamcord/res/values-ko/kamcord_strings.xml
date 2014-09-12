@@ -33,6 +33,9 @@
 	<string name="kamcordEmail">
 		이메일
 	</string>
+	<string name="kamcordLINE">
+		LINE
+	</string>
 	<string name="kamcordShareReplay">
 		리플레이 공유
 	</string>
@@ -53,6 +56,12 @@
 	</string>
 	<string name="kamcordWorking">
 		작업 중...
+	</string>
+	<string name="kamcordLINENotFound">
+		LINE App Not Found
+	</string>
+	<string name="kamcordInstallLINE">
+		You must install the LINE App before you can share to LINE.
 	</string>
 	<string name="kamcordNoInternet">
 		인터넷 연결이 없음

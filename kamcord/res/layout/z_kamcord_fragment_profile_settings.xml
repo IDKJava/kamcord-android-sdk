@@ -12,6 +12,7 @@
         android:padding="@dimen/kamcordProfileSettingsSpacing" >
 
         <LinearLayout
+            android:id="@+id/settings_items"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/kamcordProfileSettingsSpacing"
@@ -39,129 +40,15 @@
                 android:id="@+id/firstDivider"
                 style="@style/KamcordProfileSettingsDivider" />
 
-            <!-- Social Platform 0 (always Kamcord) -->
+        </LinearLayout>
 
-            <LinearLayout style="@style/KamcordProfileSettingsItemContainer" >
-
-                <ImageView
-                    android:id="@+id/icon_0"
-                    style="@style/KamcordProfileSettingsItemIcon" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/networkName_0"
-                        style="@style/KamcordProfileSettingsNetworkText" />
-
-                    <TextView
-                        android:id="@+id/username_0"
-                        style="@style/KamcordProfileSettingsUsernameText" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/signOut_0"
-                    style="@style/KamcordButton.Small" />
-            </LinearLayout>
-
-            <View style="@style/KamcordProfileSettingsDivider" />
-
-            <!-- Social Platform 1 -->
-
-            <LinearLayout style="@style/KamcordProfileSettingsItemContainer" >
-
-                <ImageView
-                    android:id="@+id/icon_1"
-                    style="@style/KamcordProfileSettingsItemIcon" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/networkName_1"
-                        style="@style/KamcordProfileSettingsNetworkText" />
-
-                    <TextView
-                        android:id="@+id/username_1"
-                        style="@style/KamcordProfileSettingsUsernameText" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/signOut_1"
-                    style="@style/KamcordButton.Small" />
-            </LinearLayout>
-
-            <View style="@style/KamcordProfileSettingsDivider" />
-
-            <!-- Social Platform 2 -->
-
-            <LinearLayout style="@style/KamcordProfileSettingsItemContainer" >
-
-                <ImageView
-                    android:id="@+id/icon_2"
-                    style="@style/KamcordProfileSettingsItemIcon" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/networkName_2"
-                        style="@style/KamcordProfileSettingsNetworkText" />
-
-                    <TextView
-                        android:id="@+id/username_2"
-                        style="@style/KamcordProfileSettingsUsernameText" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/signOut_2"
-                    style="@style/KamcordButton.Small" />
-            </LinearLayout>
-
-            <View style="@style/KamcordProfileSettingsDivider" />
-
-            <!-- Social Platform 3 -->
-
-            <LinearLayout style="@style/KamcordProfileSettingsItemContainer" >
-
-                <ImageView
-                    android:id="@+id/icon_3"
-                    style="@style/KamcordProfileSettingsItemIcon" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical" >
-
-                    <TextView
-                        android:id="@+id/networkName_3"
-                        style="@style/KamcordProfileSettingsNetworkText" />
-
-                    <TextView
-                        android:id="@+id/username_3"
-                        style="@style/KamcordProfileSettingsUsernameText" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/signOut_3"
-                    style="@style/KamcordButton.Small" />
-            </LinearLayout>
-
-            <View 
-                android:id="@+id/voice_overlay_divider"
-                style="@style/KamcordProfileSettingsDivider" />
-
-            <!-- Voice Overlay -->
+        <!-- Voice Overlay -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff"
+            android:orientation="vertical"
+            android:layout_marginBottom="@dimen/kamcordProfileSettingsSpacing" >
 
             <LinearLayout 
                 android:id="@+id/voice_overlay_container"
@@ -191,7 +78,7 @@
                     style="@style/KamcordButton.Small" />
             </LinearLayout>
         </LinearLayout>
-
+        
         <!-- Terms of Service and Privacy Policy -->
 
         <LinearLayout

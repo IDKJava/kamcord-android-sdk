@@ -33,6 +33,9 @@
 	<string name="kamcordEmail">
 		电子邮件
 	</string>
+	<string name="kamcordLINE">
+		LINE
+	</string>
 	<string name="kamcordShareReplay">
 		分享视频
 	</string>
@@ -53,6 +56,12 @@
 	</string>
 	<string name="kamcordWorking">
 		处理中...
+	</string>
+	<string name="kamcordLINENotFound">
+		LINE App Not Found
+	</string>
+	<string name="kamcordInstallLINE">
+		You must install the LINE App before you can share to LINE.
 	</string>
 	<string name="kamcordNoInternet">
 		无互联网连接

@@ -17,6 +17,7 @@
     <string name="kamcordYouTube">YouTube</string>
     <string name="kamcordTwitter">Twitter</string>
     <string name="kamcordEmail">Email</string>
+    <string name="kamcordLINE">LINE</string>
     <string name="kamcordShareReplay">Share Replay</string>
     <string name="kamcordRetry">Retry</string>
     <string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
@@ -25,6 +26,9 @@
     <string name="kamcordUploadFailed">Upload Failed</string>
     <string name="kamcordUploading">Uploading...</string>
     <string name="kamcordWorking">Working...</string>
+    
+    <string name="kamcordLINENotFound">LINE App Not Found</string>
+    <string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
     
     <!-- Dialogs. -->
     <string name="kamcordNoInternet">No Internet Connection</string>

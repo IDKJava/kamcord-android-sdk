@@ -33,6 +33,9 @@
 	<string name="kamcordEmail">
 		Adresse e-mail
 	</string>
+	<string name="kamcordLINE">
+		LINE
+	</string>
 	<string name="kamcordShareReplay">
 		Partager Replay
 	</string>
@@ -53,6 +56,12 @@
 	</string>
 	<string name="kamcordWorking">
 		En cours de traitement...
+	</string>
+	<string name="kamcordLINENotFound">
+		LINE App Not Found
+	</string>
+	<string name="kamcordInstallLINE">
+		You must install the LINE App before you can share to LINE.
 	</string>
 	<string name="kamcordNoInternet">
 		Pas de connexion internet

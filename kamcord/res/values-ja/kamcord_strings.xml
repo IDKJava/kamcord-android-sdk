@@ -4,7 +4,7 @@
 		Kamcord
 	</string>
 	<string name="kamcordShare">
-		シェアする
+		共有
 	</string>
 	<string name="kamcordWatch">
 		見る
@@ -31,13 +31,16 @@
 		Twitter
 	</string>
 	<string name="kamcordEmail">
-		Eメール
+		メール
+	</string>
+	<string name="kamcordLINE">
+		LINE
 	</string>
 	<string name="kamcordShareReplay">
-		リプレイをシェアする
+		リプレイを共有する
 	</string>
 	<string name="kamcordRetry">
-		もう一度試す
+		もう一度
 	</string>
 	<string name="kamcordPoweredByKamcord">
 		Powered by Kamcord
@@ -52,13 +55,19 @@
 		アップロード中 ...
 	</string>
 	<string name="kamcordWorking">
-		処理しています...
+		処理中...
+	</string>
+	<string name="kamcordLINENotFound">
+		LINEアプリが見つかりません
+	</string>
+	<string name="kamcordInstallLINE">
+		LINEへ共有するためにはLINEアプリのインストールが必要です
 	</string>
 	<string name="kamcordNoInternet">
 		インターネットに接続されていません
 	</string>
 	<string name="kamcordOk">
-		オーケー
+		OK
 	</string>
 	<string name="kamcordYes">
 		はい
@@ -70,13 +79,13 @@
 		閲覧できる動画はありません
 	</string>
 	<string name="kamcordUsername">
-		ユーザーネーム
+		ユーザー名
 	</string>
 	<string name="kamcordPassword">
 		パスワード
 	</string>
 	<string name="kamcordImReady">
-		準備ができている!
+		準備ができました!
 	</string>
 	<string name="kamcordCreateProfile">
 		プロフィールを作成する
@@ -91,37 +100,37 @@
 		「プロフィールを作成する」ボタンをクリックした後は、プライバシー・ポリシーとサービス規約を読み、それらに同意したものとみなされます
 	</string>
 	<string name="kamcordUsernameMinCharacters">
-		ユーザーネームは少なくとも5文字以上にして下さい
+		ユーザー名は半角5文字以上にして下さい。
 	</string>
 	<string name="kamcordUsernameMaxCharacters">
 		ユーザーネームは16文字以下でないといけません
 	</string>
 	<string name="kamcordUsernameIllegalCharacters">
-		ユーザーネームに違法な文字が含まれています
+		ユーザー名に許可されていない文字が含まれています
 	</string>
 	<string name="kamcordUsernameInUse">
 		ユーザー名は既に使用されています
 	</string>
 	<string name="kamcordUsernameEnter">
-		有効なユーザーネームを入力して下さい
+		有効なユーザー名を入力して下さい
 	</string>
 	<string name="kamcordPasswordMinCharacters">
-		パスワードは少なくとも6文字以上にして下さい。
+		パスワードは6文字以上にして下さい。
 	</string>
 	<string name="kamcordPasswordMaxCharacters">
 		パスワードは31文字以下でないといけません
 	</string>
 	<string name="kamcordPasswordEnter">
-		パスワードを入力しなければなりません
+		パスワードを入力して下さい
 	</string>
 	<string name="kamcordEmailInvalid">
-		無効なEメール
+		無効なメールアドレス
 	</string>
 	<string name="kamcordEmailInUse">
 		Eメールは既に使用されています
 	</string>
 	<string name="kamcordEmailEnter">
-		Eメールアドレスの入力が必要です
+		メールアドレスの入力が必要です
 	</string>
 	<string name="kamcordEmailMaxCharacters">
 		Eメールは65文字未満でなければなりません
@@ -130,28 +139,28 @@
 		プロフィール作成エラー
 	</string>
 	<string name="kamcordProfileErrorMessage">
-		プロフィール作成が出来ませんでした、後で再度トライしてみて下さい
+		プロフィールは作成できませんでした、後ほどお試し下さい
 	</string>
 	<string name="kamcordEmailCorrect">
-		あなたのEメールアドレスは正しいですか？
+		メールアドレスは正しいですか？
 	</string>
 	<string name="kamcordEmailEntered">
-		あなたが入力したEメールは%@
+		入力したメールアドレスは%@
 	</string>
 	<string name="kamcordUnclaimedVideos">
-		所有権の主張されていないビデオ
+		持ち主の不明なビデオ
 	</string>
 	<string name="kamcordAnyUnclaimedVideos">
-		所有権が主張されていないビデオは全て、あなたのプロフィールと関連づけられることになります。
+		これまでのビデオは全て、あなたのプロフィールと関連づけられます。
 	</string>
 	<string name="kamcordUsernameEmail">
-		ユーザーネームまたはメールアドレス
+		ユーザー名またはメールアドレス
 	</string>
 	<string name="kamcordSignIn">
-		サインイン
+		ログイン
 	</string>
 	<string name="kamcordSignOut">
-		サインアウト
+		ログアウト
 	</string>
 	<string name="kamcordForgotYourPassword">
 		パスワードをお忘れですか？
@@ -163,7 +172,7 @@
 		サインインエラー
 	</string>
 	<string name="kamcordSorryMatchingAccounts">
-		すみません、合致するアカウントが見つかりません
+		一致するアカウントが見つかりませんでした
 	</string>
 	<string name="kamcordEmailDoesNotExist">
 		Eメールまたはユーザー名が存在しません
@@ -172,43 +181,43 @@
 		無効なパスワード
 	</string>
 	<string name="kamcordEditProfile">
-		プロフィールを編集する
+		プロフィールを編集
 	</string>
 	<string name="kamcordNoAccountLinked">
-		リンクされたアカウントなし
+		リンクされたアカウントはありません
 	</string>
 	<string name="kamcordConfirmFacebookSignOut">
-		Facebookをサインアウトしたことを確認して下さい
+		Facebookログアウトの確認
 	</string>
 	<string name="kamcordConfirmTwitterSignOut">
-		Twitterをサインアウトしたことを確認して下さい
+		Twitterログアウトの確認
 	</string>
 	<string name="kamcordConfirmYouTubeSignOut">
-		YouTubeのサインアウトを確認して下さい
+		YouTubeログアウトの確認
 	</string>
 	<string name="kamcordConfirmKamcordSignOut">
-		Kamcordをサインアウトしたことを確認して下さい
+		Kamcordログアウトの確認
 	</string>
 	<string name="kamcordAreYouSure">
-		本当にサインアウトしますか？
+		本当にログアウトしますか？
 	</string>
 	<string name="kamcordEnterUsernameOrEmail">
-		Kamcordプロフィールのユーザー名かメールアドレスを入力してください。
+		Kamcordユーザー名または登録したメールアドレスを入力してください。
 	</string>
 	<string name="kamcordResetPassword">
-		パスワードをリセットする
+		パスワードをリセット
 	</string>
 	<string name="kamcordEmailNotSent">
-		Eメールは送れませんでした
+		メールは送信されませんでした
 	</string>
 	<string name="kamcordAnotherPasswordReset">
-		再度のパスワードのリセットリクエストが、ペンディング中です。
+		前回のパスワードリセットを確認ください。
 	</string>
 	<string name="kamcordEmailSent">
-		Eメールが送られました
+		メールが送信されました
 	</string>
 	<string name="kamcordWeveEmailedYou">
-		パスワードをリセットするためのリンクを、あなたのEメールにお送りしました!
+		パスワードをリセットするためのリンクをメールしました!
 	</string>
 	<string name="kamcordChangePassword">
 		パスワード変更
@@ -223,7 +232,7 @@
 		新しいパスワード
 	</string>
 	<string name="kamcordNewPasswordAgain">
-		新しいパスワード（再度）
+		新しいパスワード（確認）
 	</string>
 	<string name="kamcordNewEmail">
 		新しいEメール
@@ -232,7 +241,7 @@
 		新しいEメール(もう一度)
 	</string>
 	<string name="kamcordNewPasswordsDoNotMatch">
-		新しいパスワードはマッチしません
+		新しいパスワードが一致しません
 	</string>
 	<string name="kamcordNewEmailsDoNotMatch">
 		新しいEメールが一致しません
@@ -247,42 +256,42 @@
 		成功!
 	</string>
 	<string name="kamcordOn">
-		オン
+		有効
 	</string>
 	<string name="kamcordOff">
-		オフ
+		無効
 	</string>
 	<string name="kamcordEnable">
-		可能にする
+		有効にする
 	</string>
 	<string name="kamcordDisable">
 		無効にする
 	</string>
 	<string name="kamcordVoiceOverlay">
-		ボイスの上書き
+		ボイスオーバー
 	</string>
 	<string name="kamcordEnableVoiceOverlayQuestion">
-		ボイスの上書きは有効にしますか?
+		ボイスオーバーを有効にしますか?
 	</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">
-		ボイスの上書きはこのデバイスで無効になっています
+		ボイスオーバーは無効になっています
 	</string>
 	<string name="kamcordVoiceOverlayDisabled">
-		ボイスの上書きは無効
+		ボイスオーバー無効
 	</string>
 	<string name="kamcordEnableVoiceOverlay">
-		音声合成を有効にする
+		ボイスオーバーを有効にする
 	</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">
-		ボイスの上書きを有効にするには、「プロフィール」→「設定」から、または以下の「有効にする」を押してください。
+		ボイスオーバーを有効にするには、「プロフィール」-&gt;「設定」から、または下の「有効にする」ボタンを押してください。
 	</string>
 	<string name="kamcordVoiceOverlayEnabledFuture">
-		今後の動画ではボイスの上書きが有効になります。
+		今後のビデオではボイスオーバーが有効になります。
 	</string>
 	<string name="kamcordVoiceOverlayEnabledExclamation">
-		ボイスの上書きは有効!
+		ボイスオーバーは有効になりました!
 	</string>
 	<string name="kamcordNotNow">
-		また後で
+		後で
 	</string>
 </resources>

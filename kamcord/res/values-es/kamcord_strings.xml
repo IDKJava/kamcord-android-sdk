@@ -33,6 +33,9 @@
 	<string name="kamcordEmail">
 		Correo electrónico
 	</string>
+	<string name="kamcordLINE">
+		LINE
+	</string>
 	<string name="kamcordShareReplay">
 		Compartir Replays
 	</string>
@@ -40,7 +43,7 @@
 		Volver a intentar
 	</string>
 	<string name="kamcordPoweredByKamcord">
-		Con tecnología Kamcord
+		Con tecnología de Kamcord
 	</string>
 	<string name="kamcordUploadFinished">
 		¡Subida acabada!
@@ -53,6 +56,12 @@
 	</string>
 	<string name="kamcordWorking">
 		Trabajando...
+	</string>
+	<string name="kamcordLINENotFound">
+		LINE App Not Found
+	</string>
+	<string name="kamcordInstallLINE">
+		You must install the LINE App before you can share to LINE.
 	</string>
 	<string name="kamcordNoInternet">
 		Sin conexión a Internet

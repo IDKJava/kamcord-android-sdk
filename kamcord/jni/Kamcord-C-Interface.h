@@ -152,7 +152,7 @@ const char* Kamcord_Version();
 /*
  *
  * Returns true if and only if Kamcord is enabled. Kamcord is disabled if the version of
- * android is < 4.3, or if the device's board name does not appear on the whitelist.
+ * android is < 4.1, or if the device's board name does not appear on the whitelist.
  *
  */
 bool Kamcord_IsEnabled();
