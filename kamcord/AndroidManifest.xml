@@ -12,7 +12,6 @@
 
         <activity
             android:name="com.kamcord.android.KamcordActivity"
-            android:launchMode="singleTask"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:windowActionBar="false"
@@ -24,7 +23,6 @@
             android:name="com.kamcord.android.ReplayActivity"
             android:label="Watch"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
-            android:launchMode="singleTask"
             android:parentActivityName="com.kamcord.android.KamcordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="true" >
@@ -37,7 +35,6 @@
             android:name="com.kamcord.android.WebActivity"
             android:label="Login"
             android:theme="@style/KamcordLoginTheme"
-            android:launchMode="singleTask"
             android:parentActivityName="com.kamcord.android.KamcordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" >
             <meta-data

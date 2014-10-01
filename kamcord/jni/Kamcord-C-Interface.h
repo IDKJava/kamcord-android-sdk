@@ -25,6 +25,16 @@ typedef enum KC_METADATA_TYPE
     KC_OTHER = 1000
 } KC_METADATA_TYPE;
 
+typedef enum KC_SHARE_TARGET
+{
+    KC_SHARE_BLANK = -1,
+    KC_SHARE_FACEBOOK = 0,
+    KC_SHARE_TWITTER = 1,
+    KC_SHARE_YOUTUBE = 2,
+    KC_SHARE_EMAIL = 3,
+    KC_SHARE_LINE = 5
+} KC_SHARE_TARGET;
+
 /*
  *
  * Kamcord initialization. Must be called before you can start recording.
@@ -152,10 +162,21 @@ const char* Kamcord_Version();
 /*
  *
  * Returns true if and only if Kamcord is enabled. Kamcord is disabled if the version of
- * android is < 4.1, or if the device's board name does not appear on the whitelist.
+ * android is < 4.1, or if the device's device name does not appear on the whitelist.
  *
  */
 bool Kamcord_IsEnabled();
+
+/*
+ * Returns true if the current device is whitelisted. A device which is whitelisted still may not
+ * be enabled for recording if the hardware or operating system does not support recording.
+ */
+bool Kamcord_IsWhitelisted();
+
+/*
+ * Returns the reason that Kamcord is disabled if Kamcord_IsEnabled() is false
+ */
+const char* Kamcord_GetDisabledReason();
 
 /*
  *
@@ -344,10 +365,10 @@ void Kamcord_SetDeveloperMetadataWithNumericValueInt(
 /*
  *
  * Set the video quality to standard or trailer. Please do *NOT* release your game
- * with trailer quality, as it makes immensely large videos with only a slight
- * video quality improvement over standard.
+ * with trailer quality, as it makes larger videos with only a slight video
+ * quality improvement over standard.
  *
- * The default and recommended quality seting is KC_STANDARD_VIDEO_QUALITY.
+ * The default and recommended quality setting is KC_STANDARD_VIDEO_QUALITY.
  *
  * @param   quality     The desired video quality.
  *
@@ -431,6 +452,18 @@ void Kamcord_SetDefaultEmailSubject(
  */
 void Kamcord_SetDefaultEmailBody(
     const char* body);
+
+/*
+ *
+ * Set the sharing options of the Kamcord UI. There MUST be exactly four unique options.
+ * The order of the array affects the order in which the share options appear on the UI.
+ *
+ * @param   target          The array of share targets which will be displayed.
+ *
+ */
+void Kamcord_SetShareTargets(
+    KC_SHARE_TARGET targets[]);
+
 
 #endif // __ANDROID__
 
