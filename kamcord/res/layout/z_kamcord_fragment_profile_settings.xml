@@ -73,9 +73,11 @@
                         style="@style/KamcordProfileSettingsUsernameText" />
                 </LinearLayout>
 
-                <Button
+                <ToggleButton
                     android:id="@+id/voice_overlay_button"
-                    style="@style/KamcordButton.Small" />
+                    style="@style/KamcordButton.Small"
+                    android:textOn="@string/kamcordEnable"
+                    android:textOff="@string/kamcordDisable" />
             </LinearLayout>
         </LinearLayout>
         

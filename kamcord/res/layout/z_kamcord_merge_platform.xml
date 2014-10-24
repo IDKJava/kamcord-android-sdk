@@ -24,9 +24,11 @@
                 style="@style/KamcordProfileSettingsUsernameText" />
         </LinearLayout>
 
-        <Button
+        <ToggleButton
             android:id="@+id/sign_out"
-            style="@style/KamcordButton.Small" />
+            style="@style/KamcordButton.Small"
+            android:textOn="@string/kamcordSignIn"
+            android:textOff="@string/kamcordSignOut" />
     </LinearLayout>
 
     <View style="@style/KamcordProfileSettingsDivider" />

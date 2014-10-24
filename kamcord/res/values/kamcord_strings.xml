@@ -130,22 +130,33 @@
     <!-- ********** Colors. ********** -->
     <color name="kamcordActivityBackground">#EFF2F4</color>
     <color name="kamcordButtonActive">#4FC396</color>
+    <color name="kamcordButtonActivePressed">#3f9d79</color>
+    <color name="kamcordButtonActiveFocused">#7bdab5</color>
     <color name="kamcordButtonInactive">#bbbbbb</color>
+    <color name="kamcordButtonInactivePressed">#9c9c9c</color>
+    <color name="kamcordButtonInactiveFocused">#b8dacd</color>
+    <color name="kamcordButtonDisabled">#bbbbbb</color>
+    <color name="kamcordButtonDisabledFocused">#b8dacd</color>
     <color name="kamcordButtonTextColor">#FFFFFF</color>
     <color name="kamcordDividerColor">#808080</color>
     <color name="kamcordTextColor">#8c8f91</color>
-    <color name="kamcordDim">#A000</color>
+    <color name="kamcordModalDimBackground">#A000</color>
+    <color name="kamcordDimButton">#2000</color>
     
     <!-- Tab bar. -->
     <color name="kamcordTabbarBackground">#353E44</color>
+    <color name="kamcordTabItemFocusPressedColor">#23292e</color>
     <color name="kamcordTabItemFocusColor">#353E44</color>
+    <color name="kamcordTabItemUnfocusPressedColor">#2a3136</color>
     <color name="kamcordTabItemUnfocusColor">#3C474D</color>
     
     <!-- Share view. -->
     <color name="kamcordShareWidgetBorder">#D7D9DB</color>
     <color name="kamcordShareWidgetDivider">#E5E5E5</color>
-    <color name="kamcordShareWidgetBackground">#ffffff</color>
-    <color name="kamcordShareWidgetBackgroundDark">#4FC396</color>
+    <color name="kamcordShareWidgetBackgroundUnselected">#ffffff</color>
+    <color name="kamcordShareWidgetBackgroundUnselectedPressed">#dddddd</color>
+    <color name="kamcordShareWidgetBackgroundSelected">#4FC396</color>
+    <color name="kamcordShareWidgetBackgroundSelectedPressed">#3d9674</color>
     <color name="kamcordShareThumbBackground">#333</color>
     <color name="kamcordShareTitleEditTextColor">#000</color>
     <color name="kamcordShareWidgetText">#8c8f91</color>
@@ -268,7 +279,6 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">80dp</item>
         <item name="android:padding">0dp</item>
-        <item name="android:background">@color/kamcordButtonActive</item>
         <item name="android:textSize">25dp</item>
         <item name="android:textAllCaps">true</item>
     </style>
@@ -282,7 +292,7 @@
         <item name="android:layout_height">40dp</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">0dp</item>
-        <item name="android:background">@color/kamcordButtonActive</item>
+        <item name="android:background">@drawable/kamcord_toggle_selector</item>
         <item name="android:textSize">17dp</item>
     </style>
 
