@@ -18,6 +18,7 @@
     <string name="kamcordTwitter">Twitter</string>
     <string name="kamcordEmail">Email</string>
     <string name="kamcordLINE">LINE</string>
+    <string name="kamcordNicoNico">NicoNico</string>
     <string name="kamcordShareReplay">Share Replay</string>
     <string name="kamcordRetry">Retry</string>
     <string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
@@ -83,6 +84,7 @@
     <string name="kamcordConfirmFacebookSignOut">Confirm Facebook Sign Out</string>
     <string name="kamcordConfirmTwitterSignOut">Confirm Twitter Sign Out</string>
     <string name="kamcordConfirmYouTubeSignOut">Confirm YouTube Sign Out</string>
+    <string name="kamcordConfirmNicoNicoSignOut">Confirm NicoNico Sign Out</string>
     <string name="kamcordConfirmKamcordSignOut">Confirm Kamcord Sign Out</string>
     <string name="kamcordAreYouSure">Are you sure you want to sign out?</string>
     

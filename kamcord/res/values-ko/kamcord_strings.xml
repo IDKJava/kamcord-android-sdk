@@ -12,6 +12,7 @@
 	<string name="kamcordTwitter">Twitter</string>
 	<string name="kamcordEmail">이메일</string>
 	<string name="kamcordLINE">LINE</string>
+	<string name="kamcordNicoNico">NicoNico</string>
 	<string name="kamcordShareReplay">리플레이 공유</string>
 	<string name="kamcordRetry">재시도</string>
 	<string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
@@ -65,6 +66,7 @@
 	<string name="kamcordConfirmFacebookSignOut">Facebook 로그아웃 확인</string>
 	<string name="kamcordConfirmTwitterSignOut">Twitter 로그아웃 확인</string>
 	<string name="kamcordConfirmYouTubeSignOut">YouTube 로그아웃 확인</string>
+	<string name="kamcordConfirmNicoNicoSignOut">NicoNico 로그아웃 확인</string>
 	<string name="kamcordConfirmKamcordSignOut">Kamcord 로그아웃 확인</string>
 	<string name="kamcordAreYouSure">정말 로그아웃하시겠습니까?</string>
 	<string name="kamcordEnterUsernameOrEmail">Kamcord 프로필의 사용자 이름이나 이메일 주소를 입력해 주세요.</string>

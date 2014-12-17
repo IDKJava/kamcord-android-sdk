@@ -12,6 +12,7 @@
 	<string name="kamcordTwitter">Twitter</string>
 	<string name="kamcordEmail">电子邮件</string>
 	<string name="kamcordLINE">LINE</string>
+	<string name="kamcordNicoNico">NicoNico</string>
 	<string name="kamcordShareReplay">分享视频</string>
 	<string name="kamcordRetry">重试</string>
 	<string name="kamcordPoweredByKamcord">Kamcord提供技术支持</string>
@@ -65,6 +66,7 @@
 	<string name="kamcordConfirmFacebookSignOut">确认退出 Facebook</string>
 	<string name="kamcordConfirmTwitterSignOut">确认退出Twitter</string>
 	<string name="kamcordConfirmYouTubeSignOut">确认退出YouTube</string>
+	<string name="kamcordConfirmNicoNicoSignOut">确认退出NicoNico</string>
 	<string name="kamcordConfirmKamcordSignOut">确认退出Kamcord</string>
 	<string name="kamcordAreYouSure">您确定要退出吗？</string>
 	<string name="kamcordEnterUsernameOrEmail">请输入您的Kamcord用户名或相关的电子邮箱地址。</string>

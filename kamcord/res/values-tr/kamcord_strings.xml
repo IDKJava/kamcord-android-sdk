@@ -12,6 +12,7 @@
 	<string name="kamcordTwitter">Twitter</string>
 	<string name="kamcordEmail">Email</string>
 	<string name="kamcordLINE">LINE</string>
+	<string name="kamcordNicoNico">NicoNico</string>
 	<string name="kamcordShareReplay">Videoları Paylaş</string>
 	<string name="kamcordRetry">Yeniden dene</string>
 	<string name="kamcordPoweredByKamcord">Kamcord</string>
@@ -65,6 +66,7 @@
 	<string name="kamcordConfirmFacebookSignOut">Facebook Çıkışını Onayla</string>
 	<string name="kamcordConfirmTwitterSignOut">Twitter Çıkışını Onayla</string>
 	<string name="kamcordConfirmYouTubeSignOut">Youtube Çıkışını Onayla</string>
+	<string name="kamcordConfirmNicoNicoSignOut">NicoNico Çıkışını Onayla</string>
 	<string name="kamcordConfirmKamcordSignOut">Kamcord Çıkışını Onayla</string>
 	<string name="kamcordAreYouSure">Çıkış yapmak istediğinden emin misin?</string>
 	<string name="kamcordEnterUsernameOrEmail">Kamcord profilinin kullanıcı adını veya email adresini gir.</string>

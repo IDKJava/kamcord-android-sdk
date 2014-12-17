@@ -12,6 +12,7 @@
 	<string name="kamcordTwitter">Twitter</string>
 	<string name="kamcordEmail">อีเมล</string>
 	<string name="kamcordLINE">Line</string>
+	<string name="kamcordNicoNico">NicoNico</string>
 	<string name="kamcordShareReplay">แบ่งปันคำตอบ</string>
 	<string name="kamcordRetry">ลองอีกครั้ง</string>
 	<string name="kamcordPoweredByKamcord">ดำเนินการโดย Kamcord</string>
@@ -57,6 +58,7 @@
 	<string name="kamcordConfirmFacebookSignOut">ยืนยันการลงชื่อออกจาก Facebook </string>
 	<string name="kamcordConfirmTwitterSignOut">ยืนยันการลงชื่อออกจาก Twitter </string>
 	<string name="kamcordConfirmYouTubeSignOut">ยืนยันการลงชื่อออกจาก YouTube</string>
+	<string name="kamcordConfirmNicoNicoSignOut">ยืนยันการลงชื่อออกจาก NicoNico</string>
 	<string name="kamcordConfirmKamcordSignOut">ยืนยันการลงชื่อออกจาก Kamcord</string>
 	<string name="kamcordAreYouSure">คุณแน่ใจว่าต้องการลงชื่อออก?</string>
 	<string name="kamcordEnterUsernameOrEmail">กรอกชื่อผู้ใช้หรือที่อยู่อีเมลลงในโปรไฟล์ Kamcord</string>

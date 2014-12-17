@@ -12,6 +12,7 @@
 	<string name="kamcordTwitter">Twitter</string>
 	<string name="kamcordEmail">メール</string>
 	<string name="kamcordLINE">LINE</string>
+	<string name="kamcordNicoNico">NicoNico</string>
 	<string name="kamcordShareReplay">リプレイを共有する</string>
 	<string name="kamcordRetry">もう一度</string>
 	<string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
@@ -65,6 +66,7 @@
 	<string name="kamcordConfirmFacebookSignOut">Facebookログアウトの確認</string>
 	<string name="kamcordConfirmTwitterSignOut">Twitterログアウトの確認</string>
 	<string name="kamcordConfirmYouTubeSignOut">YouTubeログアウトの確認</string>
+	<string name="kamcordConfirmNicoNicoSignOut">NicoNicoログアウトの確認</string>
 	<string name="kamcordConfirmKamcordSignOut">Kamcordログアウトの確認</string>
 	<string name="kamcordAreYouSure">本当にログアウトしますか？</string>
 	<string name="kamcordEnterUsernameOrEmail">Kamcordユーザー名または登録したメールアドレスを入力してください。</string>

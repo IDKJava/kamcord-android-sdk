@@ -12,6 +12,7 @@
 	<string name="kamcordTwitter">Twitter</string>
 	<string name="kamcordEmail">Эл. почта</string>
 	<string name="kamcordLINE">LINE</string>
+	<string name="kamcordNicoNico">NicoNico</string>
 	<string name="kamcordShareReplay">Поделиться повтором</string>
 	<string name="kamcordRetry">Повторить</string>
 	<string name="kamcordPoweredByKamcord">На базе ПО Kamcord</string>
@@ -65,6 +66,7 @@
 	<string name="kamcordConfirmFacebookSignOut">Подтвердить выход из Facebook</string>
 	<string name="kamcordConfirmTwitterSignOut">Подтвердить выход из Twitter</string>
 	<string name="kamcordConfirmYouTubeSignOut">Подтвердить выход из YouTube</string>
+	<string name="kamcordConfirmNicoNicoSignOut">Подтвердить выход из NicoNico</string>
 	<string name="kamcordConfirmKamcordSignOut">Подтвердить выход из Kamcord</string>
 	<string name="kamcordAreYouSure">Уверен(а), что хочешь выйти?</string>
 	<string name="kamcordEnterUsernameOrEmail">Введи имя пользователя или адрес эл. почты своего профиля Kamcord.</string>
