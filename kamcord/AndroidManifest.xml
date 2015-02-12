@@ -11,7 +11,7 @@
     <application>
 
         <activity
-            android:name="com.kamcord.android.KamcordActivity"
+            android:name="com.kamcord.android.ui.KamcordActivity"
             android:configChanges="keyboardHidden|keyboard"
             android:windowSoftInputMode="stateHidden|adjustPan"
             android:windowActionBar="false"
@@ -20,10 +20,10 @@
         </activity>
 
         <activity
-            android:name="com.kamcord.android.ReplayActivity"
+            android:name="com.kamcord.android.ui.ReplayActivity"
             android:label="Watch"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
-            android:parentActivityName="com.kamcord.android.KamcordActivity"
+            android:parentActivityName="com.kamcord.android.ui.KamcordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:hardwareAccelerated="true" >
             <meta-data
@@ -32,10 +32,10 @@
         </activity>
 
         <activity
-            android:name="com.kamcord.android.WebActivity"
+            android:name="com.kamcord.android.ui.WebActivity"
             android:label="Login"
             android:theme="@style/KamcordLoginTheme"
-            android:parentActivityName="com.kamcord.android.KamcordActivity"
+            android:parentActivityName="com.kamcord.android.ui.KamcordActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

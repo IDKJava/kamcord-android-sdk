@@ -4,4 +4,7 @@
     <dimen name="kamcordShareThumbSize">125dp</dimen>
     <dimen name="kamcordShareSpacing">13.3dp</dimen>
 
+    <dimen name="kamcordWatchRecentThumbnailHeight">84dp</dimen>
+    <dimen name="kamcordWatchRecentThumbnailWidth">150dp</dimen>
+
 </resources>

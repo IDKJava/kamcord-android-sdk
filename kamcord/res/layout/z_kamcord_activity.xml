@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/kamcord_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -38,10 +39,11 @@
             android:background="@color/kamcordButtonActive" />
     </RelativeLayout>
 
-    <com.kamcord.android.CustomViewPager
+    <com.kamcord.android.ui.views.CustomViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </com.kamcord.android.CustomViewPager>
+        android:layout_height="match_parent"
+        custom:allowPageSwipe="true" >
+    </com.kamcord.android.ui.views.CustomViewPager>
 
 </LinearLayout>

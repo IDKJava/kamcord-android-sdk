@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/settingsBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingLeft="20dp"
+            android:background="#fff"
+            android:gravity="center"
+            android:textColor="#000"
+            android:textSize="30sp" />
+        
+        <View 
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#fff"/>
+
+        <ImageView
+            android:id="@+id/profileSettings"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="#fff"
+            android:padding="12dp"
+            android:src="@drawable/kamcord_profile_settings" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/buttonsDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@android:color/transparent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+            
+            <TextView
+                android:id="@+id/videosCount"
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:layout_marginBottom="-5dp"
+                android:background="#fff"
+                android:gravity="center|bottom"
+                android:text="0"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/videosText"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:background="#fff"
+                android:gravity="center|top"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
+
+        <LinearLayout
+            android:id="@+id/followersCountContainer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+            
+            <TextView
+                android:id="@+id/followersCount"
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:layout_marginBottom="-5dp"
+                android:background="#fff"
+                android:gravity="center|bottom"
+                android:text="0"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/followersText"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:background="#fff"
+                android:gravity="center|top"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
+
+        <LinearLayout
+            android:id="@+id/followingCountContainer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+            
+            <TextView
+                android:id="@+id/followingCount"
+                android:layout_width="match_parent"
+                android:layout_height="37dp"
+                android:layout_marginBottom="-5dp"
+                android:background="#fff"
+                android:gravity="center|bottom"
+                android:text="0"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/followingText"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:background="#fff"
+                android:gravity="center|top"
+                android:text="@string/kamcordFollowing"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

@@ -52,6 +52,8 @@ void Kamcord_Init(
     const char* appName,
     KC_VIDEO_QUALITY videoQuality);
 
+void Kamcord_InitJVM(JavaVM* vm);
+
 void Kamcord_InitActivity(jobject activity);
 
 /*
@@ -229,7 +231,7 @@ bool Kamcord_IsPaused();
  *                              By default, this is disabled.
  *
  */
-void Kamcord_SetVoiceOverlayEnabled(bool eanbled);
+void Kamcord_SetVoiceOverlayEnabled(bool enabled);
 
 /*
  *
@@ -364,20 +366,6 @@ void Kamcord_SetDeveloperMetadataWithNumericValueInt(
 
 /*
  *
- * Set the video quality to standard or trailer. Please do *NOT* release your game
- * with trailer quality, as it makes larger videos with only a slight video
- * quality improvement over standard.
- *
- * The default and recommended quality setting is KC_STANDARD_VIDEO_QUALITY.
- *
- * @param   quality     The desired video quality.
- *
- */
-void Kamcord_SetVideoQuality(
-    KC_VIDEO_QUALITY videoQuality);
-
-/*
- *
  * Show the Kamcord view, which will let the user share the most
  * recently recorded video.
  *
@@ -464,6 +452,17 @@ void Kamcord_SetDefaultEmailBody(
 void Kamcord_SetShareTargets(
     KC_SHARE_TARGET targets[]);
 
+/*
+ *
+ * Sets the use of FMOD for audio recording
+ *
+ * @param   usingFmod       Whether to use FMOD
+ * @param   sampleRate		The sample rate of the audio
+ *
+ */
+void Kamcord_SetUsingFmod(
+    bool usingFmod,
+    int sampleRate);
 
 #endif // __ANDROID__
 

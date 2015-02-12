@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/kamcordWatchFeaturedThumbnailWidth"
+    android:layout_height="@dimen/kamcordWatchFeaturedThumbnailHeight"
+    android:layout_marginRight="@dimen/kamcordWatchPadding"
+    android:background="#aaaaaa"
+    android:scaleType="centerCrop" >
+
+</ImageView>

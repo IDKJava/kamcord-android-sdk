@@ -55,10 +55,13 @@
         android:text="@string/kamcordSignIn"
         style="@style/KamcordButton" />
 
-    <com.kamcord.android.CustomWebView
+    <TextView
         android:id="@+id/forgotPassword"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content"
+        android:gravity="center|top"
+        android:paddingTop="@dimen/kamcordChangeCredsPadding"
+        android:text="@string/kamcordForgotYourPassword"
+        android:textColor="@color/kamcordTextColor" />
 
 </LinearLayout>

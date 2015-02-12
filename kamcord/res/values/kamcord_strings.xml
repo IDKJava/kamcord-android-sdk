@@ -31,14 +31,84 @@
     <string name="kamcordLINENotFound">LINE App Not Found</string>
     <string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
     
+    <!-- Watch tab. -->
+    <string name="kamcordJustNow">Just Now</string>
+    <plurals name="kamcordUploadTimeSeconds">
+        <item quantity="one">%d second ago</item>
+        <item quantity="other">%d seconds ago</item>
+    </plurals>
+    <plurals name="kamcordUploadTimeMinutes">
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
+    </plurals>
+    <plurals name="kamcordUploadTimeHours">
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
+    </plurals>
+    <plurals name="kamcordUploadTimeDays">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="kamcordUploadTimeMonths">
+        <item quantity="one">%d month ago</item>
+        <item quantity="other">%d months ago</item>
+    </plurals>
+    <plurals name="kamcordUploadTimeYears">
+        <item quantity="one">%d year ago</item>
+        <item quantity="other">%d years ago</item>
+    </plurals>
+    <string name="kamcordRecentVideos">Recent Videos</string>
+    <string name="kamcordFeaturedVideos">Featured Videos</string>
+    <plurals name="kamcordFeaturedVideosCount">
+        <item quantity="one">\u00A0\u00B7 %d Video</item>
+        <item quantity="other">\u00A0\u00B7 %d Videos</item>
+    </plurals>
+    <plurals name="kamcordVideosSansCount">
+        <item quantity="one">Video</item>
+        <item quantity="other">Videos</item>
+    </plurals>
+    <string name="kamcordAuthoredBy">by %s \u00B7\u00A0</string>
+    <string name="kamcordErrorRetrievingComments">There was an error retrieving comments for this video. Check your internet connection.</string>
+    <string name="kamcordErrorRetrievingFeed">There was an error retrieving this video feed. Check your internet connection.</string>
+    <string name="kamcordComments">Comments</string>
+    <string name="kamcordAddComment">Add a comment</string>
+    <string name="kamcordPost">Post</string>
+
+
+    <!-- Follow list. -->
+    <plurals name="kamcordFollowers">
+        <item quantity="one">%d Follower</item>
+        <item quantity="other">%d Followers</item>
+    </plurals>
+    <plurals name="kamcordFollowersSansCount">
+        <item quantity="one">Follower</item>
+        <item quantity="other">Followers</item>
+    </plurals>
+    <string name="kamcordFollowing">Following</string>
+    <string name="kamcordFollow">Follow</string>
+    <string name="kamcordUnfollow">Unfollow</string>
+    <string name="kamcordErrorRetrievingUserList">There was an error retrieving the list of users. Check your internet connection.</string>
+    
     <!-- Dialogs. -->
     <string name="kamcordNoInternet">No Internet Connection</string>
     <string name="kamcordOk">Ok</string>
     <string name="kamcordYes">Yes</string>
     <string name="kamcordNo">No</string>
     <string name="kamcordNoVideoAvailable">No Video Available</string>
+    <string name="kamcordMustSignInToComment">You must sign in to comment on this video.</string>
+    <string name="kamcordErrorComment">Error Posting Comment</string>
+    <string name="kamcordCheckInternetConnection">Check your internet connection.</string>
+    <string name="kamcordCouldntChangeEmail">Couldn\'t Change Email</string>
+    <string name="kamcordCouldntChangePassword">Couldn\'t Change Password</string>
+    <string name="kamcordCouldntDeleteComment">Couldn\'t Delete Comment</string>
+    <string name="kamcordCouldntDeleteVideo">Couldn\'t Delete Video</string>
+    <string name="kamcordErrorFollow">Error Following User</string>
+    <string name="kamcordErrorUnfollow">Error Unfollowing User</string>
+    <string name="kamcordMakeVideoPrivateError">Make Video Private Error</string>
+    <string name="kamcordMakeVideoPublicError">Make Video Public Error</string>
     
-    <!-- Create profile tab. -->
+    
+    <!-- Profile tab. -->
     <string name="kamcordUsername">Username</string>
     <string name="kamcordPassword">Password</string>
     <string name="kamcordImReady">I\'m Ready!</string>
@@ -59,12 +129,13 @@
     <string name="kamcordEmailEnter">You must enter an email</string>
     <string name="kamcordEmailMaxCharacters">Email must be less than 65 characters</string>
     <string name="kamcordProfileErrorTitle">Profile Creation Error</string>
-    <string name="kamcordProfileErrorMessage">Profile creation did not work, please try again later</string>
+    <string name="kamcordProfileErrorMessage">Profile creation did not work, please try again later.</string>
+    <string name="kamcordTryAgainLater">Try again later.</string>
     <string name="kamcordEmailCorrect">Is your email correct?</string>
     <string name="kamcordEmailEntered">The email you entered is %@</string>
     <string name="kamcordUnclaimedVideos">Unclaimed Videos</string>
     <string name="kamcordAnyUnclaimedVideos">Any unclaimed videos will be associated with your profile.</string>
-    
+    <string name="kamcordErrorRetrievingUserInfo">There was an error retrieving this user\'s information. Check your internet connection.</string>
     
     
     <!-- Sign in. -->
@@ -77,6 +148,7 @@
     <string name="kamcordSorryMatchingAccounts">Sorry, we could not find any matching accounts.</string>
     <string name="kamcordEmailDoesNotExist">Email or username does not exist</string>
     <string name="kamcordInvalidPassword">Invalid password</string>
+    <string name="kamcordInvalidUsernameOrPassword">Invalid username, email, or password.</string>
     
     <!-- Profile settings. -->
     <string name="kamcordEditProfile">Edit Profile</string>
@@ -87,6 +159,14 @@
     <string name="kamcordConfirmNicoNicoSignOut">Confirm NicoNico Sign Out</string>
     <string name="kamcordConfirmKamcordSignOut">Confirm Kamcord Sign Out</string>
     <string name="kamcordAreYouSure">Are you sure you want to sign out?</string>
+    
+    <!-- Video settings. -->
+    <string name="kamcordPrivate">\u00A0\u00B7 Private</string>
+    <string name="kamcordDeleteVideo">Delete Video</string>
+    <string name="kamcordReallyDelete">Really Delete?</string>
+    <string name="kamcordMakePrivate">Make Private</string>
+    <string name="kamcordMakePublic">Make Public</string>
+    <string name="kamcordDelete">Delete</string>
     
     <!-- Forgot password. -->
     <string name="kamcordEnterUsernameOrEmail">Enter the username or email address of your Kamcord profile.</string>
@@ -144,6 +224,7 @@
     <color name="kamcordTextColor">#8c8f91</color>
     <color name="kamcordModalDimBackground">#A000</color>
     <color name="kamcordDimButton">#2000</color>
+    <color name="kamcordLegalBackground">#555</color>
     
     <!-- Tab bar. -->
     <color name="kamcordTabbarBackground">#353E44</color>
@@ -166,6 +247,17 @@
     <color name="kamcordShareRectStroke">#d7d9db</color>
     <color name="kamcordVoiceOverlayStatusBackground">#e0e0e0</color>
     
+    <!-- Watch. -->
+    <color name="kamcordWatchFeedItemBackground">#fafafa</color>
+    <color name="kamcordWatchFeedItemBackgroundTransparent">#00fafafa</color>
+    <color name="kamcordWatchFeedItemBackgroundSelected">#d6f7ea</color>
+    <color name="kamcordWatchFeedItemBackgroundSelectedTransparent">#00d6f7ea</color>
+    <color name="kamcordWatchViewLikesSpacer">#ccc</color>
+    <color name="kamcordWatchViewThumbnailSpacer">#ccc</color>
+    <color name="kamcordWatchFeedItemText">#000</color>
+    <color name="kamcordWatchFeedItemDurationText">#fff</color>
+    <color name="kamcordWatchViewsLikesBackground">#fff</color>
+    
     <!-- Create profile. -->
     <color name="kamcordCreateProfileBackground">#808080</color>
     <color name="kamcordProfileSettingsTextColor">#000</color>
@@ -177,6 +269,10 @@
     
     <!-- Change credentials. -->
     <color name="kamcordChangeCredsBackground">#808080</color>
+    
+    <!-- Follow list. -->
+    <color name="kamcordFollowListUsername">#000</color>
+    <color name="kamcordFollowListFollowingCount">#808080</color>
     
     <!-- Media controls. -->
     <color name="kamcordMediaControlsSeeThrough">#CC000000</color>
@@ -191,6 +287,8 @@
     <dimen name="kamcordButtonTextsize">20dp</dimen>
     <dimen name="kamcordModalWidth">500dp</dimen>
     <dimen name="kamcordModalHeight">700dp</dimen>
+    <dimen name="kamcordRefreshBarWidth">5dp</dimen>
+    <dimen name="kamcordRefreshMaxOverscroll">200dp</dimen>
     
     <!-- Share. -->
     <dimen name="kamcordShareCornerRadius">2dp</dimen>
@@ -205,6 +303,35 @@
     <dimen name="kamcordShareWidgetTextSize">16dp</dimen>
     <dimen name="kamcordShareWidgetNudge">5dp</dimen>
     <dimen name="kamcordShareToggleWidth">55dp</dimen>
+    
+    <!-- Watch. -->
+    <dimen name="kamcordWatchPadding">10dp</dimen>
+    <dimen name="kamcordWatchHalfPadding">5dp</dimen>
+    <dimen name="kamcordWatchOverPadding">15dp</dimen>
+    <dimen name="kamcordWatchSectionFont">24sp</dimen>
+    <dimen name="kamcordWatchFontPadding">3sp</dimen>
+    <dimen name="kamcordWatchFeaturedThumbnailHeight">113dp</dimen>
+    <dimen name="kamcordWatchFeaturedThumbnailWidth">200dp</dimen>
+    <dimen name="kamcordWatchRecentThumbnailHeight">84dp</dimen>
+    <dimen name="kamcordWatchRecentThumbnailWidth">150dp</dimen>
+    <dimen name="kamcordWatchFeaturedTitle">16sp</dimen>
+    <dimen name="kamcordWatchFeaturedAuthor">14sp</dimen>
+    <dimen name="kamcordWatchFeaturedCounts">14sp</dimen>
+    <dimen name="kamcordWatchRecentTitle">18sp</dimen>
+    <dimen name="kamcordWatchRecentAuthor">12sp</dimen>
+    <dimen name="kamcordWatchRecentCounts">14sp</dimen>
+    <dimen name="kamcordWatchRecentSpacer">1dp</dimen>
+    <dimen name="kamcordWatchRecentTitleFade">20dp</dimen>
+    <dimen name="kamcordEditVideoIconWidth">8dp</dimen>
+    <dimen name="kamcordEditVideoTouchBox">40dp</dimen>
+    <dimen name="kamcordPostButtonText">18sp</dimen>
+    <dimen name="kamcordEditVideoWidth">150dp</dimen>
+    <dimen name="kamcordDeleteCommentText">20sp</dimen>
+    
+    <!-- Follow list. -->
+    <dimen name="kamcordFollowListPadding">10dp</dimen>
+    <dimen name="kamcordFollowListUsername">16sp</dimen>
+    <dimen name="kamcordFollowListFollowingCount">12sp</dimen>
     
     <!-- Tab bar. -->
     <dimen name="kamcordTabbarHeight">48dp</dimen>
@@ -275,6 +402,10 @@
         <item name="android:background">@drawable/kamcord_button_background</item>
         <item name="android:textColor">@color/kamcordButtonTextColor</item>
         <item name="android:textSize">20dp</item>
+    </style>
+    
+    <style name="KamcordButton.Gray">
+        <item name="android:background">@drawable/kamcord_button_background_gray</item>
     </style>
     
     <style name="KamcordButton.Share">
@@ -382,4 +513,7 @@
         <item name="android:background">@color/kamcordDividerColor</item>
     </style>
     
+    <declare-styleable name="CustomViewPager">
+        <attr name="allowPageSwipe" format="boolean" />
+    </declare-styleable>
 </resources>

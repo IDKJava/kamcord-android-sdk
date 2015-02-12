@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/kamcordWatchPadding"
+        android:layout_marginRight="@dimen/kamcordWatchPadding"
+        android:layout_marginTop="@dimen/kamcordWatchPadding"
+        android:background="@drawable/kamcord_feed_item_background"
+        android:padding="0dp" >
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="@dimen/kamcordWatchRecentThumbnailWidth"
+            android:layout_height="@dimen/kamcordWatchRecentThumbnailHeight"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="#aaaaaa"
+            android:scaleType="centerCrop" />
+
+        <View
+            android:id="@+id/thumbnailSpacer"
+            android:layout_width="@dimen/kamcordWatchRecentSpacer"
+            android:layout_height="@dimen/kamcordWatchRecentThumbnailHeight"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/thumbnail"
+            android:background="@color/kamcordWatchViewThumbnailSpacer" />
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/thumbnail"
+            android:layout_alignRight="@id/thumbnail"
+            android:layout_marginBottom="@dimen/kamcordWatchHalfPadding"
+            android:layout_marginRight="@dimen/kamcordWatchHalfPadding"
+            android:background="@drawable/kamcord_inset_duration_background"
+            android:paddingLeft="@dimen/kamcordWatchFontPadding"
+            android:paddingRight="@dimen/kamcordWatchFontPadding"
+            android:textColor="@color/kamcordWatchFeedItemDurationText"
+            android:textSize="14sp" />
+        
+        <ImageView 
+            android:id="@+id/voiceOverlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/duration"
+            android:layout_alignTop="@id/duration"
+            android:layout_alignBottom="@id/duration"
+            android:layout_marginRight="@dimen/kamcordWatchHalfPadding"
+            android:background="@drawable/kamcord_inset_duration_background"
+            android:padding="2dp"
+            android:src="@drawable/kamcord_mic_icon" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="@dimen/kamcordWatchHalfPadding"
+            android:layout_marginRight="@dimen/kamcordWatchHalfPadding"
+            android:layout_marginTop="@dimen/kamcordWatchHalfPadding"
+            android:layout_toLeftOf="@+id/editVideo"
+            android:layout_toRightOf="@id/thumbnailSpacer"
+            android:ellipsize="none"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/kamcordWatchFontPadding"
+            android:paddingRight="@dimen/kamcordWatchFontPadding"
+            android:singleLine="true"
+            android:textColor="@color/kamcordWatchFeedItemText"
+            android:textSize="@dimen/kamcordWatchRecentTitle" />
+
+        <View
+            android:layout_width="@dimen/kamcordWatchRecentTitleFade"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/title"
+            android:layout_alignRight="@id/title"
+            android:layout_alignTop="@id/title"
+            android:layout_marginRight="@dimen/kamcordWatchFontPadding"
+            android:background="@drawable/kamcord_textview_fading_edge" />
+
+        <ImageView
+            android:id="@+id/editVideo"
+            android:layout_width="@dimen/kamcordEditVideoIconWidth"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/title"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="@dimen/kamcordWatchHalfPadding"
+            android:layout_marginTop="@dimen/kamcordWatchHalfPadding"
+            android:src="@drawable/kamcord_edit_video_icon" />
+
+        <View
+            android:id="@+id/editVideoTouchBox"
+            android:layout_width="@dimen/kamcordEditVideoTouchBox"
+            android:layout_height="@dimen/kamcordEditVideoTouchBox"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/transparent" />
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginLeft="@dimen/kamcordWatchHalfPadding"
+            android:layout_marginTop="@dimen/kamcordWatchHalfPadding"
+            android:layout_toRightOf="@id/thumbnailSpacer"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/kamcordWatchFontPadding"
+            android:textColor="@color/kamcordWatchFeedItemText"
+            android:textSize="@dimen/kamcordWatchRecentAuthor" />
+
+        <TextView
+            android:id="@+id/uploaded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginTop="@dimen/kamcordWatchHalfPadding"
+            android:layout_toRightOf="@id/author"
+            android:maxLines="1"
+            android:textColor="@color/kamcordWatchFeedItemText"
+            android:textSize="@dimen/kamcordWatchRecentAuthor" />
+
+        <TextView
+            android:id="@+id/privateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/title"
+            android:layout_marginRight="@dimen/kamcordWatchHalfPadding"
+            android:layout_marginTop="@dimen/kamcordWatchHalfPadding"
+            android:layout_toRightOf="@id/uploaded"
+            android:maxLines="1"
+            android:paddingRight="@dimen/kamcordWatchFontPadding"
+            android:textColor="@color/kamcordWatchFeedItemText"
+            android:textSize="@dimen/kamcordWatchRecentAuthor"
+            android:text="@string/kamcordPrivate" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/thumbnailSpacer"
+            android:background="@color/kamcordWatchViewsLikesBackground"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/kamcordWatchHalfPadding"
+                android:layout_weight="1"
+                android:scaleType="fitEnd"
+                android:src="@drawable/kamcord_views" />
+
+            <TextView
+                android:id="@+id/views"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/kamcordWatchHalfPadding"
+                android:layout_weight="1"
+                android:textSize="@dimen/kamcordWatchRecentCounts" />
+
+            <View
+                android:layout_width="@dimen/kamcordWatchRecentSpacer"
+                android:layout_height="match_parent"
+                android:background="@color/kamcordWatchViewLikesSpacer" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/kamcordWatchHalfPadding"
+                android:layout_weight="1"
+                android:scaleType="fitEnd"
+                android:src="@drawable/kamcord_likes" />
+
+            <TextView
+                android:id="@+id/likes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/kamcordWatchHalfPadding"
+                android:layout_weight="1"
+                android:textSize="@dimen/kamcordWatchRecentCounts" />
+
+            <View
+                android:layout_width="@dimen/kamcordWatchRecentSpacer"
+                android:layout_height="match_parent"
+                android:background="@color/kamcordWatchViewLikesSpacer"
+                android:visibility="gone" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/kamcordWatchHalfPadding"
+                android:layout_weight="1"
+                android:scaleType="fitEnd"
+                android:src="@drawable/kamcord_comments"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/comments"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/kamcordWatchHalfPadding"
+                android:layout_weight="1"
+                android:textSize="@dimen/kamcordWatchRecentCounts"
+                android:visibility="gone" />
+            </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>
