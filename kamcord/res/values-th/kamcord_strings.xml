@@ -4,23 +4,27 @@
 	<plurals name="kamcordFollowers">
 		<item quantity="other">%d ผู้ติดตาม</item>
 	</plurals>
-	<string name="kamcordInvalidPassword">รหัสผ่านไม่ถูกต้อง</string>
 	<string name="kamcordConfirmFacebookSignOut">ยืนยันการลงชื่อออกจาก Facebook </string>
 	<string name="kamcordNoVideoAvailable">พร้อมวีดีโอไม่มี</string>
 	<string name="kamcordTryAgainLater">กรุณาลองอีกครั้งภายหลัง</string>
-	<string name="kamcordEditProfile">แก้ไขโปรไฟล์</string>
 	<string name="kamcordWeveEmailedYou">เราส่งอีเมลลิงค์ตั้งค่ารหัสผ่านใหม่ถึงคุณ</string>
+	<string name="kamcordErrorRetrievingUserList">มีข้อผิดพลาดในการเรียกรายชื่อของผู้ใช้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
 	<string name="kamcordEmailNotSent">อีเมลยังไม่ถูกส่ง</string>
-	<string name="kamcordAuthoredBy">โดย %s \u00B7\u00A0</string>
+	<string name="kamcordConfirmKamcordSignOut">ยืนยันการลงชื่อออกจาก Kamcord</string>
 	<string name="kamcordConfirmYouTubeSignOut">ยืนยันการลงชื่อออกจาก YouTube</string>
+	<string name="kamcordMustSignInToComment">คุณต้องเข้าสู่ระบบเพื่อแสดงความคิดเห็นบนวิดีโอนี้</string>
+	<string name="kamcordErrorFollow">ข้อผิดพลาดในการติดตามผู้ใช้</string>
+	<string name="kamcordProfile">โปรไฟล์</string>
 	<plurals name="kamcordUploadTimeMonths">
-		<item quantity="other">%d เดือนที่แล้ว</item>
+		<item quantity="other">%d เดือนที่ผ่านมา</item>
 	</plurals>
 	<string name="kamcordEmailCorrect">อีเมลของคุณถูกต้อง?</string>
+	<string name="kamcordCouldntChangeEmail">ไม่สามารถเปลี่ยนอีเมล</string>
 	<string name="kamcordPasswordMaxCharacters">รหัสผ่านต้องไม่เกิน 31 ตัวอักษร</string>
 	<plurals name="kamcordUploadTimeDays">
-		<item quantity="other">%d วันที่แล้ว</item>
+		<item quantity="other">%d วันที่ผ่านมา</item>
 	</plurals>
+	<string name="kamcordEditProfile">แก้ไขโปรไฟล์</string>
 	<plurals name="kamcordFollowersSansCount">
 		<item quantity="other">ผู้ติดตาม</item>
 	</plurals>
@@ -28,40 +32,40 @@
 		<item quantity="other">วิดีโอ</item>
 	</plurals>
 	<string name="kamcordYouCanEnableVoiceOverlay">คุณสามารถเปิดใช้งานการใส่เสียงได้ที่ โปรไฟล์ =&gt; การตั้งค่า หรือกดเปิดใช้งานด้านล่าง</string>
-	<string name="kamcordConfirmTwitterSignOut">ยืนยันการลงชื่อออกจาก Twitter </string>
 	<plurals name="kamcordUploadTimeYears">
-		<item quantity="other">%d ปีที่แล้ว</item>
+		<item quantity="other">%d ปีที่ผ่านมา</item>
 	</plurals>
 	<string name="kamcordSignOut">ลงชื่อออก</string>
 	<string name="kamcordNewPasswordsDoNotMatch">รหัสผ่านใหม่ไม่ถูกต้อง</string>
-	<string name="kamcordProfile">โปรไฟล์</string>
 	<string name="kamcordUsernameEmail">ชื่อผู้ใช้หรืออีเมล</string>
 	<string name="kamcordSignInError">เข้าสู่ระบบข้อผิดพลาด</string>
+	<string name="kamcordProfileErrorMessage">การสร้างข้อมูลส่วนตัวไม่สามารถใช้งานได้ โปรดลองอีกครั้งในภายหลัง</string>
 	<string name="kamcordEmailMaxCharacters">อีเมล์ต้องน้อยกว่า 65 ตัวอักษร</string>
 	<string name="kamcordConfirmNicoNicoSignOut">ยืนยันการลงชื่อออกจาก NicoNico</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">ฟังก์ชั่นการใส่เสียงประกอบถูกปิดบนอุปกรณ์นี้</string>
 	<string name="kamcordEmailInUse">อีเมล์ที่มีอยู่แล้วในการใช้งาน</string>
+	<string name="kamcordInvalidPassword">รหัสผ่านไม่ถูกต้อง</string>
+	<string name="kamcordVoiceOverlayDisabled">ปิดฟังก์ชั่นการใส่เสียงประกอบ</string>
 	<plurals name="kamcordUploadTimeSeconds">
 		<item quantity="other">%d วินาทีที่ผ่านมา</item>
 	</plurals>
 	<string name="kamcordRetry">ลองอีกครั้ง</string>
-	<string name="kamcordVoiceOverlay">การใส่เสียง</string>
 	<string name="kamcordUsername">ชื่อผู้ใช้</string>
 	<string name="kamcordEnable">เปิดใช้งาน</string>
-	<string name="kamcordVoiceOverlayDisabled">ปิดฟังก์ชั่นการใส่เสียงประกอบ</string>
-	<string name="kamcordWorking">กำลังทำงาน....</string>
+	<string name="kamcordConfirmTwitterSignOut">ยืนยันการลงชื่อออกจาก Twitter </string>
+	<string name="kamcordErrorRetrievingComments">มีข้อผิดพลาดในการเรียกความคิดเห็นสำหรับวิดีโอนี้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
 	<string name="kamcordTermsOfService">เงื่อนไขการให้บริการ</string>
 	<string name="kamcordLINENotFound">ไม่พบแอป Line</string>
-	<string name="kamcordConfirmKamcordSignOut">ยืนยันการลงชื่อออกจาก Kamcord</string>
 	<string name="kamcordUsernameInUse">ชื่อผู้ใช้ที่มีอยู่แล้วในการใช้งาน</string>
 	<string name="kamcordDelete">ลบ</string>
 	<string name="kamcordWriteATitle">ตั้งชื่อ...</string>
+	<string name="kamcordNewEmailsDoNotMatch">อีเมลใหม่ไม่ตรงกับ</string>
 	<string name="kamcordUsernameMinCharacters">ชื่อผู้ใช้ต้องมีความยาวไม่น้อยกว่า 5 ตัวอักษร</string>
 	<string name="kamcordUploadFinished">อัพโหลดเรียบร้อย!</string>
 	<string name="kamcordUploadFailed">อัพโหลดไม่สำเร็จ</string>
-	<string name="kamcordPost">โพสต์</string>
+	<string name="kamcordWorking">กำลังทำงาน....</string>
 	<string name="kamcordSorryMatchingAccounts">ขออภัย เราไม่พบบัญชีผู้ใช้ที่ตรงกัน</string>
-	<string name="kamcordChangePassword">เปลี่ยนรหัสผ่าน</string>
+	<string name="kamcordPost">โพสต์</string>
 	<string name="kamcordAnyUnclaimedVideos">วิดีโอที่ไม่ปรากฏเจ้าของใดๆ จะเชื่อมโยงกับโปรไฟล์ของคุณ</string>
 	<string name="kamcordNicoNico">NicoNico</string>
 	<string name="kamcordProfileErrorTitle">สร้างโปรไฟล์ไม่สำเร็จ</string>
@@ -73,6 +77,7 @@
 		<item quantity="other">\u00A0\u00B7 %d วิดีโอ</item>
 	</plurals>
 	<string name="kamcordOff">ปิด</string>
+	<string name="kamcordErrorRetrievingFeed">มีข้อผิดพลาดในการดึงฟีดวิดีโอนี้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
 	<string name="kamcordDeleteVideo">ลบวิดีโอ</string>
 	<string name="kamcordImReady">ฉันพร้อมแล้ว!</string>
 	<string name="kamcordRecentVideos">วิดีโอล่าสุด</string>
@@ -82,41 +87,49 @@
 	<string name="kamcordJustNow">ในขณะนี้</string>
 	<string name="kamcordWatchVideo">ดูวิดีโอ</string>
 	<string name="kamcordUnfollow">เลิกติดตาม</string>
-	<string name="kamcordNewEmailsDoNotMatch">อีเมลใหม่ไม่ตรงกับ</string>
 	<string name="kamcordAddComment">แสดงความคิดเห็น</string>
 	<string name="kamcordPrivate">\u00A0\u00B7 ส่วนตัว</string>
 	<string name="kamcordLINE">Line</string>
+	<string name="kamcordPasswordEnter">คุณต้องกรอกรหัสผ่าน</string>
 	<string name="kamcordNewPassword">รหัสผ่านใหม่</string>
 	<string name="kamcordSignIn">ลงชื่อเข้าใช้</string>
+	<string name="kamcordMakeVideoPrivateError">ข้อผิดพลาดของการทำวิดีโอให้เป็นส่วนตัว</string>
+	<string name="kamcordInvalidUsernameOrPassword">ชื่อผู้ใช้ อีเมล์หรือรหัสผ่านไม่ถูกต้อง</string>
 	<string name="kamcordResetPassword">ตั้งค่ารหัสผ่านใหม่</string>
 	<string name="kamcordPrivacyPolicy">นโยบายความเป็นส่วนตัว</string>
 	<string name="kamcordAnotherPasswordReset">คำขอตั้งค่ารหัสผ่านใหม่อื่นๆ กำลังรอ</string>
 	<string name="kamcordNotNow">ยังก่อน</string>
 	<string name="kamcordYes">ใช่</string>
+	<string name="kamcordCouldntChangePassword">ไม่สามารถเปลี่ยนรหัสผ่าน</string>
 	<string name="kamcordReallyDelete">ลบแน่นอน?</string>
 	<string name="kamcordNewEmail">อีเมลใหม่</string>
 	<string name="kamcordForgotYourPassword">ลืมรหัสผ่าน?</string>
+	<string name="kamcordErrorComment">ข้อผิดพลาดในการโพสต์แสดงความคิดเห็น</string>
 	<string name="kamcordFeaturedVideos">วิดีโอแนะนำ</string>
 	<string name="kamcordNoAccountLinked">ไม่พบบัญชีผู้ใช้ที่เชื่อมโยง</string>
 	<string name="kamcordVoiceOverlayEnabledFuture">เปิดใช้งานการใส่เสียงสำหรับวิดีโออื่นในอนาคต</string>
 	<string name="kamcordAreYouSure">คุณแน่ใจว่าต้องการลงชื่อออก?</string>
+	<string name="kamcordAuthoredBy">โดย %s \u00B7\u00A0</string>
 	<plurals name="kamcordUploadTimeMinutes">
-		<item quantity="other">%d นาทีที่แล้ว</item>
+		<item quantity="other">%d นาทีที่ผ่านมา</item>
 	</plurals>
 	<string name="kamcordFollow">ติดตาม</string>
 	<string name="kamcordPasswordMinCharacters">รหัสผ่านต้องมีความยาวไม่น้อยกว่า 6 ตัวอักษร</string>
-	<string name="kamcordOk">ตกลง</string>
+	<string name="kamcordErrorUnfollow">ข้อผิดพลาดในการยกเลิกการติดตามผู้ใช้</string>
+	<string name="kamcordChangePassword">เปลี่ยนรหัสผ่าน</string>
 	<string name="kamcordChangeEmail">เปลี่ยนอีเมล</string>
 	<string name="kamcordNoInternet">ไม่พบสัญญาณอินเทอร์เน็ต</string>
 	<string name="kamcordNewPasswordAgain">รหัสผ่านใหม่ (อีกครั้ง)</string>
-	<string name="kamcordPasswordEnter">คุณต้องกรอกรหัสผ่าน</string>
 	<string name="kamcordNewEmailAgain">อีเมลใหม่ (อีกครั้ง)</string>
 	<string name="kamcordMakePublic">ทำให้เป็นสาธารณะ</string>
+	<string name="kamcordCurrentPassword">รหัสผ่านปัจจุบัน</string>
 	<string name="kamcordUsernameEnter">กรุณาใส่ชื่อผู้ใช้ที่ถูกต้อง</string>
+	<string name="kamcordCheckInternetConnection">ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
 	<string name="kamcordUnclaimedVideos">วิดีโอที่ไม่ปรากฏเจ้าของ</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">ไม่พบที่อยู่อีเมลนี้</string>
 	<string name="kamcordOn">เปิด</string>
+	<string name="kamcordOk">ตกลง</string>
 	<string name="kamcordUploading">กำลังอัพโหลด...</string>
 	<string name="kamcordSuccessfullyChangedPassword">รหัสผ่านของคุณมีการเปลี่ยนแปลงที่ประสบความสำเร็จ</string>
 	<string name="kamcordInstallLINE">คุณต้องติดตั้งแอป Line ก่อนแบ่งปันบน Line</string>
@@ -127,24 +140,27 @@
 	<string name="kamcordUsernameMaxCharacters">ชื่อผู้ใช้ต้องยาวไม่เกิน 16 ตัวอักษร</string>
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">ดำเนินการโดย Kamcord</string>
-	<string name="kamcordMustSignInToComment">คุณต้องเข้าสู่ระบบเพื่อแสดงความคิดเห็นบนวิดีโอนี้</string>
-	<string name="kamcordCurrentPassword">รหัสผ่านปัจจุบัน</string>
 	<string name="kamcordNo">ไม่</string>
 	<string name="kamcordEnterUsernameOrEmail">กรอกชื่อผู้ใช้หรือที่อยู่อีเมลลงในโปรไฟล์ Kamcord</string>
+	<string name="kamcordCouldntDeleteComment">ไม่สามารถลบความคิดเห็น</string>
+	<string name="kamcordErrorRetrievingUserInfo">มีข้อผิดพลาดในการเรียกข้อมูลของผู้ใช้นี้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
 	<string name="kamcordFollowing">กำลังติดตาม</string>
+	<string name="kamcordVoiceOverlay">การใส่เสียง</string>
 	<string name="kamcordTwitter">Twitter</string>
 	<string name="kamcordSuccessfullyChangedEmail">อีเมล์ที่คุณต้องการคือการเปลี่ยนแปลงที่ประสบความสำเร็จ</string>
 	<string name="kamcordClose">ปิด</string>
 	<plurals name="kamcordUploadTimeHours">
-		<item quantity="other">%d ชั่วโมงที่แล้ว</item>
+		<item quantity="other">%d ชั่วโมงที่ผ่านมา</item>
 	</plurals>
 	<string name="kamcordNoAccountFound">ไม่พบบัญชีผู้ใช้</string>
 	<string name="kamcord">Kamcord</string>
 	<string name="kamcordEmailEntered">อีเมลที่คุณกรอกคือ %@</string>
 	<string name="kamcordDisable">ปิดการใช้งาน</string>
+	<string name="kamcordCouldntDeleteVideo">ไม่สามารถลบวิดีโอ</string>
 	<string name="kamcordEmailSent">ส่งอีเมลแล้ว</string>
 	<string name="kamcordPassword">รหัสผ่าน</string>
 	<string name="kamcordEmailDoesNotExist">อีเมลหรือชื่อผู้ไม่อยู่</string>
 	<string name="kamcordVoiceOverlayEnabledExclamation">เปิดใช้งานการใส่เสียงแล้ว?</string>
+	<string name="kamcordMakeVideoPublicError">ข้อผิดพลาดของการทำวิดีโอให้เป็นสาธารณะ</string>
 	<string name="kamcordShareReplay">แบ่งปันคำตอบ</string>
 </resources>
