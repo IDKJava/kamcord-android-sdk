@@ -3,7 +3,7 @@ Kamcord Android Framework
 
 <h3>The documentation can be found on the <a href="https://docs.kamcord.com/documents/platform/android/android-quick-start-guide/">developer website</a>.</h3>
 
-This repository contains a build of Kamcord for integrating into a Unity 4.2+ game or a generic Android project. The current version is 1.6.1. Please visit the <a href="https://github.com/kamcord/kamcord-android-sdk/wiki/Change-log">Change Log</a> to see a history of changes.
+This repository contains a build of Kamcord for integrating into a Unity 4.2+ game or a generic Android project. The current version is 1.6.2. Please visit the <a href="https://github.com/kamcord/kamcord-android-sdk/wiki/Change-log">Change Log</a> to see a history of changes.
 
 If you're using Unity, use the Unity package at `unity/Kamcord.unitypackage`.
 
@@ -11,5 +11,5 @@ If you'd like to integrate into an Android project not coming from Unity, the di
 
 Note that the `Kamcord.unitypackage` in this repository contains a complete copy of the Kamcord iOS Unity plugin, making it safe to import into existing Unity projects that use the Kamcord iOS Unity plugin. More information about the iOS plugin can be found at this repository: <a href="https://github.com/kamcord/kamcord-unity-sdk">https://github.com/kamcord/kamcord-unity-sdk</a>.
 
-<b>Note to Unity developers upgrading from Kamcord versions before 1.4.3</b><br/>
-The structure of the resources used in the Android library project changed slightly. Because of this, you may need to delete the `Assets/Plugins/Android/kamcord/res` directory before importing the new `Kamcord.unitypackage` into your Unity project.
+<b>Note to developers using Kamcord versions 1.6.0 - 1.6.1</b><br/>
+Due to changes in our server infrastructure, these two versions will soon be unable to properly display video feeds in the Watch and Profile tabs. Please upgrade to version 1.6.2 or higher as soon as possible. Versions prior to 1.6.0 should still display feeds correctly. We apologize for the inconvenience.

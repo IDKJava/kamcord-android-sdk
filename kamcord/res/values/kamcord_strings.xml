@@ -516,4 +516,10 @@
     <declare-styleable name="CustomViewPager">
         <attr name="allowPageSwipe" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="SnappingHorizontalScrollView">
+        <attr name="dividerWidth" format="dimension" />
+        <attr name="android:divider" />
+        <attr name="android:requiresFadingEdge" />
+        <attr name="android:fadingEdgeLength" />
+    </declare-styleable>
 </resources>
