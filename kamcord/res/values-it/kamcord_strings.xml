@@ -47,7 +47,6 @@
 	<string name="kamcordSignInError">Errore nell\'iscrizione</string>
 	<string name="kamcordProfileErrorMessage">Il processo di creazione del profilo non ha funzionato, si prega di riprovare più tardi.</string>
 	<string name="kamcordEmailMaxCharacters">L\'email deve contenere al massimo 65 caratteri</string>
-	<string name="kamcordConfirmNicoNicoSignOut">Conferma l\'uscita da NicoNico</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Registrazione voce disattivata su questo dispositivo.</string>
 	<string name="kamcordEmailInUse">Email già in uso</string>
 	<string name="kamcordInvalidPassword">Password non valida</string>
@@ -74,7 +73,7 @@
 	<string name="kamcordSorryMatchingAccounts">Impossibile trovare un account corrispondente.</string>
 	<string name="kamcordPost">Pubblica</string>
 	<string name="kamcordAnyUnclaimedVideos">I video non rivendicati verranno associati con il tuo profilo.</string>
-	<string name="kamcordNicoNico">NicoNico</string>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">Errore nella creazione del profilo</string>
 	<string name="kamcordMakePrivate">Rendi privato</string>
 	<string name="kamcordAgreementBlurb">Facendo clic su \'Crea profilo\' dichiari di aver letto e di accettare l\'Informativa sulla privacy e le Condizioni per l\'utilizzo.</string>
@@ -150,6 +149,7 @@
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Con tecnologia Kamcord</string>
 	<string name="kamcordNo">No</string>
+	<string name="kamcordConfirmNicoNicoSignOut">Conferma l\'uscita da niconico</string>
 	<string name="kamcordEnterUsernameOrEmail">Inserisci il nome utente o l\'indirizzo e-mail del tuo profilo Kamcord.</string>
 	<string name="kamcordCouldntDeleteComment">Impossibile eliminare il commento</string>
 	<string name="kamcordErrorRetrievingUserInfo">Si è verificato un errore durante il recupero delle informazioni di questo utente. Controllare la connessione a Internet.</string>

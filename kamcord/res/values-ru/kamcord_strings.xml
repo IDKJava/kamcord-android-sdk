@@ -59,7 +59,6 @@
 	<string name="kamcordSignInError">Ошибка при входе</string>
 	<string name="kamcordProfileErrorMessage">Создать профиль не удалось. Повторите попытку позже.</string>
 	<string name="kamcordEmailMaxCharacters">Эл. почта не должна превышать 65 символов </string>
-	<string name="kamcordConfirmNicoNicoSignOut">Подтвердить выход из NicoNico</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">На этом устройстве отключено наложение голоса.</string>
 	<string name="kamcordEmailInUse">Адрес Эл. почты уже используется</string>
 	<string name="kamcordInvalidPassword">Неверный пароль</string>
@@ -88,7 +87,7 @@
 	<string name="kamcordSorryMatchingAccounts">К сожалению, мы не смогли найти никаких совпадающих аккаунтов.</string>
 	<string name="kamcordPost">Опубликовать</string>
 	<string name="kamcordAnyUnclaimedVideos">Все невостребованные видео будут связаны с твоим профилем.</string>
-	<string name="kamcordNicoNico">NicoNico</string>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">Ошибка создания профиля</string>
 	<string name="kamcordMakePrivate">Закрыть ото всех</string>
 	<string name="kamcordAgreementBlurb">Нажимая на \'Создать профиль\', ты подтверждаешь, что прочитал(а) и согласен(на) с Политикой конфиденциальности и Условиями обслуживания.</string>
@@ -168,6 +167,7 @@
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">На базе ПО Kamcord</string>
 	<string name="kamcordNo">Нет</string>
+	<string name="kamcordConfirmNicoNicoSignOut">Подтвердить выход из niconico</string>
 	<string name="kamcordEnterUsernameOrEmail">Введи имя пользователя или адрес эл. почты своего профиля Kamcord.</string>
 	<string name="kamcordCouldntDeleteComment">Не удается удалить комментарий</string>
 	<string name="kamcordErrorRetrievingUserInfo">Произошла ошибка при поиске информации данного пользователя. Проверьте подключение к Интернету.</string>

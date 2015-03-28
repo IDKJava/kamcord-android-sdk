@@ -41,7 +41,6 @@
 	<string name="kamcordSignInError">サインインエラー</string>
 	<string name="kamcordProfileErrorMessage">プロフィールを作成できませんでした。後でもう一度お試しください。</string>
 	<string name="kamcordEmailMaxCharacters">Eメールは65文字未満でなければなりません</string>
-	<string name="kamcordConfirmNicoNicoSignOut">NicoNicoログアウトの確認</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">ボイスオーバーは無効になっています</string>
 	<string name="kamcordEmailInUse">Eメールは既に使用されています</string>
 	<string name="kamcordInvalidPassword">無効なパスワード</string>
@@ -67,7 +66,7 @@
 	<string name="kamcordSorryMatchingAccounts">一致するアカウントが見つかりませんでした</string>
 	<string name="kamcordPost">投稿する</string>
 	<string name="kamcordAnyUnclaimedVideos">これまでのビデオは全て、あなたのプロフィールと関連づけられます。</string>
-	<string name="kamcordNicoNico">NicoNico</string>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">プロフィール作成エラー</string>
 	<string name="kamcordMakePrivate">非公開にする</string>
 	<string name="kamcordAgreementBlurb">「プロフィールを作成する」ボタンをクリックした後は、プライバシー・ポリシーとサービス規約を読み、それらに同意したものとみなされます</string>
@@ -141,6 +140,7 @@
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
 	<string name="kamcordNo">いいえ</string>
+	<string name="kamcordConfirmNicoNicoSignOut">niconicoログアウトの確認</string>
 	<string name="kamcordEnterUsernameOrEmail">Kamcordユーザー名または登録したメールアドレスを入力してください。</string>
 	<string name="kamcordCouldntDeleteComment">コメントを削除できませんでした</string>
 	<string name="kamcordErrorRetrievingUserInfo">このユーザーの情報を取得できませんでした。インターネット接続を確認してください。</string>

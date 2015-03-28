@@ -41,7 +41,6 @@
 	<string name="kamcordSignInError">登录错误</string>
 	<string name="kamcordProfileErrorMessage">创建配置文件失败，请稍后再试。</string>
 	<string name="kamcordEmailMaxCharacters">电子邮件地址必须少于 65 个字符</string>
-	<string name="kamcordConfirmNicoNicoSignOut">确认退出NicoNico</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">当前设备禁用声音叠加</string>
 	<string name="kamcordEmailInUse">电子邮件已被使用</string>
 	<string name="kamcordInvalidPassword">密码无效</string>
@@ -67,7 +66,7 @@
 	<string name="kamcordSorryMatchingAccounts">对不起,我们找不到任何匹配的账户。</string>
 	<string name="kamcordPost">发表</string>
 	<string name="kamcordAnyUnclaimedVideos">任何无人认领的视频将和您的个人资料关联</string>
-	<string name="kamcordNicoNico">NicoNico</string>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">简介创建错误</string>
 	<string name="kamcordMakePrivate">设为隐私</string>
 	<string name="kamcordAgreementBlurb">点击创建个人资料表示您已经阅读并同意隐私策略和服务条款。</string>
@@ -141,6 +140,7 @@
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Kamcord提供技术支持</string>
 	<string name="kamcordNo">否</string>
+	<string name="kamcordConfirmNicoNicoSignOut">确认退出niconico</string>
 	<string name="kamcordEnterUsernameOrEmail">请输入您的Kamcord用户名或相关的电子邮箱地址。</string>
 	<string name="kamcordCouldntDeleteComment">无法删除评论</string>
 	<string name="kamcordErrorRetrievingUserInfo">检索该用户的信息时发生错误。请检查您的网络连接。</string>

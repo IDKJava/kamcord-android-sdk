@@ -41,7 +41,6 @@
 	<string name="kamcordSignInError">로그인 에러 </string>
 	<string name="kamcordProfileErrorMessage">프로파일 작성이 작동하지 않았습니다, 나중에 다시 시도하십시오.</string>
 	<string name="kamcordEmailMaxCharacters">이메일 주소는 65자 미만이어야 합니다</string>
-	<string name="kamcordConfirmNicoNicoSignOut">NicoNico 로그아웃 확인</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">이 기기에서 음성 오버레이가 비활성화되었습니다.</string>
 	<string name="kamcordEmailInUse">이메일 주소가 이미 사용 중입니다</string>
 	<string name="kamcordInvalidPassword">잘못된 비밀번호</string>
@@ -67,7 +66,7 @@
 	<string name="kamcordSorryMatchingAccounts">죄송합니다. 일치되는 계정을 찾지 못했습니다.</string>
 	<string name="kamcordPost">게시</string>
 	<string name="kamcordAnyUnclaimedVideos">소유자가 없는 모든 비디오는 귀하의 프로필과 연계됩니다.</string>
-	<string name="kamcordNicoNico">NicoNico</string>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">프로필 만들기 오류</string>
 	<string name="kamcordMakePrivate">비공개로 하기</string>
 	<string name="kamcordAgreementBlurb">프로필 만들기를 클릭하면 개인정보보호 정책과 서비스 약관을 읽고 동의하는 것입니다</string>
@@ -141,6 +140,7 @@
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
 	<string name="kamcordNo">아니요</string>
+	<string name="kamcordConfirmNicoNicoSignOut">niconico 로그아웃 확인</string>
 	<string name="kamcordEnterUsernameOrEmail">Kamcord 프로필의 사용자 이름이나 이메일 주소를 입력해 주세요.</string>
 	<string name="kamcordCouldntDeleteComment">댓글을 삭제할 수 없습니다</string>
 	<string name="kamcordErrorRetrievingUserInfo">이 사용자의 정보를 검색하는 중에 오류가 발생했습니다. 인터넷 연결을 확인하세요.</string>

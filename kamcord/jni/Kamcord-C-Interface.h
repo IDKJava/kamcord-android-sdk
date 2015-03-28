@@ -464,6 +464,27 @@ void Kamcord_SetUsingFmod(
     bool usingFmod,
     int sampleRate);
 
+/**
+ * Sets the "app rendering" framebuffer (usually the screen) that content is being rendered to
+ * in between calls to begin/end draw.
+ * Use this method if the application is rendering to some other frame buffer besides the screen
+ * at the end of every frame.
+ * Requires Kamcord to be enabled and Kamcord initialization to have finished to complete
+ * successfully.
+ * 
+ * @param framebufferID The OpenGL ID of the app rendering framebuffer.
+ *
+ * @return true if the setting of the framebuffer was successful, false otherwise.
+ */
+bool Kamcord_SetAppRenderingFramebuffer(int framebufferID);
+
+/**
+ * Sets the currently bound framebuffer to be the "app rendering" framebuffer
+ * 
+ * @return true if the setting of the framebuffer was successful, false otherwise.
+ */
+bool Kamcord_SetCurrentlyBoundFramebufferToBeAppRenderingFramebuffer();
+
 #endif // __ANDROID__
 
 #ifdef __cplusplus

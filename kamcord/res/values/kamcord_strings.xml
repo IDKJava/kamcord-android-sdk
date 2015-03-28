@@ -19,9 +19,11 @@
     <string name="kamcordEmail">Email</string>
     <string name="kamcordLINE">LINE</string>
     <string name="kamcordNicoNico">niconico</string>
+    <string name="kamcordKakaoTalk">KakaoTalk</string>
     <string name="kamcordShareReplay">Share Replay</string>
     <string name="kamcordRetry">Retry</string>
     <string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
+    <string name="kamcordKakaoAppKey">15bb4de98feb5cd4c344dc65a9c69fdb</string>
     
     <string name="kamcordUploadFinished">Upload Finished!</string>
     <string name="kamcordUploadFailed">Upload Failed</string>
@@ -156,7 +158,7 @@
     <string name="kamcordConfirmFacebookSignOut">Confirm Facebook Sign Out</string>
     <string name="kamcordConfirmTwitterSignOut">Confirm Twitter Sign Out</string>
     <string name="kamcordConfirmYouTubeSignOut">Confirm YouTube Sign Out</string>
-    <string name="kamcordConfirmNicoNicoSignOut">Confirm NicoNico Sign Out</string>
+    <string name="kamcordConfirmNicoNicoSignOut">Confirm niconico Sign Out</string>
     <string name="kamcordConfirmKamcordSignOut">Confirm Kamcord Sign Out</string>
     <string name="kamcordAreYouSure">Are you sure you want to sign out?</string>
     

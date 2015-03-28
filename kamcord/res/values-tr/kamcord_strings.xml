@@ -47,7 +47,6 @@
 	<string name="kamcordSignInError">Oturum Açma hatası</string>
 	<string name="kamcordProfileErrorMessage">Profil oluşturulamadı, lütfen daha sonra tekrar deneyin.</string>
 	<string name="kamcordEmailMaxCharacters">Email 65 karakterden az olmalı</string>
-	<string name="kamcordConfirmNicoNicoSignOut">NicoNico Çıkışını Onayla</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Bu cihazda Ses Kaydı kapalıdır.</string>
 	<string name="kamcordEmailInUse">Bu email kullanılıyor</string>
 	<string name="kamcordInvalidPassword">Geçersiz şifre</string>
@@ -74,7 +73,7 @@
 	<string name="kamcordSorryMatchingAccounts">Üzgünüz, eşleşen hesap bulamadık.</string>
 	<string name="kamcordPost">Gönder</string>
 	<string name="kamcordAnyUnclaimedVideos">Tüm sahipsiz videolar profilinle ilişkilendirilecek.</string>
-	<string name="kamcordNicoNico">NicoNico</string>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">Profil Oluşturma Hatası</string>
 	<string name="kamcordMakePrivate">Özel Yap</string>
 	<string name="kamcordAgreementBlurb">Profil Oluştur tuşuna basarak Gizlilik Politikası ve Hizmet Koşullarını okuyup kabul ettiğini onaylıyorsun.</string>
@@ -150,6 +149,7 @@
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Kamcord</string>
 	<string name="kamcordNo">Hayır</string>
+	<string name="kamcordConfirmNicoNicoSignOut">niconico Çıkışını Onayla</string>
 	<string name="kamcordEnterUsernameOrEmail">Kamcord profilinin kullanıcı adını veya email adresini gir.</string>
 	<string name="kamcordCouldntDeleteComment">Yorum Silinemedi</string>
 	<string name="kamcordErrorRetrievingUserInfo">Kullanıcı bilgileri alınırken bir hata oluştu. İnternet bağlantınızı kontrol edin.</string>

@@ -41,7 +41,6 @@
 	<string name="kamcordSignInError">เข้าสู่ระบบข้อผิดพลาด</string>
 	<string name="kamcordProfileErrorMessage">การสร้างข้อมูลส่วนตัวไม่สามารถใช้งานได้ โปรดลองอีกครั้งในภายหลัง</string>
 	<string name="kamcordEmailMaxCharacters">อีเมล์ต้องน้อยกว่า 65 ตัวอักษร</string>
-	<string name="kamcordConfirmNicoNicoSignOut">ยืนยันการลงชื่อออกจาก NicoNico</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">ฟังก์ชั่นการใส่เสียงประกอบถูกปิดบนอุปกรณ์นี้</string>
 	<string name="kamcordEmailInUse">อีเมล์ที่มีอยู่แล้วในการใช้งาน</string>
 	<string name="kamcordInvalidPassword">รหัสผ่านไม่ถูกต้อง</string>
@@ -67,7 +66,7 @@
 	<string name="kamcordSorryMatchingAccounts">ขออภัย เราไม่พบบัญชีผู้ใช้ที่ตรงกัน</string>
 	<string name="kamcordPost">โพสต์</string>
 	<string name="kamcordAnyUnclaimedVideos">วิดีโอที่ไม่ปรากฏเจ้าของใดๆ จะเชื่อมโยงกับโปรไฟล์ของคุณ</string>
-	<string name="kamcordNicoNico">NicoNico</string>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">สร้างโปรไฟล์ไม่สำเร็จ</string>
 	<string name="kamcordMakePrivate">ทำให้เป็นส่วนตัว</string>
 	<string name="kamcordAgreementBlurb">ในการคลิกสร้างโปรไฟล์คุณได้แสดงตัวว่าได้อ่านและยอมรับนโยบายความเป็นส่วนตัวและเงื่อนไขการให้บริการแล้ว</string>
@@ -141,6 +140,7 @@
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">ดำเนินการโดย Kamcord</string>
 	<string name="kamcordNo">ไม่</string>
+	<string name="kamcordConfirmNicoNicoSignOut">ยืนยันการลงชื่อออกจาก niconico</string>
 	<string name="kamcordEnterUsernameOrEmail">กรอกชื่อผู้ใช้หรือที่อยู่อีเมลลงในโปรไฟล์ Kamcord</string>
 	<string name="kamcordCouldntDeleteComment">ไม่สามารถลบความคิดเห็น</string>
 	<string name="kamcordErrorRetrievingUserInfo">มีข้อผิดพลาดในการเรียกข้อมูลของผู้ใช้นี้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>

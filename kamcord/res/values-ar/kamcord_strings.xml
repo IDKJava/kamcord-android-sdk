@@ -71,7 +71,6 @@
 	<string name="kamcordSignInError">خطأ في تسجيل الدخول</string>
 	<string name="kamcordProfileErrorMessage">لم ينجح إنشاء الملف الشخصي، يرجى إعادة المحاولة في وقت لاحق.</string>
 	<string name="kamcordEmailMaxCharacters">يجب ألا يتجاوز البريد الإلكتروني 65 حرفًا</string>
-	<string name="kamcordConfirmNicoNicoSignOut">تأكيد تسجيل الخروج من NicoNico</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">تم تعطيل تراكب الصوت على هذا الجهاز.</string>
 	<string name="kamcordEmailInUse">البريد الإلكتروني مستخدم بالفعل</string>
 	<string name="kamcordInvalidPassword">كلمة مرور غير صالحة</string>
@@ -102,7 +101,7 @@
 	<string name="kamcordSorryMatchingAccounts">نأسف، لكن تعذر العثور على أي حسابات مطابقة.</string>
 	<string name="kamcordPost">نشر</string>
 	<string name="kamcordAnyUnclaimedVideos">أي فيديوهات غير مربوطة سيتم ربطها بالحساب الخاص بك.</string>
-	<string name="kamcordNicoNico">NicoNico</string>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">خطأ في إنشاء الحساب</string>
 	<string name="kamcordMakePrivate">تعيين خاص</string>
 	<string name="kamcordAgreementBlurb">بالنقر على إنشاء حساب، فإنك تقر أنك قرأت سياسة الخصوصية وشروط الخدمة ووافقت على الالتزام بها.</string>
@@ -186,6 +185,7 @@
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">برعاية Kamcord</string>
 	<string name="kamcordNo">لا</string>
+	<string name="kamcordConfirmNicoNicoSignOut">تأكيد تسجيل الخروج من niconico</string>
 	<string name="kamcordEnterUsernameOrEmail">أدخل اسم المستخدم أو عنوان البريد الإلكتروني الخاص بحسابك على Kamcord.</string>
 	<string name="kamcordCouldntDeleteComment">تعذر حذف التعليق</string>
 	<string name="kamcordErrorRetrievingUserInfo">ظهر خطأ أثناء استرداد المعلومات الخاصة بهذا المستخدم. تحقق من اتصال الإنترنت الخاص بك.</string>
