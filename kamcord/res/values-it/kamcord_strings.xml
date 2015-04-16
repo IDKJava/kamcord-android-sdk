@@ -12,16 +12,18 @@
 	<string name="kamcordErrorRetrievingUserList">Si è verificato un errore durante il processo di recupero della lista utenti. Controllare la connessione ad Internet.</string>
 	<string name="kamcordEmailNotSent">E-mail non inviata</string>
 	<string name="kamcordConfirmKamcordSignOut">Conferma l\'uscita da Kamcord</string>
+	<string name="kamcordCouldntChangeTagline">Impossibile modificare il messaggio personale</string>
+	<string name="kamcordChangePassword">Modifica password</string>
 	<string name="kamcordConfirmYouTubeSignOut">Conferma l\'uscita da YouTube</string>
 	<string name="kamcordMustSignInToComment">Devi effettuare l\'accesso per commentare questo video.</string>
 	<string name="kamcordErrorFollow">Errore durante il completamento della funzione \'Segui Utente\'</string>
-	<string name="kamcordProfile">Profilo</string>
 	<plurals name="kamcordUploadTimeMonths">
 		<item quantity="one">%d mese fa</item>
 		<item quantity="other">%d mesi fa</item>
 	</plurals>
 	<string name="kamcordEmailCorrect">L\'indirizzo e-mail è corretto?</string>
 	<string name="kamcordCouldntChangeEmail">Impossibile cambiare l\'indirizzo Email</string>
+	<string name="kamcordRecent">Recenti</string>
 	<string name="kamcordPasswordMaxCharacters">La password non può superare 31 caratteri</string>
 	<plurals name="kamcordUploadTimeDays">
 		<item quantity="one">%d giorno fa</item>
@@ -43,9 +45,12 @@
 	</plurals>
 	<string name="kamcordSignOut">Esci</string>
 	<string name="kamcordNewPasswordsDoNotMatch">Le nuove password non coincidono </string>
+	<string name="kamcordProfile">Profilo</string>
+	<string name="kamcordNewTagline">Nuovo messaggio personale</string>
 	<string name="kamcordUsernameEmail">Nome utente o indirizzo e-mail</string>
 	<string name="kamcordSignInError">Errore nell\'iscrizione</string>
 	<string name="kamcordProfileErrorMessage">Il processo di creazione del profilo non ha funzionato, si prega di riprovare più tardi.</string>
+	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">L\'email deve contenere al massimo 65 caratteri</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Registrazione voce disattivata su questo dispositivo.</string>
 	<string name="kamcordEmailInUse">Email già in uso</string>
@@ -58,6 +63,8 @@
 	<string name="kamcordRetry">Riprova</string>
 	<string name="kamcordUsername">Nome utente</string>
 	<string name="kamcordEnable">Attiva</string>
+	<string name="kamcordSuccessfullyChangedTagline">Il tuo messaggio personale è stato modificato con successo.</string>
+	<string name="kamcordKakaoTalk">KakaoTalk</string>
 	<string name="kamcordConfirmTwitterSignOut">Conferma l\'uscita da Twitter</string>
 	<string name="kamcordErrorRetrievingComments">Si è verificato un errore durante il processo di recupero dei commenti per questo video. Controllare la connessione a Internet.</string>
 	<string name="kamcordTermsOfService">Condizioni per l\'utilizzo</string>
@@ -72,8 +79,8 @@
 	<string name="kamcordWorking">In corso...</string>
 	<string name="kamcordSorryMatchingAccounts">Impossibile trovare un account corrispondente.</string>
 	<string name="kamcordPost">Pubblica</string>
+	<string name="kamcordFeatured">Evidenza</string>
 	<string name="kamcordAnyUnclaimedVideos">I video non rivendicati verranno associati con il tuo profilo.</string>
-	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">Errore nella creazione del profilo</string>
 	<string name="kamcordMakePrivate">Rendi privato</string>
 	<string name="kamcordAgreementBlurb">Facendo clic su \'Crea profilo\' dichiari di aver letto e di accettare l\'Informativa sulla privacy e le Condizioni per l\'utilizzo.</string>
@@ -88,16 +95,20 @@
 	<string name="kamcordDeleteVideo">Cancella video</string>
 	<string name="kamcordImReady">Ho finito!</string>
 	<string name="kamcordRecentVideos">Cancella video</string>
+	<string name="kamcordTrending">Tendenza</string>
 	<string name="kamcordComments">Commenti</string>
+	<string name="kamcordChangeTagline">Modifica messaggio personale</string>
 	<string name="kamcordSuccess">Successo!</string>
 	<string name="kamcordEnableVoiceOverlayQuestion">Attivare Registrazione voce?</string>
+	<string name="kamcordNotifications">Notifiche</string>
 	<string name="kamcordJustNow">Proprio Ora</string>
 	<string name="kamcordWatchVideo">Guarda Video</string>
 	<string name="kamcordUnfollow">Smetti di seguire</string>
 	<string name="kamcordAddComment">Aggiungi un commento</string>
-	<string name="kamcordPrivate">\u00A0\u00B7 Privato</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Inserire una password</string>
+	<string name="kamcordUserNotUploadedVideos">Questo utente non ha ancora caricato alcun video.</string>
+	<string name="kamcordSettings">Impostazioni</string>
 	<string name="kamcordNewPassword">Nuova password</string>
 	<string name="kamcordSignIn">Accedi</string>
 	<string name="kamcordMakeVideoPrivateError">Errore durante il processo per rendere il video privato</string>
@@ -116,7 +127,6 @@
 	<string name="kamcordNoAccountLinked">Nessun account collegato</string>
 	<string name="kamcordVoiceOverlayEnabledFuture">La Registrazione voce sarà attivata per i futuri video.</string>
 	<string name="kamcordAreYouSure">Desideri davvero uscire?</string>
-	<string name="kamcordAuthoredBy">da %s \u00B7\u00A0</string>
 	<plurals name="kamcordUploadTimeMinutes">
 		<item quantity="one">%d minuto fa</item>
 		<item quantity="other">%d minuti fa</item>
@@ -124,10 +134,10 @@
 	<string name="kamcordFollow">Segui</string>
 	<string name="kamcordPasswordMinCharacters">La password deve superare i 6 caratteri</string>
 	<string name="kamcordErrorUnfollow">Errore durante il processo di rimozione della funzione \&quot;Segui Utente\&quot;</string>
-	<string name="kamcordChangePassword">Modifica password</string>
 	<string name="kamcordChangeEmail">Modifica email</string>
 	<string name="kamcordNoInternet">Connessione Internet assente</string>
 	<string name="kamcordNewPasswordAgain">Nuova password (di nuovo)</string>
+	<string name="kamcordMostViewed">I più visti</string>
 	<string name="kamcordNewEmailAgain">Nuova email (ancora)</string>
 	<string name="kamcordMakePublic">Rendi pubblico</string>
 	<string name="kamcordCurrentPassword">Password attuale</string>
@@ -145,10 +155,13 @@
 	<string name="kamcordEnableVoiceOverlay">Attiva Registrazione voce</string>
 	<string name="kamcordEmailEnter">Inserisci un indirizzo e-mail</string>
 	<string name="kamcordEmail">E-mail</string>
+	<string name="kamcordAgeDaysShort">%dd</string>
 	<string name="kamcordUsernameMaxCharacters">Il nome utente non può superare 16 caratteri</string>
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Con tecnologia Kamcord</string>
 	<string name="kamcordNo">No</string>
+	<string name="kamcordAgeYearsShort">%dy</string>
+	<string name="kamcordErrorRetrievingNotificationList">Si è verificato un errore durante il recupero dell\'elenco delle notifiche. Controlla la tua connessione a Internet.</string>
 	<string name="kamcordConfirmNicoNicoSignOut">Conferma l\'uscita da niconico</string>
 	<string name="kamcordEnterUsernameOrEmail">Inserisci il nome utente o l\'indirizzo e-mail del tuo profilo Kamcord.</string>
 	<string name="kamcordCouldntDeleteComment">Impossibile eliminare il commento</string>
@@ -162,15 +175,21 @@
 		<item quantity="one">%d ora fa</item>
 		<item quantity="other">%d ore fa</item>
 	</plurals>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordNoAccountFound">Nessun account trovato</string>
 	<string name="kamcord">Kamcord</string>
 	<string name="kamcordEmailEntered">L\'indirizzo e-mail che hai inserito è %@</string>
+	<string name="kamcordAuthoredBy">Da %s</string>
 	<string name="kamcordDisable">Disattiva</string>
 	<string name="kamcordCouldntDeleteVideo">Impossibile eliminare il video</string>
 	<string name="kamcordEmailSent">E-mail inviata</string>
 	<string name="kamcordPassword">Password</string>
 	<string name="kamcordEmailDoesNotExist">L\'email o lo username non esistono</string>
 	<string name="kamcordVoiceOverlayEnabledExclamation">Registrazione voce attivata!</string>
+	<string name="kamcordAgeHoursShort">%dh</string>
+	<string name="kamcordAgeMinutesShort">%dm</string>
+	<string name="kamcordAgeSecondsShort">%ds</string>
 	<string name="kamcordMakeVideoPublicError">Errore durante il processo per rendere il video pubblico</string>
 	<string name="kamcordShareReplay">Condividi Replay</string>
+	<string name="kamcordPrivate">Privato</string>
 </resources>

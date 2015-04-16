@@ -43,8 +43,6 @@
         </activity>
 
         <service android:name="com.kamcord.android.UploadService" />
-
-        <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kamcordKakaoAppKey"/>
         
     </application>
 </manifest>

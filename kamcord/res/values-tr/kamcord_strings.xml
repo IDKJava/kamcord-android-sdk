@@ -12,16 +12,18 @@
 	<string name="kamcordErrorRetrievingUserList">Kullanıcıların listesi alınırken bir hata oluştu. İnternet bağlantınızı kontrol edin.</string>
 	<string name="kamcordEmailNotSent">Email Gönderilmedi</string>
 	<string name="kamcordConfirmKamcordSignOut">Kamcord Çıkışını Onayla</string>
+	<string name="kamcordCouldntChangeTagline">Slogan Değiştirilemedi</string>
+	<string name="kamcordChangePassword">Şifreyi Değiştir</string>
 	<string name="kamcordConfirmYouTubeSignOut">Youtube Çıkışını Onayla</string>
 	<string name="kamcordMustSignInToComment">Bu video\'ya yorumda bulunmak için giriþ yapmalýsýn.</string>
 	<string name="kamcordErrorFollow">Kullanıcı Takibe Alınırken Hata Oluştu</string>
-	<string name="kamcordProfile">Profil</string>
 	<plurals name="kamcordUploadTimeMonths">
 		<item quantity="one">%d ay önce</item>
 		<item quantity="other">%d ay önce</item>
 	</plurals>
 	<string name="kamcordEmailCorrect">Email adresin doğru mu?</string>
 	<string name="kamcordCouldntChangeEmail">E-posta Değiştirilemedi</string>
+	<string name="kamcordRecent">En Son</string>
 	<string name="kamcordPasswordMaxCharacters">Şifre 31 karakterden kısa olmalı</string>
 	<plurals name="kamcordUploadTimeDays">
 		<item quantity="one">%d gün önce</item>
@@ -43,9 +45,12 @@
 	</plurals>
 	<string name="kamcordSignOut">Çıkış Yap</string>
 	<string name="kamcordNewPasswordsDoNotMatch">Yeni şifreler eşleşmiyor</string>
+	<string name="kamcordProfile">Profil</string>
+	<string name="kamcordNewTagline">Yeni slogan</string>
 	<string name="kamcordUsernameEmail">Kullanıcı adı veya Email</string>
 	<string name="kamcordSignInError">Oturum Açma hatası</string>
 	<string name="kamcordProfileErrorMessage">Profil oluşturulamadı, lütfen daha sonra tekrar deneyin.</string>
+	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">Email 65 karakterden az olmalı</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Bu cihazda Ses Kaydı kapalıdır.</string>
 	<string name="kamcordEmailInUse">Bu email kullanılıyor</string>
@@ -58,6 +63,8 @@
 	<string name="kamcordRetry">Yeniden dene</string>
 	<string name="kamcordUsername">Kullanıcı adı</string>
 	<string name="kamcordEnable">Aç</string>
+	<string name="kamcordSuccessfullyChangedTagline">Sloganınız başarıyla değiştirildi.</string>
+	<string name="kamcordKakaoTalk">KakaoTalk</string>
 	<string name="kamcordConfirmTwitterSignOut">Twitter Çıkışını Onayla</string>
 	<string name="kamcordErrorRetrievingComments">Bu video için yorumlar alınırken bir hata oluştu. İnternet bağlantınızı kontrol edin.</string>
 	<string name="kamcordTermsOfService">Hizmet Koşulları</string>
@@ -72,8 +79,8 @@
 	<string name="kamcordWorking">İşlem yapılıyor...</string>
 	<string name="kamcordSorryMatchingAccounts">Üzgünüz, eşleşen hesap bulamadık.</string>
 	<string name="kamcordPost">Gönder</string>
+	<string name="kamcordFeatured">Özellikli</string>
 	<string name="kamcordAnyUnclaimedVideos">Tüm sahipsiz videolar profilinle ilişkilendirilecek.</string>
-	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">Profil Oluşturma Hatası</string>
 	<string name="kamcordMakePrivate">Özel Yap</string>
 	<string name="kamcordAgreementBlurb">Profil Oluştur tuşuna basarak Gizlilik Politikası ve Hizmet Koşullarını okuyup kabul ettiğini onaylıyorsun.</string>
@@ -88,16 +95,20 @@
 	<string name="kamcordDeleteVideo">Video\'yu Sil</string>
 	<string name="kamcordImReady">Hazırım!</string>
 	<string name="kamcordRecentVideos">Video\'yu Sil</string>
+	<string name="kamcordTrending">Eğilimler</string>
 	<string name="kamcordComments">Yorumlar</string>
+	<string name="kamcordChangeTagline">Sloganı Değiştir</string>
 	<string name="kamcordSuccess">Başarılı!</string>
 	<string name="kamcordEnableVoiceOverlayQuestion">Ses Kaydını Aç?</string>
-	<string name="kamcordJustNow">Hemen þimdi</string>
+	<string name="kamcordNotifications">Bildirimler</string>
+	<string name="kamcordJustNow">Hemen şimdi</string>
 	<string name="kamcordWatchVideo">Video\'yu Ýzle</string>
 	<string name="kamcordUnfollow">Takibi býrak</string>
 	<string name="kamcordAddComment">Bir yorum ekle</string>
-	<string name="kamcordPrivate">\u00A0\u00B7 Özel</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Şifre girmelisin</string>
+	<string name="kamcordUserNotUploadedVideos">Bu kullanıcı henüz hiç video yüklemedi.</string>
+	<string name="kamcordSettings">Ayarlar</string>
 	<string name="kamcordNewPassword">Yeni şifre</string>
 	<string name="kamcordSignIn">Giriş Yap</string>
 	<string name="kamcordMakeVideoPrivateError">Videoyu Özel Yap Hatası</string>
@@ -116,7 +127,6 @@
 	<string name="kamcordNoAccountLinked">Bağlı hesap yok</string>
 	<string name="kamcordVoiceOverlayEnabledFuture">Ses Kaydı daha sonraki videolar için açık olacak. </string>
 	<string name="kamcordAreYouSure">Çıkış yapmak istediğinden emin misin?</string>
-	<string name="kamcordAuthoredBy">%s tarafýndan \u00B7\u00A0</string>
 	<plurals name="kamcordUploadTimeMinutes">
 		<item quantity="one">%d dakika önce</item>
 		<item quantity="other">%d dakika önce</item>
@@ -124,10 +134,10 @@
 	<string name="kamcordFollow">Takip et</string>
 	<string name="kamcordPasswordMinCharacters">Şifre en az 6 karakter olmalı</string>
 	<string name="kamcordErrorUnfollow">Kullanıcıyı Takipten Çıkarken Hata Oluştu</string>
-	<string name="kamcordChangePassword">Şifreyi Değiştir</string>
 	<string name="kamcordChangeEmail">Emaili değiştir</string>
 	<string name="kamcordNoInternet">İnternet Bağlantısı Yok</string>
 	<string name="kamcordNewPasswordAgain">Yeni şifre (tekrar)</string>
+	<string name="kamcordMostViewed">En Çok İzlenen</string>
 	<string name="kamcordNewEmailAgain">Yeni email (tekrar)</string>
 	<string name="kamcordMakePublic">Umumi Yap</string>
 	<string name="kamcordCurrentPassword">Geçerli şifre</string>
@@ -145,10 +155,13 @@
 	<string name="kamcordEnableVoiceOverlay">Ses Kaydını Aç</string>
 	<string name="kamcordEmailEnter">Email adresi girmelisin</string>
 	<string name="kamcordEmail">Email</string>
+	<string name="kamcordAgeDaysShort">%dd</string>
 	<string name="kamcordUsernameMaxCharacters">Kullanıcı adı 16 karakterden kısa olmalıdır</string>
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Kamcord</string>
 	<string name="kamcordNo">Hayır</string>
+	<string name="kamcordAgeYearsShort">%dy</string>
+	<string name="kamcordErrorRetrievingNotificationList">Bildirimlerin listesi alınırken bir hata oluştu. İnternet bağlantınızı kontrol edin.</string>
 	<string name="kamcordConfirmNicoNicoSignOut">niconico Çıkışını Onayla</string>
 	<string name="kamcordEnterUsernameOrEmail">Kamcord profilinin kullanıcı adını veya email adresini gir.</string>
 	<string name="kamcordCouldntDeleteComment">Yorum Silinemedi</string>
@@ -162,15 +175,21 @@
 		<item quantity="one">%d saat önce</item>
 		<item quantity="other">%d saat önce</item>
 	</plurals>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordNoAccountFound">Hesap Bulunamadı</string>
 	<string name="kamcord">Kamcord</string>
 	<string name="kamcordEmailEntered">Girdiğin email adresi %@</string>
+	<string name="kamcordAuthoredBy">%s tarafýndan</string>
 	<string name="kamcordDisable">Devre dışı bırak</string>
 	<string name="kamcordCouldntDeleteVideo">Video Silinemedi</string>
 	<string name="kamcordEmailSent">Email gönderildi</string>
 	<string name="kamcordPassword">Şifre</string>
 	<string name="kamcordEmailDoesNotExist">Email ya da kullanıcı adı bulunamadı</string>
 	<string name="kamcordVoiceOverlayEnabledExclamation">Ses Kaydı Açıldı!</string>
+	<string name="kamcordAgeHoursShort">%dh</string>
+	<string name="kamcordAgeMinutesShort">%dm</string>
+	<string name="kamcordAgeSecondsShort">%ds</string>
 	<string name="kamcordMakeVideoPublicError">Videoyu Herkese Aç Hatası</string>
 	<string name="kamcordShareReplay">Videoları Paylaş</string>
+	<string name="kamcordPrivate">Özel</string>
 </resources>

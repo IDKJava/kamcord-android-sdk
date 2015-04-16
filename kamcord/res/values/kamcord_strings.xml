@@ -9,6 +9,7 @@
     <string name="kamcordWatch">Watch</string>
     <string name="kamcordProfile">Profile</string>
     <string name="kamcordClose">Close</string>
+    <string name="kamcordNotifications">Notifications</string>
     
     <!-- Share tab. -->
     <string name="kamcordWatchVideo">Watch Video</string>
@@ -23,7 +24,6 @@
     <string name="kamcordShareReplay">Share Replay</string>
     <string name="kamcordRetry">Retry</string>
     <string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
-    <string name="kamcordKakaoAppKey">15bb4de98feb5cd4c344dc65a9c69fdb</string>
     
     <string name="kamcordUploadFinished">Upload Finished!</string>
     <string name="kamcordUploadFailed">Upload Failed</string>
@@ -59,6 +59,14 @@
         <item quantity="one">%d year ago</item>
         <item quantity="other">%d years ago</item>
     </plurals>
+    
+    <string name="kamcordAgeSecondsShort">%ds</string>
+    <string name="kamcordAgeMinutesShort">%dm</string>
+    <string name="kamcordAgeHoursShort">%dh</string>
+    <string name="kamcordAgeDaysShort">%dd</string>
+    <string name="kamcordAgeMonthsShort">%dmo</string>
+    <string name="kamcordAgeYearsShort">%dy</string>
+
     <string name="kamcordRecentVideos">Recent Videos</string>
     <string name="kamcordFeaturedVideos">Featured Videos</string>
     <plurals name="kamcordFeaturedVideosCount">
@@ -69,7 +77,7 @@
         <item quantity="one">Video</item>
         <item quantity="other">Videos</item>
     </plurals>
-    <string name="kamcordAuthoredBy">by %s \u00B7\u00A0</string>
+    <string name="kamcordAuthoredBy">By %s</string>
     <string name="kamcordErrorRetrievingComments">There was an error retrieving comments for this video. Check your internet connection.</string>
     <string name="kamcordErrorRetrievingFeed">There was an error retrieving this video feed. Check your internet connection.</string>
     <string name="kamcordComments">Comments</string>
@@ -90,6 +98,14 @@
     <string name="kamcordFollow">Follow</string>
     <string name="kamcordUnfollow">Unfollow</string>
     <string name="kamcordErrorRetrievingUserList">There was an error retrieving the list of users. Check your internet connection.</string>
+    <string name="kamcordErrorRetrievingNotificationList">There was an error retrieving the list of notifications. Check your internet connection.</string>
+    
+    <!-- Feed types -->
+    <string name="kamcordFeatured">Featured</string>
+    <string name="kamcordRecent">Recent</string>
+    <string name="kamcordTrending">Trending</string>
+    <string name="kamcordMostViewed">Most Viewed</string>
+    
     
     <!-- Dialogs. -->
     <string name="kamcordNoInternet">No Internet Connection</string>
@@ -102,6 +118,7 @@
     <string name="kamcordCheckInternetConnection">Check your internet connection.</string>
     <string name="kamcordCouldntChangeEmail">Couldn\'t Change Email</string>
     <string name="kamcordCouldntChangePassword">Couldn\'t Change Password</string>
+    <string name="kamcordCouldntChangeTagline">Couldn\'t Change Tagline</string>
     <string name="kamcordCouldntDeleteComment">Couldn\'t Delete Comment</string>
     <string name="kamcordCouldntDeleteVideo">Couldn\'t Delete Video</string>
     <string name="kamcordErrorFollow">Error Following User</string>
@@ -138,6 +155,8 @@
     <string name="kamcordUnclaimedVideos">Unclaimed Videos</string>
     <string name="kamcordAnyUnclaimedVideos">Any unclaimed videos will be associated with your profile.</string>
     <string name="kamcordErrorRetrievingUserInfo">There was an error retrieving this user\'s information. Check your internet connection.</string>
+    <string name="kamcordSettings">Settings</string>
+    <string name="kamcordUserNotUploadedVideos">This user has not uploaded any videos yet.</string>
     
     
     <!-- Sign in. -->
@@ -163,7 +182,7 @@
     <string name="kamcordAreYouSure">Are you sure you want to sign out?</string>
     
     <!-- Video settings. -->
-    <string name="kamcordPrivate">\u00A0\u00B7 Private</string>
+    <string name="kamcordPrivate">Private</string>
     <string name="kamcordDeleteVideo">Delete Video</string>
     <string name="kamcordReallyDelete">Really Delete?</string>
     <string name="kamcordMakePrivate">Make Private</string>
@@ -181,6 +200,7 @@
     <!-- Edit profile -->
     <string name="kamcordChangePassword">Change Password</string>
     <string name="kamcordChangeEmail">Change Email</string>
+    <string name="kamcordChangeTagline">Change Tagline</string>
     
     <!-- Change credentials -->
     <string name="kamcordCurrentPassword">Current password</string>
@@ -188,10 +208,12 @@
     <string name="kamcordNewPasswordAgain">New password (again)</string>
     <string name="kamcordNewEmail">New email</string>
     <string name="kamcordNewEmailAgain">New email (again)</string>
+    <string name="kamcordNewTagline">New tagline</string>
     <string name="kamcordNewPasswordsDoNotMatch">New passwords do not match</string>
     <string name="kamcordNewEmailsDoNotMatch">New emails do not match</string>
     <string name="kamcordSuccessfullyChangedEmail">Your preferred email was successfully changed.</string>
     <string name="kamcordSuccessfullyChangedPassword">Your password was successfully changed.</string>
+    <string name="kamcordSuccessfullyChangedTagline">Your tagline was successfully changed.</string>
     <string name="kamcordSuccess">Success!</string>
 
     <!-- Voice Overlay -->
@@ -212,9 +234,9 @@
     
     
     <!-- ********** Colors. ********** -->
-    <color name="kamcordActivityBackground">#EFF2F4</color>
-    <color name="kamcordButtonActive">#4FC396</color>
-    <color name="kamcordButtonActivePressed">#3f9d79</color>
+    <color name="kamcordActivityBackground">#EEE</color>
+    <color name="kamcordButtonActive">#3f9c78</color>
+    <color name="kamcordButtonActivePressed">#3d8569</color>
     <color name="kamcordButtonActiveFocused">#7bdab5</color>
     <color name="kamcordButtonInactive">#bbbbbb</color>
     <color name="kamcordButtonInactivePressed">#9c9c9c</color>
@@ -229,11 +251,12 @@
     <color name="kamcordLegalBackground">#555</color>
     
     <!-- Tab bar. -->
-    <color name="kamcordTabbarBackground">#353E44</color>
+    <color name="kamcordTabbarBackground">#FFF</color>
+    <color name="kamcordTabbarTextColor">#37484c</color>
     <color name="kamcordTabItemFocusPressedColor">#23292e</color>
-    <color name="kamcordTabItemFocusColor">#353E44</color>
+    <color name="kamcordTabItemFocusColor">#DDD</color>
     <color name="kamcordTabItemUnfocusPressedColor">#2a3136</color>
-    <color name="kamcordTabItemUnfocusColor">#3C474D</color>
+    <color name="kamcordTabItemUnfocusColor">#FFF</color>
     
     <!-- Share view. -->
     <color name="kamcordShareWidgetBorder">#D7D9DB</color>
@@ -243,7 +266,7 @@
     <color name="kamcordShareWidgetBackgroundSelected">#4FC396</color>
     <color name="kamcordShareWidgetBackgroundSelectedPressed">#3d9674</color>
     <color name="kamcordShareThumbBackground">#333</color>
-    <color name="kamcordShareTitleEditTextColor">#000</color>
+    <color name="kamcordShareTitleEditTextColor">#37484c</color>
     <color name="kamcordShareWidgetText">#8c8f91</color>
     <color name="kamcordShareWidgetTextSelected">#ffffff</color>
     <color name="kamcordShareRectStroke">#d7d9db</color>
@@ -287,16 +310,15 @@
     <dimen name="kamcordDividerWidth">0.5dp</dimen>
     <dimen name="kamcordButtonHeight">40dp</dimen>
     <dimen name="kamcordButtonTextsize">20dp</dimen>
-    <dimen name="kamcordModalWidth">500dp</dimen>
+    <dimen name="kamcordModalWidth">400dp</dimen>
     <dimen name="kamcordModalHeight">700dp</dimen>
-    <dimen name="kamcordRefreshBarWidth">5dp</dimen>
     <dimen name="kamcordRefreshMaxOverscroll">200dp</dimen>
     
     <!-- Share. -->
     <dimen name="kamcordShareCornerRadius">2dp</dimen>
     <dimen name="kamcordShareRectStroke">0.5dp</dimen>
     <dimen name="kamcordShareThumbSize">125dp</dimen>
-    <dimen name="kamcordShareThumbPlayOverlaySize">52.3dp</dimen>
+    <dimen name="kamcordShareThumbPlayOverlaySize">54dp</dimen>
     <dimen name="kamcordShareSpacing">13.3dp</dimen>
     <dimen name="kamcordShareWidgetWidth">120dp</dimen>
     <dimen name="kamcordShareWidgetPadding">12dp</dimen>
@@ -305,6 +327,8 @@
     <dimen name="kamcordShareWidgetTextSize">16dp</dimen>
     <dimen name="kamcordShareWidgetNudge">5dp</dimen>
     <dimen name="kamcordShareToggleWidth">55dp</dimen>
+    <dimen name="kamcordShareTargetButtonSize">44dp</dimen>
+    <dimen name="kamcordShareTargetButtonSpacing">7dp</dimen>
     
     <!-- Watch. -->
     <dimen name="kamcordWatchPadding">10dp</dimen>
@@ -336,9 +360,10 @@
     <dimen name="kamcordFollowListFollowingCount">12sp</dimen>
     
     <!-- Tab bar. -->
-    <dimen name="kamcordTabbarHeight">48dp</dimen>
-    <dimen name="kamcordTabbarItemSeparation">0.5dp</dimen>
-    <dimen name="kamcordTabbarBackPadding">11.5dp</dimen> <!-- This should be (tabbarHeight - tabbarBackSize) / 2 -->
+    <dimen name="kamcordTabbarHeight">52dp</dimen>
+    <dimen name="kamcordTabbarItemSeparation">0dp</dimen>
+    <dimen name="kamcordTabItemTextSize">18sp</dimen>
+    <dimen name="kamcordTabbarBackPadding">18dp</dimen>
     <dimen name="kamcordTabbarBackSize">25dp</dimen>
     <dimen name="kamcordTabbarProgressSize">3.5dp</dimen>
     
@@ -460,15 +485,6 @@
         <item name="android:scaleType">centerInside</item>
     </style>
 
-    <style name="KamcordShareWidgetText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:focusable">false</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/kamcordShareWidgetTextSize</item>
-        <item name="android:textColor">@color/kamcord_share_widget_text</item>
-    </style>
-    
     <style name="KamcordProfileSettingsItemContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/kamcordProfileSettingsItemHeight</item>
@@ -523,5 +539,29 @@
         <attr name="android:divider" />
         <attr name="android:requiresFadingEdge" />
         <attr name="android:fadingEdgeLength" />
+    </declare-styleable>
+    <declare-styleable name="RoundedImageView">
+        <attr name="riv_corner_radius" format="dimension" />
+        <attr name="riv_border_width" format="dimension" />
+        <attr name="riv_border_color" format="color" />
+        <attr name="riv_mutate_background" format="boolean" />
+        <attr name="riv_oval" format="boolean" />
+        <attr name="riv_maintain_aspect" format="boolean" />
+        <attr name="android:scaleType" />
+        <attr name="riv_tile_mode">
+            <enum name="clamp" value="0" />
+            <enum name="repeat" value="1" />
+            <enum name="mirror" value="2" />
+        </attr>
+        <attr name="riv_tile_mode_x">
+            <enum name="clamp" value="0" />
+            <enum name="repeat" value="1" />
+            <enum name="mirror" value="2" />
+        </attr>
+        <attr name="riv_tile_mode_y">
+            <enum name="clamp" value="0" />
+            <enum name="repeat" value="1" />
+            <enum name="mirror" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

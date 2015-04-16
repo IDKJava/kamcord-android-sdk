@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
+    android:background="@color/kamcordActivityBackground"
     android:orientation="vertical" >
 
     <FrameLayout
@@ -13,7 +13,7 @@
         android:background="@drawable/kamcord_background_gradient" >
     </FrameLayout>
 
-    <com.kamcord.android.ui.views.PullToRefreshListView
+    <com.kamcord.android.ui.views.PullToRefreshGridView
         android:id="@+id/intermediateBottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,6 +22,7 @@
         android:clipToPadding="false"
         android:divider="@null"
         android:listSelector="@android:color/transparent"
-        android:background="#fff" />
+        android:background="#fff"
+        android:numColumns="1" />
 
 </LinearLayout>

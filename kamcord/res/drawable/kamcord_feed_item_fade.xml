@@ -3,8 +3,8 @@
     android:shape="rectangle" >
 
     <gradient
-        android:endColor="@color/kamcordWatchFeedItemBackground"
-        android:startColor="@color/kamcordWatchFeedItemBackgroundTransparent"
+        android:endColor="#fff"
+        android:startColor="#0fff"
         android:type="linear" />
 
 </shape>

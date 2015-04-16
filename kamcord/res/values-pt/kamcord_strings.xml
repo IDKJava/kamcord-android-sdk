@@ -12,16 +12,18 @@
 	<string name="kamcordErrorRetrievingUserList">Houve um erro ao acessar a lista de usuários. Verifique sua conexão com a internet.</string>
 	<string name="kamcordEmailNotSent">E-Mail Não Enviado</string>
 	<string name="kamcordConfirmKamcordSignOut">Confirmar Saída do Kamcord</string>
+	<string name="kamcordCouldntChangeTagline">Não foi possível alterar slogan</string>
+	<string name="kamcordChangePassword">Mudar Senha</string>
 	<string name="kamcordConfirmYouTubeSignOut">Confirmar Saída do YouTube</string>
 	<string name="kamcordMustSignInToComment">Você precisa entrar para comentar neste vídeo.</string>
 	<string name="kamcordErrorFollow">Erro ao seguir usuário.</string>
-	<string name="kamcordProfile">Perfil</string>
 	<plurals name="kamcordUploadTimeMonths">
 		<item quantity="one">%d mês atrás</item>
 		<item quantity="other">%d meses atrás</item>
 	</plurals>
 	<string name="kamcordEmailCorrect">Seu e-mail está certo?</string>
 	<string name="kamcordCouldntChangeEmail">Não foi possível alterar o e-mail.</string>
+	<string name="kamcordRecent">Recente</string>
 	<string name="kamcordPasswordMaxCharacters">A senha deve ter no máximo 31 caracteres</string>
 	<plurals name="kamcordUploadTimeDays">
 		<item quantity="one">%d dia atrás</item>
@@ -43,9 +45,12 @@
 	</plurals>
 	<string name="kamcordSignOut">Sair</string>
 	<string name="kamcordNewPasswordsDoNotMatch">As novas senhas não estão iguais</string>
+	<string name="kamcordProfile">Perfil</string>
+	<string name="kamcordNewTagline">Novo slogan</string>
 	<string name="kamcordUsernameEmail">Nome de Usuário ou E-Mail</string>
 	<string name="kamcordSignInError">Erro de entrada no sistema</string>
 	<string name="kamcordProfileErrorMessage">Não foi possível criar o perfil. Tente novamente mais tarde.</string>
+	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">O email deve conter menos de 65 caracteres</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">A Narração está desabilitada neste aparelho.</string>
 	<string name="kamcordEmailInUse">Email já em uso</string>
@@ -58,6 +63,8 @@
 	<string name="kamcordRetry">Tentar de novo</string>
 	<string name="kamcordUsername">Nome de usuário</string>
 	<string name="kamcordEnable">Habilitar</string>
+	<string name="kamcordSuccessfullyChangedTagline">Seu slogan foi alterado com sucesso.</string>
+	<string name="kamcordKakaoTalk">KakaoTalk</string>
 	<string name="kamcordConfirmTwitterSignOut">Confirmar Saída do Twitter</string>
 	<string name="kamcordErrorRetrievingComments">Houve um erro ao acessar os comentários deste vídeo. Verifique sua conexão com a internet.</string>
 	<string name="kamcordTermsOfService">Termos do Serviço</string>
@@ -72,8 +79,8 @@
 	<string name="kamcordWorking">Trabalhando...</string>
 	<string name="kamcordSorryMatchingAccounts">Desculpe; não encontramos uma conta correspondente.</string>
 	<string name="kamcordPost">Publicar</string>
+	<string name="kamcordFeatured">Destaque</string>
 	<string name="kamcordAnyUnclaimedVideos">Os vídeos não reconhecidos serão associados ao seu perfil.</string>
-	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">Erro na Criação do Perfil</string>
 	<string name="kamcordMakePrivate">Tornar Particular</string>
 	<string name="kamcordAgreementBlurb">Clicando em \'Criar Perfil\', você indica ter lido e concordado com a Política de Privacidade e os Termos do Serviço.</string>
@@ -88,16 +95,20 @@
 	<string name="kamcordDeleteVideo">Excluir Vídeo</string>
 	<string name="kamcordImReady">Estou Pronto!</string>
 	<string name="kamcordRecentVideos">Excluir Vídeo</string>
+	<string name="kamcordTrending">Trending</string>
 	<string name="kamcordComments">Comentários</string>
+	<string name="kamcordChangeTagline">Mudar slogan</string>
 	<string name="kamcordSuccess">Operação bem sucedida!</string>
 	<string name="kamcordEnableVoiceOverlayQuestion">Habilitar a Narração?</string>
+	<string name="kamcordNotifications">Notificações</string>
 	<string name="kamcordJustNow">Agora Há Pouco</string>
 	<string name="kamcordWatchVideo">Ver Video</string>
 	<string name="kamcordUnfollow">Não seguir</string>
 	<string name="kamcordAddComment">Adicionar um comentário</string>
-	<string name="kamcordPrivate">\u00A0\u00B7 Particular</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Você precisa digitar uma senha</string>
+	<string name="kamcordUserNotUploadedVideos">Esse usuário ainda não adicionou nenhum vídeo.</string>
+	<string name="kamcordSettings">Configurações</string>
 	<string name="kamcordNewPassword">Nova senha</string>
 	<string name="kamcordSignIn">Entrar</string>
 	<string name="kamcordMakeVideoPrivateError">Erro ao tornar o vídeo privado.</string>
@@ -116,7 +127,6 @@
 	<string name="kamcordNoAccountLinked">Não há conta associada</string>
 	<string name="kamcordVoiceOverlayEnabledFuture">A Narração estará habilitada para os próximos vídeos.</string>
 	<string name="kamcordAreYouSure">Você quer mesmo sair?</string>
-	<string name="kamcordAuthoredBy">por %s \u00B7\u00A0</string>
 	<plurals name="kamcordUploadTimeMinutes">
 		<item quantity="one">%d minuto atrás</item>
 		<item quantity="other">%d minutos atrás</item>
@@ -124,10 +134,10 @@
 	<string name="kamcordFollow">Seguir</string>
 	<string name="kamcordPasswordMinCharacters">A senha deve ter no mínimo 6 caracteres</string>
 	<string name="kamcordErrorUnfollow">Erro ao deixar de seguir usuário.</string>
-	<string name="kamcordChangePassword">Mudar Senha</string>
 	<string name="kamcordChangeEmail">Alterar email</string>
 	<string name="kamcordNoInternet">Sem Internet</string>
 	<string name="kamcordNewPasswordAgain">Nova senha (outra vez)</string>
+	<string name="kamcordMostViewed">Mais visualizado</string>
 	<string name="kamcordNewEmailAgain">Novo email (novamente)</string>
 	<string name="kamcordMakePublic">Tornar Público</string>
 	<string name="kamcordCurrentPassword">Senha atual</string>
@@ -145,10 +155,13 @@
 	<string name="kamcordEnableVoiceOverlay">Habilite a Narração</string>
 	<string name="kamcordEmailEnter">Você precisa digitar um e-mail</string>
 	<string name="kamcordEmail">E-mail</string>
+	<string name="kamcordAgeDaysShort">%dd</string>
 	<string name="kamcordUsernameMaxCharacters">O nome de usuário deve ter menos de 16 caracteres</string>
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Utiliza o serviço Kamcord</string>
 	<string name="kamcordNo">Não</string>
+	<string name="kamcordAgeYearsShort">%dy</string>
+	<string name="kamcordErrorRetrievingNotificationList">Ocorreu um erro ao recuperar a lista de notificações. Verifique sua internet</string>
 	<string name="kamcordConfirmNicoNicoSignOut">Confirmar Saída do niconico</string>
 	<string name="kamcordEnterUsernameOrEmail">Digite o nome de usuário ou o e-mail do seu perfil no Kamcord.</string>
 	<string name="kamcordCouldntDeleteComment">Não foi possível excluir o comentário.</string>
@@ -162,15 +175,21 @@
 		<item quantity="one">%d hora atrás</item>
 		<item quantity="other">%d horas atrás</item>
 	</plurals>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordNoAccountFound">Nenhuma Conta Encontrada</string>
 	<string name="kamcord">Kamcord</string>
 	<string name="kamcordEmailEntered">O e-mail que você digitou é %@</string>
+	<string name="kamcordAuthoredBy">Por %s</string>
 	<string name="kamcordDisable">Desabilitar</string>
 	<string name="kamcordCouldntDeleteVideo">Não foi possível excluir o vídeo.</string>
 	<string name="kamcordEmailSent">E-Mail Enviado</string>
 	<string name="kamcordPassword">Senha</string>
 	<string name="kamcordEmailDoesNotExist">Email ou nome de utilizador inexistentes</string>
 	<string name="kamcordVoiceOverlayEnabledExclamation">Narração Habilitada!</string>
+	<string name="kamcordAgeHoursShort">%dh</string>
+	<string name="kamcordAgeMinutesShort">%dm</string>
+	<string name="kamcordAgeSecondsShort">%ds</string>
 	<string name="kamcordMakeVideoPublicError">Erro ao tornar o vídeo público.</string>
 	<string name="kamcordShareReplay">Compartilhar Replay</string>
+	<string name="kamcordPrivate">Particular</string>
 </resources>

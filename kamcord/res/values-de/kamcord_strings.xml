@@ -12,16 +12,18 @@
 	<string name="kamcordErrorRetrievingUserList">Es gab einen Fehler beim Abrufen der Liste der Benutzer. Überprüfen Sie Ihre Internetverbindung.</string>
 	<string name="kamcordEmailNotSent">Email nicht gesendet</string>
 	<string name="kamcordConfirmKamcordSignOut">Kamcord-Abmeldung bestätigen</string>
+	<string name="kamcordCouldntChangeTagline">Leitsatz konnte nicht geändert werden</string>
+	<string name="kamcordChangePassword">Passwort ändern</string>
 	<string name="kamcordConfirmYouTubeSignOut">YouTube-Abmeldung bestätigen</string>
 	<string name="kamcordMustSignInToComment">Du musst dich anmelden, um dieses Video zu kommentieren</string>
 	<string name="kamcordErrorFollow">Fehler beim Folgen des Benutzers</string>
-	<string name="kamcordProfile">Profil</string>
 	<plurals name="kamcordUploadTimeMonths">
 		<item quantity="one">Vor %d Monat</item>
 		<item quantity="other">Vor %d Monaten</item>
 	</plurals>
 	<string name="kamcordEmailCorrect">Ist deine Email korrekt?</string>
 	<string name="kamcordCouldntChangeEmail">E-Mail konnte nicht geändert werden</string>
+	<string name="kamcordRecent">Kürzlich</string>
 	<string name="kamcordPasswordMaxCharacters">Passwort darf nicht mehr als 31 Zeichen lang sein</string>
 	<plurals name="kamcordUploadTimeDays">
 		<item quantity="one">Vor %d Tag</item>
@@ -43,9 +45,12 @@
 	</plurals>
 	<string name="kamcordSignOut">Abmelden</string>
 	<string name="kamcordNewPasswordsDoNotMatch">Neue Passwörter stimmen nicht überein</string>
+	<string name="kamcordProfile">Profil</string>
+	<string name="kamcordNewTagline">Neuer Leitsatz</string>
 	<string name="kamcordUsernameEmail">Benutzername oder Email</string>
 	<string name="kamcordSignInError">Fehler bei der Anmeldung</string>
 	<string name="kamcordProfileErrorMessage">Profilerstellung fehlgeschlagen, versuchen Sie es später noch einmal.</string>
+	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">E-Mail muss weniger als 65 Zeichen haben</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Auf diesem Gerät ist die Vertonung deaktiviert.</string>
 	<string name="kamcordEmailInUse">Die E-Mail wird bereits verwendet</string>
@@ -58,6 +63,8 @@
 	<string name="kamcordRetry">Wiederholen</string>
 	<string name="kamcordUsername">Benutzername</string>
 	<string name="kamcordEnable">Aktivieren</string>
+	<string name="kamcordSuccessfullyChangedTagline">Ihr Leitsatz wurde erfolgreich geändert.</string>
+	<string name="kamcordKakaoTalk">KakaoTalk</string>
 	<string name="kamcordConfirmTwitterSignOut">Twitter-Abmeldung bestätigen</string>
 	<string name="kamcordErrorRetrievingComments">Es gab einen Fehler beim Abrufen der Kommentare für dieses Video. Überprüfen Sie Ihre Internetverbindung.</string>
 	<string name="kamcordTermsOfService">Nutzungsbedingungen</string>
@@ -72,8 +79,8 @@
 	<string name="kamcordWorking">In Arbeit...</string>
 	<string name="kamcordSorryMatchingAccounts">Leider konnten wir keine passenden Konten finden.</string>
 	<string name="kamcordPost">Posten</string>
+	<string name="kamcordFeatured">Vorgestellte</string>
 	<string name="kamcordAnyUnclaimedVideos">Alle nicht abgerufenen Videos werden deinem Profil zugeordnet.</string>
-	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">Fehler beim Erstellen des Profils</string>
 	<string name="kamcordMakePrivate">Privat machen</string>
 	<string name="kamcordAgreementBlurb">Wenn du auf \'Profil erstellen\' klickst, bestätigst du, dass du die Datenschutzrichtlinien und die Nutzungsbedingungen gelesen hast und ihnen zustimmst.</string>
@@ -88,16 +95,20 @@
 	<string name="kamcordDeleteVideo">Video löschen</string>
 	<string name="kamcordImReady">Ich bin fertig!</string>
 	<string name="kamcordRecentVideos">Video löschen</string>
+	<string name="kamcordTrending">Trending</string>
 	<string name="kamcordComments">Kommentare</string>
+	<string name="kamcordChangeTagline">Leitsatz ändern</string>
 	<string name="kamcordSuccess">Erfolg!</string>
 	<string name="kamcordEnableVoiceOverlayQuestion">Vertonung aktivieren?</string>
+	<string name="kamcordNotifications">Benachrichtigungen</string>
 	<string name="kamcordJustNow">Augenblicklich</string>
 	<string name="kamcordWatchVideo">Video Ansehen</string>
 	<string name="kamcordUnfollow">Nicht mehr folgen</string>
 	<string name="kamcordAddComment">Einen Kommentar hinzufügen</string>
-	<string name="kamcordPrivate">\u00A0\u00B7 Privat</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Du musst ein Passwort eingeben</string>
+	<string name="kamcordUserNotUploadedVideos">Dieser Benutzer hat noch keine Videos hochgeladen.</string>
+	<string name="kamcordSettings">Einstellungen</string>
 	<string name="kamcordNewPassword">Neues Passwort</string>
 	<string name="kamcordSignIn">Anmelden</string>
 	<string name="kamcordMakeVideoPrivateError">Fehler beim Umstellen des Videos auf Privat</string>
@@ -116,7 +127,6 @@
 	<string name="kamcordNoAccountLinked">Kein Konto verbunden</string>
 	<string name="kamcordVoiceOverlayEnabledFuture">Vertonung wird für künftige Videos aktiviert.</string>
 	<string name="kamcordAreYouSure">Bist du sicher, dass du dich abmelden willst?</string>
-	<string name="kamcordAuthoredBy">von %s \u00B7\u00A0</string>
 	<plurals name="kamcordUploadTimeMinutes">
 		<item quantity="one">Vor %d Minute</item>
 		<item quantity="other">Vor %d Minuten</item>
@@ -124,10 +134,10 @@
 	<string name="kamcordFollow">Folgen</string>
 	<string name="kamcordPasswordMinCharacters">Passwort muss mindestens 6 Zeichen lang sein</string>
 	<string name="kamcordErrorUnfollow">Fehler beim Nicht-mehr-Folgen des Benutzers</string>
-	<string name="kamcordChangePassword">Passwort ändern</string>
 	<string name="kamcordChangeEmail">E-Mail ändern</string>
 	<string name="kamcordNoInternet">Keine Internetverbindung</string>
 	<string name="kamcordNewPasswordAgain">Neues Passwort (wiederholen)</string>
+	<string name="kamcordMostViewed">Am häufigsten aufgerufen</string>
 	<string name="kamcordNewEmailAgain">Neue E-Mail (wiederholen)</string>
 	<string name="kamcordMakePublic">Öffentlich machen</string>
 	<string name="kamcordCurrentPassword">Aktuelles Passwort</string>
@@ -145,10 +155,13 @@
 	<string name="kamcordEnableVoiceOverlay">Vertonung aktivieren</string>
 	<string name="kamcordEmailEnter">Du musst eine Email eingeben</string>
 	<string name="kamcordEmail">Email</string>
+	<string name="kamcordAgeDaysShort">%dd</string>
 	<string name="kamcordUsernameMaxCharacters">Benutzername muss weniger als 16 Zeichen lang sein</string>
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">Unterstützt von Kamcord</string>
 	<string name="kamcordNo">Nein</string>
+	<string name="kamcordAgeYearsShort">%dy</string>
+	<string name="kamcordErrorRetrievingNotificationList">Bei der Abrufung der Benachrichtigungsliste ist ein Fehler aufgetreten. Prüfen Sie Ihre Internetverbindung.</string>
 	<string name="kamcordConfirmNicoNicoSignOut">niconico-Abmeldung bestätigen</string>
 	<string name="kamcordEnterUsernameOrEmail">Gib den Benutzernamen oder die Emailadresse für dein Kamcord-Profil ein.</string>
 	<string name="kamcordCouldntDeleteComment">Kommentar konnte nicht gelöscht werden</string>
@@ -162,15 +175,21 @@
 		<item quantity="one">Vor %d Stunde</item>
 		<item quantity="other">Vor %d Stunden</item>
 	</plurals>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordNoAccountFound">Kein Konto gefunden</string>
 	<string name="kamcord">Kamcord</string>
 	<string name="kamcordEmailEntered">Die Email, die du eingegeben hast, ist %@</string>
+	<string name="kamcordAuthoredBy">Von %s</string>
 	<string name="kamcordDisable">Deaktivieren</string>
 	<string name="kamcordCouldntDeleteVideo">Video konnte nicht gelöscht werden</string>
 	<string name="kamcordEmailSent">Email gesendet</string>
 	<string name="kamcordPassword">Passwort</string>
 	<string name="kamcordEmailDoesNotExist">E-Mail oder Benutzername existiert nicht</string>
 	<string name="kamcordVoiceOverlayEnabledExclamation">Vertonung aktiviert!</string>
+	<string name="kamcordAgeHoursShort">%dh</string>
+	<string name="kamcordAgeMinutesShort">%dm</string>
+	<string name="kamcordAgeSecondsShort">%ds</string>
 	<string name="kamcordMakeVideoPublicError">Fehler beim Veröffentlichen des Videos</string>
 	<string name="kamcordShareReplay">Video teilen</string>
+	<string name="kamcordPrivate">Privat</string>
 </resources>

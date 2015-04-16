@@ -16,10 +16,11 @@
 	<string name="kamcordErrorRetrievingUserList">ظهر خطأ أثناء استرداد قائمة المستخدمين. تحقق من اتصال الإنترنت الخاص بك.</string>
 	<string name="kamcordEmailNotSent">لم يتم إرسال البريد الإلكتروني</string>
 	<string name="kamcordConfirmKamcordSignOut">تأكيد تسجيل الخروج من Kamcord</string>
+	<string name="kamcordCouldntChangeTagline">تعذر تغيير الشعار</string>
+	<string name="kamcordChangePassword">تغيير كلمة السر</string>
 	<string name="kamcordConfirmYouTubeSignOut">تأكيد تسجيل الخروج من YouTube</string>
 	<string name="kamcordMustSignInToComment">يجب تسجيل الدخول للتعليق على هذا الفيديو.</string>
 	<string name="kamcordErrorFollow">خطأ في متابعة العضو</string>
-	<string name="kamcordProfile">حساب</string>
 	<plurals name="kamcordUploadTimeMonths">
 		<item quantity="zero">%d منذ أشهر</item>
 		<item quantity="one">%d منذ شهر واحد</item>
@@ -30,6 +31,7 @@
 	</plurals>
 	<string name="kamcordEmailCorrect">هل البريد الإلكتروني صحيح؟</string>
 	<string name="kamcordCouldntChangeEmail">تعذر تغيير البريد الإلكتروني</string>
+	<string name="kamcordRecent">حديثًا</string>
 	<string name="kamcordPasswordMaxCharacters">يجب أن تكون كلمة السر أقل من 31 حرفًا</string>
 	<plurals name="kamcordUploadTimeDays">
 		<item quantity="zero">%d منذ أيام</item>
@@ -67,9 +69,12 @@
 	</plurals>
 	<string name="kamcordSignOut">تسجيل الخروج</string>
 	<string name="kamcordNewPasswordsDoNotMatch">كلمة السر الجديدة غير متطابقة</string>
+	<string name="kamcordProfile">حساب</string>
+	<string name="kamcordNewTagline">الشعار الجديد</string>
 	<string name="kamcordUsernameEmail">اسم مستخدم أو بريد إلكتروني</string>
 	<string name="kamcordSignInError">خطأ في تسجيل الدخول</string>
 	<string name="kamcordProfileErrorMessage">لم ينجح إنشاء الملف الشخصي، يرجى إعادة المحاولة في وقت لاحق.</string>
+	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">يجب ألا يتجاوز البريد الإلكتروني 65 حرفًا</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">تم تعطيل تراكب الصوت على هذا الجهاز.</string>
 	<string name="kamcordEmailInUse">البريد الإلكتروني مستخدم بالفعل</string>
@@ -86,6 +91,8 @@
 	<string name="kamcordRetry">إعادة المحاولة</string>
 	<string name="kamcordUsername">اسم المستخدم</string>
 	<string name="kamcordEnable">تمكين</string>
+	<string name="kamcordSuccessfullyChangedTagline">تم تغيير شعارك بنجاح.</string>
+	<string name="kamcordKakaoTalk">KakaoTalk</string>
 	<string name="kamcordConfirmTwitterSignOut">تأكيد تسجيل الخروج من Twitter</string>
 	<string name="kamcordErrorRetrievingComments">ظهر خطأ أثناء استرداد تعليقات لهذا الفيديو. تحقق من اتصال الإنترنت الخاص بك.</string>
 	<string name="kamcordTermsOfService">شروط الخدمة</string>
@@ -100,8 +107,8 @@
 	<string name="kamcordWorking">جارِ العمل...</string>
 	<string name="kamcordSorryMatchingAccounts">نأسف، لكن تعذر العثور على أي حسابات مطابقة.</string>
 	<string name="kamcordPost">نشر</string>
+	<string name="kamcordFeatured">مميزة</string>
 	<string name="kamcordAnyUnclaimedVideos">أي فيديوهات غير مربوطة سيتم ربطها بالحساب الخاص بك.</string>
-	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordProfileErrorTitle">خطأ في إنشاء الحساب</string>
 	<string name="kamcordMakePrivate">تعيين خاص</string>
 	<string name="kamcordAgreementBlurb">بالنقر على إنشاء حساب، فإنك تقر أنك قرأت سياسة الخصوصية وشروط الخدمة ووافقت على الالتزام بها.</string>
@@ -120,16 +127,20 @@
 	<string name="kamcordDeleteVideo">حذف الفيديو</string>
 	<string name="kamcordImReady">أنا مستعد!</string>
 	<string name="kamcordRecentVideos">حذف الفيديو</string>
+	<string name="kamcordTrending">الاتجاهات</string>
 	<string name="kamcordComments">تعليقات</string>
+	<string name="kamcordChangeTagline">تغيير الشعار</string>
 	<string name="kamcordSuccess">!عملية ناجحة</string>
 	<string name="kamcordEnableVoiceOverlayQuestion">هل تريد تمكين تراكب الصوت؟</string>
+	<string name="kamcordNotifications">الإخطارات</string>
 	<string name="kamcordJustNow">الآن</string>
 	<string name="kamcordWatchVideo">مشاهدة الفيديو</string>
 	<string name="kamcordUnfollow">إلغاء المتابعة</string>
 	<string name="kamcordAddComment">إضافة تعليق</string>
-	<string name="kamcordPrivate">\u00A0\u00B7 خاص</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">يجب إدخال كلمة سر</string>
+	<string name="kamcordUserNotUploadedVideos">لم يقم هذا المستخدم بتحميل أي فيديوهات بعد.</string>
+	<string name="kamcordSettings">الإعدادات</string>
 	<string name="kamcordNewPassword">كلمة سر الجديدة</string>
 	<string name="kamcordSignIn">تسجيل الدخول</string>
 	<string name="kamcordMakeVideoPrivateError">خطأ في جعل الفيديو خاص</string>
@@ -148,7 +159,6 @@
 	<string name="kamcordNoAccountLinked">لا يوجد أي حساب مربوط</string>
 	<string name="kamcordVoiceOverlayEnabledFuture">سوف يتم تمكين تراكب الصوت للفيديوهات القادمة.</string>
 	<string name="kamcordAreYouSure">هل أنت مأكد أنك تريد تسجيل الخروج؟</string>
-	<string name="kamcordAuthoredBy">\u00A0\u00B7 بواسطة %s</string>
 	<plurals name="kamcordUploadTimeMinutes">
 		<item quantity="zero">%d منذ دقائق</item>
 		<item quantity="one">%d منذ دقيقة</item>
@@ -160,10 +170,10 @@
 	<string name="kamcordFollow">متابعة</string>
 	<string name="kamcordPasswordMinCharacters">يجب أن تكون كلمة السر 6 أحرف على الأقل</string>
 	<string name="kamcordErrorUnfollow">خطأ في إلغاء متابعة العضو</string>
-	<string name="kamcordChangePassword">تغيير كلمة السر</string>
 	<string name="kamcordChangeEmail">تغيير البريد الإلكتروني</string>
 	<string name="kamcordNoInternet">لا يوجد اتصال بالانترنت</string>
 	<string name="kamcordNewPasswordAgain">كلمة السر الجديدة (مرة أخرى)</string>
+	<string name="kamcordMostViewed">الأكثر مشاهدة</string>
 	<string name="kamcordNewEmailAgain">(البريد الإلكتروني الجديد (مرة أخرى</string>
 	<string name="kamcordMakePublic">تعيين عام</string>
 	<string name="kamcordCurrentPassword">كلمة السر الحالية</string>
@@ -181,10 +191,13 @@
 	<string name="kamcordEnableVoiceOverlay">تمكين تراكب الصوت</string>
 	<string name="kamcordEmailEnter">يجب إدخال بريد إلكتروني</string>
 	<string name="kamcordEmail">بريد إلكتروني</string>
+	<string name="kamcordAgeDaysShort">%dd</string>
 	<string name="kamcordUsernameMaxCharacters">اسم المستخدم يجب أن يكون أقل من 16 حرفًا</string>
 	<string name="kamcordFacebook">Facebook</string>
 	<string name="kamcordPoweredByKamcord">برعاية Kamcord</string>
 	<string name="kamcordNo">لا</string>
+	<string name="kamcordAgeYearsShort">%dy</string>
+	<string name="kamcordErrorRetrievingNotificationList">كان هناك خطأ أثناء استرداد قائمة الإخطارات. تحقق من اتصال الإنترنت الخاص بك.</string>
 	<string name="kamcordConfirmNicoNicoSignOut">تأكيد تسجيل الخروج من niconico</string>
 	<string name="kamcordEnterUsernameOrEmail">أدخل اسم المستخدم أو عنوان البريد الإلكتروني الخاص بحسابك على Kamcord.</string>
 	<string name="kamcordCouldntDeleteComment">تعذر حذف التعليق</string>
@@ -202,15 +215,21 @@
 		<item quantity="many">%d منذ ساعات</item>
 		<item quantity="other">%d منذ ساعات</item>
 	</plurals>
+	<string name="kamcordNicoNico">niconico</string>
 	<string name="kamcordNoAccountFound">لم يتم العثور على أي حساب</string>
 	<string name="kamcord">Kamcord</string>
 	<string name="kamcordEmailEntered">البريد الإلكتروني الذي تم إدخاله هو %@</string>
+	<string name="kamcordAuthoredBy">بواسطة %s</string>
 	<string name="kamcordDisable">تعطيل</string>
 	<string name="kamcordCouldntDeleteVideo">تعذر حذف الفيديو</string>
 	<string name="kamcordEmailSent">تم إرسال البريد الإلكتروني</string>
 	<string name="kamcordPassword">كلمة السر</string>
 	<string name="kamcordEmailDoesNotExist">البريد الإلكتروني أو اسم المستخدم غير موجود</string>
 	<string name="kamcordVoiceOverlayEnabledExclamation">تم تمكين تراكب الصوت!</string>
+	<string name="kamcordAgeHoursShort">%dh</string>
+	<string name="kamcordAgeMinutesShort">%dm</string>
+	<string name="kamcordAgeSecondsShort">%ds</string>
 	<string name="kamcordMakeVideoPublicError">خطأ في جعل الفيديو عام</string>
 	<string name="kamcordShareReplay">مشاركة الفيديو</string>
+	<string name="kamcordPrivate">خاص</string>
 </resources>

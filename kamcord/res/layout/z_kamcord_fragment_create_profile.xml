@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    android:orientation="vertical"
-    android:padding="10dp" >
+    android:background="@color/kamcordActivityBackground" >
 
-    <LinearLayout
+    <include layout="@layout/z_kamcord_fragment_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
+    
+    <LinearLayout
+        android:id="@+id/input_fields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_margin="10dp"
         android:background="#fff"
         android:orientation="vertical"
         android:paddingLeft="@dimen/kamcordChangeCredsPadding"
@@ -71,6 +77,8 @@
 
     <Button
         android:id="@+id/createProfile"
+        android:layout_below="@id/input_fields"
+        android:layout_centerHorizontal="true"
         style="@style/KamcordButton"
         android:text="@string/kamcordCreateProfile" />
 
@@ -78,9 +86,19 @@
         android:id="@+id/privacyAndTerms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/createProfile"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/kamcordChangeCredsPadding"
         android:bufferType="spannable"
         android:gravity="center|top"
         android:textColor="#000" />
+    
+    <View
+        android:id="@+id/headerDropShadow"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_below="@+id/header"
+        android:background="@drawable/kamcord_drop_shadow_bottom" />
+    
 
-</LinearLayout>
+</RelativeLayout>

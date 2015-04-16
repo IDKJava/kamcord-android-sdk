@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/kamcord_toggle_selector">
-    </item>
-    <item>
-        <bitmap android:src="@drawable/kamcord_likes_white"
-            android:gravity="center" />
-    </item>
-</layer-list>

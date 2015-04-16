@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp" >
+    android:layout_height="match_parent" >
     
     <View 
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#eee"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp" />
+        android:layout_marginBottom="12dp" />
 
     <TextView
         android:id="@+id/author"
@@ -19,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="12dp"
         android:textSize="20sp" />
     
     <TextView
@@ -40,6 +38,7 @@
         android:layout_alignBottom="@id/author"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@id/author"
+        android:layout_marginRight="12dp"
         android:background="@drawable/kamcord_toggle_selector"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
@@ -54,8 +53,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/author"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="4dp"
         android:textSize="16sp"
         android:textColor="#868788" />
+    
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_below="@id/commentText"
+        android:background="@null" />
     
 </RelativeLayout>
