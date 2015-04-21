@@ -11,8 +11,6 @@ import android.media.MediaMuxer;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -41,23 +39,15 @@ public class ScreenRecorder extends Thread{
     private MediaCodec.BufferInfo mVideoBufferInfo;
 
     private boolean mMuxerStart = false;
-    private int mTrackIndex;
-    private int frameRate = 30;
+    private int mTrackIndex = -1;
+    private int frameRate = 15;
     private static final String VIDEO_TYPE = "video/avc";
-    private static final int VIDEO_WIDTH = 720;
-    private static final int VIDEO_HEIGHT = 480;
+//    private static final int VIDEO_WIDTH = 720;
+//    private static final int VIDEO_HEIGHT = 480;
 
     private int mDisplayWidth;
     private int mDisplayHeight;
     private int mScreenDensity;
-
-    private final Handler mDrainHandler = new Handler(Looper.getMainLooper());
-    private Runnable mDrainEncoderRunnable = new Runnable() {
-        @Override
-        public void run() {
-            drainEncoder();
-        }
-    };
 
     public ScreenRecorder(MediaProjection mediaProjection, Context context)
     {
@@ -87,10 +77,10 @@ public class ScreenRecorder extends Thread{
             mDisplayWidth = metrics.widthPixels;
             mDisplayHeight = metrics.heightPixels;
             mScreenDensity = metrics.densityDpi;
-            Log.d("woohoo", "mDisplayWidth: " + mDisplayWidth);
-            Log.d("woohoo", "mDisplayHeight: " + mDisplayHeight);
-            Log.d("woohoo", "mScreenDensity: " + mScreenDensity);
-            if(true) return;
+//            Log.d("woohoo", "mDisplayWidth: " + mDisplayWidth);
+//            Log.d("woohoo", "mDisplayHeight: " + mDisplayHeight);
+//            Log.d("woohoo", "mScreenDensity: " + mScreenDensity);
+//            if(true) return;
 
             prepareMediaCodec();
 
@@ -104,10 +94,6 @@ public class ScreenRecorder extends Thread{
                 throw new RuntimeException("Muxer failed.", ioe);
             }
 
-            // Start video input
-            mMediaProjection.createVirtualDisplay("Recording Screen.",
-                    mDisplayWidth, mDisplayHeight, 0, mScreenDensity, mSurface, null, null);
-
             // Start Media Encode
             drainEncoder();
         }
@@ -115,21 +101,22 @@ public class ScreenRecorder extends Thread{
 
     private void prepareMediaCodec() {
         mVideoBufferInfo = new MediaCodec.BufferInfo();
-        MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, VIDEO_WIDTH, VIDEO_HEIGHT);
+        MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, mDisplayWidth, mDisplayHeight);
 
         // Set format properties
         mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 6000000);
+        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 2000000);
         mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-        mMediaFormat.setInteger(MediaFormat.KEY_CAPTURE_RATE, frameRate);
-        mMediaFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);  // Number of channels in an audio format
+//        mMediaFormat.setInteger(MediaFormat.KEY_CAPTURE_RATE, frameRate);
+//        mMediaFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);  // Number of channels in an audio format
         mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1); // Frequency of I frames expressed in secs between I frames
-        mMediaFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / frameRate); /* */
+//        mMediaFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / frameRate); /* */
 
+        Log.d("MediaFormat: ", "" + mMediaFormat);
         // Config a MediaCodec and get a surface which we want to record
         try {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_TYPE);
-            mVideoEncoder.configure(mMediaFormat, mSurface, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+            mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mSurface = mVideoEncoder.createInputSurface();
             mVideoEncoder.start();
         } catch (IOException ioe) {
@@ -138,12 +125,12 @@ public class ScreenRecorder extends Thread{
     }
 
     private boolean drainEncoder() {
-        mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
+//        mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
         while (true) {
             int encoderStatus = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);
+            Log.d("encoderStatus", "" + encoderStatus);
             if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // No output available
-                break;
             } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 if (mTrackIndex >= 0) {
                     throw new RuntimeException("format changed twice");
@@ -152,41 +139,41 @@ public class ScreenRecorder extends Thread{
                 if (!mMuxerStart && mTrackIndex >= 0) {
                     mMuxer.start();
                     mMuxerStart = true;
-                } else if (encoderStatus < 0) {
-                    // ignore it, but why?
-                } else {
-                    ByteBuffer encodedData = mVideoEncoder.getOutputBuffer(encoderStatus);
-                    if (encodedData == null) {
-                        throw new RuntimeException("Could not fetch buffer." + encoderStatus);
-                    }
+                }
+            } else if (encoderStatus < 0) {
+                // ignore it, but why?
+            }
+            else {
+                ByteBuffer encodedData = mVideoEncoder.getOutputBuffer(encoderStatus);
+                if (encodedData == null) {
+                    throw new RuntimeException("Could not fetch buffer." + encoderStatus);
+                }
 
-                    if ((mVideoBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
-                        mVideoBufferInfo.size = 0;
-                    }
+                if ((mVideoBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
+                    mVideoBufferInfo.size = 0;
+                }
 
-                    if (mVideoBufferInfo.size != 0) {
-                        if (mMuxerStart) {
-                            encodedData.position(mVideoBufferInfo.offset);
-                            encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
-                            mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
-                        }
+                if (mVideoBufferInfo.size != 0) {
+                    if (mMuxerStart) {
+                        encodedData.position(mVideoBufferInfo.offset);
+                        encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
+                        mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
                     }
+                }
 
-                    mVideoEncoder.releaseOutputBuffer(encoderStatus, false);
+                mVideoEncoder.releaseOutputBuffer(encoderStatus, false);
 
-                    if ((mVideoBufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-                        break;
-                    }
+                if ((mVideoBufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+                    break;
                 }
             }
 
         }
-        mDrainHandler.postDelayed(mDrainEncoderRunnable, 10);
+//        mDrainHandler.postDelayed(mDrainEncoderRunnable, 10);
         return false;
     }
 
     private void releaseEncoders() {
-        mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
         if (mMuxer != null) {
             if (mMuxerStart) {
                 mMuxer.stop();
@@ -209,6 +196,5 @@ public class ScreenRecorder extends Thread{
             mMediaProjection = null;
         }
         mVideoBufferInfo = null;
-        mDrainEncoderRunnable = null;
     }
 }
