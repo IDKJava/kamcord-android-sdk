@@ -40,8 +40,10 @@ public class ScreenRecorder extends Thread{
 
     private boolean mMuxerStart = false;
     private int mTrackIndex = -1;
-    private int frameRate = 15;
+    private int frameRate = 1;
     private static final String VIDEO_TYPE = "video/avc";
+
+    private int frameCount = 0;
 //    private static final int VIDEO_WIDTH = 720;
 //    private static final int VIDEO_HEIGHT = 480;
 
@@ -74,8 +76,8 @@ public class ScreenRecorder extends Thread{
             }
 
             defaultDisplay.getMetrics(metrics);
-            mDisplayWidth = metrics.widthPixels;
-            mDisplayHeight = metrics.heightPixels;
+            mDisplayWidth = metrics.widthPixels /2;
+            mDisplayHeight = metrics.heightPixels /2;
             mScreenDensity = metrics.densityDpi;
 //            Log.d("woohoo", "mDisplayWidth: " + mDisplayWidth);
 //            Log.d("woohoo", "mDisplayHeight: " + mDisplayHeight);
@@ -96,6 +98,7 @@ public class ScreenRecorder extends Thread{
 
             // Start Media Encode
             drainEncoder();
+            releaseEncoders();
         }
     }
 
@@ -125,10 +128,9 @@ public class ScreenRecorder extends Thread{
     }
 
     private boolean drainEncoder() {
-//        mDrainHandler.removeCallbacks(mDrainEncoderRunnable);
-        while (true) {
+        while (true && frameCount <= 500) {
             int encoderStatus = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);
-            Log.d("encoderStatus", "" + encoderStatus);
+//            Log.d("encoderStatus", "" + encoderStatus);
             if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // No output available
             } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
@@ -158,6 +160,8 @@ public class ScreenRecorder extends Thread{
                         encodedData.position(mVideoBufferInfo.offset);
                         encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
                         mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
+                        frameCount++;
+                        Log.d("frame count: ", "" + frameCount);
                     }
                 }
 
