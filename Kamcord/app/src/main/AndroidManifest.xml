@@ -2,13 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kamcord.app.kamcord" >
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activity.RecordActivity"
+            android:name=".activity.activity.RecordActivity"
             android:label="@string/title_activity_record" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,6 +19,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activity.service.RecordingService$DummyActivity"
+            android:label="whatever">
+        </activity>
+        <service android:name=".activity.service.RecordingService" >
+        </service>
+
     </application>
 
 </manifest>
