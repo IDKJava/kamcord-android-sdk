@@ -3,43 +3,13 @@
     android:layout_height="match_parent"
     tools:context="com.kamcord.app.kamcord.activity.activity.RecordActivity">
 
-    <SurfaceView
-        android:id="@+id/surfaceview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
-
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Start Service"
-        android:id="@+id/servicestart_button" />
-
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Stop Service"
-        android:id="@+id/servicestop_button"
-        android:layout_below="@+id/servicestart_button"
-        android:layout_centerHorizontal="true" />
-
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Record"
-        android:id="@+id/record_button"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <ImageButton
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:id="@+id/imageButton"
-        android:background="@drawable/paranoid_img"
+        android:textColor="@android:color/white"
+        android:id="@+id/servicestart_button"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
-
-
-
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

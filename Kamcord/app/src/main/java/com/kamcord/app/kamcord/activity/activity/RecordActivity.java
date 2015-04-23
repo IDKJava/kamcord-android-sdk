@@ -1,106 +1,103 @@
 package com.kamcord.app.kamcord.activity.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.display.DisplayManager;
-import android.hardware.display.VirtualDisplay;
-import android.media.MediaCodec;
-import android.media.MediaCodecInfo;
-import android.media.MediaFormat;
-import android.media.MediaMuxer;
+import android.content.pm.PackageManager;
 import android.media.projection.MediaProjection;
-import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.DisplayMetrics;
-import android.view.Display;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.ScreenRecorder;
+import com.kamcord.app.kamcord.activity.application.KamcordApplication;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.io.File;
 
 
-public class RecordActivity extends Activity implements View.OnClickListener{
+public class RecordActivity extends Activity implements View.OnClickListener {
 
-    private static final int PERMISSION_CODE = 1;
+    private static final int RECORD_FLAG = 2;
 
-    private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;
-    private VirtualDisplay mVirtualDisplay;
-    private Surface mSurface;
-    private SurfaceView mSurfaceView;
 
-    private Button recordButton;
     private Button serviceStartButton;
-    private Button serviceStopButton;
-    private ImageButton mImageButton;
 
-
+    private File SDCard_Path;
+    private File VideoFolder;
+    private String VideoFolderPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
 
-        // Recording Initialization
-        mMediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        initKamcord();
 
-        recordButton = (Button) findViewById(R.id.record_button);
+    }
+
+    public void initKamcord() {
+
         serviceStartButton = (Button) findViewById(R.id.servicestart_button);
-        serviceStopButton = (Button) findViewById(R.id.servicestop_button);
-        mImageButton = (ImageButton) findViewById(R.id.imageButton);
-
-        recordButton.setOnClickListener(this);
         serviceStartButton.setOnClickListener(this);
-        serviceStopButton.setOnClickListener(this);
-        mImageButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Pressed", Toast.LENGTH_SHORT).show();
-            }
-        });
 
+        // SD Card Check and Folder Initialize
+        SDCard_Path = Environment.getExternalStorageDirectory();
+        VideoFolderPath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + "/Kamcord/";
+        VideoFolder = new File(VideoFolderPath);
+        if (!VideoFolder.exists() || VideoFolder.isDirectory()) {
+            VideoFolder.mkdir();
+        }
+
+        // App package name with permission(Should be a list)
+        appInstalledOrNot("jp.co.ponos.battlecatsen");
+
+    }
+
+    private boolean appInstalledOrNot(String uri) {
+        PackageManager pm = getPackageManager();
+        boolean appInstalled;
+        try {
+            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+            appInstalled = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            appInstalled = false;
+        }
+        return appInstalled;
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.servicestart_button: {
-                Intent startServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
-                startService(startServiceIntent);
-                break;
+                if (!((KamcordApplication) this.getApplication()).getRecordFlag()) {
+                    ((KamcordApplication) this.getApplication()).setRecordFlag(true);
+                    serviceStartButton.setText("Pause");
+                    Intent startServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
+                    startService(startServiceIntent);
+
+                    break;
+                } else {
+                    ((KamcordApplication) this.getApplication()).setRecordFlag(false);
+                    serviceStartButton.setText("Record");
+                    Intent stopServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
+                    stopServiceIntent.addFlags(RECORD_FLAG);
+                    startService(stopServiceIntent);
+                    break;
+                }
             }
-            case R.id.servicestop_button:
-                Intent stopServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
-                stopService(stopServiceIntent);
-                break;
-            case R.id.record_button:
-                // do something about recording
-                Intent startServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
-                startService(startServiceIntent);
-                break;
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if(mMediaProjection != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (mMediaProjection != null) {
                 mMediaProjection.stop();
                 mMediaProjection = null;
             }

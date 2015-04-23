@@ -1,6 +1,7 @@
-package com.kamcord.app.kamcord.activity;
+package com.kamcord.app.kamcord.activity.utils;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -15,16 +16,18 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
-import android.view.SurfaceView;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by donliang1 on 4/21/15.
  */
 @TargetApi(21)
-public class ScreenRecorder extends Thread{
+public class ScreenRecorder extends Thread {
 
     private Context mContext;
 
@@ -32,7 +35,6 @@ public class ScreenRecorder extends Thread{
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
     private Surface mSurface;
-    private SurfaceView mSurfaceView;
 
     private MediaMuxer mMuxer;
     private MediaCodec mVideoEncoder;
@@ -40,59 +42,67 @@ public class ScreenRecorder extends Thread{
 
     private boolean mMuxerStart = false;
     private int mTrackIndex = -1;
-    private int frameRate = 1;
+    private int frameRate = 30;
     private static final String VIDEO_TYPE = "video/avc";
-
+    private int delayFrame = 60;
     private int frameCount = 0;
-//    private static final int VIDEO_WIDTH = 720;
-//    private static final int VIDEO_HEIGHT = 480;
+    private String fileDateFormat = "yyyy-MM-dd HH:mm";
 
     private int mDisplayWidth;
     private int mDisplayHeight;
     private int mScreenDensity;
 
-    public ScreenRecorder(MediaProjection mediaProjection, Context context)
-    {
+    private boolean recordFlag;
+
+    private ActivityManager activityManager;
+    private List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList;
+    private ActivityManager.RunningAppProcessInfo runningAppProcessInfo;
+    private int appImportance;
+
+    public ScreenRecorder(MediaProjection mediaProjection, Context context, boolean recordFlag) {
         this.mMediaProjection = mediaProjection;
         this.mContext = context;
+        this.recordFlag = recordFlag;
+    }
+
+    public void setFlag(boolean flag) {
+        recordFlag = flag;
     }
 
     @Override
     public void run() {
-        Log.d("thread is ", "run");
         startRecording();
     }
 
     private void startRecording() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             // Get specifications from DisplayMetrics Structure
             DisplayMetrics metrics = new DisplayMetrics();
 
             DisplayManager dm = (DisplayManager) mContext.getSystemService(Context.DISPLAY_SERVICE);
             Display defaultDisplay = dm.getDisplay(Display.DEFAULT_DISPLAY);
-            if(defaultDisplay == null) {
+            if (defaultDisplay == null) {
                 throw new RuntimeException("No display available");
             }
 
+            activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+
             defaultDisplay.getMetrics(metrics);
-            mDisplayWidth = metrics.widthPixels /2;
-            mDisplayHeight = metrics.heightPixels /2;
+            mDisplayWidth = metrics.widthPixels / 2;
+            mDisplayHeight = metrics.heightPixels / 2;
             mScreenDensity = metrics.densityDpi;
-//            Log.d("woohoo", "mDisplayWidth: " + mDisplayWidth);
-//            Log.d("woohoo", "mDisplayHeight: " + mDisplayHeight);
-//            Log.d("woohoo", "mScreenDensity: " + mScreenDensity);
-//            if(true) return;
 
             prepareMediaCodec();
 
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("Recording", mDisplayWidth, mDisplayHeight, mScreenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
 
-            // Video Store Location
+            // Video Location
             try {
-                mMuxer = new MediaMuxer("/sdcard/kamcord.mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-            } catch(IOException ioe) {
+                String fileNamePrefix = new SimpleDateFormat(fileDateFormat).format(new Date()).replaceAll("[\\s:]", "-");
+                mMuxer = new MediaMuxer("/sdcard/Kamcord/" + "Kamcord-" + fileNamePrefix + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+            } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }
 
@@ -110,12 +120,8 @@ public class ScreenRecorder extends Thread{
         mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 2000000);
         mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-//        mMediaFormat.setInteger(MediaFormat.KEY_CAPTURE_RATE, frameRate);
-//        mMediaFormat.setInteger(MediaFormat.KEY_CHANNEL_COUNT, 1);  // Number of channels in an audio format
         mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1); // Frequency of I frames expressed in secs between I frames
-//        mMediaFormat.setInteger(MediaFormat.KEY_REPEAT_PREVIOUS_FRAME_AFTER, 1000000 / frameRate); /* */
 
-        Log.d("MediaFormat: ", "" + mMediaFormat);
         // Config a MediaCodec and get a surface which we want to record
         try {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_TYPE);
@@ -128,9 +134,21 @@ public class ScreenRecorder extends Thread{
     }
 
     private boolean drainEncoder() {
-        while (true && frameCount <= 500) {
+
+        runningAppProcessInfoList = activityManager.getRunningAppProcesses();
+        runningAppProcessInfo = runningAppProcessInfoList.get(0);
+        String[] packageList = runningAppProcessInfo.pkgList;
+        String str = packageList[0];
+        Log.d("RunningAppProcessInfo: ", str);
+        appImportance = runningAppProcessInfo.importance;
+        Log.d("App Importance: ", Integer.toString(appImportance));
+
+        while (this.recordFlag == true
+                && str.equals("com.sgn.pandapop.gp")
+                && appImportance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+
             int encoderStatus = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);
-//            Log.d("encoderStatus", "" + encoderStatus);
+
             if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // No output available
             } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
@@ -144,8 +162,7 @@ public class ScreenRecorder extends Thread{
                 }
             } else if (encoderStatus < 0) {
                 // ignore it, but why?
-            }
-            else {
+            } else {
                 ByteBuffer encodedData = mVideoEncoder.getOutputBuffer(encoderStatus);
                 if (encodedData == null) {
                     throw new RuntimeException("Could not fetch buffer." + encoderStatus);
@@ -157,9 +174,18 @@ public class ScreenRecorder extends Thread{
 
                 if (mVideoBufferInfo.size != 0) {
                     if (mMuxerStart) {
+
+                        runningAppProcessInfoList = activityManager.getRunningAppProcesses();
+                        runningAppProcessInfo = runningAppProcessInfoList.get(0);
+                        packageList = runningAppProcessInfo.pkgList;
+                        str = packageList[0];
+                        Log.d("RunningAppProcessInfo: ", str);
+
                         encodedData.position(mVideoBufferInfo.offset);
                         encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
-                        mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
+                        if (frameCount >= delayFrame) {
+                            mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
+                        }
                         frameCount++;
                         Log.d("frame count: ", "" + frameCount);
                     }
@@ -173,7 +199,6 @@ public class ScreenRecorder extends Thread{
             }
 
         }
-//        mDrainHandler.postDelayed(mDrainEncoderRunnable, 10);
         return false;
     }
 
