@@ -12,11 +12,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
+import com.kamcord.app.kamcord.activity.Model.MessageObject;
+import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
 import com.kamcord.app.kamcord.activity.utils.ScreenRecorder;
 
 @TargetApi(21)
@@ -26,12 +28,16 @@ public class RecordingService extends Service {
     private static int PERMISSION_CODE = 1;
     private static ScreenRecorder recordThread;
 
+    private static RecordHandlerThread recordHandlerThread;
+    private static Handler recordHandler;
+
     public RecordingService() {
         super();
     }
 
     @Override
     public void onCreate() {
+
         super.onCreate();
     }
 
@@ -51,20 +57,21 @@ public class RecordingService extends Service {
                     .build();
 
             startForeground(3141592, notification);
-            Log.d("start ServiceActivity", "yeah!");
+
             Intent recordIntent = new Intent(this, ServiceActivity.class);
             recordIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(recordIntent);
             Toast.makeText(getApplicationContext(), "Start Recording", Toast.LENGTH_SHORT).show();
 
         } else {
-            recordThread.setFlag(false);
-            recordThread.interrupt();
-            stopSelf();
-            Toast.makeText(getApplicationContext(), "Stop Recording", Toast.LENGTH_SHORT).show();
-            Log.d("Stop recording", "" + recordStopFlag);
+            if(recordHandlerThread != null) {
+                recordHandlerThread.interrupt();
+                stopSelf();
+                Toast.makeText(getApplicationContext(), "Stop Recording", Toast.LENGTH_SHORT).show();
+                Log.d("Stop recording", "" + recordStopFlag);
+            }
         }
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
@@ -101,13 +108,19 @@ public class RecordingService extends Service {
             if (resultCode == RESULT_OK && requestCode == PERMISSION_CODE) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     MediaProjection projection = mediaProjectionManager.getMediaProjection(resultCode, data);
-                    String pkgNameForService = getApplication().getPackageName();
-                    recordThread = new ScreenRecorder(projection, getApplicationContext(), true);
-                    recordThread.start();
+
+                    // Calling Record Thread
+                    recordHandlerThread = new RecordHandlerThread("HandlerThread");
+                    recordHandlerThread.start();
+
+                    recordHandler = new Handler(recordHandlerThread.getLooper(), recordHandlerThread);
+                    MessageObject messageObject = new MessageObject(projection, getApplicationContext(), true, recordHandler);
+                    Message msg = Message.obtain(recordHandler, 1, messageObject);
+                    recordHandler.sendMessage(msg);
 
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sgn.pandapop.gp");
                     startActivity(launchIntent);
-                }
+            }
             } else {
                 // do something else
             }

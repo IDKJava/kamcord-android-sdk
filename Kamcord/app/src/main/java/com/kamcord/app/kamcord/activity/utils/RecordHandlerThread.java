@@ -1,6 +1,5 @@
 package com.kamcord.app.kamcord.activity.utils;
 
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
@@ -12,10 +11,15 @@ import android.media.MediaMuxer;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
+
+import com.kamcord.app.kamcord.activity.Model.MessageObject;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -23,13 +27,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by donliang1 on 4/21/15.
- */
-@TargetApi(21)
-public class ScreenRecorder extends Thread {
+public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
 
     private Context mContext;
+    private Handler mHandler;
+    private static MessageObject msgObject;
 
     private MediaProjectionManager mMediaProjectionManager;
     private MediaProjection mMediaProjection;
@@ -59,27 +61,51 @@ public class ScreenRecorder extends Thread {
     private ActivityManager.RunningAppProcessInfo runningAppProcessInfo;
     private int appImportance;
     private String packageString;
+    private String[] packageList;
 
-    public ScreenRecorder(MediaProjection mediaProjection, Context context, boolean recordFlag) {
-        this.mMediaProjection = mediaProjection;
-        this.mContext = context;
-        this.recordFlag = recordFlag;
-    }
 
-    public void setFlag(boolean flag) {
-        recordFlag = flag;
+    public RecordHandlerThread(String name) {
+        super(name);
     }
 
     @Override
-    public void run() {
-        startRecording();
-        while (!packageString.equals("com.sgn.pandapop.gp")
-                || runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-            //waiting
-            runningAppProcessInfoList = activityManager.getRunningAppProcesses();
-            runningAppProcessInfo = runningAppProcessInfoList.get(0);
-            packageString = runningAppProcessInfo.pkgList[0];
+    public boolean handleMessage(Message msg) {
+
+        switch (msg.what) {
+            case 1:
+                this.msgObject = (MessageObject)msg.obj;
+                this.mMediaProjection = msgObject.getObjectProjection();
+                this.mContext = msgObject.getObjectContext();
+                this.recordFlag = msgObject.getObjectRecordFlag();
+                this.mHandler = msgObject.getHandler();
+
+                startRecording();
+
+                while(pollingGame()) {
+                }
+                Log.d("waiting is ", "FINISHED!!!");
+
+                Message resumeMsg = Message.obtain(this.mHandler, 1, msgObject);
+                this.mHandler.sendMessage(resumeMsg);
+                break;
+            case 2:
+                Log.d("Message: ", Integer.toString(msg.what));
+                // stop recording
+                break;
         }
+        return false;
+    }
+
+    private boolean pollingGame() {
+        activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        runningAppProcessInfoList = activityManager.getRunningAppProcesses();
+        runningAppProcessInfo = runningAppProcessInfoList.get(0);
+        packageList = runningAppProcessInfo.pkgList;
+        packageString = packageList[0];
+        if(packageString.equals("com.sgn.pandapop.gp")) {
+            return false;
+        }
+        return true;
     }
 
     private void startRecording() {
@@ -87,14 +113,11 @@ public class ScreenRecorder extends Thread {
 
             // Get specifications from DisplayMetrics Structure
             DisplayMetrics metrics = new DisplayMetrics();
-
             DisplayManager dm = (DisplayManager) mContext.getSystemService(Context.DISPLAY_SERVICE);
             Display defaultDisplay = dm.getDisplay(Display.DEFAULT_DISPLAY);
             if (defaultDisplay == null) {
                 throw new RuntimeException("No display available");
             }
-
-            activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 
             defaultDisplay.getMetrics(metrics);
             mDisplayWidth = metrics.widthPixels / 2;
@@ -109,11 +132,12 @@ public class ScreenRecorder extends Thread {
             // Video Location
             try {
                 String fileNamePrefix = new SimpleDateFormat(fileDateFormat).format(new Date()).replaceAll("[\\s:]", "-");
-                mMuxer = new MediaMuxer("/sdcard/Kamcord/" + "Kamcord-" + fileNamePrefix + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+                mMuxer = new MediaMuxer("/sdcard/Kamcord_Android/" + "Kamcord-" + fileNamePrefix + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }
 
+            frameCount = 0;
             drainEncoder();
             releaseEncoders();
 
@@ -143,13 +167,13 @@ public class ScreenRecorder extends Thread {
 
     private boolean drainEncoder() {
 
-        // Package-get initialization
+        // Initialzation
+        activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         runningAppProcessInfoList = activityManager.getRunningAppProcesses();
         runningAppProcessInfo = runningAppProcessInfoList.get(0);
-        String[] packageList = runningAppProcessInfo.pkgList;
+        packageList = runningAppProcessInfo.pkgList;
         packageString = packageList[0];
         appImportance = runningAppProcessInfo.importance;
-        Log.d("App Importance: ", Integer.toString(appImportance));
 
         while (this.recordFlag == true
                 && packageString.equals("com.sgn.pandapop.gp")
@@ -160,11 +184,8 @@ public class ScreenRecorder extends Thread {
             if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // No output available
             } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
-                if (mTrackIndex >= 0) {
-                    throw new RuntimeException("format changed twice");
-                }
-                mTrackIndex = mMuxer.addTrack(mVideoEncoder.getOutputFormat());
-                if (!mMuxerStart && mTrackIndex >= 0) {
+                if (!mMuxerStart) {
+                    mTrackIndex = mMuxer.addTrack(mVideoEncoder.getOutputFormat());
                     mMuxer.start();
                     mMuxerStart = true;
                 }
@@ -190,6 +211,7 @@ public class ScreenRecorder extends Thread {
 
                         encodedData.position(mVideoBufferInfo.offset);
                         encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
+                        // Skip Frames from DummyActivity
                         if (frameCount >= delayFrame) {
                             mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
                         }
@@ -204,7 +226,6 @@ public class ScreenRecorder extends Thread {
                     break;
                 }
             }
-
         }
         return false;
     }
@@ -228,7 +249,7 @@ public class ScreenRecorder extends Thread {
             mSurface = null;
         }
         if (mMediaProjection != null) {
-            mMediaProjection.stop();
+            //mMediaProjection.stop();
             mMediaProjection = null;
         }
         mVideoBufferInfo = null;

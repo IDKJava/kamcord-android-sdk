@@ -47,7 +47,7 @@ public class RecordActivity extends Activity implements View.OnClickListener {
 
         // SD Card Check and Folder Initialize
         SDCard_Path = Environment.getExternalStorageDirectory();
-        VideoFolderPath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + "/Kamcord/";
+        VideoFolderPath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + "/Kamcord_Android/";
         VideoFolder = new File(VideoFolderPath);
         if (!VideoFolder.exists() || VideoFolder.isDirectory()) {
             VideoFolder.mkdir();
@@ -85,8 +85,7 @@ public class RecordActivity extends Activity implements View.OnClickListener {
                     ((KamcordApplication) this.getApplication()).setRecordFlag(false);
                     serviceStartButton.setText("Record");
                     Intent stopServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
-                    stopServiceIntent.addFlags(RECORD_FLAG);
-                    startService(stopServiceIntent);
+                    stopService(stopServiceIntent);
                     break;
                 }
             }
