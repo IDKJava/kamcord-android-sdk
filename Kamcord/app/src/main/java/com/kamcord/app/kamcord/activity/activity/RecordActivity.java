@@ -115,7 +115,8 @@ public class RecordActivity extends Activity implements View.OnClickListener, Cu
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(getApplicationContext() , " " + position, Toast.LENGTH_SHORT).show();
+        ((KamcordApplication)this.getApplication()).setSelectedPackageName(packageGameList.get(position).getPackageName());
+        Toast.makeText(getApplicationContext() , "You will record " + ((KamcordApplication)this.getApplication()).getSelectedPackageName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -62,6 +62,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private int appImportance;
     private String packageString;
     private String[] packageList;
+    private String selectedPackageName;
 
 
     public RecordHandlerThread(String name) {
@@ -78,6 +79,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 this.mContext = msgObject.getObjectContext();
                 this.recordFlag = msgObject.getObjectRecordFlag();
                 this.mHandler = msgObject.getHandler();
+                this.selectedPackageName = msgObject.getPackageName();
 
                 startRecording();
 
@@ -102,7 +104,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         runningAppProcessInfo = runningAppProcessInfoList.get(0);
         packageList = runningAppProcessInfo.pkgList;
         packageString = packageList[0];
-        if(packageString.equals("com.rovio.BadPiggies")) {
+        if(packageString.equals(selectedPackageName)) {
             return false;
         }
         return true;
@@ -176,7 +178,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         appImportance = runningAppProcessInfo.importance;
 
         while (this.recordFlag == true
-                && packageString.equals("com.rovio.BadPiggies")
+                && packageString.equals(selectedPackageName)
                 && appImportance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
             int encoderStatus = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);

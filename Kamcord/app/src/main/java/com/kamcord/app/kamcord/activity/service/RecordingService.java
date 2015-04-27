@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.Model.MessageObject;
 import com.kamcord.app.kamcord.activity.activity.RecordActivity;
+import com.kamcord.app.kamcord.activity.application.KamcordApplication;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
 import com.kamcord.app.kamcord.activity.utils.ScreenRecorder;
 
@@ -125,11 +126,12 @@ public class RecordingService extends Service {
                     recordHandlerThread.start();
 
                     recordHandler = new Handler(recordHandlerThread.getLooper(), recordHandlerThread);
-                    MessageObject messageObject = new MessageObject(projection, getApplicationContext(), true, recordHandler);
+                    MessageObject messageObject = new MessageObject(projection, getApplicationContext(), true, recordHandler, ((KamcordApplication)this.getApplication()).getSelectedPackageName());
                     Message msg = Message.obtain(recordHandler, 1, messageObject);
                     recordHandler.sendMessage(msg);
 
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.rovio.BadPiggies");
+                    Log.d("package name:", ((KamcordApplication)this.getApplication()).getSelectedPackageName());
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(((KamcordApplication)this.getApplication()).getSelectedPackageName());
                     startActivity(launchIntent);
                 }
             } else {

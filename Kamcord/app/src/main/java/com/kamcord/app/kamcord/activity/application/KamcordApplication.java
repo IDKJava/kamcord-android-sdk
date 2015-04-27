@@ -8,7 +8,7 @@ import android.app.Application;
 public class KamcordApplication extends Application {
 
     private boolean recordFlag = false;
-    private String packageName = "com.rovio.BadPiggies";
+    private String packageName = "";
 
     @Override
     public void onCreate() {
@@ -23,7 +23,11 @@ public class KamcordApplication extends Application {
         this.recordFlag = recordFlag;
     }
 
-    public String getPackageName() {
+    public void setSelectedPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public String getSelectedPackageName() {
         return packageName;
     }
 }

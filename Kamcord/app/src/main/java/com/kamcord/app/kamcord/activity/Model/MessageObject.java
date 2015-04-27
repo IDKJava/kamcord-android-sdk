@@ -13,12 +13,14 @@ public class MessageObject extends Object{
     public Context context;
     public boolean recordFlag;
     private Handler handler;
+    private String packageName;
 
-    public MessageObject(MediaProjection projection, Context context, boolean recordFlag, Handler handler) {
+    public MessageObject(MediaProjection projection, Context context, boolean recordFlag, Handler handler, String packageName) {
         this.projection = projection;
         this.context = context;
         this.recordFlag = recordFlag;
         this.handler = handler;
+        this.packageName = packageName;
     }
 
     public MediaProjection getObjectProjection() {
@@ -35,5 +37,9 @@ public class MessageObject extends Object{
 
     public Handler getHandler() {
         return handler;
+    }
+
+    public String getPackageName() {
+        return packageName;
     }
 }
