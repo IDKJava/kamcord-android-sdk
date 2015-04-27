@@ -3,6 +3,8 @@ package com.kamcord.app.kamcord.activity.service;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.Model.MessageObject;
+import com.kamcord.app.kamcord.activity.activity.RecordActivity;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
 import com.kamcord.app.kamcord.activity.utils.ScreenRecorder;
 
@@ -31,13 +34,15 @@ public class RecordingService extends Service {
     private static RecordHandlerThread recordHandlerThread;
     private static Handler recordHandler;
 
+    private Context serviceContext;
+
     public RecordingService() {
         super();
     }
 
     @Override
     public void onCreate() {
-
+        serviceContext = getApplicationContext();
         super.onCreate();
     }
 
@@ -46,28 +51,34 @@ public class RecordingService extends Service {
 
 
         int recordStopFlag = intent.getFlags();
+
         if (recordStopFlag != 2) {
             // Notification Setting
-            // RemoteViews bigContentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification_big_contentview);
-            // notification.bigContentView = bigContentView;
+
+            Intent noficationIntent = new Intent(serviceContext, RecordActivity.class);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
             Notification.Builder notificationBuilder = new Notification.Builder(this);
-            Notification notification = notificationBuilder.setContentTitle("Kamcord")
+            Notification notification = notificationBuilder
+                    .setContentTitle("Kamcord")
                     .setContentText("Recording")
                     .setSmallIcon(R.drawable.paranoid_img)
                     .build();
+
 
             startForeground(3141592, notification);
 
             Intent recordIntent = new Intent(this, ServiceActivity.class);
             recordIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(recordIntent);
-            Toast.makeText(getApplicationContext(), "Start Recording", Toast.LENGTH_SHORT).show();
+            Toast.makeText(serviceContext, "Start Recording", Toast.LENGTH_SHORT).show();
 
         } else {
-            if(recordHandlerThread != null) {
+            if (recordHandlerThread != null) {
                 recordHandlerThread.interrupt();
                 stopSelf();
-                Toast.makeText(getApplicationContext(), "Stop Recording", Toast.LENGTH_SHORT).show();
+                Toast.makeText(serviceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
                 Log.d("Stop recording", "" + recordStopFlag);
             }
         }
@@ -118,9 +129,9 @@ public class RecordingService extends Service {
                     Message msg = Message.obtain(recordHandler, 1, messageObject);
                     recordHandler.sendMessage(msg);
 
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.sgn.pandapop.gp");
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.rovio.BadPiggies");
                     startActivity(launchIntent);
-            }
+                }
             } else {
                 // do something else
             }

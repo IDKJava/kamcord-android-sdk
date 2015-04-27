@@ -102,7 +102,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         runningAppProcessInfo = runningAppProcessInfoList.get(0);
         packageList = runningAppProcessInfo.pkgList;
         packageString = packageList[0];
-        if(packageString.equals("com.sgn.pandapop.gp")) {
+        if(packageString.equals("com.rovio.BadPiggies")) {
             return false;
         }
         return true;
@@ -176,7 +176,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         appImportance = runningAppProcessInfo.importance;
 
         while (this.recordFlag == true
-                && packageString.equals("com.sgn.pandapop.gp")
+                && packageString.equals("com.rovio.BadPiggies")
                 && appImportance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
 
             int encoderStatus = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);

@@ -7,19 +7,26 @@ import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
+import com.kamcord.app.kamcord.activity.Model.GameModel;
 import com.kamcord.app.kamcord.activity.application.KamcordApplication;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
+import com.kamcord.app.kamcord.activity.utils.CustomRecyclerAdapter;
+import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
 
 import java.io.File;
+import java.util.ArrayList;
 
 
-public class RecordActivity extends Activity implements View.OnClickListener {
+public class RecordActivity extends Activity implements View.OnClickListener, CustomRecyclerAdapter.OnItemClickListener {
 
     private static final int RECORD_FLAG = 2;
 
@@ -31,11 +38,30 @@ public class RecordActivity extends Activity implements View.OnClickListener {
     private File VideoFolder;
     private String VideoFolderPath;
 
+    private RecyclerView mRecyclerView;
+    private CustomRecyclerAdapter mRecyclerAdapter;
+    private ArrayList<GameModel> packageGameList;
+
+
+    private String[] packageNameArray = new String[]{
+            "com.rovio.BadPiggies",
+            "com.yodo1.crossyroad",
+            "com.madfingergames.deadtrigger2",
+            "com.fingersoft.hillclimb",
+            "com.kabam.marvelbattle",
+    };
+    private Integer[] gameDrawablArray = new Integer[]{
+            R.drawable.bad_piggies,
+            R.drawable.crossy_road,
+            R.drawable.dead_trigger,
+            R.drawable.hill_racing,
+            R.drawable.marvel,
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
-
         initKamcord();
 
     }
@@ -45,7 +71,7 @@ public class RecordActivity extends Activity implements View.OnClickListener {
         serviceStartButton = (Button) findViewById(R.id.servicestart_button);
         serviceStartButton.setOnClickListener(this);
 
-        // SD Card Check and Folder Initialize
+        // sd card check and folder initialize
         SDCard_Path = Environment.getExternalStorageDirectory();
         VideoFolderPath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + "/Kamcord_Android/";
         VideoFolder = new File(VideoFolderPath);
@@ -53,8 +79,25 @@ public class RecordActivity extends Activity implements View.OnClickListener {
             VideoFolder.mkdir();
         }
 
-        // App package name with permission(Should be a list)
-        appInstalledOrNot("jp.co.ponos.battlecatsen");
+        // app package name with permission(Should be a list)
+        appInstalledOrNot("com.rovio.BadPiggies");
+
+        packageGameList = new ArrayList<GameModel>();
+        for (int i = 0; i < packageNameArray.length; i++) {
+            GameModel gameModel = new GameModel();
+            gameModel.setPackageName(packageNameArray[i]);
+            gameModel.setDrawableID(gameDrawablArray[i]);
+            packageGameList.add(gameModel);
+        }
+
+        // gridview init;
+        mRecyclerView = (RecyclerView) findViewById(R.id.record_recyclerview);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_margin);
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
+        mRecyclerAdapter = new CustomRecyclerAdapter(this, packageGameList);
+        mRecyclerAdapter.setOnItemClickListener(this);
+        mRecyclerView.setAdapter(mRecyclerAdapter);
 
     }
 
@@ -68,6 +111,11 @@ public class RecordActivity extends Activity implements View.OnClickListener {
             appInstalled = false;
         }
         return appInstalled;
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Toast.makeText(getApplicationContext() , " " + position, Toast.LENGTH_SHORT).show();
     }
 
     @Override

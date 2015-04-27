@@ -8,7 +8,7 @@ import android.app.Application;
 public class KamcordApplication extends Application {
 
     private boolean recordFlag = false;
-    private String packageName = "com.sgn.pandapop.gp";
+    private String packageName = "com.rovio.BadPiggies";
 
     @Override
     public void onCreate() {
