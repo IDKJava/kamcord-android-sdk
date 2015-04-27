@@ -126,11 +126,15 @@ public class RecordingService extends Service {
                     recordHandlerThread.start();
 
                     recordHandler = new Handler(recordHandlerThread.getLooper(), recordHandlerThread);
-                    MessageObject messageObject = new MessageObject(projection, getApplicationContext(), true, recordHandler, ((KamcordApplication)this.getApplication()).getSelectedPackageName());
+                    MessageObject messageObject = new MessageObject(projection,
+                            getApplicationContext(),
+                            true,
+                            recordHandler,
+                            ((KamcordApplication)this.getApplication()).getSelectedPackageName(),
+                            ((KamcordApplication)this.getApplication()).getGameFolderString());
                     Message msg = Message.obtain(recordHandler, 1, messageObject);
                     recordHandler.sendMessage(msg);
 
-                    Log.d("package name:", ((KamcordApplication)this.getApplication()).getSelectedPackageName());
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(((KamcordApplication)this.getApplication()).getSelectedPackageName());
                     startActivity(launchIntent);
                 }

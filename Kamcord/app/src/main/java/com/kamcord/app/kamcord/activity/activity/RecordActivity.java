@@ -37,11 +37,13 @@ public class RecordActivity extends Activity implements View.OnClickListener, Cu
     private File SDCard_Path;
     private File VideoFolder;
     private String VideoFolderPath;
+    private String rootFolder;
+    private String GamePath;
+    private File GameFolder;
 
     private RecyclerView mRecyclerView;
     private CustomRecyclerAdapter mRecyclerAdapter;
     private ArrayList<GameModel> packageGameList;
-
 
     private String[] packageNameArray = new String[]{
             "com.rovio.BadPiggies",
@@ -72,15 +74,15 @@ public class RecordActivity extends Activity implements View.OnClickListener, Cu
         serviceStartButton.setOnClickListener(this);
 
         // sd card check and folder initialize
+        if (rootFolder == null) {
+            rootFolder = "/Kamcord_Android/";
+        }
         SDCard_Path = Environment.getExternalStorageDirectory();
-        VideoFolderPath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + "/Kamcord_Android/";
+        VideoFolderPath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + rootFolder;
         VideoFolder = new File(VideoFolderPath);
         if (!VideoFolder.exists() || VideoFolder.isDirectory()) {
             VideoFolder.mkdir();
         }
-
-        // app package name with permission(Should be a list)
-        appInstalledOrNot("com.rovio.BadPiggies");
 
         packageGameList = new ArrayList<GameModel>();
         for (int i = 0; i < packageNameArray.length; i++) {
@@ -101,6 +103,7 @@ public class RecordActivity extends Activity implements View.OnClickListener, Cu
 
     }
 
+    // Not being used in this moment
     private boolean appInstalledOrNot(String uri) {
         PackageManager pm = getPackageManager();
         boolean appInstalled;
@@ -115,8 +118,19 @@ public class RecordActivity extends Activity implements View.OnClickListener, Cu
 
     @Override
     public void onItemClick(View view, int position) {
-        ((KamcordApplication)this.getApplication()).setSelectedPackageName(packageGameList.get(position).getPackageName());
-        Toast.makeText(getApplicationContext() , "You will record " + ((KamcordApplication)this.getApplication()).getSelectedPackageName(), Toast.LENGTH_SHORT).show();
+        ((KamcordApplication) this.getApplication()).setSelectedPackageName(packageGameList.get(position).getPackageName());
+        String toastString = ((KamcordApplication) this.getApplication()).getSelectedPackageName();
+        String gameName = toastString.substring(toastString.lastIndexOf(".") + 1);
+        Toast.makeText(getApplicationContext(),
+                "You will record " + toastString.substring(toastString.lastIndexOf(".") + 1),
+                Toast.LENGTH_SHORT)
+                .show();
+        ((KamcordApplication) this.getApplication()).setGameFolderString(gameName);
+        GamePath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + rootFolder + "/" + gameName;
+        GameFolder = new File(GamePath);
+        if (!GameFolder.exists() || GameFolder.isDirectory()) {
+            GameFolder.mkdir();
+        }
     }
 
     @Override

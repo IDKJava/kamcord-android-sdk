@@ -14,13 +14,15 @@ public class MessageObject extends Object{
     public boolean recordFlag;
     private Handler handler;
     private String packageName;
+    private String gameFolderString;
 
-    public MessageObject(MediaProjection projection, Context context, boolean recordFlag, Handler handler, String packageName) {
+    public MessageObject(MediaProjection projection, Context context, boolean recordFlag, Handler handler, String packageName, String gameFolderString) {
         this.projection = projection;
         this.context = context;
         this.recordFlag = recordFlag;
         this.handler = handler;
         this.packageName = packageName;
+        this.gameFolderString = gameFolderString;
     }
 
     public MediaProjection getObjectProjection() {
@@ -41,5 +43,9 @@ public class MessageObject extends Object{
 
     public String getPackageName() {
         return packageName;
+    }
+
+    public String getGameFolderString() {
+        return gameFolderString;
     }
 }
