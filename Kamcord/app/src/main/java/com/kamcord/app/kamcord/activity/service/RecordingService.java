@@ -3,7 +3,6 @@ package com.kamcord.app.kamcord.activity.service;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -18,11 +17,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.activity.RecordActivity;
-import com.kamcord.app.kamcord.activity.application.KamcordApplication;
 import com.kamcord.app.kamcord.activity.model.RecordingMessage;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
-import com.kamcord.app.kamcord.activity.utils.ScreenRecorder;
 
 @TargetApi(21)
 public class RecordingService extends Service {
@@ -32,6 +28,8 @@ public class RecordingService extends Service {
     private static RecordHandlerThread recordHandlerThread;
     private static Handler recordHandler;
     private Context serviceContext;
+    public static String gameFolderString;
+    private static String launchPackageName;
 
     public RecordingService() {
         super();
@@ -46,21 +44,24 @@ public class RecordingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (intent.getExtras().getBoolean("RecordFlag")) {
-            // Notification Setting
-            Notification.Builder notificationBuilder = new Notification.Builder(this);
-            Notification notification = notificationBuilder
-                    .setContentTitle(getResources().getString(R.string.notification_title))
-                    .setContentText(getResources().getString(R.string.notification_content))
-                    .setSmallIcon(R.drawable.kamcord_appicon)
-                    .build();
+        // Notification Setting
+        Notification.Builder notificationBuilder = new Notification.Builder(this);
+        Notification notification = notificationBuilder
+                .setContentTitle(getResources().getString(R.string.notification_title))
+                .setContentText(getResources().getString(R.string.notification_content))
+                .setSmallIcon(R.drawable.kamcord_appicon)
+                .build();
+        startForeground(3141592, notification);
 
-            startForeground(3141592, notification);
-            Intent recordIntent = new Intent(this, ServiceActivity.class);
-            recordIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(recordIntent);
-            Toast.makeText(serviceContext, "Start Recording", Toast.LENGTH_SHORT).show();
-        }
+        gameFolderString = intent.getStringExtra("GameFolder");
+        Log.d("GameFolder", gameFolderString);
+        launchPackageName = intent.getStringExtra("PackageName");
+        Log.d("PackageName", launchPackageName);
+        Intent recordIntent = new Intent(this, ServiceActivity.class);
+        recordIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(recordIntent);
+        Toast.makeText(serviceContext, "Start Recording", Toast.LENGTH_SHORT).show();
+
         return START_STICKY;
     }
 
@@ -104,22 +105,20 @@ public class RecordingService extends Service {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     MediaProjection projection = mediaProjectionManager.getMediaProjection(resultCode, data);
 
-                    // Calling Record Thread
                     recordHandlerThread = new RecordHandlerThread("HandlerThread");
                     recordHandlerThread.start();
-
                     recordHandler = new Handler(recordHandlerThread.getLooper(), recordHandlerThread);
                     RecordingMessage messageObject = new RecordingMessage(
                             projection,
                             getApplicationContext(),
                             true,
                             recordHandler,
-                            ((KamcordApplication) this.getApplication()).getSelectedPackageName(),
-                            ((KamcordApplication) this.getApplication()).getGameFolderString());
+                            RecordingService.launchPackageName,
+                            RecordingService.gameFolderString);
                     Message msg = Message.obtain(recordHandler, whatMemberValue, messageObject);
                     recordHandler.sendMessage(msg);
 
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(((KamcordApplication) this.getApplication()).getSelectedPackageName());
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(RecordingService.launchPackageName);
                     startActivity(launchIntent);
                 }
             } else {

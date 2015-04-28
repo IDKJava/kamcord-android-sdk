@@ -3,8 +3,6 @@ package com.kamcord.app.kamcord.activity.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.projection.MediaProjection;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,12 +25,11 @@ import java.util.ArrayList;
 
 public class RecordActivity extends Activity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener {
 
-    private static final int RECORD_FLAG = 2;
-    private MediaProjection mMediaProjection;
-
     private Button serviceStartButton;
     private FileManagement fileManagement;
     private String mGameName;
+    private String gameFolderString;
+    private String launchPackageName;
 
     private Intent serviceIntent;
 
@@ -109,12 +106,11 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
     public void onItemClick(View view, int position) {
 
         // Package for Launch Game
-        ((KamcordApplication) this.getApplication()).setSelectedPackageName(packageGameList.get(position).getPackageName());
-        String toastString = ((KamcordApplication) this.getApplication()).getSelectedPackageName();
-        fileManagement.gameFolderInitialize(toastString);
+        launchPackageName = packageGameList.get(position).getPackageName();
+        fileManagement.gameFolderInitialize(launchPackageName);
         mGameName = fileManagement.getGameName();
         Toast.makeText(getApplicationContext(),
-                "You will record " + toastString.substring(toastString.lastIndexOf(".") + 1),
+                "You will record " + launchPackageName.substring(launchPackageName.lastIndexOf(".") + 1),
                 Toast.LENGTH_SHORT)
                 .show();
     }
@@ -141,13 +137,17 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
     }
 
     public void startRecordingService() {
-        ((KamcordApplication) this.getApplication()).setRecordFlag(true);
-        serviceStartButton.setText("Stop");
-        fileManagement.sessionFolderInitialize();
+        if (!((KamcordApplication) this.getApplication()).getRecordFlag()) {
+            ((KamcordApplication) this.getApplication()).setRecordFlag(true);
+            serviceStartButton.setText("Stop");
+            fileManagement.sessionFolderInitialize();
 
-        ((KamcordApplication) this.getApplication()).setGameFolderString(mGameName + "/" + fileManagement.getUUIDString());
-        serviceIntent.putExtra("RecordFlag", true);
-        startService(serviceIntent);
+            gameFolderString = mGameName + "/" + fileManagement.getUUIDString();
+            serviceIntent.putExtra("RecordFlag", true);
+            serviceIntent.putExtra("GameFolder", gameFolderString);
+            serviceIntent.putExtra("PackageName", launchPackageName);
+            startService(serviceIntent);
+        }
     }
 
     public void stopRecordingService() {
@@ -160,12 +160,6 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (mMediaProjection != null) {
-                mMediaProjection.stop();
-                mMediaProjection = null;
-            }
-        }
     }
 
     @Override

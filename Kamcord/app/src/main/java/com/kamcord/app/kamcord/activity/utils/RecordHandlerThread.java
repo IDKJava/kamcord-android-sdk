@@ -89,8 +89,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
             case 2:
                 Log.d("Message: ", Integer.toString(msg.what));
-                // stop recording
-                // HandlerThread Fatal Exception probably gets from not release the resources.
                 releaseEncoders();
                 break;
         }
