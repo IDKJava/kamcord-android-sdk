@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.Model.GameModel;
+import com.kamcord.app.kamcord.activity.model.GameModel;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAd
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
         final GameModel gameModel = getItem(position);
-        viewHolder.itemPackageName.setText(gameModel.getPackageName());
+        viewHolder.itemPackageName.setText(gameModel.getGameName());
         viewHolder.itemImage.setBackgroundResource(gameModel.getDrawableID());
     }
 

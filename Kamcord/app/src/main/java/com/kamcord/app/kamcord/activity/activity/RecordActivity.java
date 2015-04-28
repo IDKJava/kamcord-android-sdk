@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -16,33 +15,29 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.Model.GameModel;
 import com.kamcord.app.kamcord.activity.application.KamcordApplication;
+import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
-import com.kamcord.app.kamcord.activity.utils.CustomRecyclerAdapter;
+import com.kamcord.app.kamcord.activity.utils.FileManagement;
+import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
 import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
 
-import java.io.File;
 import java.util.ArrayList;
 
 
-public class RecordActivity extends Activity implements View.OnClickListener, CustomRecyclerAdapter.OnItemClickListener {
+public class RecordActivity extends Activity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener {
 
     private static final int RECORD_FLAG = 2;
-
     private MediaProjection mMediaProjection;
 
     private Button serviceStartButton;
+    private FileManagement fileManagement;
+    private String mGameName;
 
-    private File SDCard_Path;
-    private File VideoFolder;
-    private String VideoFolderPath;
-    private String rootFolder;
-    private String GamePath;
-    private File GameFolder;
+    private Intent serviceIntent;
 
     private RecyclerView mRecyclerView;
-    private CustomRecyclerAdapter mRecyclerAdapter;
+    private GameRecordListAdapter mRecyclerAdapter;
     private ArrayList<GameModel> packageGameList;
 
     private String[] packageNameArray = new String[]{
@@ -73,21 +68,14 @@ public class RecordActivity extends Activity implements View.OnClickListener, Cu
         serviceStartButton = (Button) findViewById(R.id.servicestart_button);
         serviceStartButton.setOnClickListener(this);
 
-        // sd card check and folder initialize
-        if (rootFolder == null) {
-            rootFolder = "/Kamcord_Android/";
-        }
-        SDCard_Path = Environment.getExternalStorageDirectory();
-        VideoFolderPath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + rootFolder;
-        VideoFolder = new File(VideoFolderPath);
-        if (!VideoFolder.exists() || VideoFolder.isDirectory()) {
-            VideoFolder.mkdir();
-        }
+        fileManagement = new FileManagement();
+        fileManagement.rootFolderInitialize();
 
         packageGameList = new ArrayList<GameModel>();
         for (int i = 0; i < packageNameArray.length; i++) {
             GameModel gameModel = new GameModel();
             gameModel.setPackageName(packageNameArray[i]);
+            gameModel.setGameName(gameModel.getPackageName());
             gameModel.setDrawableID(gameDrawablArray[i]);
             packageGameList.add(gameModel);
         }
@@ -97,13 +85,14 @@ public class RecordActivity extends Activity implements View.OnClickListener, Cu
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_margin);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
-        mRecyclerAdapter = new CustomRecyclerAdapter(this, packageGameList);
+        mRecyclerAdapter = new GameRecordListAdapter(this, packageGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
+        serviceIntent = new Intent(RecordActivity.this, RecordingService.class);
     }
 
-    // Not being used in this moment
+    // Future use
     private boolean appInstalledOrNot(String uri) {
         PackageManager pm = getPackageManager();
         boolean appInstalled;
@@ -118,41 +107,54 @@ public class RecordActivity extends Activity implements View.OnClickListener, Cu
 
     @Override
     public void onItemClick(View view, int position) {
+
+        // Package for Launch Game
         ((KamcordApplication) this.getApplication()).setSelectedPackageName(packageGameList.get(position).getPackageName());
         String toastString = ((KamcordApplication) this.getApplication()).getSelectedPackageName();
-        String gameName = toastString.substring(toastString.lastIndexOf(".") + 1);
+        fileManagement.gameFolderInitialize(toastString);
+        mGameName = fileManagement.getGameName();
         Toast.makeText(getApplicationContext(),
                 "You will record " + toastString.substring(toastString.lastIndexOf(".") + 1),
                 Toast.LENGTH_SHORT)
                 .show();
-        ((KamcordApplication) this.getApplication()).setGameFolderString(gameName);
-        GamePath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + rootFolder + "/" + gameName;
-        GameFolder = new File(GamePath);
-        if (!GameFolder.exists() || GameFolder.isDirectory()) {
-            GameFolder.mkdir();
-        }
     }
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case R.id.servicestart_button: {
                 if (!((KamcordApplication) this.getApplication()).getRecordFlag()) {
-                    ((KamcordApplication) this.getApplication()).setRecordFlag(true);
-                    serviceStartButton.setText("Pause");
-                    Intent startServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
-                    startService(startServiceIntent);
-
-                    break;
+                    if (mGameName != null) {
+                        startRecordingService();
+                        break;
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please select a game to record.", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                 } else {
-                    ((KamcordApplication) this.getApplication()).setRecordFlag(false);
-                    serviceStartButton.setText("Record");
-                    Intent stopServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
-                    stopService(stopServiceIntent);
+                    stopRecordingService();
                     break;
                 }
             }
         }
+    }
+
+    public void startRecordingService() {
+        ((KamcordApplication) this.getApplication()).setRecordFlag(true);
+        serviceStartButton.setText("Stop");
+        fileManagement.sessionFolderInitialize();
+
+        ((KamcordApplication) this.getApplication()).setGameFolderString(mGameName + "/" + fileManagement.getUUIDString());
+        serviceIntent.putExtra("RecordFlag", true);
+        startService(serviceIntent);
+    }
+
+    public void stopRecordingService() {
+        ((KamcordApplication) this.getApplication()).setRecordFlag(false);
+        serviceStartButton.setText("Record");
+        serviceIntent.putExtra("RecordFlag", false);
+        stopService(serviceIntent);
     }
 
     @Override

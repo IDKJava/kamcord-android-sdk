@@ -1,4 +1,4 @@
-package com.kamcord.app.kamcord.activity.Model;
+package com.kamcord.app.kamcord.activity.model;
 
 /**
  * Created by donliang1 on 4/24/15.
@@ -6,6 +6,7 @@ package com.kamcord.app.kamcord.activity.Model;
 public class GameModel {
 
     private String packageName;
+    private String gameName;
     private int drawableID;
 
     public void setPackageName(String packageName) {
@@ -14,6 +15,15 @@ public class GameModel {
 
     public String getPackageName() {
         return packageName;
+    }
+
+    public void setGameName(String packageName) {
+        String temp = this.packageName.substring(packageName.lastIndexOf(".") + 1);
+        this.gameName = temp.substring(0, 1).toUpperCase() + temp.substring(1);
+    }
+
+    public String getGameName() {
+        return gameName;
     }
 
     public void setDrawableID(int drawableID) {

@@ -19,6 +19,8 @@
         android:text="Default"
         android:textColor="@android:color/white"
         android:id="@+id/item_packagename"
-        android:layout_alignBottom="@+id/item_image" />
+        android:layout_alignBottom="@+id/item_image"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="5dp" />
 
 </RelativeLayout>

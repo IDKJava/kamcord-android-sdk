@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -19,22 +18,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.Model.MessageObject;
 import com.kamcord.app.kamcord.activity.activity.RecordActivity;
 import com.kamcord.app.kamcord.activity.application.KamcordApplication;
+import com.kamcord.app.kamcord.activity.model.RecordingMessage;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
 import com.kamcord.app.kamcord.activity.utils.ScreenRecorder;
 
 @TargetApi(21)
 public class RecordingService extends Service {
 
-    private static final String LOG_TAG = "ForegroundService";
     private static int PERMISSION_CODE = 1;
-    private static ScreenRecorder recordThread;
 
     private static RecordHandlerThread recordHandlerThread;
     private static Handler recordHandler;
-
     private Context serviceContext;
 
     public RecordingService() {
@@ -50,47 +46,35 @@ public class RecordingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-
-        int recordStopFlag = intent.getFlags();
-
-        if (recordStopFlag != 2) {
+        if (intent.getExtras().getBoolean("RecordFlag")) {
             // Notification Setting
-
-            Intent noficationIntent = new Intent(serviceContext, RecordActivity.class);
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-
             Notification.Builder notificationBuilder = new Notification.Builder(this);
             Notification notification = notificationBuilder
-                    .setContentTitle("Kamcord")
-                    .setContentText("Recording")
-                    .setSmallIcon(R.drawable.paranoid_img)
+                    .setContentTitle(getResources().getString(R.string.notification_title))
+                    .setContentText(getResources().getString(R.string.notification_content))
+                    .setSmallIcon(R.drawable.kamcord_appicon)
                     .build();
 
-
             startForeground(3141592, notification);
-
             Intent recordIntent = new Intent(this, ServiceActivity.class);
             recordIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(recordIntent);
             Toast.makeText(serviceContext, "Start Recording", Toast.LENGTH_SHORT).show();
-
         } else {
             if (recordHandlerThread != null) {
                 recordHandlerThread.interrupt();
                 stopSelf();
                 Toast.makeText(serviceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
-                Log.d("Stop recording", "" + recordStopFlag);
             }
         }
-        return START_REDELIVER_INTENT;
+        return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         stopSelf();
-        Log.d(LOG_TAG, "kill service.");
+        Log.d(RecordingService.class.getSimpleName(), "kill service.");
     }
 
     @Override
@@ -101,6 +85,7 @@ public class RecordingService extends Service {
     public static class ServiceActivity extends Activity {
 
         private MediaProjectionManager mediaProjectionManager;
+        private static final int whatMemberValue = 1;
 
         public ServiceActivity() {
             super();
@@ -116,7 +101,6 @@ public class RecordingService extends Service {
         @Override
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-            Log.d("onActivityResult", "onActivityResult(" + requestCode + ", " + resultCode + ", " + data + ")");
             if (resultCode == RESULT_OK && requestCode == PERMISSION_CODE) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     MediaProjection projection = mediaProjectionManager.getMediaProjection(resultCode, data);
@@ -126,16 +110,17 @@ public class RecordingService extends Service {
                     recordHandlerThread.start();
 
                     recordHandler = new Handler(recordHandlerThread.getLooper(), recordHandlerThread);
-                    MessageObject messageObject = new MessageObject(projection,
+                    RecordingMessage messageObject = new RecordingMessage(
+                            projection,
                             getApplicationContext(),
                             true,
                             recordHandler,
-                            ((KamcordApplication)this.getApplication()).getSelectedPackageName(),
-                            ((KamcordApplication)this.getApplication()).getGameFolderString());
-                    Message msg = Message.obtain(recordHandler, 1, messageObject);
+                            ((KamcordApplication) this.getApplication()).getSelectedPackageName(),
+                            ((KamcordApplication) this.getApplication()).getGameFolderString());
+                    Message msg = Message.obtain(recordHandler, whatMemberValue, messageObject);
                     recordHandler.sendMessage(msg);
 
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(((KamcordApplication)this.getApplication()).getSelectedPackageName());
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(((KamcordApplication) this.getApplication()).getSelectedPackageName());
                     startActivity(launchIntent);
                 }
             } else {

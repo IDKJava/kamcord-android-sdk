@@ -18,7 +18,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 
-import com.kamcord.app.kamcord.activity.Model.MessageObject;
+import com.kamcord.app.kamcord.activity.model.RecordingMessage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,7 +30,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
     private Context mContext;
     private Handler mHandler;
-    private static MessageObject msgObject;
+    private static RecordingMessage msgObject;
 
     private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
@@ -72,26 +72,26 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         switch (msg.what) {
             case 1:
-                this.msgObject = (MessageObject)msg.obj;
-                this.mMediaProjection = msgObject.getObjectProjection();
-                this.mContext = msgObject.getObjectContext();
-                this.recordFlag = msgObject.getObjectRecordFlag();
+                this.msgObject = (RecordingMessage) msg.obj;
+                this.mMediaProjection = msgObject.getProjection();
+                this.mContext = msgObject.getContext();
+                this.recordFlag = msgObject.getRecordFlag();
                 this.mHandler = msgObject.getHandler();
                 this.selectedPackageName = msgObject.getPackageName();
                 this.gamefolder = msgObject.getGameFolderString();
 
                 startRecording();
-
-                while(pollingGame()) {
+                while (pollingGame()) {
                 }
-                Log.d("waiting is ", "FINISHED!!!");
-
+                Log.d("Polling has ", "finished.");
                 Message resumeMsg = Message.obtain(this.mHandler, 1, msgObject);
                 this.mHandler.sendMessage(resumeMsg);
                 break;
             case 2:
                 Log.d("Message: ", Integer.toString(msg.what));
                 // stop recording
+                // HandlerThread Fatal Exception probably gets from not release the resources.
+                releaseEncoders();
                 break;
         }
         return false;
@@ -103,7 +103,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         runningAppProcessInfo = runningAppProcessInfoList.get(0);
         packageList = runningAppProcessInfo.pkgList;
         packageString = packageList[0];
-        if(packageString.equals(selectedPackageName)) {
+        if (packageString.equals(selectedPackageName)) {
             return false;
         }
         return true;
@@ -133,7 +133,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             // Video Location
             try {
                 String fileNamePrefix = new SimpleDateFormat(fileDateFormat).format(new Date()).replaceAll("[\\s:]", "-");
-                mMuxer = new MediaMuxer("/sdcard/Kamcord_Android/" + gamefolder + "/" + "Kamcord-" + fileNamePrefix + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+                mMuxer = new MediaMuxer("/sdcard/Kamcord_Android/" + gamefolder + "/" + "Kamcord -" + fileNamePrefix + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }
@@ -141,7 +141,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             frameCount = 0;
             drainEncoder();
             releaseEncoders();
-
         }
     }
 
