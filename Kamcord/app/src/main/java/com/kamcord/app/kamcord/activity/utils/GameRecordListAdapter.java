@@ -14,15 +14,15 @@ import com.kamcord.app.kamcord.activity.model.GameModel;
 import java.util.List;
 
 /**
- * Created by donliang1 on 4/24/15.
+ * Created by donliang1 on 4/28/15.
  */
-public class CustomRecyclerAdapter extends RecyclerView.Adapter<CustomRecyclerAdapter.ViewHolder> {
+public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAdapter.ViewHolder> {
 
     private static Context mContext;
     private List<GameModel> mGames;
     private static OnItemClickListener mItemClickListener;
 
-    public CustomRecyclerAdapter(Context context, List<GameModel> games) {
+    public GameRecordListAdapter(Context context, List<GameModel> games) {
         this.mContext = context;
         this.mGames = games;
     }

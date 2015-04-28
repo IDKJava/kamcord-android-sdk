@@ -60,12 +60,6 @@ public class RecordingService extends Service {
             recordIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(recordIntent);
             Toast.makeText(serviceContext, "Start Recording", Toast.LENGTH_SHORT).show();
-        } else {
-            if (recordHandlerThread != null) {
-                recordHandlerThread.interrupt();
-                stopSelf();
-                Toast.makeText(serviceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
-            }
         }
         return START_STICKY;
     }
@@ -73,6 +67,11 @@ public class RecordingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (recordHandlerThread != null) {
+            recordHandlerThread.interrupt();
+            stopSelf();
+            Toast.makeText(serviceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
+        }
         stopSelf();
         Log.d(RecordingService.class.getSimpleName(), "kill service.");
     }
