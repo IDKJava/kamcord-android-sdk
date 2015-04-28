@@ -7,18 +7,8 @@ import android.app.Application;
  */
 public class KamcordApplication extends Application {
 
-    private boolean recordFlag = false;
-
     @Override
     public void onCreate() {
         super.onCreate();
-    }
-
-    public boolean getRecordFlag() {
-        return recordFlag;
-    }
-
-    public void setRecordFlag(boolean recordFlag) {
-        this.recordFlag = recordFlag;
     }
 }

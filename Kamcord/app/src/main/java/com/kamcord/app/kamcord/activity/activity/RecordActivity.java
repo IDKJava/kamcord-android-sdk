@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.application.KamcordApplication;
 import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
@@ -30,6 +29,7 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
     private String mGameName;
     private String gameFolderString;
     private String launchPackageName;
+    private boolean buttonClicked = false;
 
     private Intent serviceIntent;
 
@@ -120,7 +120,7 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
 
         switch (v.getId()) {
             case R.id.servicestart_button: {
-                if (!((KamcordApplication) this.getApplication()).getRecordFlag()) {
+                if (!buttonClicked) {
                     if (mGameName != null) {
                         startRecordingService();
                         break;
@@ -137,21 +137,19 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
     }
 
     public void startRecordingService() {
-        if (!((KamcordApplication) this.getApplication()).getRecordFlag()) {
-            ((KamcordApplication) this.getApplication()).setRecordFlag(true);
-            serviceStartButton.setText("Stop");
-            fileManagement.sessionFolderInitialize();
+        buttonClicked = true;
+        serviceStartButton.setText("Stop");
+        fileManagement.sessionFolderInitialize();
 
-            gameFolderString = mGameName + "/" + fileManagement.getUUIDString();
-            serviceIntent.putExtra("RecordFlag", true);
-            serviceIntent.putExtra("GameFolder", gameFolderString);
-            serviceIntent.putExtra("PackageName", launchPackageName);
-            startService(serviceIntent);
-        }
+        gameFolderString = mGameName + "/" + fileManagement.getUUIDString();
+        serviceIntent.putExtra("RecordFlag", true);
+        serviceIntent.putExtra("GameFolder", gameFolderString);
+        serviceIntent.putExtra("PackageName", launchPackageName);
+        startService(serviceIntent);
     }
 
     public void stopRecordingService() {
-        ((KamcordApplication) this.getApplication()).setRecordFlag(false);
+        buttonClicked = false;
         serviceStartButton.setText("Record");
         serviceIntent.putExtra("RecordFlag", false);
         stopService(serviceIntent);
