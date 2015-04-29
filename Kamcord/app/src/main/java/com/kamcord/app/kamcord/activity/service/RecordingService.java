@@ -25,11 +25,11 @@ public class RecordingService extends Service {
 
     private static int PERMISSION_CODE = 1;
 
-    private static RecordHandlerThread recordHandlerThread;
-    private static Handler recordHandler;
-    private Context serviceContext;
-    public static String gameFolderString;
-    private static String launchPackageName;
+    private static RecordHandlerThread mRecordHandlerThread;
+    private static Handler RecordHandler;
+    private Context ServiceContext;
+    private static String GameFolderString;
+    private static String LaunchPackageName;
 
     public RecordingService() {
         super();
@@ -37,7 +37,7 @@ public class RecordingService extends Service {
 
     @Override
     public void onCreate() {
-        serviceContext = getApplicationContext();
+        ServiceContext = getApplicationContext();
         super.onCreate();
     }
 
@@ -53,14 +53,12 @@ public class RecordingService extends Service {
                 .build();
         startForeground(3141592, notification);
 
-        gameFolderString = intent.getStringExtra("GameFolder");
-        Log.d("GameFolder", gameFolderString);
-        launchPackageName = intent.getStringExtra("PackageName");
-        Log.d("PackageName", launchPackageName);
+        GameFolderString = intent.getStringExtra("GameFolder");
+        LaunchPackageName = intent.getStringExtra("PackageName");
         Intent recordIntent = new Intent(this, ServiceActivity.class);
         recordIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(recordIntent);
-        Toast.makeText(serviceContext, "Start Recording", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ServiceContext, "Start Recording", Toast.LENGTH_SHORT).show();
 
         return START_STICKY;
     }
@@ -68,10 +66,10 @@ public class RecordingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (recordHandlerThread != null) {
-            recordHandlerThread.interrupt();
+        if (mRecordHandlerThread != null) {
+            mRecordHandlerThread.interrupt();
             stopSelf();
-            Toast.makeText(serviceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ServiceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
         }
         stopSelf();
         Log.d(RecordingService.class.getSimpleName(), "kill service.");
@@ -105,20 +103,20 @@ public class RecordingService extends Service {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     MediaProjection projection = mediaProjectionManager.getMediaProjection(resultCode, data);
 
-                    recordHandlerThread = new RecordHandlerThread("HandlerThread");
-                    recordHandlerThread.start();
-                    recordHandler = new Handler(recordHandlerThread.getLooper(), recordHandlerThread);
+                    mRecordHandlerThread = new RecordHandlerThread("HandlerThread");
+                    mRecordHandlerThread.start();
+                    RecordHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
                     RecordingMessage messageObject = new RecordingMessage(
                             projection,
                             getApplicationContext(),
                             true,
-                            recordHandler,
-                            RecordingService.launchPackageName,
-                            RecordingService.gameFolderString);
-                    Message msg = Message.obtain(recordHandler, whatMemberValue, messageObject);
-                    recordHandler.sendMessage(msg);
+                            RecordHandler,
+                            RecordingService.LaunchPackageName,
+                            RecordingService.GameFolderString);
+                    Message msg = Message.obtain(RecordHandler, whatMemberValue, messageObject);
+                    RecordHandler.sendMessage(msg);
 
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(RecordingService.launchPackageName);
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(RecordingService.LaunchPackageName);
                     startActivity(launchIntent);
                 }
             } else {

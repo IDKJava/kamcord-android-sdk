@@ -7,36 +7,36 @@ import java.util.UUID;
 
 public class FileManagement {
 
-    private File SDCard_Path;
+    private File SDCardPath;
     private File VideoFolder;
     private String VideoFolderPath;
-    private String rootFolder;
+    private String RootFolder;
     private String GamePath;
     private File GameFolder;
     private File GameUUIDFolder;
-    private String uuidString;
-    private UUID uuid;
-    private String gameName;
+    private String UUIDString;
+    private UUID Uuid;
+    private String GameName;
 
     public FileManagement() {
 
     }
 
     public String getGameName() {
-        return gameName;
+        return GameName;
     }
 
     public String getUUIDString() {
-        return uuidString;
+        return UUIDString;
     }
 
     public void rootFolderInitialize() {
         // SD card check and folder initialize
-        if (rootFolder == null) {
-            rootFolder = "/Kamcord_Android/";
+        if (RootFolder == null) {
+            RootFolder = "/Kamcord_Android/";
         }
-        SDCard_Path = Environment.getExternalStorageDirectory();
-        VideoFolderPath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + rootFolder;
+        SDCardPath = Environment.getExternalStorageDirectory();
+        VideoFolderPath = SDCardPath.getParent() + "/" + SDCardPath.getName() + "/" + RootFolder;
         VideoFolder = new File(VideoFolderPath);
         if (!VideoFolder.exists() || VideoFolder.isDirectory()) {
             VideoFolder.mkdir();
@@ -44,9 +44,9 @@ public class FileManagement {
     }
 
     public void gameFolderInitialize(String gamePackageName) {
-        gameName = gamePackageName.substring(gamePackageName.lastIndexOf(".") + 1);
+        GameName = gamePackageName.substring(gamePackageName.lastIndexOf(".") + 1);
         // Game Folder Generation
-        GamePath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + rootFolder + "/" + gameName;
+        GamePath = SDCardPath.getParent() + "/" + SDCardPath.getName() + "/" + RootFolder + "/" + GameName;
         GameFolder = new File(GamePath);
         if (!GameFolder.exists() || !GameFolder.isDirectory()) {
             GameFolder.mkdir();
@@ -54,9 +54,9 @@ public class FileManagement {
     }
 
     public void sessionFolderInitialize() {
-        uuid = UUID.randomUUID();
-        uuidString = uuid.toString();
-        GamePath = SDCard_Path.getParent() + "/" + SDCard_Path.getName() + "/" + rootFolder + "/" + gameName + "/" + uuidString;
+        Uuid = UUID.randomUUID();
+        UUIDString = Uuid.toString();
+        GamePath = SDCardPath.getParent() + "/" + SDCardPath.getName() + "/" + RootFolder + "/" + GameName + "/" + UUIDString;
         GameUUIDFolder = new File(GamePath);
         if (!GameUUIDFolder.exists() || !GameUUIDFolder.isDirectory()) {
             GameUUIDFolder.mkdir();

@@ -1,10 +1,12 @@
 package com.kamcord.app.kamcord.activity.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
+import com.kamcord.app.kamcord.activity.fragment.RecordShareFragment;
 import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
@@ -25,29 +28,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RecordActivity extends Activity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener {
+public class RecordActivity extends FragmentActivity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener {
 
-    private Button serviceStartButton;
-    private FileManagement fileManagement;
+    private Button ServiceStartButton;
+    private FileManagement mFileManagement;
     private String mGameName;
-    private String gameFolderString;
-    private String launchPackageName;
-    private boolean buttonClicked = false;
+    private String GameFolderString;
+    private String LaunchPackageName;
+    private boolean ButtonClicked = false;
 
-    private Intent serviceIntent;
+    private Intent ServiceIntent;
 
     private RecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
-    private ArrayList<GameModel> packageGameList;
+    private ArrayList<GameModel> PackageGameList;
 
-    private String[] packageNameArray = new String[]{
+    private String[] PackageNameArray = new String[]{
             "com.rovio.BadPiggies",
             "com.yodo1.crossyroad",
             "com.madfingergames.deadtrigger2",
             "com.fingersoft.hillclimb",
             "com.kabam.marvelbattle",
     };
-    private Integer[] gameDrawablArray = new Integer[]{
+    private Integer[] GameDrawablArray = new Integer[]{
             R.drawable.bad_piggies,
             R.drawable.crossy_road,
             R.drawable.dead_trigger,
@@ -65,31 +68,31 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
 
     public void initKamcord() {
 
-        serviceStartButton = (Button) findViewById(R.id.servicestart_button);
-        serviceStartButton.setOnClickListener(this);
+        ServiceStartButton = (Button) findViewById(R.id.servicestart_button);
+        ServiceStartButton.setOnClickListener(this);
 
-        fileManagement = new FileManagement();
-        fileManagement.rootFolderInitialize();
+        mFileManagement = new FileManagement();
+        mFileManagement.rootFolderInitialize();
 
-        packageGameList = new ArrayList<GameModel>();
-        for (int i = 0; i < packageNameArray.length; i++) {
+        PackageGameList = new ArrayList<GameModel>();
+        for (int i = 0; i < PackageNameArray.length; i++) {
             GameModel gameModel = new GameModel();
-            gameModel.setPackageName(packageNameArray[i]);
+            gameModel.setPackageName(PackageNameArray[i]);
             gameModel.setGameName(gameModel.getPackageName());
-            gameModel.setDrawableID(gameDrawablArray[i]);
-            packageGameList.add(gameModel);
+            gameModel.setDrawableID(GameDrawablArray[i]);
+            PackageGameList.add(gameModel);
         }
 
         // gridview init;
         mRecyclerView = (RecyclerView) findViewById(R.id.record_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_margin);
-        mRecyclerView.addItemDecoration(new SpaceItemDecoration(spacingInPixels));
-        mRecyclerAdapter = new GameRecordListAdapter(this, packageGameList);
+        int SpacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_margin);
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration(SpacingInPixels));
+        mRecyclerAdapter = new GameRecordListAdapter(this, PackageGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
-        serviceIntent = new Intent(RecordActivity.this, RecordingService.class);
+        ServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
 
 //        getInstalledGameList();
     }
@@ -124,11 +127,11 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
     public void onItemClick(View view, int position) {
 
         // Package for Launch Game
-        launchPackageName = packageGameList.get(position).getPackageName();
-        fileManagement.gameFolderInitialize(launchPackageName);
-        mGameName = fileManagement.getGameName();
+        LaunchPackageName = PackageGameList.get(position).getPackageName();
+        mFileManagement.gameFolderInitialize(LaunchPackageName);
+        mGameName = mFileManagement.getGameName();
         Toast.makeText(getApplicationContext(),
-                "You will record " + launchPackageName.substring(launchPackageName.lastIndexOf(".") + 1),
+                "You will record " + LaunchPackageName.substring(LaunchPackageName.lastIndexOf(".") + 1),
                 Toast.LENGTH_SHORT)
                 .show();
     }
@@ -138,7 +141,7 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
 
         switch (v.getId()) {
             case R.id.servicestart_button: {
-                if (!buttonClicked) {
+                if (!ButtonClicked) {
                     if (mGameName != null) {
                         startRecordingService();
                         break;
@@ -148,29 +151,39 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
                     }
                 } else {
                     stopRecordingService();
+                    showShareFragment();
                     break;
                 }
             }
         }
     }
 
-    public void startRecordingService() {
-        buttonClicked = true;
-        serviceStartButton.setText("Stop");
-        fileManagement.sessionFolderInitialize();
+    public void showShareFragment() {
+        ServiceStartButton.setVisibility(View.GONE);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = RecordShareFragment.newInstance();
+        fragmentTransaction.add(R.id.activity_recordlayout, fragment, "tag")
+                .addToBackStack("tag")
+                .commit();
+    }
 
-        gameFolderString = mGameName + "/" + fileManagement.getUUIDString();
-        serviceIntent.putExtra("RecordFlag", true);
-        serviceIntent.putExtra("GameFolder", gameFolderString);
-        serviceIntent.putExtra("PackageName", launchPackageName);
-        startService(serviceIntent);
+    public void startRecordingService() {
+        ButtonClicked = true;
+        ServiceStartButton.setText("Stop");
+        mFileManagement.sessionFolderInitialize();
+
+        GameFolderString = mGameName + "/" + mFileManagement.getUUIDString();
+        ServiceIntent.putExtra("RecordFlag", true);
+        ServiceIntent.putExtra("GameFolder", GameFolderString);
+        ServiceIntent.putExtra("PackageName", LaunchPackageName);
+        startService(ServiceIntent);
     }
 
     public void stopRecordingService() {
-        buttonClicked = false;
-        serviceStartButton.setText("Record");
-        serviceIntent.putExtra("RecordFlag", false);
-        stopService(serviceIntent);
+        ButtonClicked = false;
+        ServiceStartButton.setText("Record");
+        ServiceIntent.putExtra("RecordFlag", false);
+        stopService(ServiceIntent);
     }
 
     @Override

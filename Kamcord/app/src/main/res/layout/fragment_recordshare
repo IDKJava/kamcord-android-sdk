@@ -1,15 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kamcord.app.kamcord.activity.activity.RecordActivity">
+    android:background="@android:color/white">
 
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Share"
-        android:textColor="@android:color/white"
-        android:id="@+id/share_button"
-        android:layout_alignParentBottom="true"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:id="@+id/videothumbnail_imageview"
+        android:background="@drawable/default_thumbnails"
+        android:scaleType="centerCrop"
+        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
+    <!--<Button-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Share This Video"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:id="@+id/share_button"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignEnd="@+id/seekBar" />-->
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:hint="Give your video a title"
+        android:layout_below="@+id/videothumbnail_imageview"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="video_duration"
+        android:textColor="@android:color/white"
+        android:background="#CC000000"
+        android:id="@+id/previewduration_textview"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="21dp"
+        android:layout_alignBottom="@+id/videothumbnail_imageview"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

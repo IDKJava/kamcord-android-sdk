@@ -6,43 +6,43 @@ import android.os.Handler;
 
 public class RecordingMessage extends Object {
 
-    public MediaProjection projection;
-    public Context context;
-    public boolean recordFlag;
-    private Handler handler;
-    private String packageName;
-    private String gameFolderString;
+    public MediaProjection Projection;
+    public Context mContext;
+    public boolean mRecordFlag;
+    private Handler mHandler;
+    private String PackageName;
+    private String GameFolderString;
 
     public RecordingMessage(MediaProjection projection, Context context, boolean recordFlag, Handler handler, String packageName, String gameFolderString) {
-        this.projection = projection;
-        this.context = context;
-        this.recordFlag = recordFlag;
-        this.handler = handler;
-        this.packageName = packageName;
-        this.gameFolderString = gameFolderString;
+        this.Projection = projection;
+        this.mContext = context;
+        this.mRecordFlag = recordFlag;
+        this.mHandler = handler;
+        this.PackageName = packageName;
+        this.GameFolderString = gameFolderString;
     }
 
     public MediaProjection getProjection() {
-        return projection;
+        return Projection;
     }
 
     public Context getContext() {
-        return context;
+        return mContext;
     }
 
     public boolean getRecordFlag() {
-        return recordFlag;
+        return mRecordFlag;
     }
 
     public Handler getHandler() {
-        return handler;
+        return mHandler;
     }
 
     public String getPackageName() {
-        return packageName;
+        return PackageName;
     }
 
     public String getGameFolderString() {
-        return gameFolderString;
+        return GameFolderString;
     }
 }
