@@ -93,8 +93,6 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         ServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
-
-//        getInstalledGameList();
     }
 
     // Future use
