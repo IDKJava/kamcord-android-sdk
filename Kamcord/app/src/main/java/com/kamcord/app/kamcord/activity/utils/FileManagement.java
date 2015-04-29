@@ -5,9 +5,6 @@ import android.os.Environment;
 import java.io.File;
 import java.util.UUID;
 
-/**
- * Created by donliang1 on 4/28/15.
- */
 public class FileManagement {
 
     private File SDCard_Path;

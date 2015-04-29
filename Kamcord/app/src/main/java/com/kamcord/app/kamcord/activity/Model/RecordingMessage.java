@@ -4,9 +4,6 @@ import android.content.Context;
 import android.media.projection.MediaProjection;
 import android.os.Handler;
 
-/**
- * Created by donliang1 on 4/28/15.
- */
 public class RecordingMessage extends Object {
 
     public MediaProjection projection;

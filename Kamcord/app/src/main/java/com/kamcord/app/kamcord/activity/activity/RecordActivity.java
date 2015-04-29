@@ -2,10 +2,12 @@ package com.kamcord.app.kamcord.activity.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
 import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class RecordActivity extends Activity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener {
@@ -87,6 +90,8 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         serviceIntent = new Intent(RecordActivity.this, RecordingService.class);
+
+//        getInstalledGameList();
     }
 
     // Future use
@@ -100,6 +105,19 @@ public class RecordActivity extends Activity implements View.OnClickListener, Ga
             appInstalled = false;
         }
         return appInstalled;
+    }
+
+    public void getInstalledGameList() {
+        PackageManager packageManager = getPackageManager();
+        List<ApplicationInfo> applicationInfoList = packageManager.getInstalledApplications(0);
+
+        ArrayList<ApplicationInfo> installedGameList = new ArrayList<ApplicationInfo>();
+        for(ApplicationInfo app : applicationInfoList) {
+            if((app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME){
+                installedGameList.add(app);
+                Log.d("Game Installed: ", (String)packageManager.getApplicationLabel(app));
+            }
+        }
     }
 
     @Override

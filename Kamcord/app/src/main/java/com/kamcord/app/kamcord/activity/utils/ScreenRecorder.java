@@ -23,9 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by donliang1 on 4/21/15.
- */
 @TargetApi(21)
 public class ScreenRecorder extends Thread {
 

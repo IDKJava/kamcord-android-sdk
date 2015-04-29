@@ -13,9 +13,6 @@ import com.kamcord.app.kamcord.activity.model.GameModel;
 
 import java.util.List;
 
-/**
- * Created by donliang1 on 4/28/15.
- */
 public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAdapter.ViewHolder> {
 
     private static Context mContext;

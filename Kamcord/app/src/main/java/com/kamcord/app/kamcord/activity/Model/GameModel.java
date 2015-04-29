@@ -1,8 +1,5 @@
 package com.kamcord.app.kamcord.activity.model;
 
-/**
- * Created by donliang1 on 4/24/15.
- */
 public class GameModel {
 
     private String packageName;
