@@ -105,7 +105,6 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                 Toast.makeText(getApplicationContext(), "hey", Toast.LENGTH_SHORT).show();
 
                 ArrayList<String> arrayList = new ArrayList<String>();
-//                String[] str = new String[3];
                 arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip1.mp4");
                 arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip2.mp4");
                 arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip3.mp4");
