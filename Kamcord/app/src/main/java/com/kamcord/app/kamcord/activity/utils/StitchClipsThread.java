@@ -12,6 +12,7 @@ import com.googlecode.mp4parser.authoring.tracks.AppendTrack;
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.channels.WritableByteChannel;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,9 +23,9 @@ public class StitchClipsThread extends Thread {
 
     private MovieCreator mMovieCreator;
     private String ResultPath;
-    private String[] inputVideoClips;
+    private ArrayList<String> inputVideoClips;
 
-    public StitchClipsThread(String[] inputVideos) {
+    public StitchClipsThread(ArrayList<String> inputVideos) {
         this.inputVideoClips = inputVideos;
     }
 
@@ -39,15 +40,15 @@ public class StitchClipsThread extends Thread {
         startStitching(inputVideoClips);
     }
 
-    public void startStitching(String[] inputVideos) {
+    public void startStitching(ArrayList<String> inputVideos) {
         try {
 
-            int clipsLength = inputVideos.length;
+            int clipsLength = inputVideos.size();
             Movie[] clips = new Movie[clipsLength];
             List<Track> videoTracks = new LinkedList<>();
 
             for (int i = 0; i < clipsLength; i++) {
-                clips[i] = mMovieCreator.build(inputVideos[i]);
+                clips[i] = mMovieCreator.build(inputVideos.get(i));
             }
             for (Movie movie : clips) {
                 for (Track track : movie.getTracks()) {

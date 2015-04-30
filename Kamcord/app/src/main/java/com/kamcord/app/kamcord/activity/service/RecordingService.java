@@ -67,7 +67,7 @@ public class RecordingService extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (mRecordHandlerThread != null) {
-            mRecordHandlerThread.interrupt();
+            mRecordHandlerThread.quitSafely();
             stopSelf();
             Toast.makeText(ServiceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
         }

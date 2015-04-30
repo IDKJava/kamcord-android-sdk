@@ -104,11 +104,12 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "hey", Toast.LENGTH_SHORT).show();
 
-                String[] str = new String[3];
-                str[0] = Environment.getExternalStorageDirectory().getParent() + "/" + android.os.Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip1.mp4";
-                str[1] = Environment.getExternalStorageDirectory().getParent() + "/" + android.os.Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip2.mp4";
-                str[2] = Environment.getExternalStorageDirectory().getParent() + "/" + android.os.Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip3.mp4";
-                StitchClipsThread stitchClipsThread = new StitchClipsThread(str);
+                ArrayList<String> arrayList = new ArrayList<String>();
+//                String[] str = new String[3];
+                arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip1.mp4");
+                arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip2.mp4");
+                arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip3.mp4");
+                StitchClipsThread stitchClipsThread = new StitchClipsThread(arrayList);
                 stitchClipsThread.start();
             }
         });
@@ -168,7 +169,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                     }
                 } else {
                     stopRecordingService();
-                    showShareFragment();
+//                    showShareFragment();
                     break;
                 }
             }
