@@ -1,0 +1,23 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/activity_recordlayout"
+    tools:context="com.kamcord.app.kamcord.activity.activity.RecordActivity">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/record_recyclerview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="vertical" />
+
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Record"
+        android:textColor="@android:color/white"
+        android:id="@+id/servicestart_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>
