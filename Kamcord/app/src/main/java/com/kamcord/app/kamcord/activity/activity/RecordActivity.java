@@ -108,7 +108,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                 arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip1.mp4");
                 arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip2.mp4");
                 arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip3.mp4");
-                StitchClipsThread stitchClipsThread = new StitchClipsThread(arrayList);
+                StitchClipsThread stitchClipsThread = new StitchClipsThread(arrayList, getApplicationContext());
                 stitchClipsThread.start();
             }
         });
