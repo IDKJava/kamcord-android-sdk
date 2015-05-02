@@ -1,9 +1,15 @@
 package com.kamcord.app.kamcord.activity.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -28,138 +34,164 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RecordActivity extends FragmentActivity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener {
+public class RecordActivity extends FragmentActivity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener
+{
+    private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    private Button ServiceStartButton;
+    private Button mServiceStartButton;
     private FileManagement mFileManagement;
-    private String mGameName;
-    private String GameFolderString;
-    private String LaunchPackageName;
-    private boolean ButtonClicked = false;
+    private boolean mButtonClicked = false;
 
-    private Intent ServiceIntent;
+    private ArrayList<GameModel> mSupportedGameList = new ArrayList<GameModel>()
+    {
+        {
+            add(new GameModel("com.rovio.BadPiggies", "com.rovio.BadPiggies", R.drawable.bad_piggies));
+            add(new GameModel("com.yodo1.crossyroad", "com.yodo1.crossyroad", R.drawable.crossy_road));
+            add(new GameModel("com.madfingergames.deadtrigger2", "com.madfingergames.deadtrigger2", R.drawable.dead_trigger));
+            add(new GameModel("com.fingersoft.hillclimb", "com.fingersoft.hillclimb", R.drawable.hill_racing));
+            add(new GameModel("com.kabam.marvelbattle", "com.kabam.marvelbattle", R.drawable.marvel));
+        }
+    };
+    private GameModel mSelectedGame = null;
+
+    private RecordingService mRecordingService;
+    private ServiceConnection mConnection = new ServiceConnection()
+    {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder)
+        {
+            mRecordingService = ((RecordingService.LocalBinder) iBinder).getService();
+            mIsBoundToService = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName)
+        {
+            mIsBoundToService = false;
+        }
+    };
+    private boolean mIsBoundToService = false;
+
+    private MediaProjectionManager mMediaProjectionManager;
 
     private RecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
-    private ArrayList<GameModel> PackageGameList;
-
-    private String[] PackageNameArray = new String[]{
-            "com.rovio.BadPiggies",
-            "com.yodo1.crossyroad",
-            "com.madfingergames.deadtrigger2",
-            "com.fingersoft.hillclimb",
-            "com.kabam.marvelbattle",
-    };
-    private Integer[] GameDrawablArray = new Integer[]{
-            R.drawable.bad_piggies,
-            R.drawable.crossy_road,
-            R.drawable.dead_trigger,
-            R.drawable.hill_racing,
-            R.drawable.marvel,
-    };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
         initKamcord();
 
+        startService(new Intent(this, RecordingService.class));
     }
 
-    public void initKamcord() {
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        bindService(new Intent(this, RecordingService.class), mConnection, 0);
+    }
 
-        ServiceStartButton = (Button) findViewById(R.id.servicestart_button);
-        ServiceStartButton.setOnClickListener(this);
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        if( mIsBoundToService )
+        {
+            unbindService(mConnection);
+            mIsBoundToService = false;
+        }
+    }
+
+    public void initKamcord()
+    {
+
+        mServiceStartButton = (Button) findViewById(R.id.servicestart_button);
+        mServiceStartButton.setOnClickListener(this);
 
         mFileManagement = new FileManagement();
         mFileManagement.rootFolderInitialize();
-
-        PackageGameList = new ArrayList<GameModel>();
-        for (int i = 0; i < PackageNameArray.length; i++) {
-            GameModel gameModel = new GameModel();
-            gameModel.setPackageName(PackageNameArray[i]);
-            gameModel.setGameName(gameModel.getPackageName());
-            gameModel.setDrawableID(GameDrawablArray[i]);
-            PackageGameList.add(gameModel);
-        }
 
         // gridview init;
         mRecyclerView = (RecyclerView) findViewById(R.id.record_recyclerview);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         int SpacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_margin);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(SpacingInPixels));
-        mRecyclerAdapter = new GameRecordListAdapter(this, PackageGameList);
+        mRecyclerAdapter = new GameRecordListAdapter(this, mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
-
-        ServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
 
 //        getInstalledGameList();
     }
 
     // Future use
-    private boolean appInstalledOrNot(String uri) {
+    private boolean appInstalledOrNot(String uri)
+    {
         PackageManager pm = getPackageManager();
         boolean appInstalled;
-        try {
+        try
+        {
             pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
             appInstalled = true;
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch( PackageManager.NameNotFoundException e )
+        {
             appInstalled = false;
         }
         return appInstalled;
     }
 
-    public void getInstalledGameList() {
+    public void getInstalledGameList()
+    {
         PackageManager packageManager = getPackageManager();
         List<ApplicationInfo> applicationInfoList = packageManager.getInstalledApplications(0);
 
         ArrayList<ApplicationInfo> installedGameList = new ArrayList<ApplicationInfo>();
-        for(ApplicationInfo app : applicationInfoList) {
-            if((app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME){
+        for( ApplicationInfo app : applicationInfoList )
+        {
+            if( (app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME )
+            {
                 installedGameList.add(app);
-                Log.d("Game Installed: ", (String)packageManager.getApplicationLabel(app));
+                Log.d("Game Installed: ", (String) packageManager.getApplicationLabel(app));
             }
         }
     }
 
     @Override
-    public void onItemClick(View view, int position) {
-
+    public void onItemClick(View view, int position)
+    {
         // Package for Launch Game
-        LaunchPackageName = PackageGameList.get(position).getPackageName();
-        mFileManagement.gameFolderInitialize(LaunchPackageName);
-        mGameName = mFileManagement.getGameName();
+        mSelectedGame = mSupportedGameList.get(position);
         Toast.makeText(getApplicationContext(),
-                "You will record " + LaunchPackageName.substring(LaunchPackageName.lastIndexOf(".") + 1),
+                "You will record " + mSelectedGame.getPackageName(),
                 Toast.LENGTH_SHORT)
                 .show();
     }
 
     @Override
-    public void onClick(View v) {
-
-        switch (v.getId()) {
-            case R.id.servicestart_button: {
-                if (!ButtonClicked) {
-                    if (mGameName != null) {
-                        startRecordingService();
-                        break;
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Please select a game to record.", Toast.LENGTH_SHORT).show();
-                        break;
-                    }
-                } else {
-                    stopRecordingService();
-                    showShareFragment();
+    public void onClick(View v)
+    {
+        switch( v.getId() )
+        {
+            case R.id.servicestart_button:
+            {
+                if( mSelectedGame != null )
+                {
+                    obtainMediaProjection();
+                    break;
+                } else
+                {
+                    Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
                     break;
                 }
             }
         }
     }
 
-    public void showShareFragment() {
-        ServiceStartButton.setVisibility(View.GONE);
+    public void showShareFragment()
+    {
+        mServiceStartButton.setVisibility(View.GONE);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = RecordShareFragment.newInstance();
         fragmentTransaction.add(R.id.activity_recordlayout, fragment, "tag")
@@ -167,49 +199,47 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                 .commit();
     }
 
-    public void startRecordingService() {
-        ButtonClicked = true;
-        ServiceStartButton.setText("Stop");
-        mFileManagement.sessionFolderInitialize();
-
-        GameFolderString = mGameName + "/" + mFileManagement.getUUIDString();
-        ServiceIntent.putExtra("RecordFlag", true);
-        ServiceIntent.putExtra("GameFolder", GameFolderString);
-        ServiceIntent.putExtra("PackageName", LaunchPackageName);
-        startService(ServiceIntent);
-    }
-
-    public void stopRecordingService() {
-        ButtonClicked = false;
-        ServiceStartButton.setText("Record");
-        ServiceIntent.putExtra("RecordFlag", false);
-        stopService(ServiceIntent);
+    public void obtainMediaProjection()
+    {
+        mMediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_record, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if( id == R.id.action_settings )
+        {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if( resultCode == RESULT_OK && requestCode == MEDIA_PROJECTION_MANAGER_PERMISSION_CODE )
+        {
+            if( mMediaProjectionManager != null && mSelectedGame != null )
+            {
+                MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, data);
+                mRecordingService.startRecording(projection, mSelectedGame);
+            }
+            else
+            {
+                Log.w("Kamcord", "Unable to start recording because reasons.");
+            }
+        }
     }
 }

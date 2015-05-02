@@ -12,13 +12,12 @@ import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 
-import com.kamcord.app.kamcord.activity.model.RecordingMessage;
+import com.kamcord.app.kamcord.activity.model.GameModel;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,13 +25,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
-
+public class RecordHandlerThread extends HandlerThread implements Handler.Callback
+{
+    private MediaProjection mMediaProjection;
+    private GameModel mGameModel;
     private Context mContext;
     private Handler mHandler;
-    private static RecordingMessage msgObject;
 
-    private MediaProjection mMediaProjection;
     private VirtualDisplay mVirtualDisplay;
     private Surface mSurface;
 
@@ -63,36 +62,45 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private String selectedPackageName;
     private String gamefolder;
 
-    public RecordHandlerThread(String name) {
-        super(name);
+    private RecordingState mState = RecordingState.IDLE;
+
+    public RecordHandlerThread(MediaProjection mediaProjection, GameModel gameModel, Context context) {
+        super("KamcordRecordingThread");
+        this.mMediaProjection = mediaProjection;
+        this.mGameModel = gameModel;
+        this.mContext = context;
     }
 
     @Override
-    public boolean handleMessage(Message msg) {
+    public boolean handleMessage(android.os.Message msg) {
 
         switch (msg.what) {
-            case 1:
-                this.msgObject = (RecordingMessage) msg.obj;
-                this.mMediaProjection = msgObject.getProjection();
-                this.mContext = msgObject.getContext();
-                this.recordFlag = msgObject.getRecordFlag();
-                this.mHandler = msgObject.getHandler();
-                this.selectedPackageName = msgObject.getPackageName();
-                this.gamefolder = msgObject.getGameFolderString();
-
-                startRecording();
-                while (pollingGame()) {
-                }
-                Log.d("Polling has ", "finished.");
-                Message resumeMsg = Message.obtain(this.mHandler, 1, msgObject);
-                this.mHandler.sendMessage(resumeMsg);
+            case Message.RECORD_CLIP:
+                recordUntilBackground();
+                mHandler.removeMessages(Message.POLL);
+                mHandler.sendEmptyMessage(Message.POLL);
                 break;
-            case 2:
-                Log.d("Message: ", Integer.toString(msg.what));
-                releaseEncoders();
+            case Message.POLL:
+                pollUntilForeground();
+                mHandler.removeMessages(Message.RECORD_CLIP);
+                mHandler.sendEmptyMessage(Message.RECORD_CLIP);
+                break;
+            case Message.STOP_RECORDING:
+                mMediaProjection.stop();
                 break;
         }
+        this.getState();
         return false;
+    }
+
+    public void setHandler(Handler handler)
+    {
+        this.mHandler = handler;
+    }
+
+    private void pollUntilForeground()
+    {
+        while( pollingGame() );
     }
 
     private boolean pollingGame() {
@@ -107,7 +115,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         return true;
     }
 
-    private void startRecording() {
+    private void recordUntilBackground() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             // Get specifications from DisplayMetrics Structure
@@ -131,7 +139,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             // Video Location
             try {
                 String fileNamePrefix = new SimpleDateFormat(fileDateFormat).format(new Date()).replaceAll("[\\s:]", "-");
-                mMuxer = new MediaMuxer("/sdcard/Kamcord_Android/" + gamefolder + "/" + "Kamcord -" + fileNamePrefix + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+                mMuxer = new MediaMuxer("/sdcard/Kamcord_Android/" + gamefolder + "/" + "Kamcord-" + fileNamePrefix + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }
@@ -246,10 +254,20 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mSurface.release();
             mSurface = null;
         }
-        if (mMediaProjection != null) {
-            //mMediaProjection.stop();
-            mMediaProjection = null;
-        }
         mVideoBufferInfo = null;
+    }
+
+    public enum RecordingState
+    {
+        IDLE,
+        RECORDING,
+        PAUSED,
+    }
+
+    public static class Message
+    {
+        public static final int RECORD_CLIP = 1;
+        public static final int STOP_RECORDING = 2;
+        public static final int POLL = 3;
     }
 }

@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">Kamcord</string>
     <string name="title_activity_record">RecordActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="notification_title">Kamcord</string>
-    <string name="notification_content">"Recording"</string>
+    <string name="kamcord">Kamcord</string>
+    <string name="idle">Idle</string>
+    <string name="recording">Recording</string>
+    <string name="paused">Paused</string>
+
+    <string name="select_a_game">Please select a game to record.</string>
 
 </resources>
