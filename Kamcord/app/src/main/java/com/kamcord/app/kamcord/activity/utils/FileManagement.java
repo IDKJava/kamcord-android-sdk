@@ -2,7 +2,10 @@ package com.kamcord.app.kamcord.activity.utils;
 
 import android.os.Environment;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.UUID;
 
 public class FileManagement {
@@ -17,6 +20,8 @@ public class FileManagement {
     private String UUIDString;
     private UUID Uuid;
     private String GameName;
+
+    private File ClipsFile;
 
     public FileManagement() {
 
@@ -40,6 +45,15 @@ public class FileManagement {
         VideoFolder = new File(VideoFolderPath);
         if (!VideoFolder.exists() || VideoFolder.isDirectory()) {
             VideoFolder.mkdir();
+        }
+
+        // create a cliplist for video-editting in the futrure
+        try {
+            ClipsFile = new File(VideoFolderPath + "/cliplist.txt");
+            BufferedWriter output = new BufferedWriter(new FileWriter(ClipsFile));
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

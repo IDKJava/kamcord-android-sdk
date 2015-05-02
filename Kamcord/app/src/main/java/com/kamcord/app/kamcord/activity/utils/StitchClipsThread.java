@@ -1,7 +1,6 @@
 package com.kamcord.app.kamcord.activity.utils;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
@@ -11,26 +10,24 @@ import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunnin
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 
 import java.io.File;
-import java.util.ArrayList;
 
 public class StitchClipsThread extends Thread {
 
     private String ResultPath;
-    private ArrayList<String> inputVideoClips;
+    private String GameSessionPath;
     private Context FFmpegContext;
     private FFmpeg mFFmpeg;
-    private String cmd;
+    private static String cmd;
 
-    public StitchClipsThread(ArrayList<String> inputVideos, Context context) {
-        this.inputVideoClips = inputVideos;
+    public StitchClipsThread(String gameSessionFolder, Context context) {
+        this.GameSessionPath = gameSessionFolder;
         this.FFmpegContext = context;
-
     }
 
     @Override
     public void run() {
-        ResultPath = Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Video";
-        File ResultFolder = new File(ResultPath);
+
+        File ResultFolder = new File(GameSessionPath);
         if (!ResultFolder.exists() || !ResultFolder.isDirectory()) {
             ResultFolder.mkdir();
         }
@@ -40,59 +37,60 @@ public class StitchClipsThread extends Thread {
             mFFmpeg.loadBinary(new LoadBinaryResponseHandler() {
                 @Override
                 public void onStart() {
-                    Log.d("FFmpeg","start");
+                    Log.d("FFmpeg load Binaray:", "start");
 
                 }
 
                 @Override
                 public void onFailure() {
-                    Log.d("FFmpeg","fails");
+                    Log.d("FFmpeg load Binaray:", "fails");
                 }
 
                 @Override
                 public void onSuccess() {
-                    Log.d("loadBinary(success):", "yo");
+                    Log.d("FFmpeg load Binaray:", "success");
                 }
 
                 @Override
                 public void onFinish() {
-                    Log.d("FFmpeg","finish");
+                    Log.d("FFmpeg load Binaray:", "finish");
                 }
             });
         } catch (FFmpegNotSupportedException e) {
             e.printStackTrace();
         }
-        cmd = "-i " + ResultPath+"/Clip1.mp4" + " " + ResultPath + "/video.avi";
-        Log.d("cmd:", cmd);
-        startStitching(cmd);
+        cmd = "-f concat -i /sdcard/Kamcord_Android/cliplist.txt" + " -c copy " + GameSessionPath + "Kamcord.mp4";
+        startStitching();
     }
 
-    public void startStitching(String command) {
+    public void startStitching() {
         try {
-
 
             // Execute "ffmpeg -version" command you just need to pass "-version"
             mFFmpeg.execute(cmd, new ExecuteBinaryResponseHandler() {
                 @Override
                 public void onStart() {
+                    Log.d("FFmpeg execute:", "start");
                 }
 
                 @Override
                 public void onProgress(String message) {
+                    Log.d("progress:", message);
                 }
 
                 @Override
                 public void onFailure(String message) {
-
+                    Log.d("FFmpeg execute:", "failure");
                 }
 
                 @Override
                 public void onSuccess(String message) {
-                    Log.d("execute:", "success");
+                    Log.d("FFmpeg execute:", "success");
                 }
 
                 @Override
                 public void onFinish() {
+                    Log.d("FFmpeg execute:", "finish");
                 }
             });
 

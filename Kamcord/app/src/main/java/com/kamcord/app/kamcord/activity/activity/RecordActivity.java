@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +24,10 @@ import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
 import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
 import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,8 +61,6 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             R.drawable.hill_racing,
             R.drawable.marvel,
     };
-
-    private Button MergeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,20 +98,6 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
 
         ServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
 
-        MergeButton = (Button) findViewById(R.id.merge_button);
-        MergeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "hey", Toast.LENGTH_SHORT).show();
-
-                ArrayList<String> arrayList = new ArrayList<String>();
-                arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip1.mp4");
-                arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip2.mp4");
-                arrayList.add(Environment.getExternalStorageDirectory().getParent() + "/" + Environment.getExternalStorageDirectory().getName() + "/Kamcord_Android/clip3.mp4");
-                StitchClipsThread stitchClipsThread = new StitchClipsThread(arrayList, getApplicationContext());
-                stitchClipsThread.start();
-            }
-        });
     }
 
     // Future use
@@ -132,10 +118,9 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         List<ApplicationInfo> applicationInfoList = packageManager.getInstalledApplications(0);
 
         ArrayList<ApplicationInfo> installedGameList = new ArrayList<ApplicationInfo>();
-        for(ApplicationInfo app : applicationInfoList) {
-            if((app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME){
+        for (ApplicationInfo app : applicationInfoList) {
+            if ((app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME) {
                 installedGameList.add(app);
-                Log.d("Game Installed: ", (String)packageManager.getApplicationLabel(app));
             }
         }
     }
@@ -168,15 +153,14 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                     }
                 } else {
                     stopRecordingService();
-//                    showShareFragment();
                     break;
                 }
             }
         }
     }
 
+    // Showing the fragment after user stop a session of recording
     public void showShareFragment() {
-//        ServiceStartButton.setVisibility(View.GONE);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = RecordShareFragment.newInstance();
         fragmentTransaction.add(R.id.activity_recordlayout, fragment, "tag")
@@ -188,8 +172,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         ButtonClicked = true;
         ServiceStartButton.setText("Stop");
         mFileManagement.sessionFolderInitialize();
-
-        GameFolderString = mGameName + "/" + mFileManagement.getUUIDString();
+        GameFolderString = mGameName + "/" + mFileManagement.getUUIDString() + "/";
         ServiceIntent.putExtra("RecordFlag", true);
         ServiceIntent.putExtra("GameFolder", GameFolderString);
         ServiceIntent.putExtra("PackageName", LaunchPackageName);
@@ -201,6 +184,26 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         ServiceStartButton.setText("Record");
         ServiceIntent.putExtra("RecordFlag", false);
         stopService(ServiceIntent);
+
+        writeClipFile();
+        StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + GameFolderString, getApplicationContext());
+        stitchClipsThread.start();
+    }
+
+    public void writeClipFile() {
+        File sessionFile = new File("/sdcard/Kamcord_Android/" + GameFolderString);
+        if (sessionFile.exists() && sessionFile.isDirectory()) {
+            try {
+                FileWriter fileWriter = new FileWriter("/sdcard/Kamcord_Android/cliplist.txt", true);
+                for (final File file : sessionFile.listFiles()) {
+                    BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                    bufferedWriter.write("file '" + file.getAbsolutePath() + "'\n");
+                    bufferedWriter.close();
+                }
+            } catch (IOException iox) {
+                iox.printStackTrace();
+            }
+        }
     }
 
     @Override

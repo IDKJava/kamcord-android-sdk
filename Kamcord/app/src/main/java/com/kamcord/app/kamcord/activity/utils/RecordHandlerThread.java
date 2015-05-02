@@ -44,7 +44,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private static final String VIDEO_TYPE = "video/avc";
     private int delayFrame = 60;
     private int frameCount = 0;
-    private String fileDateFormat = "yyyy-MM-dd HH:mm";
 
     private int mDisplayWidth;
     private int mDisplayHeight;
@@ -130,7 +129,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
             // Video Location
             try {
-                mMuxer = new MediaMuxer("/sdcard/Kamcord_Android/" + gamefolder + "/" + "Clip" + clipNumber + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+                String ClipPath = "/sdcard/Kamcord_Android/" + gamefolder + "clip" + clipNumber + ".mp4";
+                mMuxer = new MediaMuxer(ClipPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }
