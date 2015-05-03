@@ -6,24 +6,24 @@ import android.os.Handler;
 
 public class RecordingMessage extends Object {
 
-    public MediaProjection Projection;
+    public MediaProjection projection;
     public Context mContext;
     public boolean mRecordFlag;
     private Handler mHandler;
-    private String PackageName;
-    private String GameFolderString;
+    private String packageName;
+    private String gameFolderString;
 
     public RecordingMessage(MediaProjection projection, Context context, boolean recordFlag, Handler handler, String packageName, String gameFolderString) {
-        this.Projection = projection;
+        this.projection = projection;
         this.mContext = context;
         this.mRecordFlag = recordFlag;
         this.mHandler = handler;
-        this.PackageName = packageName;
-        this.GameFolderString = gameFolderString;
+        this.packageName = packageName;
+        this.gameFolderString = gameFolderString;
     }
 
     public MediaProjection getProjection() {
-        return Projection;
+        return projection;
     }
 
     public Context getContext() {
@@ -39,10 +39,10 @@ public class RecordingMessage extends Object {
     }
 
     public String getPackageName() {
-        return PackageName;
+        return packageName;
     }
 
     public String getGameFolderString() {
-        return GameFolderString;
+        return gameFolderString;
     }
 }

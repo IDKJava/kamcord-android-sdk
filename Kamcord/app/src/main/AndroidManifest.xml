@@ -28,13 +28,6 @@
 
         <service android:name=".activity.service.RecordingService" >
         </service>
-
-        <activity
-            android:name=".activity.activity.WelcomeActivity"
-            android:label="@string/title_activity_welcome"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
-
-        </activity>
     </application>
 
 </manifest>

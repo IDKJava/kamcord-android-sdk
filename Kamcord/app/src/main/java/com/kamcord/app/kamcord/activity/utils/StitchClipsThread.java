@@ -13,53 +13,47 @@ import java.io.File;
 
 public class StitchClipsThread extends Thread {
 
-    private String ResultPath;
-    private String GameSessionPath;
-    private Context FFmpegContext;
+    private String gameSessionPath;
+    private Context ffMpegContext;
     private FFmpeg mFFmpeg;
     private static String cmd;
 
     public StitchClipsThread(String gameSessionFolder, Context context) {
-        this.GameSessionPath = gameSessionFolder;
-        this.FFmpegContext = context;
+        this.gameSessionPath = gameSessionFolder;
+        this.ffMpegContext = context;
     }
 
     @Override
     public void run() {
 
-        File ResultFolder = new File(GameSessionPath);
+        File ResultFolder = new File(gameSessionPath);
         if (!ResultFolder.exists() || !ResultFolder.isDirectory()) {
             ResultFolder.mkdir();
         }
 
-        mFFmpeg = FFmpeg.getInstance(FFmpegContext);
+        mFFmpeg = FFmpeg.getInstance(ffMpegContext);
         try {
             mFFmpeg.loadBinary(new LoadBinaryResponseHandler() {
                 @Override
                 public void onStart() {
-                    Log.d("FFmpeg load Binaray:", "start");
-
                 }
 
                 @Override
                 public void onFailure() {
-                    Log.d("FFmpeg load Binaray:", "fails");
                 }
 
                 @Override
                 public void onSuccess() {
-                    Log.d("FFmpeg load Binaray:", "success");
                 }
 
                 @Override
                 public void onFinish() {
-                    Log.d("FFmpeg load Binaray:", "finish");
                 }
             });
         } catch (FFmpegNotSupportedException e) {
             e.printStackTrace();
         }
-        cmd = "-f concat -i /sdcard/Kamcord_Android/cliplist.txt" + " -c copy " + GameSessionPath + "Kamcord.mp4";
+        cmd = "-f concat -i " + gameSessionPath + "cliplist.txt -c copy " + gameSessionPath + "video.mp4";
         startStitching();
     }
 
@@ -70,7 +64,6 @@ public class StitchClipsThread extends Thread {
             mFFmpeg.execute(cmd, new ExecuteBinaryResponseHandler() {
                 @Override
                 public void onStart() {
-                    Log.d("FFmpeg execute:", "start");
                 }
 
                 @Override
@@ -80,17 +73,16 @@ public class StitchClipsThread extends Thread {
 
                 @Override
                 public void onFailure(String message) {
-                    Log.d("FFmpeg execute:", "failure");
+                    Log.d("FFmpeg execute:", message);
                 }
 
                 @Override
                 public void onSuccess(String message) {
-                    Log.d("FFmpeg execute:", "success");
+                    Log.d("FFmpeg execute:", message);
                 }
 
                 @Override
                 public void onFinish() {
-                    Log.d("FFmpeg execute:", "finish");
                 }
             });
 
