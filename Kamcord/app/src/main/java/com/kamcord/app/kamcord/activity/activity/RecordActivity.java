@@ -23,34 +23,39 @@ import com.kamcord.app.kamcord.activity.service.RecordingService;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
 import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
 import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
+import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class RecordActivity extends FragmentActivity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener {
 
-    private Button ServiceStartButton;
+    private Button serviceStartButton;
     private FileManagement mFileManagement;
     private String mGameName;
-    private String GameFolderString;
-    private String LaunchPackageName;
-    private boolean ButtonClicked = false;
+    private String gameFolderString;
+    private String launchPackageName;
+    private boolean buttonClicked = false;
 
-    private Intent ServiceIntent;
+    private Intent serviceIntent;
 
     private RecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
-    private ArrayList<GameModel> PackageGameList;
+    private ArrayList<GameModel> packageGameList;
 
-    private String[] PackageNameArray = new String[]{
+    private String[] packageNameArray = new String[]{
             "com.rovio.BadPiggies",
             "com.yodo1.crossyroad",
             "com.madfingergames.deadtrigger2",
             "com.fingersoft.hillclimb",
             "com.kabam.marvelbattle",
     };
-    private Integer[] GameDrawablArray = new Integer[]{
+    private Integer[] gameDrawablArray = new Integer[]{
             R.drawable.bad_piggies,
             R.drawable.crossy_road,
             R.drawable.dead_trigger,
@@ -68,19 +73,19 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
 
     public void initKamcord() {
 
-        ServiceStartButton = (Button) findViewById(R.id.servicestart_button);
-        ServiceStartButton.setOnClickListener(this);
+        serviceStartButton = (Button) findViewById(R.id.servicestart_button);
+        serviceStartButton.setOnClickListener(this);
 
         mFileManagement = new FileManagement();
         mFileManagement.rootFolderInitialize();
 
-        PackageGameList = new ArrayList<GameModel>();
-        for (int i = 0; i < PackageNameArray.length; i++) {
+        packageGameList = new ArrayList<GameModel>();
+        for (int i = 0; i < packageNameArray.length; i++) {
             GameModel gameModel = new GameModel();
-            gameModel.setPackageName(PackageNameArray[i]);
+            gameModel.setPackageName(packageNameArray[i]);
             gameModel.setGameName(gameModel.getPackageName());
-            gameModel.setDrawableID(GameDrawablArray[i]);
-            PackageGameList.add(gameModel);
+            gameModel.setDrawableID(gameDrawablArray[i]);
+            packageGameList.add(gameModel);
         }
 
         // gridview init;
@@ -88,13 +93,12 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         int SpacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_margin);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(SpacingInPixels));
-        mRecyclerAdapter = new GameRecordListAdapter(this, PackageGameList);
+        mRecyclerAdapter = new GameRecordListAdapter(this, packageGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
-        ServiceIntent = new Intent(RecordActivity.this, RecordingService.class);
+        serviceIntent = new Intent(RecordActivity.this, RecordingService.class);
 
-//        getInstalledGameList();
     }
 
     // Future use
@@ -115,10 +119,9 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         List<ApplicationInfo> applicationInfoList = packageManager.getInstalledApplications(0);
 
         ArrayList<ApplicationInfo> installedGameList = new ArrayList<ApplicationInfo>();
-        for(ApplicationInfo app : applicationInfoList) {
-            if((app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME){
+        for (ApplicationInfo app : applicationInfoList) {
+            if ((app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME) {
                 installedGameList.add(app);
-                Log.d("Game Installed: ", (String)packageManager.getApplicationLabel(app));
             }
         }
     }
@@ -127,11 +130,11 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
     public void onItemClick(View view, int position) {
 
         // Package for Launch Game
-        LaunchPackageName = PackageGameList.get(position).getPackageName();
-        mFileManagement.gameFolderInitialize(LaunchPackageName);
+        launchPackageName = packageGameList.get(position).getPackageName();
+        mFileManagement.gameFolderInitialize(launchPackageName);
         mGameName = mFileManagement.getGameName();
         Toast.makeText(getApplicationContext(),
-                "You will record " + LaunchPackageName.substring(LaunchPackageName.lastIndexOf(".") + 1),
+                "You will record " + launchPackageName.substring(launchPackageName.lastIndexOf(".") + 1),
                 Toast.LENGTH_SHORT)
                 .show();
     }
@@ -141,7 +144,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
 
         switch (v.getId()) {
             case R.id.servicestart_button: {
-                if (!ButtonClicked) {
+                if (!buttonClicked) {
                     if (mGameName != null) {
                         startRecordingService();
                         break;
@@ -151,15 +154,14 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                     }
                 } else {
                     stopRecordingService();
-                    showShareFragment();
                     break;
                 }
             }
         }
     }
 
+    // Showing the fragment after user stop a session of recording
     public void showShareFragment() {
-        ServiceStartButton.setVisibility(View.GONE);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = RecordShareFragment.newInstance();
         fragmentTransaction.add(R.id.activity_recordlayout, fragment, "tag")
@@ -168,22 +170,41 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
     }
 
     public void startRecordingService() {
-        ButtonClicked = true;
-        ServiceStartButton.setText("Stop");
+        buttonClicked = true;
+        serviceStartButton.setText("Stop");
         mFileManagement.sessionFolderInitialize();
-
-        GameFolderString = mGameName + "/" + mFileManagement.getUUIDString();
-        ServiceIntent.putExtra("RecordFlag", true);
-        ServiceIntent.putExtra("GameFolder", GameFolderString);
-        ServiceIntent.putExtra("PackageName", LaunchPackageName);
-        startService(ServiceIntent);
+        gameFolderString = mGameName + "/" + mFileManagement.getUUIDString() + "/";
+        serviceIntent.putExtra("RecordFlag", true);
+        serviceIntent.putExtra("GameFolder", gameFolderString);
+        serviceIntent.putExtra("PackageName", launchPackageName);
+        startService(serviceIntent);
     }
 
     public void stopRecordingService() {
-        ButtonClicked = false;
-        ServiceStartButton.setText("Record");
-        ServiceIntent.putExtra("RecordFlag", false);
-        stopService(ServiceIntent);
+        writeClipFile();
+        buttonClicked = false;
+        serviceStartButton.setText("Record");
+        serviceIntent.putExtra("RecordFlag", false);
+        stopService(serviceIntent);
+        StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + gameFolderString, getApplicationContext());
+        stitchClipsThread.start();
+    }
+
+    public void writeClipFile() {
+        File sessionFile = new File("/sdcard/Kamcord_Android/" + gameFolderString);
+        if (sessionFile.exists() && sessionFile.isDirectory()) {
+            try {
+                FileWriter fileWriter = new FileWriter(sessionFile + "/cliplist.txt", true);
+                Log.d("create", sessionFile+"cliplist.txt");
+                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                for (final File file : sessionFile.listFiles()) {
+                    bufferedWriter.write("file '" + file.getAbsolutePath() + "'\n");
+                }
+                bufferedWriter.close();
+            } catch (IOException iox) {
+                iox.printStackTrace();
+            }
+        }
     }
 
     @Override

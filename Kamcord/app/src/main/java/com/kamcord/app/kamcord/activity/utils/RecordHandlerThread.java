@@ -22,8 +22,6 @@ import com.kamcord.app.kamcord.activity.model.RecordingMessage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
@@ -46,7 +44,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private static final String VIDEO_TYPE = "video/avc";
     private int delayFrame = 60;
     private int frameCount = 0;
-    private String fileDateFormat = "yyyy-MM-dd HH:mm";
 
     private int mDisplayWidth;
     private int mDisplayHeight;
@@ -62,6 +59,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private String[] packageList;
     private String selectedPackageName;
     private String gamefolder;
+    private int clipNumber = 1;
 
     public RecordHandlerThread(String name) {
         super(name);
@@ -84,6 +82,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 while (pollingGame()) {
                 }
                 Log.d("Polling has ", "finished.");
+                clipNumber++;
                 Message resumeMsg = Message.obtain(this.mHandler, 1, msgObject);
                 this.mHandler.sendMessage(resumeMsg);
                 break;
@@ -130,8 +129,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
             // Video Location
             try {
-                String fileNamePrefix = new SimpleDateFormat(fileDateFormat).format(new Date()).replaceAll("[\\s:]", "-");
-                mMuxer = new MediaMuxer("/sdcard/Kamcord_Android/" + gamefolder + "/" + "Kamcord -" + fileNamePrefix + ".mp4", MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+                String ClipPath = "/sdcard/Kamcord_Android/" + gamefolder + "clip" + clipNumber + ".mp4";
+                mMuxer = new MediaMuxer(ClipPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }

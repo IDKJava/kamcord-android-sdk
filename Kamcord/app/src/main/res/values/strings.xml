@@ -6,5 +6,6 @@
 
     <string name="notification_title">Kamcord</string>
     <string name="notification_content">"Recording"</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
 
 </resources>
