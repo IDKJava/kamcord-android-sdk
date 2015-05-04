@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.model.RecordingMessage;
+import com.kamcord.app.kamcord.activity.utils.AudioRecordThread;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
 
 @TargetApi(21)
@@ -30,6 +31,8 @@ public class RecordingService extends Service {
     private Context ServiceContext;
     private static String GameFolderString;
     private static String LaunchPackageName;
+
+    private static AudioRecordThread mAudioRecordThread;
 
     public RecordingService() {
         super();
@@ -69,9 +72,12 @@ public class RecordingService extends Service {
         if (mRecordHandlerThread != null) {
             mRecordHandlerThread.quitSafely();
             stopSelf();
-            Toast.makeText(ServiceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
+        }
+        if(mAudioRecordThread != null) {
+            mRecordHandlerThread.quitSafely();
         }
         stopSelf();
+        Toast.makeText(ServiceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
         Log.d(RecordingService.class.getSimpleName(), "kill service.");
     }
 
@@ -103,7 +109,7 @@ public class RecordingService extends Service {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     MediaProjection projection = mediaProjectionManager.getMediaProjection(resultCode, data);
 
-                    mRecordHandlerThread = new RecordHandlerThread("HandlerThread");
+                    mRecordHandlerThread = new RecordHandlerThread("Video Recording Thread");
                     mRecordHandlerThread.start();
                     RecordHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
                     RecordingMessage messageObject = new RecordingMessage(
@@ -115,6 +121,10 @@ public class RecordingService extends Service {
                             RecordingService.GameFolderString);
                     Message msg = Message.obtain(RecordHandler, whatMemberValue, messageObject);
                     RecordHandler.sendMessage(msg);
+
+                    // Record Audio From mic
+                    mAudioRecordThread = new AudioRecordThread("Audio Recording Thread");
+                    mAudioRecordThread.start();
 
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(RecordingService.LaunchPackageName);
                     startActivity(launchIntent);

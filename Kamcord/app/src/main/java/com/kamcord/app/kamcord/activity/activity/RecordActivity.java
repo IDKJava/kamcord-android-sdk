@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +19,12 @@ import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.fragment.RecordShareFragment;
 import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
+import com.kamcord.app.kamcord.activity.utils.AudioRecordThread;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
 import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
 import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
 import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
+import com.kamcord.app.kamcord.activity.utils.VideoFileFilter;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,6 +48,8 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
     private RecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
     private ArrayList<GameModel> packageGameList;
+
+    private static AudioRecordThread mAudioRecordThread;
 
     private String[] packageNameArray = new String[]{
             "com.rovio.BadPiggies",
@@ -170,6 +173,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
     }
 
     public void startRecordingService() {
+
         buttonClicked = true;
         serviceStartButton.setText("Stop");
         mFileManagement.sessionFolderInitialize();
@@ -181,6 +185,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
     }
 
     public void stopRecordingService() {
+
         writeClipFile();
         buttonClicked = false;
         serviceStartButton.setText("Record");
@@ -195,9 +200,8 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         if (sessionFile.exists() && sessionFile.isDirectory()) {
             try {
                 FileWriter fileWriter = new FileWriter(sessionFile + "/cliplist.txt", true);
-                Log.d("create", sessionFile+"cliplist.txt");
                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-                for (final File file : sessionFile.listFiles()) {
+                for (final File file : sessionFile.listFiles(new VideoFileFilter())) {
                     bufferedWriter.write("file '" + file.getAbsolutePath() + "'\n");
                 }
                 bufferedWriter.close();
@@ -206,6 +210,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             }
         }
     }
+
 
     @Override
     public void onDestroy() {
