@@ -29,7 +29,12 @@ import com.kamcord.app.kamcord.activity.service.RecordingService;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
 import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
 import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
+import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,7 +158,6 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             if( (app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME )
             {
                 installedGameList.add(app);
-                Log.d("Game Installed: ", (String) packageManager.getApplicationLabel(app));
             }
         }
     }
@@ -179,15 +183,15 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                 if( mSelectedGame != null )
                 {
                     obtainMediaProjection();
-                    break;
+                        break;
                 } else
                 {
                     Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
-                    break;
+                        break;
+                    }
                 }
             }
         }
-    }
 
     public void showShareFragment()
     {
@@ -203,6 +207,33 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
     {
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
+    }
+
+    public void stopRecordingService() {
+        writeClipFile();
+        buttonClicked = false;
+        serviceStartButton.setText("Record");
+        serviceIntent.putExtra("RecordFlag", false);
+        stopService(serviceIntent);
+        StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + gameFolderString, getApplicationContext());
+        stitchClipsThread.start();
+    }
+
+    public void writeClipFile() {
+        File sessionFile = new File("/sdcard/Kamcord_Android/" + gameFolderString);
+        if (sessionFile.exists() && sessionFile.isDirectory()) {
+            try {
+                FileWriter fileWriter = new FileWriter(sessionFile + "/cliplist.txt", true);
+                Log.d("create", sessionFile+"cliplist.txt");
+                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                for (final File file : sessionFile.listFiles()) {
+                    bufferedWriter.write("file '" + file.getAbsolutePath() + "'\n");
+                }
+                bufferedWriter.close();
+            } catch (IOException iox) {
+                iox.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -235,7 +266,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             {
                 MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, data);
                 mRecordingService.startRecording(projection, mSelectedGame);
-            }
+}
             else
             {
                 Log.w("Kamcord", "Unable to start recording because reasons.");

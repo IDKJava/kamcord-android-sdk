@@ -55,8 +55,8 @@ public class RecordingService extends Service
         stopRecording();
 
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
-        stopSelf();
-    }
+            stopSelf();
+        }
 
     @Override
     public IBinder onBind(Intent intent)
@@ -89,20 +89,20 @@ public class RecordingService extends Service
         {
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
             mRecordHandlerThread.quitSafely();
-        }
+                }
         else
         {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
+            }
         }
-    }
 
     public class LocalBinder extends Binder
     {
         public RecordingService getService()
         {
             return RecordingService.this;
-        }
     }
+}
 }
 
 
