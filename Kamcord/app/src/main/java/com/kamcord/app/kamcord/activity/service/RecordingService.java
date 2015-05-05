@@ -14,6 +14,7 @@ import android.util.Log;
 import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
+import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
 
 public class RecordingService extends Service
 {
@@ -97,8 +98,9 @@ public class RecordingService extends Service
         if( mRecordHandlerThread != null && mRecordHandlerThread.isAlive() )
         {
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
-            mRecordHandlerThread.quit();
-            stopSelf();
+            mRecordHandlerThread.quitSafely();
+            StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(), getApplicationContext());
+            stitchClipsThread.start();
         }
         else
         {

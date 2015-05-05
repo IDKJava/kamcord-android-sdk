@@ -110,6 +110,11 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mHandler = handler;
     }
 
+    public String getSessionFolderName()
+    {
+        return mSessionFolderName;
+    }
+
     private boolean isGameInForeground()
     {
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = mActivityManager.getRunningAppProcesses();
