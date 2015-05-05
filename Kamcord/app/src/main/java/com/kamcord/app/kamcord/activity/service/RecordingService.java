@@ -1,130 +1,124 @@
 package com.kamcord.app.kamcord.activity.service;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjection;
-import android.media.projection.MediaProjectionManager;
-import android.os.Build;
-import android.os.Bundle;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.model.RecordingMessage;
+import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
+import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
 
-@TargetApi(21)
-public class RecordingService extends Service {
+public class RecordingService extends Service
+{
+    private static final String TAG = RecordingService.class.getSimpleName();
+    private static int NOTIFICATION_ID = 3141592;
 
-    private static int PERMISSION_CODE = 1;
+    private final IBinder mBinder = new LocalBinder();
 
-    private static RecordHandlerThread mRecordHandlerThread;
-    private static Handler RecordHandler;
-    private Context ServiceContext;
-    private static String GameFolderString;
-    private static String LaunchPackageName;
-
-    public RecordingService() {
-        super();
-    }
+    private RecordHandlerThread mRecordHandlerThread;
+    private Handler mHandler;
 
     @Override
-    public void onCreate() {
-        ServiceContext = getApplicationContext();
+    public void onCreate()
+    {
         super.onCreate();
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
         // Notification Setting
         Notification.Builder notificationBuilder = new Notification.Builder(this);
         Notification notification = notificationBuilder
-                .setContentTitle(getResources().getString(R.string.notification_title))
-                .setContentText(getResources().getString(R.string.notification_content))
+                .setContentTitle(getResources().getString(R.string.kamcord))
+                .setContentText(getResources().getString(R.string.idle))
                 .setSmallIcon(R.drawable.kamcord_appicon)
                 .build();
-        startForeground(3141592, notification);
-
-        GameFolderString = intent.getStringExtra("GameFolder");
-        LaunchPackageName = intent.getStringExtra("PackageName");
-        Intent recordIntent = new Intent(this, ServiceActivity.class);
-        recordIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(recordIntent);
-        Toast.makeText(ServiceContext, "Start Recording", Toast.LENGTH_SHORT).show();
+        startForeground(NOTIFICATION_ID, notification);
 
         return START_STICKY;
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
-        if (mRecordHandlerThread != null) {
-            mRecordHandlerThread.quitSafely();
-            stopSelf();
-            Toast.makeText(ServiceContext, "Stop Recording", Toast.LENGTH_SHORT).show();
-        }
+
+        // If we're getting destroyed, we should probably just stop the current recording session.
+        stopRecording();
+
+        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         stopSelf();
-        Log.d(RecordingService.class.getSimpleName(), "kill service.");
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+    public IBinder onBind(Intent intent)
+    {
+        return mBinder;
     }
 
-    public static class ServiceActivity extends Activity {
+    /* Interface for starting and stopping a recording session */
+    public synchronized void startRecording(MediaProjection mediaProjection, GameModel gameModel)
+    {
+        if( mRecordHandlerThread == null || !mRecordHandlerThread.isAlive() )
+        {
+            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, gameModel, getApplicationContext());
+            mRecordHandlerThread.start();
 
-        private MediaProjectionManager mediaProjectionManager;
-        private static final int whatMemberValue = 1;
+            mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
+            mRecordHandlerThread.setHandler(mHandler);
 
-        public ServiceActivity() {
-            super();
+            mHandler.sendEmptyMessage(RecordHandlerThread.Message.POLL);
+
+            Notification.Builder notificationBuilder = new Notification.Builder(this);
+            Notification notification = notificationBuilder
+                    .setContentTitle(getResources().getString(R.string.kamcord))
+                    .setContentText(getResources().getString(R.string.recording))
+                    .setSmallIcon(R.drawable.kamcord_appicon)
+                    .build();
+            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notification);
         }
-
-        @Override
-        public void onCreate(Bundle bundle) {
-            super.onCreate(bundle);
-            mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-            startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), PERMISSION_CODE);
-        }
-
-        @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-            if (resultCode == RESULT_OK && requestCode == PERMISSION_CODE) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    MediaProjection projection = mediaProjectionManager.getMediaProjection(resultCode, data);
-
-                    mRecordHandlerThread = new RecordHandlerThread("HandlerThread");
-                    mRecordHandlerThread.start();
-                    RecordHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
-                    RecordingMessage messageObject = new RecordingMessage(
-                            projection,
-                            getApplicationContext(),
-                            true,
-                            RecordHandler,
-                            RecordingService.LaunchPackageName,
-                            RecordingService.GameFolderString);
-                    Message msg = Message.obtain(RecordHandler, whatMemberValue, messageObject);
-                    RecordHandler.sendMessage(msg);
-
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(RecordingService.LaunchPackageName);
-                    startActivity(launchIntent);
-                }
-            } else {
-                // do something else
-            }
-            finish();
+        else
+        {
+            Log.e(TAG, "Unable to start recording session! There is already a currently running recording session.");
         }
     }
+
+    public synchronized void stopRecording()
+    {
+        if( mRecordHandlerThread != null && mRecordHandlerThread.isAlive() )
+        {
+            mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
+            mRecordHandlerThread.quitSafely();
+            StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(), getApplicationContext());
+            stitchClipsThread.start();
+        }
+        else
+        {
+            Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
+        }
+    }
+
+    public synchronized boolean isRecording()
+    {
+        return mRecordHandlerThread != null && mRecordHandlerThread.isAlive();
+    }
+
+    public class LocalBinder extends Binder
+    {
+        public RecordingService getService()
+        {
+            return RecordingService.this;
+    }
+}
 }
 
 

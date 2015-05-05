@@ -9,7 +9,13 @@ import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class StitchClipsThread extends Thread {
 
@@ -30,6 +36,8 @@ public class StitchClipsThread extends Thread {
         if (!ResultFolder.exists() || !ResultFolder.isDirectory()) {
             ResultFolder.mkdir();
         }
+
+        writeClipFile();
 
         mFFmpeg = FFmpeg.getInstance(ffMpegContext);
         try {
@@ -53,7 +61,7 @@ public class StitchClipsThread extends Thread {
         } catch (FFmpegNotSupportedException e) {
             e.printStackTrace();
         }
-        cmd = "-f concat -i " + gameSessionPath + "cliplist.txt -c copy " + gameSessionPath + "video.mp4";
+        cmd = "-f concat -i " + gameSessionPath + "video_cliplist.txt -c copy " + gameSessionPath + "video.mp4";
         startStitching();
     }
 
@@ -91,4 +99,20 @@ public class StitchClipsThread extends Thread {
         }
     }
 
+    private void writeClipFile() {
+        try {
+            File gameSessionFolder = new File(gameSessionPath);
+            FileWriter fileWriter = new FileWriter(gameSessionPath + "/video_cliplist.txt");
+            for (final File file : gameSessionFolder.listFiles())
+            {
+                if( file.getName().endsWith(".mp4") )
+                {
+                    fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
+                }
+            }
+            fileWriter.close();
+        } catch (IOException iox) {
+            iox.printStackTrace();
+        }
+    }
 }
