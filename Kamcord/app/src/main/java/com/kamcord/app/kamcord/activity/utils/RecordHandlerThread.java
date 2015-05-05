@@ -78,14 +78,12 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         {
             case Message.RECORD_CLIP:
                 clipNumber++;
-                Log.v("FindMe", "Received record clip message");
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
                 mHandler.sendEmptyMessage(Message.POLL);
                 break;
 
             case Message.POLL:
-                Log.v("FindMe", "Received poll message");
                 if( !isGameInForeground() )
                 {
                     mHandler.removeMessages(Message.POLL);
@@ -98,7 +96,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.STOP_RECORDING:
-                Log.v("FindMe", "Received stop recording message");
                 mMediaProjection.stop();
                 break;
         }
@@ -238,7 +235,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                             mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
                         }
                         frameCount++;
-                        Log.d("frame count: ", "" + frameCount);
                     }
                 }
 

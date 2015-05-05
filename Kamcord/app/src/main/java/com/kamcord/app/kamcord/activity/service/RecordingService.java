@@ -70,7 +70,6 @@ public class RecordingService extends Service
     {
         if( mRecordHandlerThread == null || !mRecordHandlerThread.isAlive() )
         {
-            Log.v("FindMe", "Starting recording...");
             mRecordHandlerThread = new RecordHandlerThread(mediaProjection, gameModel, getApplicationContext());
             mRecordHandlerThread.start();
 
