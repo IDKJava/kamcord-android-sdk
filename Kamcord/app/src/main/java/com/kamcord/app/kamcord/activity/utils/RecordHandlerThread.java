@@ -59,7 +59,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private String[] packageList;
     private String selectedPackageName;
     private String gamefolder;
-    private int clipNumber = 1;
+    private int ClipNumber = 1;
 
     public RecordHandlerThread(String name) {
         super(name);
@@ -81,8 +81,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 startRecording();
                 while (pollingGame()) {
                 }
-                Log.d("Polling has ", "finished.");
-                clipNumber++;
+                ClipNumber++;
                 Message resumeMsg = Message.obtain(this.mHandler, 1, msgObject);
                 this.mHandler.sendMessage(resumeMsg);
                 break;
@@ -109,6 +108,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private void startRecording() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
+            Log.d("send message", "thread video record");
+
             // Get specifications from DisplayMetrics Structure
             DisplayMetrics metrics = new DisplayMetrics();
             DisplayManager dm = (DisplayManager) mContext.getSystemService(Context.DISPLAY_SERVICE);
@@ -129,7 +130,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
             // Video Location
             try {
-                String ClipPath = "/sdcard/Kamcord_Android/" + gamefolder + "clip" + clipNumber + ".mp4";
+                String ClipPath = "/sdcard/Kamcord_Android/" + gamefolder + "clip" + ClipNumber + ".mp4";
                 mMuxer = new MediaMuxer(ClipPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);

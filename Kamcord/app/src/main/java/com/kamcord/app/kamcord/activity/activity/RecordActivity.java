@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.fragment.RecordShareFragment;
 import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
+import com.kamcord.app.kamcord.activity.utils.AudioFileFilter;
 import com.kamcord.app.kamcord.activity.utils.AudioRecordThread;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
 import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
@@ -48,6 +50,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
     private RecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
     private ArrayList<GameModel> packageGameList;
+    private ArrayList<String> audioList;
 
     private static AudioRecordThread mAudioRecordThread;
 
@@ -101,6 +104,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         serviceIntent = new Intent(RecordActivity.this, RecordingService.class);
+        audioList = new ArrayList<String>();
 
     }
 
@@ -177,8 +181,11 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         buttonClicked = true;
         serviceStartButton.setText("Stop");
         mFileManagement.sessionFolderInitialize();
+
         gameFolderString = mGameName + "/" + mFileManagement.getUUIDString() + "/";
+
         serviceIntent.putExtra("RecordFlag", true);
+        Log.d("GameFolderString", gameFolderString);
         serviceIntent.putExtra("GameFolder", gameFolderString);
         serviceIntent.putExtra("PackageName", launchPackageName);
         startService(serviceIntent);
@@ -205,6 +212,13 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                     bufferedWriter.write("file '" + file.getAbsolutePath() + "'\n");
                 }
                 bufferedWriter.close();
+
+                FileWriter audioFileWriter = new FileWriter(sessionFile + "/audiolist.txt", true);
+                BufferedWriter audioBufferedWriter = new BufferedWriter(audioFileWriter);
+                for (final File file : sessionFile.listFiles(new AudioFileFilter())) {
+                    audioBufferedWriter.write("file '" + file.getAbsolutePath() + "'\n");
+                }
+                audioBufferedWriter.close();
             } catch (IOException iox) {
                 iox.printStackTrace();
             }

@@ -28,6 +28,7 @@ public class RecordingService extends Service {
 
     private static RecordHandlerThread mRecordHandlerThread;
     private static Handler RecordHandler;
+    private static Handler AudioRecordHandler;
     private Context ServiceContext;
     private static String GameFolderString;
     private static String LaunchPackageName;
@@ -120,11 +121,23 @@ public class RecordingService extends Service {
                             RecordingService.LaunchPackageName,
                             RecordingService.GameFolderString);
                     Message msg = Message.obtain(RecordHandler, whatMemberValue, messageObject);
+                    Log.d("send message", "video record");
                     RecordHandler.sendMessage(msg);
 
                     // Record Audio From mic
                     mAudioRecordThread = new AudioRecordThread("Audio Recording Thread");
                     mAudioRecordThread.start();
+                    AudioRecordHandler = new Handler(mAudioRecordThread.getLooper(), mAudioRecordThread);
+                    RecordingMessage audioMessageObject = new RecordingMessage(
+                            projection,
+                            getApplicationContext(),
+                            true,
+                            AudioRecordHandler,
+                            RecordingService.LaunchPackageName,
+                            RecordingService.GameFolderString);
+                    Message audioMsg = Message.obtain(AudioRecordHandler, whatMemberValue, audioMessageObject);
+                    Log.d("send message", "audio record");
+                    AudioRecordHandler.sendMessage(audioMsg);
 
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(RecordingService.LaunchPackageName);
                     startActivity(launchIntent);
