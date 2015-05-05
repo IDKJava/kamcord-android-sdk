@@ -39,11 +39,11 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private VirtualDisplay mVirtualDisplay;
 
     private boolean mMuxerStart = false;
+    private boolean mMuxerWrite = false;
     private int mTrackIndex = -1;
     private int frameRate = 30;
     private static final String VIDEO_TYPE = "video/avc";
     private int delayFrame = 60;
-    private int frameCount = 0;
 
     private int mDisplayWidth;
     private int mDisplayHeight;
@@ -77,6 +77,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         switch( msg.what )
         {
             case Message.RECORD_CLIP:
+                Log.v("FindMe", "RECORD_CLIP");
                 clipNumber++;
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
@@ -84,6 +85,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.POLL:
+                Log.v("FindMe", "POLL");
                 if( !isGameInForeground() )
                 {
                     mHandler.removeMessages(Message.POLL);
@@ -96,6 +98,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.STOP_RECORDING:
+                Log.v("FindMe", "STOP_RECORDING");
                 mMediaProjection.stop();
                 break;
         }
@@ -115,13 +118,18 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private boolean isGameInForeground()
     {
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = mActivityManager.getRunningAppProcesses();
-        ActivityManager.RunningAppProcessInfo runningAppProcessInfo = runningAppProcessInfoList.get(0);
-        String[] packageList = runningAppProcessInfo.pkgList;
-        String packageString = packageList[0];
-        int appImportance = runningAppProcessInfo.importance;
-        if( packageString.equals(mGameModel.getPackageName()) && appImportance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND )
+        for( ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList )
         {
-            return true;
+            if( runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND )
+            {
+                for( String pkgName : runningAppProcessInfo.pkgList )
+                {
+                    if( pkgName.equals(mGameModel.getPackageName()) )
+                    {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
@@ -159,7 +167,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 throw new RuntimeException("Muxer failed.", ioe);
             }
 
-            frameCount = 0;
             drainEncoder();
             releaseEncoders();
         }
@@ -227,14 +234,10 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 {
                     if( mMuxerStart )
                     {
-
                         encodedData.position(mVideoBufferInfo.offset);
                         encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
-                        if( frameCount >= delayFrame )
-                        {
                             mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
-                        }
-                        frameCount++;
+                            mMuxerWrite = true;
                     }
                 }
 
@@ -257,7 +260,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         }
         if( mMuxer != null )
         {
-            if( mMuxerStart )
+            if( mMuxerStart && mMuxerWrite )
             {
                 mMuxer.stop();
             }
