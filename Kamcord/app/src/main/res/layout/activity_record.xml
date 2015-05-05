@@ -13,7 +13,6 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Record"
         android:textColor="@android:color/white"
         android:id="@+id/servicestart_button"
         android:layout_alignParentBottom="true"

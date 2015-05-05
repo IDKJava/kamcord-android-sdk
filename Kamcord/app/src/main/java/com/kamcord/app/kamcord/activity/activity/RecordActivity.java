@@ -1,5 +1,6 @@
 package com.kamcord.app.kamcord.activity.activity;
 
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
@@ -29,12 +31,7 @@ import com.kamcord.app.kamcord.activity.service.RecordingService;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
 import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
 import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
-import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +64,14 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         {
             mRecordingService = ((RecordingService.LocalBinder) iBinder).getService();
             mIsBoundToService = true;
+            if( mRecordingService.isRecording() )
+            {
+                mServiceStartButton.setText(R.string.stop_recording);
+            } else
+            {
+                mServiceStartButton.setText(R.string.start_recording);
+            }
+            mServiceStartButton.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -115,6 +120,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
 
         mServiceStartButton = (Button) findViewById(R.id.servicestart_button);
         mServiceStartButton.setOnClickListener(this);
+        mServiceStartButton.setVisibility(View.INVISIBLE);
 
         mFileManagement = new FileManagement();
         mFileManagement.rootFolderInitialize();
@@ -180,18 +186,25 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         {
             case R.id.servicestart_button:
             {
-                if( mSelectedGame != null )
+                if( ((Button) v).getText().equals(getResources().getString(R.string.start_recording)) )
                 {
-                    obtainMediaProjection();
+                    if( mSelectedGame != null )
+                    {
+                        obtainMediaProjection();
                         break;
-                } else
-                {
-                    Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
+                    } else
+                    {
+                        Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
                         break;
                     }
                 }
+                else if( ((Button) v).getText().equals(getResources().getString(R.string.stop_recording)) )
+                {
+                    mRecordingService.stopRecording();
+                }
             }
         }
+    }
 
     public void showShareFragment()
     {
@@ -209,6 +222,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
     }
 
+    /*
     public void stopRecordingService() {
         writeClipFile();
         buttonClicked = false;
@@ -235,6 +249,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             }
         }
     }
+    */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -264,9 +279,19 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         {
             if( mMediaProjectionManager != null && mSelectedGame != null )
             {
-                MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, data);
-                mRecordingService.startRecording(projection, mSelectedGame);
-}
+                try
+                {
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.getPackageName());
+                    startActivity(launchIntent);
+
+                    MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, data);
+                    mRecordingService.startRecording(projection, mSelectedGame);
+                }
+                catch( ActivityNotFoundException e )
+                {
+                    // TODO: show the user something about not finding the game.
+                }
+            }
             else
             {
                 Log.w("Kamcord", "Unable to start recording because reasons.");

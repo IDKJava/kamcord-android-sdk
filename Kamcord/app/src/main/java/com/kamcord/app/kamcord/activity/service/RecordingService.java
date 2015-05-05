@@ -55,8 +55,8 @@ public class RecordingService extends Service
         stopRecording();
 
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
-            stopSelf();
-        }
+        stopSelf();
+    }
 
     @Override
     public IBinder onBind(Intent intent)
@@ -69,13 +69,22 @@ public class RecordingService extends Service
     {
         if( mRecordHandlerThread == null || !mRecordHandlerThread.isAlive() )
         {
+            Log.v("FindMe", "Starting recording...");
             mRecordHandlerThread = new RecordHandlerThread(mediaProjection, gameModel, getApplicationContext());
             mRecordHandlerThread.start();
 
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
             mRecordHandlerThread.setHandler(mHandler);
 
-            mHandler.sendEmptyMessage(RecordHandlerThread.Message.RECORD_CLIP);
+            mHandler.sendEmptyMessage(RecordHandlerThread.Message.POLL);
+
+            Notification.Builder notificationBuilder = new Notification.Builder(this);
+            Notification notification = notificationBuilder
+                    .setContentTitle(getResources().getString(R.string.kamcord))
+                    .setContentText(getResources().getString(R.string.recording))
+                    .setSmallIcon(R.drawable.kamcord_appicon)
+                    .build();
+            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notification);
         }
         else
         {
@@ -88,13 +97,19 @@ public class RecordingService extends Service
         if( mRecordHandlerThread != null && mRecordHandlerThread.isAlive() )
         {
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
-            mRecordHandlerThread.quitSafely();
-                }
+            mRecordHandlerThread.quit();
+            stopSelf();
+        }
         else
         {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
-            }
         }
+    }
+
+    public synchronized boolean isRecording()
+    {
+        return mRecordHandlerThread != null && mRecordHandlerThread.isAlive();
+    }
 
     public class LocalBinder extends Binder
     {
