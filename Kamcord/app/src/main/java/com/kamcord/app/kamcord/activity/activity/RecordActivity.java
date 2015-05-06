@@ -1,9 +1,11 @@
 package com.kamcord.app.kamcord.activity.activity;
 
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -41,7 +43,8 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
 
     private Button mServiceStartButton;
     private FileManagement mFileManagement;
-    private boolean mButtonClicked = false;
+    private String thumbnailString;
+    private CustomReceiver mBroadcastReceiver;
 
     private ArrayList<GameModel> mSupportedGameList = new ArrayList<GameModel>()
     {
@@ -134,6 +137,11 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
 //        getInstalledGameList();
+
+        mBroadcastReceiver = new CustomReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.kamcord.RecordService");
+        RecordActivity.this.registerReceiver(mBroadcastReceiver, filter);
     }
 
     // Future use
@@ -200,6 +208,7 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
                 else if( ((Button) v).getText().equals(getResources().getString(R.string.stop_recording)) )
                 {
                     mRecordingService.stopRecording();
+                    showShareFragment();
                 }
             }
         }
@@ -213,6 +222,10 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
         fragmentTransaction.add(R.id.activity_recordlayout, fragment, "tag")
                 .addToBackStack("tag")
                 .commit();
+    }
+
+    public String getVideoThumbnail() {
+        return thumbnailString;
     }
 
     public void obtainMediaProjection()
@@ -303,6 +316,14 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             {
                 Log.w("Kamcord", "Unable to start recording because reasons.");
             }
+        }
+    }
+
+    public class CustomReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            thumbnailString = intent.getStringExtra("ThumbNailPath");
         }
     }
 }

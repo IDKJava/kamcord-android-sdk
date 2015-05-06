@@ -84,6 +84,11 @@ public class RecordingService extends Service
             fileManagement.gameFolderInitialize(gameModel.getPackageName());
             fileManagement.sessionFolderInitialize();
 
+            Intent thumbnailIntent = new Intent();
+            thumbnailIntent.putExtra("ThumbNailPath", "/sdcard/Kamcord_Android/" + fileManagement.getGameName() + "/" + fileManagement.getUUIDString() + "/thumbnails.jpg" );
+            thumbnailIntent.setAction("com.kamcord.RecordService");
+            sendBroadcast(thumbnailIntent);
+
             mRecordHandlerThread = new RecordHandlerThread(mediaProjection, gameModel, getApplicationContext(), fileManagement);
             mRecordHandlerThread.start();
 

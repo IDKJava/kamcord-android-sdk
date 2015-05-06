@@ -4,42 +4,60 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:id="@+id/videothumbnail_imageview"
-        android:background="@drawable/default_thumbnails"
-        android:scaleType="centerCrop"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
-    <!--<Button-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Share This Video"-->
-        <!--android:textColor="@android:color/white"-->
-        <!--android:id="@+id/share_button"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignEnd="@+id/seekBar" />-->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:id="@+id/videothumbnail_imageview"
+            android:background="@drawable/default_thumbnails"
+            android:scaleType="centerCrop"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
-    <EditText
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText"
+            android:hint="Give your video a title"
+            android:layout_below="@+id/videothumbnail_imageview"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="video_duration"
+            android:textColor="@android:color/white"
+            android:background="#CC000000"
+            android:id="@+id/previewduration_textview"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="21dp"
+            android:layout_alignBottom="@+id/videothumbnail_imageview"
+            android:layout_alignParentEnd="true" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/imageView"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:background="@drawable/video_play"/>
+
+    </RelativeLayout>
+
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:hint="Give your video a title"
-        android:layout_below="@+id/videothumbnail_imageview"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="video_duration"
+        android:text="Share This Video"
         android:textColor="@android:color/white"
-        android:background="#CC000000"
-        android:id="@+id/previewduration_textview"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="21dp"
-        android:layout_alignBottom="@+id/videothumbnail_imageview"
-        android:layout_alignParentEnd="true" />
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
