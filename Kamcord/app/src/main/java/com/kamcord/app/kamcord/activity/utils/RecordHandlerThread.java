@@ -12,7 +12,6 @@ import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -30,7 +29,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private GameModel mGameModel;
     private Context mContext;
     private Handler mHandler;
-
     private Surface mSurface;
 
     private MediaMuxer mMuxer;
@@ -55,7 +53,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
     private RecordingState mState = RecordingState.IDLE;
 
-    public RecordHandlerThread(MediaProjection mediaProjection, GameModel gameModel, Context context)
+    public RecordHandlerThread(MediaProjection mediaProjection, GameModel gameModel, Context context, FileManagement fileManagement)
     {
         super("KamcordRecordingThread");
         this.mMediaProjection = mediaProjection;
@@ -63,10 +61,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mContext = context;
 
         this.mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        FileManagement fileManagement = new FileManagement();
-        fileManagement.rootFolderInitialize();
-        fileManagement.gameFolderInitialize(mGameModel.getPackageName());
-        fileManagement.sessionFolderInitialize();
         mSessionFolderName = fileManagement.getGameName() + "/" + fileManagement.getUUIDString() + "/";
     }
 
