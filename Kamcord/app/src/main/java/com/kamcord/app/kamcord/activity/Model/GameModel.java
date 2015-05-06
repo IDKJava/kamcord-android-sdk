@@ -6,6 +6,13 @@ public class GameModel {
     private String gameName;
     private int drawableID;
 
+    public GameModel(String packageName, String gameName, int drawableID)
+    {
+        this.packageName = packageName;
+        this.gameName = gameName;
+        this.drawableID = drawableID;
+    }
+
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }

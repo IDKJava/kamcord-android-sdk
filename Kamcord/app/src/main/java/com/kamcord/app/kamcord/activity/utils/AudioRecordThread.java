@@ -5,10 +5,9 @@ import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
 import android.util.Log;
 
-import com.kamcord.app.kamcord.activity.model.RecordingMessage;
+import com.kamcord.app.kamcord.activity.model.GameModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,68 +15,78 @@ import java.util.List;
 public class AudioRecordThread extends HandlerThread implements Handler.Callback {
 
     private MediaRecorder mRecorder = null;
-    private RecordingMessage msgObject;
     private Context mContext;
-    private boolean recordFlag;
     private Handler mHandler;
-    private String selectedPackageName;
-    private String gamefolder;
-    private int AudioNumber = 1;
+    private int audioNumber = 0;
+    private GameModel gameModel;
+    private String mSessionFolderName;
 
     private ActivityManager activityManager;
-    private List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList;
-    private ActivityManager.RunningAppProcessInfo runningAppProcessInfo;
-    private String[] packageList;
-    private String packageString;
 
-    public AudioRecordThread(String name) {
-        super(name);
+
+    public AudioRecordThread(GameModel gameModel, Context context, FileManagement fileManagement) {
+        super("dsdsd");
+        this.gameModel = gameModel;
+        this.mContext = context;
+
+        this.activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        mSessionFolderName = fileManagement.getGameName() + "/" + fileManagement.getUUIDString() + "/";
     }
 
     @Override
-    public boolean handleMessage(Message msg) {
+    public boolean handleMessage(android.os.Message msg) {
 
         switch (msg.what) {
-            case 1:
-                this.msgObject = (RecordingMessage) msg.obj;
-                this.mContext = msgObject.getContext();
-                this.recordFlag = msgObject.getRecordFlag();
-                this.mHandler = msgObject.getHandler();
-                this.selectedPackageName = msgObject.getPackageName();
-                this.gamefolder = msgObject.getGameFolderString();
+            case Message.RECORD_CLIP:
+                Log.v("FindMe", "RECORD_CLIP");
+                audioNumber++;
+                recordUntilBackground();
+                mHandler.removeMessages(Message.POLL);
+                mHandler.sendEmptyMessage(Message.POLL);
+                break;
 
-                startRecording();
-                while (pollingGame()) {
+            case Message.POLL:
+                Log.v("FindMe", "POLL");
+                if (!isGameInForeground()) {
+                    mHandler.removeMessages(Message.POLL);
+                    mHandler.sendEmptyMessageDelayed(Message.POLL, 100);
+                } else {
+                    mHandler.removeMessages(Message.RECORD_CLIP);
+                    mHandler.sendEmptyMessage(Message.RECORD_CLIP);
                 }
-                stopRecording();
-                AudioNumber++;
-                while (!pollingGame()) {
-                }
-                Log.d("Record", "Audio Again");
-                Message resumeMsg = Message.obtain(this.mHandler, 1, this.msgObject);
-                this.mHandler.sendMessage(resumeMsg);
+                break;
+
+            case Message.STOP_RECORDING:
+                Log.v("FindMe", "STOP_RECORDING");
                 break;
         }
         return false;
     }
 
-    private boolean pollingGame() {
-        activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        runningAppProcessInfoList = activityManager.getRunningAppProcesses();
-        runningAppProcessInfo = runningAppProcessInfoList.get(0);
-        packageList = runningAppProcessInfo.pkgList;
-        packageString = packageList[0];
-        if (packageString.equals(selectedPackageName)) {
-            return true;
+    public void setHandler(Handler handler)
+    {
+        this.mHandler = handler;
+    }
+
+    private boolean isGameInForeground() {
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = activityManager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
+            if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                for (String pkgName : runningAppProcessInfo.pkgList) {
+                    if (pkgName.equals(gameModel.getPackageName())) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
 
-    private void startRecording() {
+    private void recordUntilBackground() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
-        String AudioPath = "/sdcard/Kamcord_Android/" + gamefolder + "audio" + AudioNumber + ".aac";
+        String AudioPath = "/sdcard/Kamcord_Android/" + mSessionFolderName + "audio" + audioNumber + ".aac";
         mRecorder.setOutputFile(AudioPath);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 
@@ -88,12 +97,25 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         }
 
         mRecorder.start();
-    }
 
-    public void stopRecording() {
-        Log.d("Stop", "recording");
+        while (isGameInForeground()) {
+        }
+
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
+    }
+
+
+    public enum RecordingState {
+        IDLE,
+        RECORDING,
+        PAUSED,
+    }
+
+    public static class Message {
+        public static final int RECORD_CLIP = 1;
+        public static final int STOP_RECORDING = 2;
+        public static final int POLL = 3;
     }
 }

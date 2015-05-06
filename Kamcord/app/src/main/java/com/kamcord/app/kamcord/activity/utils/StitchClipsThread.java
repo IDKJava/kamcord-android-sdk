@@ -10,6 +10,8 @@ import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunnin
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class StitchClipsThread extends Thread {
 
@@ -30,6 +32,8 @@ public class StitchClipsThread extends Thread {
         if (!ResultFolder.exists() || !ResultFolder.isDirectory()) {
             ResultFolder.mkdir();
         }
+
+        writeClipFile();
 
         mFFmpeg = FFmpeg.getInstance(ffMpegContext);
         try {
@@ -55,8 +59,8 @@ public class StitchClipsThread extends Thread {
         }
 
         commandArray = new String[3];
-        commandArray[0] = "-f concat -i " + gameSessionPath + "cliplist.txt -c copy " + gameSessionPath + "video.mp4";
-        commandArray[1] = "-f concat -i " + gameSessionPath + "audioList.txt -c copy " + gameSessionPath + "audioUntrimmed.aac";
+        commandArray[0] = "-f concat -i " + gameSessionPath + "video_cliplist.txt -c copy " + gameSessionPath + "video.mp4";
+        commandArray[1] = "-f concat -i " + gameSessionPath + "audio_cliplist.txt -c copy " + gameSessionPath + "audioUntrimmed.aac";
         commandArray[2] = "-i " + gameSessionPath + "video.mp4 -i " + gameSessionPath + "audioUnTrimmed.aac -vcodec copy -acodec copy -bsf:a aac_adtstoasc -strict -2 " + gameSessionPath + "out.mp4";
         startStitching();
     }
@@ -98,4 +102,30 @@ public class StitchClipsThread extends Thread {
 
     }
 
+    private void writeClipFile() {
+        try {
+            File gameSessionFolder = new File(gameSessionPath);
+            FileWriter fileWriter = new FileWriter(gameSessionPath + "/video_cliplist.txt");
+            for (final File file : gameSessionFolder.listFiles())
+            {
+                if( file.getName().endsWith(".mp4") )
+                {
+                    fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
+                }
+            }
+            fileWriter.close();
+
+            fileWriter = new FileWriter(gameSessionPath + "/audio_cliplist.txt");
+            for (final File file : gameSessionFolder.listFiles())
+            {
+                if( file.getName().endsWith(".aac") )
+                {
+                    fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
+                }
+            }
+            fileWriter.close();
+        } catch (IOException iox) {
+            iox.printStackTrace();
+        }
+    }
 }
