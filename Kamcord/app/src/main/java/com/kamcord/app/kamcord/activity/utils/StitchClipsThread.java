@@ -19,6 +19,7 @@ public class StitchClipsThread extends Thread {
     private Context ffMpegContext;
     private FFmpeg mFFmpeg;
     private static String[] commandArray;
+    private int commentAmount = 3;
 
     public StitchClipsThread(String gameSessionFolder, Context context) {
         this.gameSessionPath = gameSessionFolder;
@@ -58,7 +59,7 @@ public class StitchClipsThread extends Thread {
             e.printStackTrace();
         }
 
-        commandArray = new String[3];
+        commandArray = new String[commentAmount];
         commandArray[0] = "-f concat -i " + gameSessionPath + "video_cliplist.txt -c copy " + gameSessionPath + "video.mp4";
         commandArray[1] = "-f concat -i " + gameSessionPath + "audio_cliplist.txt -c copy " + gameSessionPath + "audioUntrimmed.aac";
         commandArray[2] = "-i " + gameSessionPath + "video.mp4 -i " + gameSessionPath + "audioUnTrimmed.aac -vcodec copy -acodec copy -bsf:a aac_adtstoasc -strict -2 " + gameSessionPath + "out.mp4";
@@ -67,7 +68,7 @@ public class StitchClipsThread extends Thread {
 
     public void startStitching() {
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < commentAmount; i++) {
             try {
                 // Execute "ffmpeg -version" command you just need to pass "-version"
                 mFFmpeg.execute(commandArray[i], new ExecuteBinaryResponseHandler() {

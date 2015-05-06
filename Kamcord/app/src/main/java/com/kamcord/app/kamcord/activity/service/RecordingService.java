@@ -28,9 +28,6 @@ public class RecordingService extends Service
     private static RecordHandlerThread mRecordHandlerThread;
     private static Handler mHandler;
     private static Handler mAudioRecordHandler;
-    private Context ServiceContext;
-    private static String GameFolderString;
-    private static String LaunchPackageName;
 
     private static AudioRecordThread mAudioRecordThread;
 
