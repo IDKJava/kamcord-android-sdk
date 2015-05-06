@@ -107,20 +107,16 @@ public class StitchClipsThread extends Thread {
         try {
             File gameSessionFolder = new File(gameSessionPath);
             FileWriter fileWriter = new FileWriter(gameSessionPath + "/video_cliplist.txt");
-            for (final File file : gameSessionFolder.listFiles())
-            {
-                if( file.getName().endsWith(".mp4") )
-                {
+            for (final File file : gameSessionFolder.listFiles()) {
+                if (file.getName().endsWith(".mp4")) {
                     fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
                 }
             }
             fileWriter.close();
 
             fileWriter = new FileWriter(gameSessionPath + "/audio_cliplist.txt");
-            for (final File file : gameSessionFolder.listFiles())
-            {
-                if( file.getName().endsWith(".aac") )
-                {
+            for (final File file : gameSessionFolder.listFiles()) {
+                if (file.getName().endsWith(".aac")) {
                     fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
                 }
             }
