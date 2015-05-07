@@ -10,21 +10,4 @@
         android:scrollbars="vertical"
         android:clipToPadding="false" />
 
-    <Button
-        android:id="@+id/servicestart_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:textColor="@android:color/white" />
-
-    <Button
-        android:id="@+id/recordview_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:text="Record View"
-        android:textColor="@android:color/white" />
-
 </RelativeLayout>
