@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="ColorPrimary">#ffffff</color>
+    <color name="ColorPrimaryDark">#999999</color>
+
+    <color name="tabsScrollColor">#47d894</color>
+    <color name="tabTitleColor">#353e44</color>
+
+    <color name="FabPrimaryColor">#47d894</color>
+</resources>

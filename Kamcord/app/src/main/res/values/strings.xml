@@ -12,5 +12,8 @@
     <string name="paused">Paused</string>
 
     <string name="select_a_game">Please select a game to record.</string>
+    <string name="title_activity_mdrecord">MDRecordActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

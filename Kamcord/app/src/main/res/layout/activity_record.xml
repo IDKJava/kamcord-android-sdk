@@ -1,21 +1,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_recordlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context="com.kamcord.app.kamcord.activity.activity.RecordActivity">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/record_recyclerview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:scrollbars="vertical" />
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/main_tool_bar"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_width="match_parent" />
 
-    <Button
+    <com.kamcord.app.kamcord.activity.utils.SlidingTabLayout
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:id="@+id/servicestart_button"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:background="@color/ColorPrimary"
+        android:elevation="2dp" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/main_pager"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_weight="1" />
 
 </RelativeLayout>

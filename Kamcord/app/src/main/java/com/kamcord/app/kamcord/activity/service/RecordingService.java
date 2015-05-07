@@ -85,7 +85,7 @@ public class RecordingService extends Service
             fileManagement.sessionFolderInitialize();
 
             Intent thumbnailIntent = new Intent();
-            thumbnailIntent.putExtra("ThumbNailPath", "/sdcard/Kamcord_Android/" + fileManagement.getGameName() + "/" + fileManagement.getUUIDString() + "/thumbnails.jpg" );
+            thumbnailIntent.putExtra("ThumbNailPath", "/sdcard/Kamcord_Android/" + fileManagement.getGameName() + "/" + fileManagement.getUUIDString() + "/clip1.mp4" );
             thumbnailIntent.setAction("com.kamcord.RecordService");
             sendBroadcast(thumbnailIntent);
 
@@ -128,6 +128,7 @@ public class RecordingService extends Service
             mAudioRecordThread.quitSafely();
             StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(), getApplicationContext());
             stitchClipsThread.start();
+            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         }
         else
         {

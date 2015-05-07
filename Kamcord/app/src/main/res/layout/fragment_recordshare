@@ -7,57 +7,57 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
             android:id="@+id/videothumbnail_imageview"
-            android:background="@drawable/default_thumbnails"
-            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true" />
+            android:background="@drawable/default_thumbnails"
+            android:scaleType="centerCrop" />
 
         <EditText
+            android:id="@+id/editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:hint="Give your video a title"
+            android:layout_alignParentStart="true"
             android:layout_below="@+id/videothumbnail_imageview"
-            android:layout_alignParentStart="true" />
+            android:hint="Give your video a title" />
 
         <TextView
+            android:id="@+id/previewduration_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="video_duration"
-            android:textColor="@android:color/white"
-            android:background="#CC000000"
-            android:id="@+id/previewduration_textview"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="21dp"
             android:layout_alignBottom="@+id/videothumbnail_imageview"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="21dp"
+            android:layout_marginEnd="25dp"
+            android:background="#CC000000"
+            android:text="video_duration"
+            android:textColor="@android:color/white" />
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/imageView"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="80dp"
-            android:background="@drawable/video_play"/>
+            android:background="@drawable/video_play" />
 
     </RelativeLayout>
 
     <Button
+        android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Share This Video"
-        android:textColor="@android:color/white"
-        android:id="@+id/button"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:text="Share This Video"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

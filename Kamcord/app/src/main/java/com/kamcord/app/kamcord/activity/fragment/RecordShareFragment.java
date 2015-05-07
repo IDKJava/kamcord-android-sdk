@@ -1,9 +1,9 @@
 package com.kamcord.app.kamcord.activity.fragment;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.activity.RecordActivity;
 
-public class RecordShareFragment extends DialogFragment implements View.OnClickListener {
+public class RecordShareFragment extends Fragment implements View.OnClickListener {
 
     private ImageView thumbNailImageView;
 
@@ -23,14 +23,35 @@ public class RecordShareFragment extends DialogFragment implements View.OnClickL
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         RecordActivity mRecordActivity = (RecordActivity) getActivity();
-        String thumbNailPath = mRecordActivity.getVideoThumbnail();
+//        String thumbNailPath = mRecordActivity.getVideoThumbnail();
+
         View v = inflater.inflate(R.layout.fragment_recordshare, container, false);
         thumbNailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
-        Bitmap bitmap = BitmapFactory.decodeFile(thumbNailPath);
-        thumbNailImageView.setImageBitmap(bitmap);
+//        thumbNailImageView.setImageBitmap(getVideoThumbnail(thumbNailPath));
         return v;
+    }
+
+    public Bitmap getVideoThumbnail(String filePath) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            retriever.setDataSource(filePath);
+            bitmap = retriever.getFrameAtTime(2000000);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+
+        finally {
+            try {
+                retriever.release();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
+        }
+        return bitmap;
     }
 
     @Override
