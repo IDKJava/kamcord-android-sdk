@@ -14,13 +14,6 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activity.activity.RecordActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" >
-
-        </activity>
-
-        <activity
             android:name=".activity.activity.MDRecordActivity"
             android:label="@string/app_name" >
             <intent-filter>

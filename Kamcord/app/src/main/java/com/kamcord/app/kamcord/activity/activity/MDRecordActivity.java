@@ -9,12 +9,12 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.adapter.MainViewPagerAdapter;
 import com.kamcord.app.kamcord.activity.fragment.RecordFragment;
+import com.kamcord.app.kamcord.activity.fragment.RecordShareFragment;
 import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
 import com.kamcord.app.kamcord.activity.utils.SlidingTabLayout;
@@ -76,7 +77,7 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
         startService(new Intent(this, RecordingService.class));
 
         mToolBar = (Toolbar) findViewById(R.id.md_toolbar);
-        mToolBar.setTitle(getResources().getString(R.string.kamcord));
+        mToolBar.setTitle(R.string.toolbar_title);
         setSupportActionBar(mToolBar);
 
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -113,11 +114,20 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
                 } else {
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
                     mRecordingService.stopRecording();
+                    recordButtonResId = -1;
+                    showUploadFragment();
                 }
             }
         }
     }
 
+    public void showUploadFragment() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = RecordShareFragment.newInstance();
+        fragmentTransaction.add(R.id.main_activity_layout, fragment, "tag")
+                .addToBackStack("tag")
+                .commit();
+    }
     @Override
     public void selectedGame(GameModel gameModel) {
         mSelectedGame = gameModel;
@@ -129,27 +139,27 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
         startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_mdrecord, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_mdrecord, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public void onResume() {

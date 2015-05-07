@@ -90,13 +90,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         public void selectedGame(GameModel selectedGameModel);
     }
 
-//    public void showShareFragment() {
-//        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-//        Fragment fragment = RecordShareFragment.newInstance();
-//        fragmentTransaction.add(R.id.activity_recordlayout, fragment, "tag")
-//                .addToBackStack("tag")
-//                .commit();
-//    }
+
 //
 //    public String getVideoThumbnail() {
 //        return thumbnailString;
