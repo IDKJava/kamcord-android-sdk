@@ -1,8 +1,8 @@
 package com.kamcord.app.kamcord.activity.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +17,7 @@ import com.kamcord.app.kamcord.activity.server.model.Game;
 import com.kamcord.app.kamcord.activity.server.model.GenericResponse;
 import com.kamcord.app.kamcord.activity.server.model.PaginatedGameList;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
+import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +34,12 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private Game mSelectedGame = null;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
-    private String nextSupportedGamePage = null;
-
-    private Context mContext;
 
     private FileManagement mFileManagement;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.record_tab, container, false);
-        mContext = getActivity().getApplicationContext();
         initKamcordRecordFragment(v);
         return v;
     }
@@ -52,24 +49,16 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mFileManagement = new FileManagement();
         mFileManagement.rootFolderInitialize();
 
-        // gridview init;
-        // int paddingTop = Utils.getToolbarHeight(mContext) + Utils.getTabsHeight(mContext);
-        // mRecyclerView.setPadding(mRecyclerView.getPaddingLeft(), paddingTop, mRecyclerView.getPaddingRight(), mRecyclerView.getPaddingBottom());
-
+        mSupportedGameList.clear();
         AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
 
-//        mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-//        int SpacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_margin);
-//        mRecyclerView.addItemDecoration(new SpaceItemDecoration(SpacingInPixels));
-//        mRecyclerAdapter = new GameRecordListAdapter(mContext, mSupportedGameList);
-//        mRecyclerAdapter.setOnItemClickListener(this);
-//        mRecyclerView.setAdapter(mRecyclerAdapter);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
-//        mBroadcastReceiver = new CustomReceiver();
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction("com.kamcord.RecordService");
-//        mContext.registerReceiver(mBroadcastReceiver, filter);
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
+        mRecyclerAdapter.setOnItemClickListener(this);
+        mRecyclerView.setAdapter(mRecyclerAdapter);
     }
 
     @Override
@@ -77,7 +66,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mSelectedGame = mSupportedGameList.get(position);
         selectdGameListener listener = (selectdGameListener) getActivity();
         listener.selectedGame(mSelectedGame);
-        Toast.makeText(mContext,
+        Toast.makeText(getActivity(),
                 "You will record " + mSelectedGame.name,
                 Toast.LENGTH_SHORT)
                 .show();
@@ -87,17 +76,20 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         void selectedGame(com.kamcord.app.kamcord.activity.server.model.Game selectedGameModel);
     }
 
-    private static class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>>
+    private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>>
     {
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
-            Log.v(TAG, "Success!");
             if( gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null )
             {
                 for( Game game : gamesListWrapper.response.game_list )
                 {
-                    Log.v(TAG, "  " + game.name + ": " + game.play_store_id);
+                    if( game.play_store_id != null )
+                    {
+                        mSupportedGameList.add(game);
+                    }
                 }
+                mRecyclerAdapter.notifyDataSetChanged();
             }
         }
 

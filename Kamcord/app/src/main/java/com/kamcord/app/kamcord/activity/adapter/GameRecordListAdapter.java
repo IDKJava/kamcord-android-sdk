@@ -10,12 +10,13 @@ import android.widget.TextView;
 
 import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.server.model.Game;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAdapter.ViewHolder> {
 
-    private static Context mContext;
+    private Context mContext;
     private List<Game> mGames;
     private static OnItemClickListener mItemClickListener;
 
@@ -36,9 +37,12 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        final Game gameModel = getItem(position);
-        viewHolder.itemPackageName.setText(gameModel.name);
-//        viewHolder.itemImage.setBackgroundResource(gameModel.getDrawableID());
+        Game game = getItem(position);
+        viewHolder.itemPackageName.setText(game.name);
+        Picasso.with(mContext)
+                .load(game.icons.regular)
+                .tag(game.play_store_id)
+                .into(viewHolder.itemImage);
     }
 
     @Override
@@ -76,8 +80,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
         }
     }
 
-    public static interface OnItemClickListener {
-        public void onItemClick(View view, int position);
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener mItemClickListener) {
