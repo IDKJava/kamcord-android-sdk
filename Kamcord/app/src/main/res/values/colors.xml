@@ -8,4 +8,8 @@
     <color name="tabTitleColor">#353e44</color>
 
     <color name="FabPrimaryColor">#47d894</color>
+
+    <color name="ButtonTextColor">#353e44</color>
+    <color name="ButtonOutlineColor">#56bd89</color>
+
 </resources>

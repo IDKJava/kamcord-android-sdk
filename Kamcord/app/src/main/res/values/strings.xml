@@ -5,8 +5,14 @@
 
     <!-- UI String-->
     <string name="toolbar_title">kamcord</string>
+    <string name="activity_login_subtitle">A Social Network For Gamers</string>
     <string name="stop_recording">Stop Recording</string>
     <string name="start_recording">Start Recording</string>
+    <string name="termsofservice">By creating a profile, you are agreeing to Kamcords</string>
+    <string name="clickterms">Terms of Service and Privacy Policy</string>
+
+    <string name="btn_createprofile">Create a Profile</string>
+    <string name="btn_login">Log In</string>
 
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>
@@ -14,6 +20,9 @@
 
     <string name="select_a_game">Please select a game to record.</string>
     <string name="title_activity_mdrecord">MDRecordActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 
 </resources>

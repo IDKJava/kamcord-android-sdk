@@ -32,7 +32,7 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
                 return true;
             }
         });
-        thumbNailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
+//        thumbNailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
 //        thumbNailImageView.setImageBitmap(getVideoThumbnail(thumbNailPath));
         return v;
     }
@@ -43,13 +43,11 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
         try {
             retriever.setDataSource(filePath);
             bitmap = retriever.getFrameAtTime(2000000);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (RuntimeException e) {
             e.printStackTrace();
-        }
-
-        finally {
+        } finally {
             try {
                 retriever.release();
             } catch (RuntimeException e) {

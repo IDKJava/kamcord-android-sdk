@@ -17,7 +17,7 @@
             android:layout_height="200dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/default_thumbnails"
+
             android:scaleType="centerCrop" />
 
         <EditText

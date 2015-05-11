@@ -124,7 +124,7 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
     public void showUploadFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = RecordShareFragment.newInstance();
-        fragmentTransaction.add(R.id.main_activity_layout, fragment, "tag")
+        fragmentTransaction.replace(R.id.main_activity_layout, fragment, "tag")
                 .addToBackStack("tag")
                 .commit();
     }
