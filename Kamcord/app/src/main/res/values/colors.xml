@@ -11,6 +11,7 @@
 
     <color name="ButtonTextColor">#40d18b</color>
     <color name="ButtonOutlineColor">#40d18b</color>
+    <color name="EditTextBackgroundColor">#e2e2e2</color>
     <color name="TermsHighLighted">#353e44</color>
 
 </resources>
