@@ -46,18 +46,23 @@ public class CreateProfileFragment extends Fragment implements View.OnClickListe
 
         subTitleTextView = (TextView) v.findViewById(R.id.termsTextview);
         SpannableStringBuilder textViewStyle = new SpannableStringBuilder(termsOfServiceStr);
-        int indexOfMatchStr = termsOfServiceStr.indexOf(highlightStrTerms);
-        textViewStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.TermsHighLighted)),
-                indexOfMatchStr,
-                indexOfMatchStr + highlightStrTerms.length(),
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        textViewStyle.setSpan(new StyleSpan(Typeface.BOLD),
-                indexOfMatchStr,
-                indexOfMatchStr + highlightStrTerms.length(),
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        highLightText(highlightStrTerms, textViewStyle);
+        highLightText(highlightStrPrivacy, textViewStyle);
         subTitleTextView.setText(textViewStyle);
 
         return v;
+    }
+
+    public void highLightText(String highLightStr, SpannableStringBuilder textViewStyle) {
+        int indexOfMatchStr = termsOfServiceStr.indexOf(highLightStr);
+        textViewStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.TermsHighLighted)),
+                indexOfMatchStr,
+                indexOfMatchStr + highLightStr.length(),
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        textViewStyle.setSpan(new StyleSpan(Typeface.BOLD),
+                indexOfMatchStr,
+                indexOfMatchStr + highLightStr.length(),
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
     }
 
     @Override
