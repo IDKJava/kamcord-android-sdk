@@ -9,7 +9,8 @@
 
     <color name="FabPrimaryColor">#47d894</color>
 
-    <color name="ButtonTextColor">#353e44</color>
-    <color name="ButtonOutlineColor">#56bd89</color>
+    <color name="ButtonTextColor">#40d18b</color>
+    <color name="ButtonOutlineColor">#40d18b</color>
+    <color name="TermsHighLighted">#353e44</color>
 
 </resources>

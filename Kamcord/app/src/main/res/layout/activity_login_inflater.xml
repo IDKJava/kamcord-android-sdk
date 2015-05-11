@@ -24,6 +24,7 @@
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
             android:layout_weight="1">
 
             <Button
@@ -33,12 +34,14 @@
                 android:layout_alignBottom="@+id/login_btn"
                 android:background="@drawable/login_btnstyle"
                 android:text="Create a Profile"
+                android:textAllCaps="false"
                 android:textColor="@color/ButtonTextColor" />
         </FrameLayout>
 
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:layout_weight="1">
 
             <Button
@@ -49,6 +52,7 @@
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/login_btnstyle"
                 android:text="Log In"
+                android:textAllCaps="false"
                 android:textColor="@color/ButtonTextColor" />
         </FrameLayout>
 

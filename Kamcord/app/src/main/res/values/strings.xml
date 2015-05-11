@@ -13,6 +13,7 @@
 
     <string name="btn_createprofile">Create a Profile</string>
     <string name="btn_login">Log In</string>
+    <string name="btn_forgetpassword">Forget Password?</string>
 
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>
