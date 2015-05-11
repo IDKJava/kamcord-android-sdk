@@ -1,8 +1,13 @@
 package com.kamcord.app.kamcord.activity.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
+import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
 
@@ -17,16 +23,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private EditText userNameEditText;
     private EditText passwordEditText;
-    private EditText emailEditText;
-    private Button createProfileBtn;
+    private Button loginProfileBtn;
 
-    private String termsOfServiceStr = "Terms of Service and Privacy Policy";
-    private String highlightStrTerms = "Terms of Service";
-    private String highlightStrPrivacy = "Privacy Policy";
-    private TextView subTitleTextView;
-    private int displayFlag = 1;
     private TextView forgetPasswordTextView;
-    private TextView termsTextView;
+    private String forgetPasswordStr;
 
     public LoginFragment() {
         super();
@@ -36,28 +36,42 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            displayFlag = bundle.getInt("createprofile", displayFlag);
-            Log.d("Bundle value: ", "" + displayFlag);
-        }
-
         View v = inflater.inflate(R.layout.fragment_login_simple, container, false);
+
+        forgetPasswordTextView = (TextView) v.findViewById(R.id.forgetpassword_textview);
+        forgetPasswordStr = getResources().getString(R.string.kamcordPassword);
+        SpannableStringBuilder textViewStyle = new SpannableStringBuilder(forgetPasswordStr);
+        URLSpan forgetpasswordSpan = new URLSpan("https://www.kamcord.com/tos/") {
+            @Override
+            public void onClick(View widget) {
+                Toast.makeText(getActivity().getApplicationContext(), "Click terms of service", Toast.LENGTH_SHORT).show();
+            }
+        };
+        highLightText(forgetpasswordSpan, forgetPasswordStr, textViewStyle);
+        forgetPasswordTextView.setText(textViewStyle);
+
         v.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
             }
         });
-
-        emailEditText = (EditText) v.findViewById(R.id.emailEditText);
-        emailEditText.setVisibility(View.INVISIBLE);
-
-        termsTextView = (TextView) v.findViewById(R.id.termsTextview);
-        termsTextView.setVisibility(View.INVISIBLE);
-        forgetPasswordTextView = (TextView) v.findViewById(R.id.forgetpasswordTextView);
-        forgetPasswordTextView.setText("Forget Password?");
-
         return v;
+    }
+
+    public void highLightText(URLSpan urlSpan, String highLightStr, SpannableStringBuilder textViewStyle) {
+        int indexOfMatchStr = forgetPasswordStr.indexOf(highLightStr);
+        textViewStyle.setSpan(urlSpan,
+                indexOfMatchStr,
+                indexOfMatchStr + highLightStr.length(),
+                Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        textViewStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.TermsHighLighted)),
+                indexOfMatchStr,
+                indexOfMatchStr + highLightStr.length(),
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        textViewStyle.setSpan(new StyleSpan(Typeface.BOLD),
+                indexOfMatchStr,
+                indexOfMatchStr + highLightStr.length(),
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
     }
 
     @Override

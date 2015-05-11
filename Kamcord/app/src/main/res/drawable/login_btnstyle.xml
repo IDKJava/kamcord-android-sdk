@@ -1,24 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <shape>
-            <solid android:color="@color/ButtonOutlineColor" />
-        </shape>
-    </item>
-
-    <item
-        android:top="1dp"
-        android:left="1dp"
-        android:bottom="1dp"
-        android:right="1dp">
-        <shape>
-
-            <solid android:color="#ffffff" />
-            <padding
-                android:bottom="10dp"
-                android:left="10dp"
-                android:right="10dp"
-                android:top="10dp" />
-        </shape>
-    </item>
-</layer-list>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <solid android:color="#ffffff" />
+    <corners android:radius="5dp" />
+    <stroke
+        android:color="@color/ButtonOutlineColor"
+        android:width="1dp" />
+</shape>

@@ -31,9 +31,6 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private String highlightStr = "Gamers";
     private TextView subTitleTextView;
 
-    private LoginFragment mLoginFragment;
-    private CreateProfileFragment mCreateProfileFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,14 +67,6 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         logInButton.setOnClickListener(this);
         skipButton.setOnClickListener(this);
 
-        mLoginFragment = new LoginFragment();
-        mCreateProfileFragment = new CreateProfileFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.activity_login_layout, mLoginFragment)
-                .add(R.id.activity_login_layout, mCreateProfileFragment)
-                .hide(mLoginFragment)
-                .hide(mCreateProfileFragment)
-                .commit();
     }
 
     @Override
@@ -86,15 +75,15 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             case R.id.create_profile_btn: {
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
-                        .show(mCreateProfileFragment)
-                        .addToBackStack("LoginFragment").commit();
+                        .add(R.id.activity_login_layout, new CreateProfileFragment())
+                        .addToBackStack("CreateProfileFragment").commit();
                 panel.setVisibility(View.INVISIBLE);
                 break;
             }
             case R.id.login_btn: {
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
-                        .show(mLoginFragment)
+                        .add(R.id.activity_login_layout, new LoginFragment())
                         .addToBackStack("LoginFragment").commit();
                 panel.setVisibility(View.INVISIBLE);
                 break;
@@ -132,7 +121,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(panel.getVisibility() == View.INVISIBLE) {
+        if (panel.getVisibility() == View.INVISIBLE) {
             panel.setVisibility(View.VISIBLE);
         }
 

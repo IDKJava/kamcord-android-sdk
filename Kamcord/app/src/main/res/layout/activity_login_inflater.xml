@@ -11,7 +11,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="Skip" />
+        android:background="@drawable/login_btnstyle"
+        android:text="Skip"
+        android:textAllCaps="false"
+        android:textColor="@color/ButtonTextColor" />
 
     <TableRow
         android:id="@+id/tableRow"
@@ -19,43 +22,31 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:padding="10dp">
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1">
+        android:layout_margin="10dp">
 
             <Button
                 android:id="@+id/create_profile_btn"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
                 android:layout_alignBottom="@+id/login_btn"
                 android:background="@drawable/login_btnstyle"
                 android:text="Create a Profile"
                 android:textAllCaps="false"
                 android:textColor="@color/ButtonTextColor" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="1">
 
             <Button
                 android:id="@+id/login_btn"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/login_btnstyle"
                 android:text="Log In"
                 android:textAllCaps="false"
                 android:textColor="@color/ButtonTextColor" />
-
-        </FrameLayout>
 
     </TableRow>
 
