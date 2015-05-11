@@ -9,17 +9,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.model.GameModel;
+import com.kamcord.app.kamcord.activity.server.model.Game;
 
 import java.util.List;
 
 public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAdapter.ViewHolder> {
 
     private static Context mContext;
-    private List<GameModel> mGames;
+    private List<Game> mGames;
     private static OnItemClickListener mItemClickListener;
 
-    public GameRecordListAdapter(Context context, List<GameModel> games) {
+    public GameRecordListAdapter(Context context, List<Game> games) {
         this.mContext = context;
         this.mGames = games;
     }
@@ -36,9 +36,9 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        final GameModel gameModel = getItem(position);
-        viewHolder.itemPackageName.setText(gameModel.getGameName());
-        viewHolder.itemImage.setBackgroundResource(gameModel.getDrawableID());
+        final Game gameModel = getItem(position);
+        viewHolder.itemPackageName.setText(gameModel.name);
+//        viewHolder.itemImage.setBackgroundResource(gameModel.getDrawableID());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
         return mGames.size();
     }
 
-    public GameModel getItem(int position) {
+    public Game getItem(int position) {
         return mGames.get(position);
     }
 

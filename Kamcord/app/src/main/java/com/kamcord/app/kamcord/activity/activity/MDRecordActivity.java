@@ -23,7 +23,7 @@ import com.kamcord.app.kamcord.R;
 import com.kamcord.app.kamcord.activity.adapter.MainViewPagerAdapter;
 import com.kamcord.app.kamcord.activity.fragment.RecordFragment;
 import com.kamcord.app.kamcord.activity.fragment.RecordShareFragment;
-import com.kamcord.app.kamcord.activity.model.GameModel;
+import com.kamcord.app.kamcord.activity.server.model.Game;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
 import com.kamcord.app.kamcord.activity.utils.SlidingTabLayout;
 
@@ -44,7 +44,7 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
     private RecordingService mRecordingService;
     private MediaProjectionManager mMediaProjectionManager;
     private boolean mIsBoundToService = false;
-    private GameModel mSelectedGame = null;
+    private Game mSelectedGame = null;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -129,9 +129,9 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
                 .commit();
     }
     @Override
-    public void selectedGame(GameModel gameModel) {
+    public void selectedGame(Game gameModel) {
         mSelectedGame = gameModel;
-        Log.d("Selected game:", " " + mSelectedGame.getPackageName());
+        Log.d("Selected game:", " " + mSelectedGame.name);
     }
 
     public void obtainMediaProjection() {
@@ -181,7 +181,7 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
         if (resultCode == RESULT_OK && requestCode == MEDIA_PROJECTION_MANAGER_PERMISSION_CODE) {
             if (mMediaProjectionManager != null && mSelectedGame != null) {
                 try {
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.getPackageName());
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
                     Log.d("start Activity", "yoyo");
                     startActivity(launchIntent);
                     MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, data);

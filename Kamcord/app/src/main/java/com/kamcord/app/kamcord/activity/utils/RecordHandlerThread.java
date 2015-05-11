@@ -17,7 +17,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 
-import com.kamcord.app.kamcord.activity.model.GameModel;
+import com.kamcord.app.kamcord.activity.server.model.Game;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
     private MediaProjection mMediaProjection;
-    private GameModel mGameModel;
+    private Game mGameModel;
     private Context mContext;
     private Handler mHandler;
     private Surface mSurface;
@@ -52,7 +52,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
     private RecordingState mState = RecordingState.IDLE;
 
-    public RecordHandlerThread(MediaProjection mediaProjection, GameModel gameModel, Context context, FileManagement fileManagement) {
+    public RecordHandlerThread(MediaProjection mediaProjection, Game gameModel, Context context, FileManagement fileManagement) {
         super("KamcordRecordingThread");
         this.mMediaProjection = mediaProjection;
         this.mGameModel = gameModel;
@@ -106,7 +106,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
             if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                 for (String pkgName : runningAppProcessInfo.pkgList) {
-                    if (pkgName.equals(mGameModel.getPackageName())) {
+                    if (pkgName.equals(mGameModel.play_store_id)) {
                         return true;
                     }
                 }
