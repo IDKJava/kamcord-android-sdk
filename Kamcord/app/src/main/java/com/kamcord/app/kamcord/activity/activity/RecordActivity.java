@@ -27,12 +27,12 @@ import com.kamcord.app.kamcord.activity.server.model.Game;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
 import com.kamcord.app.kamcord.activity.utils.SlidingTabLayout;
 
-public class MDRecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.selectdGameListener {
+public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.selectdGameListener {
 
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
     Toolbar mToolBar;
-    ImageButton mFAB;
+    ImageButton mFloatingActionButton;
     private ViewPager mViewPager;
     private MainViewPagerAdapter mainViewPagerAdapter;
     private SlidingTabLayout mTabs;
@@ -51,11 +51,11 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
             mRecordingService = ((RecordingService.LocalBinder) iBinder).getService();
             mIsBoundToService = true;
             if (mRecordingService.isRecording()) {
-                mFAB.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
             } else {
-                mFAB.setImageResource(R.drawable.ic_videocam_white_36dp);
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
             }
-            mFAB.setVisibility(View.VISIBLE);
+            mFloatingActionButton.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -93,8 +93,8 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
 
-        mFAB = (ImageButton) findViewById(R.id.main_fab);
-        mFAB.setOnClickListener(this);
+        mFloatingActionButton = (ImageButton) findViewById(R.id.main_fab);
+        mFloatingActionButton.setOnClickListener(this);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
             case R.id.main_fab: {
                 if (recordButtonResId == -1) {
                     if (mSelectedGame != null) {
-                        mFAB.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+                        mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
                         obtainMediaProjection();
                         recordButtonResId = 0;
                         break;
@@ -138,28 +138,6 @@ public class MDRecordActivity extends ActionBarActivity implements View.OnClickL
         mMediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_mdrecord, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     public void onResume() {

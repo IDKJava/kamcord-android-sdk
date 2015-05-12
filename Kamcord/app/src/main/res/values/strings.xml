@@ -11,8 +11,16 @@
     <string name="termsofservice">By creating a profile, you are agreeing to Kamcords</string>
     <string name="clickterms">Terms of Service and Privacy Policy</string>
 
+    <!-- Login -->
+    <string name="kamcordTermsPolicy">By creating a profile, you are agreeing to Kamcords Terms of Service and Privacy Policy</string>
+    <string name="kamcordTermsOfService">Terms of Service</string>
+    <string name="kamcordPrivacPolicy">Privacy Policy</string>
+    <string name="kamcordPassword">Forget Password</string>
+    <string name="kamcordSubtitle">A Social Network For Gamers</string>
+    <string name="kamcordSubtitleHighLighted">Gamers</string>
     <string name="btn_createprofile">Create a Profile</string>
     <string name="btn_login">Log In</string>
+    <string name="btn_forgetpassword">Forget Password?</string>
 
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>

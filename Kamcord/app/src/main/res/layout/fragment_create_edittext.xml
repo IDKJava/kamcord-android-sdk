@@ -11,10 +11,11 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:ems="10"
-        android:hint="UserName" />
+        android:hint="UserName"
+        android:inputType="textPersonName" />
 
     <EditText
-        android:id="@+id/loginpasswordeditText"
+        android:id="@+id/editText3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -23,12 +24,22 @@
         android:hint="Password"
         android:inputType="textPassword" />
 
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/editText3"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress" />
+
     <TextView
-        android:id="@+id/forgetpassword_textview"
+        android:id="@+id/terms_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/loginpasswordeditText"
+        android:layout_below="@+id/emailEditText"
+        android:layout_centerHorizontal="true"
         android:gravity="center" />
 
 </RelativeLayout>

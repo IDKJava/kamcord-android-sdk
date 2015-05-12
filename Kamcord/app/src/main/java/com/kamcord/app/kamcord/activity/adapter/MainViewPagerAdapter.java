@@ -21,11 +21,13 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        if(position == 0) {
-            return new RecordFragment();
-        } else {
-            return new ProfileFragment();
+        switch(position) {
+            case 0:
+                return new RecordFragment();
+            case 1:
+                return new ProfileFragment();
         }
+        return new RecordFragment();
     }
 
     @Override

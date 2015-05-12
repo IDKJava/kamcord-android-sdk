@@ -1,16 +1,23 @@
 package com.kamcord.app.kamcord.activity.activity;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.kamcord.app.kamcord.R;
+import com.kamcord.app.kamcord.activity.fragment.CreateProfileFragment;
 import com.kamcord.app.kamcord.activity.fragment.LoginFragment;
 
 public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
@@ -20,8 +27,9 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private Button createProfileButton;
     private Button logInButton;
     private Button skipButton;
-
-    private LoginFragment mLoginFragment;
+    private String subTitleStr;
+    private String subTitleHighLightStr;
+    private TextView subTitleTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +44,22 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         final View loginControlView = mLayoutInflater.inflate(R.layout.activity_login_inflater, null);
         ViewGroup.LayoutParams layoutParamsControl = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         this.addContentView(loginControlView, layoutParamsControl);
-
         panel = findViewById(R.id.panel);
+
+        subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
+        subTitleStr = getResources().getString(R.string.kamcordSubtitle);
+        subTitleHighLightStr = getResources().getString(R.string.kamcordSubtitleHighLighted);
+        SpannableStringBuilder textViewStyle = new SpannableStringBuilder(subTitleStr);
+        int indexOfMatchStr = subTitleStr.indexOf(subTitleHighLightStr);
+        textViewStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.FabPrimaryColor)),
+                indexOfMatchStr,
+                indexOfMatchStr + subTitleHighLightStr.length(),
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        textViewStyle.setSpan(new StyleSpan(Typeface.BOLD),
+                indexOfMatchStr,
+                indexOfMatchStr + subTitleHighLightStr.length(),
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        subTitleTextView.setText(textViewStyle);
 
         createProfileButton = (Button) findViewById(R.id.create_profile_btn);
         logInButton = (Button) findViewById(R.id.login_btn);
@@ -47,11 +69,6 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         logInButton.setOnClickListener(this);
         skipButton.setOnClickListener(this);
 
-        mLoginFragment = new LoginFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.activity_login_layout, mLoginFragment)
-                .hide(mLoginFragment)
-                .commit();
     }
 
     @Override
@@ -60,15 +77,21 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             case R.id.create_profile_btn: {
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
-                        .show(mLoginFragment).addToBackStack("LoginFragment").commit();
+                        .add(R.id.activity_login_layout, new CreateProfileFragment())
+                        .addToBackStack("CreateProfileFragment").commit();
                 panel.setVisibility(View.INVISIBLE);
                 break;
             }
             case R.id.login_btn: {
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
+                        .add(R.id.activity_login_layout, new LoginFragment())
+                        .addToBackStack("LoginFragment").commit();
+                panel.setVisibility(View.INVISIBLE);
                 break;
             }
             case R.id.skip_btn: {
-                Intent mainIntent = new Intent(this, MDRecordActivity.class);
+                Intent mainIntent = new Intent(this, RecordActivity.class);
                 startActivity(mainIntent);
                 break;
             }
@@ -100,7 +123,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if(panel.getVisibility() == View.INVISIBLE) {
+        if (panel.getVisibility() == View.INVISIBLE) {
             panel.setVisibility(View.VISIBLE);
         }
 
