@@ -30,7 +30,7 @@ public class AppServerClient {
 
     private static AppServer instance;
 
-    public static AppServer getInstance()
+    public static synchronized AppServer getInstance()
     {
         if( instance == null )
         {
