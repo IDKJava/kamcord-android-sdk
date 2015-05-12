@@ -18,32 +18,29 @@ import com.kamcord.app.kamcord.activity.utils.FileManagement;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
 import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
 
-public class RecordingService extends Service
-{
+public class RecordingService extends Service {
     private static final String TAG = RecordingService.class.getSimpleName();
     private static int NOTIFICATION_ID = 3141592;
 
     private final IBinder mBinder = new LocalBinder();
 
-    private static RecordHandlerThread mRecordHandlerThread;
-    private static Handler mHandler;
-    private static Handler mAudioRecordHandler;
+    private RecordHandlerThread mRecordHandlerThread;
+    private Handler mHandler;
+    private Handler mAudioRecordHandler;
 
-    private static AudioRecordThread mAudioRecordThread;
+    private AudioRecordThread mAudioRecordThread;
 
     public RecordingService() {
         super();
     }
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
         super.onCreate();
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         // Notification Setting
         Notification.Builder notificationBuilder = new Notification.Builder(this);
         Notification notification = notificationBuilder
@@ -57,8 +54,7 @@ public class RecordingService extends Service
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
 
         // If we're getting destroyed, we should probably just stop the current recording session.
@@ -69,16 +65,13 @@ public class RecordingService extends Service
     }
 
     @Override
-    public IBinder onBind(Intent intent)
-    {
+    public IBinder onBind(Intent intent) {
         return mBinder;
     }
 
     /* Interface for starting and stopping a recording session */
-    public synchronized void startRecording(MediaProjection mediaProjection, GameModel gameModel)
-    {
-        if( mRecordHandlerThread == null || !mRecordHandlerThread.isAlive() )
-        {
+    public synchronized void startRecording(MediaProjection mediaProjection, GameModel gameModel) {
+        if (mRecordHandlerThread == null || !mRecordHandlerThread.isAlive()) {
             FileManagement fileManagement = new FileManagement();
             fileManagement.rootFolderInitialize();
             fileManagement.gameFolderInitialize(gameModel.getPackageName());
@@ -106,17 +99,13 @@ public class RecordingService extends Service
                     .setSmallIcon(R.drawable.kamcord_appicon)
                     .build();
             ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notification);
-        }
-        else
-        {
+        } else {
             Log.e(TAG, "Unable to start recording session! There is already a currently running recording session.");
         }
     }
 
-    public synchronized void stopRecording()
-    {
-        if( mRecordHandlerThread != null && mRecordHandlerThread.isAlive() )
-        {
+    public synchronized void stopRecording() {
+        if (mRecordHandlerThread != null && mRecordHandlerThread.isAlive()) {
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
             mRecordHandlerThread.quitSafely();
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
@@ -131,18 +120,15 @@ public class RecordingService extends Service
         }
     }
 
-    public synchronized boolean isRecording()
-    {
+    public synchronized boolean isRecording() {
         return mRecordHandlerThread != null && mRecordHandlerThread.isAlive();
     }
 
-    public class LocalBinder extends Binder
-    {
-        public RecordingService getService()
-        {
+    public class LocalBinder extends Binder {
+        public RecordingService getService() {
             return RecordingService.this;
+        }
     }
-}
 }
 
 
