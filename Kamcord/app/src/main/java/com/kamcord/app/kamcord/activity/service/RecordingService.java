@@ -44,7 +44,7 @@ public class RecordingService extends Service {
         // Notification Setting
         Notification.Builder notificationBuilder = new Notification.Builder(this);
         Notification notification = notificationBuilder
-                .setContentTitle(getResources().getString(R.string.kamcord))
+                .setContentTitle(getResources().getString(R.string.toolbar_title))
                 .setContentText(getResources().getString(R.string.idle))
                 .setSmallIcon(R.drawable.kamcord_appicon)
                 .build();
@@ -94,7 +94,7 @@ public class RecordingService extends Service {
 
             Notification.Builder notificationBuilder = new Notification.Builder(this);
             Notification notification = notificationBuilder
-                    .setContentTitle(getResources().getString(R.string.kamcord))
+                    .setContentTitle(getResources().getString(R.string.toolbar_title))
                     .setContentText(getResources().getString(R.string.recording))
                     .setSmallIcon(R.drawable.kamcord_appicon)
                     .build();
@@ -112,7 +112,10 @@ public class RecordingService extends Service {
             mAudioRecordThread.quitSafely();
             StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(), getApplicationContext());
             stitchClipsThread.start();
-        } else {
+            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
+        }
+        else
+        {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }
     }

@@ -19,7 +19,7 @@ public class StitchClipsThread extends Thread {
     private Context ffMpegContext;
     private FFmpeg mFFmpeg;
     private static String[] commandArray;
-    private int commentAmount = 3;
+    private int commentAmount = 4;
 
     public StitchClipsThread(String gameSessionFolder, Context context) {
         this.gameSessionPath = gameSessionFolder;
@@ -63,6 +63,7 @@ public class StitchClipsThread extends Thread {
         commandArray[0] = "-f concat -i " + gameSessionPath + "video_cliplist.txt -c copy " + gameSessionPath + "video.mp4";
         commandArray[1] = "-f concat -i " + gameSessionPath + "audio_cliplist.txt -c copy " + gameSessionPath + "audioUntrimmed.aac";
         commandArray[2] = "-i " + gameSessionPath + "video.mp4 -i " + gameSessionPath + "audioUnTrimmed.aac -vcodec copy -acodec copy -bsf:a aac_adtstoasc -strict -2 " + gameSessionPath + "out.mp4";
+        commandArray[3] = "-i " + gameSessionPath + "video.mp4 -vframes 1 -q:v 1 -vf scale=320:-1 -ss 2 " + gameSessionPath + "thumbnails.jpg";
         startStitching();
     }
 

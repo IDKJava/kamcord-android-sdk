@@ -5,65 +5,57 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
+import com.kamcord.app.kamcord.activity.adapter.MainViewPagerAdapter;
+import com.kamcord.app.kamcord.activity.fragment.RecordFragment;
 import com.kamcord.app.kamcord.activity.fragment.RecordShareFragment;
 import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.service.RecordingService;
-import com.kamcord.app.kamcord.activity.utils.FileManagement;
-import com.kamcord.app.kamcord.activity.utils.GameRecordListAdapter;
-import com.kamcord.app.kamcord.activity.utils.SpaceItemDecoration;
+import com.kamcord.app.kamcord.activity.utils.SlidingTabLayout;
 
-import java.util.ArrayList;
-import java.util.List;
+public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.selectdGameListener {
 
-
-public class RecordActivity extends FragmentActivity implements View.OnClickListener, GameRecordListAdapter.OnItemClickListener {
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    private Button mServiceStartButton;
-    private FileManagement mFileManagement;
+    Toolbar mToolBar;
+    ImageButton mFloatingActionButton;
+    private ViewPager mViewPager;
+    private MainViewPagerAdapter mainViewPagerAdapter;
+    private SlidingTabLayout mTabs;
+    private CharSequence tabTitles[] = {"Record", "Profile"};
+    private int numberOfTabs = 2;
 
-    private ArrayList<GameModel> mSupportedGameList = new ArrayList<GameModel>() {
-        {
-            add(new GameModel("com.rovio.BadPiggies", "com.rovio.BadPiggies", R.drawable.bad_piggies));
-            add(new GameModel("com.yodo1.crossyroad", "com.yodo1.crossyroad", R.drawable.crossy_road));
-            add(new GameModel("com.madfingergames.deadtrigger2", "com.madfingergames.deadtrigger2", R.drawable.dead_trigger));
-            add(new GameModel("com.fingersoft.hillclimb", "com.fingersoft.hillclimb", R.drawable.hill_racing));
-            add(new GameModel("com.kabam.marvelbattle", "com.kabam.marvelbattle", R.drawable.marvel));
-        }
-    };
-    private GameModel mSelectedGame = null;
+    private int recordButtonResId = -1;
 
     private RecordingService mRecordingService;
+    private MediaProjectionManager mMediaProjectionManager;
+    private boolean mIsBoundToService = false;
+    private GameModel mSelectedGame = null;
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             mRecordingService = ((RecordingService.LocalBinder) iBinder).getService();
             mIsBoundToService = true;
             if (mRecordingService.isRecording()) {
-                mServiceStartButton.setText(R.string.stop_recording);
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
             } else {
-                mServiceStartButton.setText(R.string.start_recording);
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
             }
-            mServiceStartButton.setVisibility(View.VISIBLE);
+            mFloatingActionButton.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -71,118 +63,75 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             mIsBoundToService = false;
         }
     };
-    private boolean mIsBoundToService = false;
-
-    private MediaProjectionManager mMediaProjectionManager;
-
-    private RecyclerView mRecyclerView;
-    private GameRecordListAdapter mRecyclerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_record);
-        initKamcord();
+        setContentView(R.layout.activity_mdrecord);
+
+        initMainActivity();
+    }
+
+    public void initMainActivity() {
 
         startService(new Intent(this, RecordingService.class));
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        bindService(new Intent(this, RecordingService.class), mConnection, 0);
-    }
+        mToolBar = (Toolbar) findViewById(R.id.md_toolbar);
+        mToolBar.setTitle(R.string.toolbar_title);
+        setSupportActionBar(mToolBar);
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mIsBoundToService) {
-            unbindService(mConnection);
-            mIsBoundToService = false;
-        }
-    }
-
-    public void initKamcord() {
-
-        mServiceStartButton = (Button) findViewById(R.id.servicestart_button);
-        mServiceStartButton.setOnClickListener(this);
-        mServiceStartButton.setVisibility(View.INVISIBLE);
-
-        mFileManagement = new FileManagement();
-        mFileManagement.rootFolderInitialize();
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.record_recyclerview);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        int SpacingInPixels = getResources().getDimensionPixelSize(R.dimen.grid_margin);
-        mRecyclerView.addItemDecoration(new SpaceItemDecoration(SpacingInPixels));
-        mRecyclerAdapter = new GameRecordListAdapter(this, mSupportedGameList);
-        mRecyclerAdapter.setOnItemClickListener(this);
-        mRecyclerView.setAdapter(mRecyclerAdapter);
-
-    }
-
-    //
-    private boolean appInstalledOrNot(String uri) {
-        PackageManager pm = getPackageManager();
-        boolean appInstalled;
-        try {
-            pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
-            appInstalled = true;
-        } catch (PackageManager.NameNotFoundException e) {
-            appInstalled = false;
-        }
-        return appInstalled;
-    }
-
-    //
-    public void getInstalledGameList() {
-        PackageManager packageManager = getPackageManager();
-        List<ApplicationInfo> applicationInfoList = packageManager.getInstalledApplications(0);
-
-        ArrayList<ApplicationInfo> installedGameList = new ArrayList<ApplicationInfo>();
-        for (ApplicationInfo app : applicationInfoList) {
-            if ((app.flags & ApplicationInfo.FLAG_IS_GAME) == ApplicationInfo.FLAG_IS_GAME) {
-                installedGameList.add(app);
+        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mTabs.setDistributeEvenly(true);
+        mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
             }
-        }
-    }
+        });
+        mViewPager = (ViewPager) findViewById(R.id.main_pager);
+        mainViewPagerAdapter = new MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
+        mViewPager.setAdapter(mainViewPagerAdapter);
+        mTabs.setViewPager(mViewPager);
 
-    @Override
-    public void onItemClick(View view, int position) {
-        // Package for Launch Game
-        mSelectedGame = mSupportedGameList.get(position);
-        Toast.makeText(getApplicationContext(),
-                "You will record " + mSelectedGame.getPackageName(),
-                Toast.LENGTH_SHORT)
-                .show();
+        mFloatingActionButton = (ImageButton) findViewById(R.id.main_fab);
+        mFloatingActionButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.servicestart_button: {
-                if (((Button) v).getText().equals(getResources().getString(R.string.start_recording))) {
+            case R.id.main_fab: {
+                if (recordButtonResId == -1) {
                     if (mSelectedGame != null) {
+                        mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
                         obtainMediaProjection();
+                        recordButtonResId = 0;
                         break;
                     } else {
                         Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
                         break;
                     }
-                } else if (((Button) v).getText().equals(getResources().getString(R.string.stop_recording))) {
+                } else {
+                    ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
                     mRecordingService.stopRecording();
+                    recordButtonResId = -1;
+                    showUploadFragment();
                 }
             }
         }
     }
 
-    public void showShareFragment() {
-        mServiceStartButton.setVisibility(View.GONE);
+    public void showUploadFragment() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Fragment fragment = RecordShareFragment.newInstance();
-        fragmentTransaction.add(R.id.activity_recordlayout, fragment, "tag")
+        fragmentTransaction.replace(R.id.main_activity_layout, fragment, "tag")
                 .addToBackStack("tag")
                 .commit();
+    }
+    @Override
+    public void selectedGame(GameModel gameModel) {
+        mSelectedGame = gameModel;
+        Log.d("Selected game:", " " + mSelectedGame.getPackageName());
     }
 
     public void obtainMediaProjection() {
@@ -191,21 +140,18 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_record, menu);
-        return true;
+    public void onResume() {
+        super.onResume();
+        bindService(new Intent(this, RecordingService.class), mConnection, 0);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
+    public void onPause() {
+        super.onPause();
+        if (mIsBoundToService) {
+            unbindService(mConnection);
+            mIsBoundToService = false;
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -214,8 +160,8 @@ public class RecordActivity extends FragmentActivity implements View.OnClickList
             if (mMediaProjectionManager != null && mSelectedGame != null) {
                 try {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.getPackageName());
+                    Log.d("start Activity", "yoyo");
                     startActivity(launchIntent);
-
                     MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, data);
                     mRecordingService.startRecording(projection, mSelectedGame);
                 } catch (ActivityNotFoundException e) {
