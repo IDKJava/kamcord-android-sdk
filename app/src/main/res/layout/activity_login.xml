@@ -1,0 +1,25 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/activity_login_layout"
+    android:background="#FFFFFF"
+    tools:context="com.kamcord.app.activity.LoginActivity">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/kamcord_landing_imageview"
+        android:src="@drawable/kamcord_landing_logo"
+        android:layout_above="@+id/subtitle_textview"
+        android:layout_alignStart="@+id/subtitle_textview"
+        android:layout_alignEnd="@+id/subtitle_textview" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/subtitle_textview"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
