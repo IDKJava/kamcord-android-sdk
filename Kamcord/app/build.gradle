@@ -19,11 +19,11 @@ android {
     }
 }
 
-repositories {
-    maven {
-        url "http://172.30.0.34/content/repositories/releases/"
-    }
-}
+//repositories {
+//    maven {
+//        url "http://172.30.0.34/content/repositories/releases/"
+//    }
+//}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -37,5 +37,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
 
-    // compile 'com.kamcord:app-server-models:1.0.0'
+    // compile 'com.kamcord:app-server-models:1.0.1'
 }

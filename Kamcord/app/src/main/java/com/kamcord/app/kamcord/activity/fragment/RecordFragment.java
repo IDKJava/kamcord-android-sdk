@@ -1,5 +1,6 @@
 package com.kamcord.app.kamcord.activity.fragment;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -61,6 +62,19 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mRecyclerView.setAdapter(mRecyclerAdapter);
     }
 
+    private boolean isAppInstalled(String packageName) {
+        boolean appIsInstalled = false;
+
+        PackageManager pm = getActivity().getPackageManager();
+        try {
+            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+            appIsInstalled = true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+        }
+        return appIsInstalled;
+    }
+
     @Override
     public void onItemClick(View view, int position) {
         mSelectedGame = mSupportedGameList.get(position);
@@ -84,7 +98,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             {
                 for( Game game : gamesListWrapper.response.game_list )
                 {
-                    if( game.play_store_id != null )
+                    if( game.play_store_id != null && isAppInstalled(game.play_store_id) )
                     {
                         mSupportedGameList.add(game);
                     }
