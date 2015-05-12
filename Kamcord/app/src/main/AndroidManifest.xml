@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.kamcord.app.kamcord">
+    package="com.kamcord.app">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -13,13 +13,13 @@
     <uses-permission android:name="android.permission.get_top_activity_info" />
 
     <application
-        android:name=".activity.application.KamcordApplication"
+        android:name=".application.KamcordApplication"
         android:allowBackup="true"
         android:icon="@drawable/kamcord_appicon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,10 +28,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.activity.RecordActivity"
+            android:name=".activity.RecordActivity"
             android:label="@string/app_name"></activity>
 
-        <service android:name=".activity.service.RecordingService"></service>
+        <service android:name=".service.RecordingService"></service>
     </application>
 
 </manifest>

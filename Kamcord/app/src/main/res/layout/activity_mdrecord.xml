@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main_activity_layout"
-    tools:context="com.kamcord.app.kamcord.activity.activity.RecordActivity">
+    tools:context="com.kamcord.app.activity.RecordActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"/>
 
-        <com.kamcord.app.kamcord.activity.utils.SlidingTabLayout
+        <com.kamcord.app.utils.SlidingTabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
