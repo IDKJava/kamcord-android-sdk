@@ -12,7 +12,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.model.GameModel;
+import com.kamcord.app.kamcord.activity.server.model.Game;
 import com.kamcord.app.kamcord.activity.utils.AudioRecordThread;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
@@ -70,11 +70,13 @@ public class RecordingService extends Service {
     }
 
     /* Interface for starting and stopping a recording session */
-    public synchronized void startRecording(MediaProjection mediaProjection, GameModel gameModel) {
-        if (mRecordHandlerThread == null || !mRecordHandlerThread.isAlive()) {
+    public synchronized void startRecording(MediaProjection mediaProjection, Game gameModel)
+    {
+        if( mRecordHandlerThread == null || !mRecordHandlerThread.isAlive() )
+        {
             FileManagement fileManagement = new FileManagement();
             fileManagement.rootFolderInitialize();
-            fileManagement.gameFolderInitialize(gameModel.getPackageName());
+            fileManagement.gameFolderInitialize(gameModel.play_store_id);
             fileManagement.sessionFolderInitialize();
 
             mRecordHandlerThread = new RecordHandlerThread(mediaProjection, gameModel, getApplicationContext(), fileManagement);

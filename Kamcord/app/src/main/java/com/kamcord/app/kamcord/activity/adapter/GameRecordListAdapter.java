@@ -9,17 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.kamcord.R;
-import com.kamcord.app.kamcord.activity.model.GameModel;
+import com.kamcord.app.kamcord.activity.server.model.Game;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAdapter.ViewHolder> {
 
-    private static Context mContext;
-    private List<GameModel> mGames;
+    private Context mContext;
+    private List<Game> mGames;
     private static OnItemClickListener mItemClickListener;
 
-    public GameRecordListAdapter(Context context, List<GameModel> games) {
+    public GameRecordListAdapter(Context context, List<Game> games) {
         this.mContext = context;
         this.mGames = games;
     }
@@ -36,9 +37,12 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        final GameModel gameModel = getItem(position);
-        viewHolder.itemPackageName.setText(gameModel.getGameName());
-        viewHolder.itemImage.setBackgroundResource(gameModel.getDrawableID());
+        Game game = getItem(position);
+        viewHolder.itemPackageName.setText(game.name);
+        Picasso.with(mContext)
+                .load(game.icons.regular)
+                .tag(game.play_store_id)
+                .into(viewHolder.itemImage);
     }
 
     @Override
@@ -51,7 +55,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
         return mGames.size();
     }
 
-    public GameModel getItem(int position) {
+    public Game getItem(int position) {
         return mGames.get(position);
     }
 
@@ -76,8 +80,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
         }
     }
 
-    public static interface OnItemClickListener {
-        public void onItemClick(View view, int position);
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener mItemClickListener) {

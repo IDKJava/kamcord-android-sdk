@@ -7,7 +7,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
-import com.kamcord.app.kamcord.activity.model.GameModel;
+import com.kamcord.app.kamcord.activity.server.model.Game;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,13 +18,13 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     private Context mContext;
     private Handler mHandler;
     private int audioNumber = 0;
-    private GameModel gameModel;
+    private Game gameModel;
     private String mSessionFolderName;
 
     private ActivityManager activityManager;
 
 
-    public AudioRecordThread(GameModel gameModel, Context context, FileManagement fileManagement) {
+    public AudioRecordThread(Game gameModel, Context context, FileManagement fileManagement) {
         super("dsdsd");
         this.gameModel = gameModel;
         this.mContext = context;
@@ -73,7 +73,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
             if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                 for (String pkgName : runningAppProcessInfo.pkgList) {
-                    if (pkgName.equals(gameModel.getPackageName())) {
+                    if (pkgName.equals(gameModel.play_store_id)) {
                         return true;
                     }
                 }
