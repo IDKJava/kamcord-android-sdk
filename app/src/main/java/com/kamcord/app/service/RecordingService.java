@@ -21,6 +21,7 @@ import com.kamcord.app.utils.StitchClipsThread;
 public class RecordingService extends Service {
     private static final String TAG = RecordingService.class.getSimpleName();
     private static int NOTIFICATION_ID = 3141592;
+    private static volatile boolean mIsRunning = false;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -34,9 +35,15 @@ public class RecordingService extends Service {
         super();
     }
 
+    public static boolean isRunning()
+    {
+        return mIsRunning;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mIsRunning = true;
     }
 
     @Override
@@ -59,6 +66,7 @@ public class RecordingService extends Service {
 
         // If we're getting destroyed, we should probably just stop the current recording session.
         stopRecording();
+        mIsRunning = false;
 
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         stopSelf();
@@ -70,10 +78,8 @@ public class RecordingService extends Service {
     }
 
     /* Interface for starting and stopping a recording session */
-    public synchronized void startRecording(MediaProjection mediaProjection, Game gameModel)
-    {
-        if( mRecordHandlerThread == null || !mRecordHandlerThread.isAlive() )
-        {
+    public synchronized void startRecording(MediaProjection mediaProjection, Game gameModel) {
+        if (mRecordHandlerThread == null || !mRecordHandlerThread.isAlive()) {
             FileManagement fileManagement = new FileManagement();
             fileManagement.rootFolderInitialize();
             fileManagement.gameFolderInitialize(gameModel.play_store_id);
@@ -115,15 +121,9 @@ public class RecordingService extends Service {
             StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(), getApplicationContext());
             stitchClipsThread.start();
             ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
-        }
-        else
-        {
+        } else {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }
-    }
-
-    public synchronized boolean isRecording() {
-        return mRecordHandlerThread != null && mRecordHandlerThread.isAlive();
     }
 
     public class LocalBinder extends Binder {
