@@ -23,8 +23,6 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        RecordActivity mRecordActivity = (RecordActivity) getActivity();
-//        String thumbNailPath = mRecordActivity.getVideoThumbnail();
 
         View v = inflater.inflate(R.layout.fragment_recordshare, container, false);
         v.setOnTouchListener(new View.OnTouchListener() {
@@ -32,8 +30,6 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
                 return true;
             }
         });
-//        thumbNailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
-//        thumbNailImageView.setImageBitmap(getVideoThumbnail(thumbNailPath));
         return v;
     }
 

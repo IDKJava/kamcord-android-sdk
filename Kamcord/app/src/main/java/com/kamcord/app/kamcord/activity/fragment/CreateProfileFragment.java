@@ -1,15 +1,10 @@
 package com.kamcord.app.kamcord.activity.fragment;
 
-import android.content.Intent;
-import android.graphics.Typeface;
-import android.net.Uri;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -20,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.kamcord.app.kamcord.R;
+import com.kamcord.app.kamcord.activity.utils.StringUtils;
 
 public class CreateProfileFragment extends Fragment implements View.OnClickListener {
 
@@ -32,6 +28,7 @@ public class CreateProfileFragment extends Fragment implements View.OnClickListe
     private String highlightStrTerms;
     private String highlightStrPrivacy;
     private TextView subTitleTextView;
+    private Context mContext;
 
 
     @Override
@@ -45,6 +42,7 @@ public class CreateProfileFragment extends Fragment implements View.OnClickListe
             }
         });
 
+        mContext = getActivity().getApplicationContext();
         createProfileBtn = (Button) v.findViewById(R.id.createprofiel_btn);
         createProfileBtn.setOnClickListener(this);
 
@@ -54,42 +52,14 @@ public class CreateProfileFragment extends Fragment implements View.OnClickListe
 
         subTitleTextView = (TextView) v.findViewById(R.id.terms_textview);
         SpannableStringBuilder textViewStyle = new SpannableStringBuilder(termsOfServiceStr);
-        URLSpan termsOfServiceSpan = new URLSpan("https://www.kamcord.com/tos/") {
-            @Override
-            public void onClick(View widget) {
-                Uri uri = Uri.parse("https://www.kamcord.com/tos/");
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
-            }
-        };
-        highLightText(termsOfServiceSpan, highlightStrTerms, textViewStyle);
-        URLSpan privacyPolicySpan = new URLSpan("https://www.kamcord.com/privacy/") {
-            @Override
-            public void onClick(View widget) {
-                Uri uri = Uri.parse("https://www.kamcord.com/privacy/");
-                startActivity(new Intent(Intent.ACTION_VIEW,uri));
-            }
-        };
-        highLightText(privacyPolicySpan, highlightStrPrivacy, textViewStyle);
+        URLSpan termsOfServiceSpan = StringUtils.makeURLSpan(getActivity(), "https://www.kamcord.com/tos/");
+        StringUtils.highLightText(mContext, termsOfServiceSpan, termsOfServiceStr, highlightStrTerms, textViewStyle);
+        URLSpan privacyPolicySpan = StringUtils.makeURLSpan(getActivity(), "https://www.kamcord.com/privacy/");
+        StringUtils.highLightText(mContext, privacyPolicySpan, termsOfServiceStr, highlightStrPrivacy, textViewStyle);
         subTitleTextView.setText(textViewStyle);
         subTitleTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
         return v;
-    }
-
-    public void highLightText(URLSpan urlSpan, String highLightStr, SpannableStringBuilder textViewStyle) {
-        int indexOfMatchStr = termsOfServiceStr.indexOf(highLightStr);
-        textViewStyle.setSpan(urlSpan,
-                indexOfMatchStr,
-                indexOfMatchStr + highLightStr.length(),
-                Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        textViewStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.TermsHighLighted)),
-                indexOfMatchStr,
-                indexOfMatchStr + highLightStr.length(),
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        textViewStyle.setSpan(new StyleSpan(Typeface.BOLD),
-                indexOfMatchStr,
-                indexOfMatchStr + highLightStr.length(),
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
     }
 
     @Override

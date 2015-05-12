@@ -1,12 +1,9 @@
 package com.kamcord.app.kamcord.activity.fragment;
 
-import android.graphics.Typeface;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,12 +15,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kamcord.app.kamcord.R;
+import com.kamcord.app.kamcord.activity.utils.StringUtils;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private EditText userNameEditText;
     private EditText passwordEditText;
     private Button loginProfileBtn;
+    private Context mContext;
 
     private TextView forgetPasswordTextView;
     private String forgetPasswordStr;
@@ -37,6 +36,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_login_simple, container, false);
+        mContext = getActivity().getApplicationContext();
 
         forgetPasswordTextView = (TextView) v.findViewById(R.id.forgetpassword_textview);
         forgetPasswordStr = getResources().getString(R.string.kamcordPassword);
@@ -47,7 +47,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity().getApplicationContext(), "Click terms of service", Toast.LENGTH_SHORT).show();
             }
         };
-        highLightText(forgetpasswordSpan, forgetPasswordStr, textViewStyle);
+        StringUtils.highLightText(mContext, forgetpasswordSpan, forgetPasswordStr, forgetPasswordStr, textViewStyle);
         forgetPasswordTextView.setText(textViewStyle);
 
         v.setOnTouchListener(new View.OnTouchListener() {
@@ -56,22 +56,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             }
         });
         return v;
-    }
-
-    public void highLightText(URLSpan urlSpan, String highLightStr, SpannableStringBuilder textViewStyle) {
-        int indexOfMatchStr = forgetPasswordStr.indexOf(highLightStr);
-        textViewStyle.setSpan(urlSpan,
-                indexOfMatchStr,
-                indexOfMatchStr + highLightStr.length(),
-                Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        textViewStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.TermsHighLighted)),
-                indexOfMatchStr,
-                indexOfMatchStr + highLightStr.length(),
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        textViewStyle.setSpan(new StyleSpan(Typeface.BOLD),
-                indexOfMatchStr,
-                indexOfMatchStr + highLightStr.length(),
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
     }
 
     @Override

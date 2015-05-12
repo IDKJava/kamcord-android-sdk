@@ -16,6 +16,7 @@ import com.kamcord.app.kamcord.activity.model.GameModel;
 import com.kamcord.app.kamcord.activity.utils.AudioRecordThread;
 import com.kamcord.app.kamcord.activity.utils.FileManagement;
 import com.kamcord.app.kamcord.activity.utils.RecordHandlerThread;
+import com.kamcord.app.kamcord.activity.utils.StitchClipsThread;
 
 public class RecordingService extends Service
 {
@@ -83,11 +84,6 @@ public class RecordingService extends Service
             fileManagement.gameFolderInitialize(gameModel.getPackageName());
             fileManagement.sessionFolderInitialize();
 
-            Intent thumbnailIntent = new Intent();
-            thumbnailIntent.putExtra("ThumbNailPath", "/sdcard/Kamcord_Android/" + fileManagement.getGameName() + "/" + fileManagement.getUUIDString() + "/clip1.mp4" );
-            thumbnailIntent.setAction("com.kamcord.RecordService");
-            sendBroadcast(thumbnailIntent);
-
             mRecordHandlerThread = new RecordHandlerThread(mediaProjection, gameModel, getApplicationContext(), fileManagement);
             mRecordHandlerThread.start();
 
@@ -125,8 +121,8 @@ public class RecordingService extends Service
             mRecordHandlerThread.quitSafely();
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
             mAudioRecordThread.quitSafely();
-//            StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(), getApplicationContext());
-//            stitchClipsThread.start();
+            StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(), getApplicationContext());
+            stitchClipsThread.start();
             ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         }
         else

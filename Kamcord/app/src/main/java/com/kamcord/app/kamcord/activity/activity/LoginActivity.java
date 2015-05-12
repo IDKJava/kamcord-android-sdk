@@ -27,8 +27,8 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private Button createProfileButton;
     private Button logInButton;
     private Button skipButton;
-    private String subTitleStr = "A Social Network For Gamers";
-    private String highlightStr = "Gamers";
+    private String subTitleStr;
+    private String subTitleHighLightStr;
     private TextView subTitleTextView;
 
     @Override
@@ -47,15 +47,17 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         panel = findViewById(R.id.panel);
 
         subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
+        subTitleStr = getResources().getString(R.string.kamcordSubtitle);
+        subTitleHighLightStr = getResources().getString(R.string.kamcordSubtitleHighLighted);
         SpannableStringBuilder textViewStyle = new SpannableStringBuilder(subTitleStr);
-        int indexOfMatchStr = subTitleStr.indexOf(highlightStr);
+        int indexOfMatchStr = subTitleStr.indexOf(subTitleHighLightStr);
         textViewStyle.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.FabPrimaryColor)),
                 indexOfMatchStr,
-                indexOfMatchStr + highlightStr.length(),
+                indexOfMatchStr + subTitleHighLightStr.length(),
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         textViewStyle.setSpan(new StyleSpan(Typeface.BOLD),
                 indexOfMatchStr,
-                indexOfMatchStr + highlightStr.length(),
+                indexOfMatchStr + subTitleHighLightStr.length(),
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         subTitleTextView.setText(textViewStyle);
 
@@ -89,7 +91,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                 break;
             }
             case R.id.skip_btn: {
-                Intent mainIntent = new Intent(this, MDRecordActivity.class);
+                Intent mainIntent = new Intent(this, RecordActivity.class);
                 startActivity(mainIntent);
                 break;
             }
