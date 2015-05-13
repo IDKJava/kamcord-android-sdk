@@ -17,6 +17,9 @@
     <string name="createAProfile">Create a Profile</string>
     <string name="logIn">Log In</string>
 
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>
     <string name="paused">Paused</string>

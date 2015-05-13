@@ -6,14 +6,17 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.kamcord.app.BuildConfig;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
+import com.kamcord.app.utils.AccountManager;
 
 import java.lang.reflect.Type;
 import java.util.Date;
 
 import retrofit.Callback;
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 import retrofit.http.Field;
@@ -55,6 +58,19 @@ public class AppServerClient {
     }
 
     private static AppServer instance;
+    private static RequestInterceptor addHeadersInterceptor = new RequestInterceptor() {
+        @Override
+        public void intercept(RequestFacade request) {
+            request.addHeader("user-agent", "android_app_" + BuildConfig.VERSION_NAME);
+
+            Account account = AccountManager.getStoredAccount();
+            if( account != null )
+            {
+                request.addHeader("user-token", account.token);
+            }
+//            request.addHeader("device-token");
+        }
+    };
 
     public static synchronized AppServer getInstance()
     {
@@ -72,6 +88,7 @@ public class AppServerClient {
             RestAdapter restAdapter = new RestAdapter.Builder()
                     .setEndpoint("https://app.kamcord.com/")
                     .setConverter(new GsonConverter(gson))
+                    .setRequestInterceptor(addHeadersInterceptor)
                     .setLogLevel(RestAdapter.LogLevel.FULL)
                     .build();
             instance = restAdapter.create(AppServer.class);
