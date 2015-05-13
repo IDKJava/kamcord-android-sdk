@@ -98,7 +98,7 @@
             android:color="?android:colorControlHighlight">
             <item>
                 <shape android:shape="oval">
-                    <solid android:color="@color/FabPrimaryColor" />
+                    <solid android:color="@color/kamcordGreen" />
                 </shape>
             </item>
         </ripple>

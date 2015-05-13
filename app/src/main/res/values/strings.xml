@@ -17,7 +17,7 @@
     <string name="kamcordPrivacPolicy">Privacy Policy</string>
     <string name="kamcordPassword">Forget Password</string>
     <string name="kamcordSubtitle">A Social Network For Gamers</string>
-    <string name="kamcordSubtitleHighLighted">Gamers</string>
+    <string name="kamcordSubtitleHighlighted">Gamers</string>
     <string name="btn_createprofile">Create a Profile</string>
     <string name="btn_login">Log In</string>
     <string name="btn_forgetpassword">Forget Password?</string>

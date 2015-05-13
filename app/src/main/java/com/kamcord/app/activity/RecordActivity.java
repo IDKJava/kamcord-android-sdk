@@ -56,6 +56,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mConnection.isConnected()) {
             unbindService(mConnection);
         }
