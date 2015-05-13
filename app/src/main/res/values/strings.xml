@@ -8,17 +8,18 @@
     <string name="startRecording">Start Recording</string>
 
     <!-- Login -->
-    <string name="termsAndPolicy">By creating a profile, you are agreeing to Kamcords Terms of Service and Privacy Policy</string>
+    <string name="termsAndPolicy">By creating a profile, you are agreeing to Kamcord\'s Terms of Service and Privacy Policy</string>
     <string name="termsOfService">Terms of Service</string>
     <string name="privacyPolicy">Privacy Policy</string>
     <string name="forgotPassword">Forgot Password?</string>
     <string name="socialNetworkForGamers">A Social Network For Gamers</string>
     <string name="gamers">Gamers</string>
-    <string name="createAProfile">Create a Profile</string>
+    <string name="createProfile">Create Profile</string>
     <string name="logIn">Log In</string>
 
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="email">Email</string>
 
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>

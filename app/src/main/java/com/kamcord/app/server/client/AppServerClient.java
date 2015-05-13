@@ -30,6 +30,8 @@ import retrofit.http.Query;
  * Created by pplunkett on 5/11/15.
  */
 public class AppServerClient {
+    private static final String APP_SERVER_URL = "https://app.kamcord.com";
+
     public interface AppServer
     {
         @GET("/app/v3/kcp/games")
@@ -69,8 +71,8 @@ public class AppServerClient {
             {
                 request.addHeader("user-token", account.token);
             }
-            String deviceToken = DeviceManager.getDeviceToken();
 
+            String deviceToken = DeviceManager.getDeviceToken();
             if( deviceToken != null && !deviceToken.isEmpty() ) {
                 request.addHeader("device-token", DeviceManager.getDeviceToken());
             }
@@ -91,7 +93,7 @@ public class AppServerClient {
                     .create();
 
             RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setEndpoint("https://app.kamcord.com/")
+                    .setEndpoint(APP_SERVER_URL)
                     .setConverter(new GsonConverter(gson))
                     .setRequestInterceptor(addHeadersInterceptor)
                     .setLogLevel(RestAdapter.LogLevel.FULL)

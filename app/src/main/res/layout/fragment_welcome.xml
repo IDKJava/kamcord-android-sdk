@@ -53,7 +53,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/login_btnstyle"
-        android:text="@string/createAProfile"
+        android:text="@string/createProfile"
         android:textAllCaps="false"
         android:textColor="@color/ButtonTextColor" />
 

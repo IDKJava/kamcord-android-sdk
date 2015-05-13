@@ -56,7 +56,6 @@ public class DeviceManager {
 
     private static void readUUIDFromFile(File file) throws FileNotFoundException
     {
-        // First determine if we've already generated a GUID for this device.
         StringBuilder stringBuilder = new StringBuilder((int) file.length());
         Scanner scanner = new Scanner(file);
 
@@ -72,7 +71,6 @@ public class DeviceManager {
 
         // Check if what we read is actually a UUID.
         UUID.fromString(deviceToken);
-        // If the above line didn't throw anything, it's a valid UUID.
     }
 
     private static void writeUUIDToFile()
@@ -80,7 +78,7 @@ public class DeviceManager {
         // Write the UUID to file.
         try
         {
-            FileWriter fileWriter = new FileWriter(new File(FileSystemManager.getCacheDirectory(), ".guid"));
+            FileWriter fileWriter = new FileWriter(new File(FileSystemManager.getCacheDirectory(), GUID));
             fileWriter.write(deviceToken);
             fileWriter.close();
         }
