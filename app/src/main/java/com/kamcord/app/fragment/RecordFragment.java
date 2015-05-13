@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
@@ -37,6 +38,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private List<Game> mSupportedGameList = new ArrayList<>();
 
     private FileManagement mFileManagement;
+    private ProgressBar mProgressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,6 +62,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
+
+        mProgressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
     }
 
     private boolean isAppInstalled(String packageName) {
@@ -104,6 +108,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                     }
                 }
                 mRecyclerAdapter.notifyDataSetChanged();
+                mProgressBar.setVisibility(View.GONE);
             }
         }
 

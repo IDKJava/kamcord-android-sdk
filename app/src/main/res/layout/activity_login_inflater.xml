@@ -6,16 +6,16 @@
     android:orientation="vertical">
 
 
-    <Button
-        android:id="@+id/facecam_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/login_btnstyle"
-        android:text="FaceCam"
-        android:textAllCaps="false"
-        android:textColor="@color/ButtonTextColor" />
+    <!--<Button-->
+        <!--android:id="@+id/facecam_btn"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:background="@drawable/login_btnstyle"-->
+        <!--android:text="FaceCam"-->
+        <!--android:textAllCaps="false"-->
+        <!--android:textColor="@color/ButtonTextColor" />-->
 
     <Button
         android:id="@+id/skip_btn"
@@ -24,9 +24,7 @@
         android:background="@drawable/login_btnstyle"
         android:text="Skip"
         android:textAllCaps="false"
-        android:textColor="@color/ButtonTextColor"
-        android:layout_below="@+id/facecam_btn"
-        android:layout_alignStart="@+id/facecam_btn" />
+        android:textColor="@color/ButtonTextColor" />
 
     <Button
         android:id="@+id/shareview_btn"
