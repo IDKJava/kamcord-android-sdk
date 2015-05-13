@@ -25,14 +25,14 @@ import butterknife.OnClick;
  */
 public class WelcomeFragment extends Fragment {
 
-    @InjectView(R.id.subtitle_textview) TextView subtitleTextView;
-    @InjectView(R.id.skip_btn) Button skipButton;
-    @InjectView(R.id.create_profile_btn) Button createProfileButton;
-    @InjectView(R.id.login_btn) Button loginButton;
+    @InjectView(R.id.subtitleTextView) TextView subtitleTextView;
+    @InjectView(R.id.skipButton) Button skipButton;
+    @InjectView(R.id.createProfileButton) Button createProfileButton;
+    @InjectView(R.id.loginButton) Button loginButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.activity_login, container, false);
+        View root = inflater.inflate(R.layout.fragment_welcome, container, false);
 
         ButterKnife.inject(this, root);
         initializeSubtitleText();
@@ -70,14 +70,14 @@ public class WelcomeFragment extends Fragment {
         return 0;
     }
 
-    @OnClick(R.id.skip_btn)
+    @OnClick(R.id.skipButton)
     public void skip()
     {
         Intent intent = new Intent(getActivity(), RecordActivity.class);
         startActivity(intent);
     }
 
-    @OnClick(R.id.create_profile_btn)
+    @OnClick(R.id.createProfileButton)
     public void createProfile()
     {
         getActivity().getSupportFragmentManager().beginTransaction()
@@ -87,7 +87,7 @@ public class WelcomeFragment extends Fragment {
 
     }
 
-    @OnClick(R.id.login_btn)
+    @OnClick(R.id.loginButton)
     public void login()
     {
         getActivity().getSupportFragmentManager().beginTransaction()

@@ -17,9 +17,11 @@ import android.widget.Toast;
 import com.kamcord.app.R;
 import com.kamcord.app.utils.StringUtils;
 
+import butterknife.InjectView;
+
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
-    private EditText userNameEditText;
+    @InjectView(R.id.usernameEditText) private EditText userNameEditText;
     private EditText passwordEditText;
     private Button loginProfileBtn;
     private Context mContext;

@@ -15,7 +15,7 @@
         android:src="@drawable/kamcord_landing_logo" />
 
     <TextView
-        android:id="@+id/subtitle_textview"
+        android:id="@+id/subtitleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/kamcord_landing_imageview"
@@ -25,7 +25,7 @@
 
 
     <Button
-        android:id="@+id/skip_btn"
+        android:id="@+id/skipButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -42,13 +42,13 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="16dp">
+        android:padding="16dp">
 
         <Button
-            android:id="@+id/create_profile_btn"
+            android:id="@+id/createProfileButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/login_btn"
+            android:layout_alignBottom="@+id/loginButton"
             android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:background="@drawable/login_btnstyle"
