@@ -11,6 +11,7 @@ import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.DeviceManager;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -68,7 +69,11 @@ public class AppServerClient {
             {
                 request.addHeader("user-token", account.token);
             }
-//            request.addHeader("device-token");
+            String deviceToken = DeviceManager.getDeviceToken();
+
+            if( deviceToken != null && !deviceToken.isEmpty() ) {
+                request.addHeader("device-token", DeviceManager.getDeviceToken());
+            }
         }
     };
 

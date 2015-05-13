@@ -43,6 +43,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onDestroyView()
     {
+        super.onDestroyView();
         ButterKnife.reset(this);
     }
 

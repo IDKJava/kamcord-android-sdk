@@ -11,7 +11,6 @@ import com.kamcord.app.server.model.Account;
  * Created by pplunkett on 5/13/15.
  */
 public class AccountManager {
-
     private static final String ACCOUNT_PREFS = "ACCOUNT_PREFS";
     private static final String ACCOUNT = "ACCOUNT";
     private static SharedPreferences preferences = null;
