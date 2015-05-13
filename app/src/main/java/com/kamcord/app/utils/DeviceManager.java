@@ -25,13 +25,13 @@ public class DeviceManager {
                 new File(FileSystemManager.getOldSDKCacheDirectory(), GUID),
         };
 
-        boolean readDeviceToken = false;
-        for( File possibleLocation : possibleLocations )
+        int readDeviceTokenFromIndex = -1;
+        for( int i=0; i<possibleLocations.length; i++ )
         {
             try
             {
-                readUUIDFromFile(possibleLocation);
-                readDeviceToken = true;
+                readUUIDFromFile(possibleLocations[i]);
+                readDeviceTokenFromIndex = i;
                 break;
             }
             catch( Exception e )
@@ -40,9 +40,11 @@ public class DeviceManager {
             }
         }
 
-        if( !readDeviceToken )
+        if( readDeviceTokenFromIndex < 0 )
         {
             deviceToken = UUID.randomUUID().toString();
+        }
+        if( readDeviceTokenFromIndex != 0 ) {
             writeUUIDToFile();
         }
     }
