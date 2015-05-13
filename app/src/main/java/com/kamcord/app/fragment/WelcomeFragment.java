@@ -81,7 +81,7 @@ public class WelcomeFragment extends Fragment {
     public void createProfile()
     {
         getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
+                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                 .replace(getContainerViewId(), new CreateProfileFragment())
                 .addToBackStack("CreateProfileFragment").commit();
 
@@ -91,7 +91,7 @@ public class WelcomeFragment extends Fragment {
     public void login()
     {
         getActivity().getSupportFragmentManager().beginTransaction()
-                .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
+                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                 .replace(getContainerViewId(), new LoginFragment())
                 .addToBackStack("LoginFragment").commit();
 
