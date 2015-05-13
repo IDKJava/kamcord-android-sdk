@@ -25,7 +25,7 @@ import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.SlidingTabLayout;
 
 public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.selectdGameListener {
-
+    private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
     Toolbar mToolBar;
@@ -36,30 +36,9 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     private CharSequence tabTitles[] = {"Record", "Profile"};
     private int numberOfTabs = 2;
 
-    private int recordButtonResId = -1;
 
-    private RecordingService mRecordingService;
-    private MediaProjectionManager mMediaProjectionManager;
-    private boolean mIsBoundToService = false;
     private Game mSelectedGame = null;
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mRecordingService = ((RecordingService.LocalBinder) iBinder).getService();
-            mIsBoundToService = true;
-            if (mRecordingService.isRecording()) {
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
-            } else {
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
-            }
-            mFloatingActionButton.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mIsBoundToService = false;
-        }
-    };
+    private RecordingServiceConnection mConnection = new RecordingServiceConnection();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +46,20 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
         setContentView(R.layout.activity_mdrecord);
 
         initMainActivity();
+
+        if (RecordingService.isRunning()) {
+            bindService(new Intent(this, RecordingService.class), mConnection, 0);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mConnection.isConnected()) {
+            unbindService(mConnection);
+        }
     }
 
     public void initMainActivity() {
-
-        startService(new Intent(this, RecordingService.class));
 
         mToolBar = (Toolbar) findViewById(R.id.md_toolbar);
         mToolBar.setTitle(R.string.toolbar_title);
@@ -98,17 +86,15 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.main_fab: {
-                if (recordButtonResId == -1) {
+                if (!RecordingService.isRunning()) {
                     if (mSelectedGame != null) {
                         mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
                         obtainMediaProjection();
-                        recordButtonResId = 0;
-                        break;
                     } else {
                         Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
-                        break;
                     }
                 } else {
+<<<<<<< HEAD
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
                     mRecordingService.stopRecording();
                     recordButtonResId = -1;
@@ -117,52 +103,114 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                             .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
                             .add(R.id.main_activity_layout, new RecordShareFragment())
                             .addToBackStack("LoginFragment").commit();
+=======
+                    mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+                    showUploadFragment();
+                    stopService(new Intent(this, RecordingService.class));
+>>>>>>> 8f25ad1844995f053b8a68d984f0395ab19469dd
                 }
             }
         }
     }
 
+<<<<<<< HEAD
+=======
+    public void showUploadFragment() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = RecordShareFragment.newInstance();
+        fragmentTransaction.replace(R.id.main_activity_layout, fragment, "tag")
+                .addToBackStack("tag")
+                .commit();
+    }
+
+>>>>>>> 8f25ad1844995f053b8a68d984f0395ab19469dd
     @Override
     public void selectedGame(Game gameModel) {
         mSelectedGame = gameModel;
     }
 
     public void obtainMediaProjection() {
-        mMediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
+        startActivityForResult(((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
+                .createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        bindService(new Intent(this, RecordingService.class), mConnection, 0);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (mIsBoundToService) {
-            unbindService(mConnection);
-            mIsBoundToService = false;
-        }
+        handleServiceRunning();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == MEDIA_PROJECTION_MANAGER_PERMISSION_CODE) {
-            if (mMediaProjectionManager != null && mSelectedGame != null) {
+            if (mSelectedGame != null) {
                 try {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
-                    Log.d("start Activity", "yoyo");
                     startActivity(launchIntent);
-                    MediaProjection projection = mMediaProjectionManager.getMediaProjection(resultCode, data);
-                    mRecordingService.startRecording(projection, mSelectedGame);
+
+                    MediaProjection projection = ((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
+                            .getMediaProjection(resultCode, data);
+                    mConnection.initializeForRecording(projection, mSelectedGame);
+
+                    startService(new Intent(this, RecordingService.class));
+                    bindService(new Intent(this, RecordingService.class), mConnection, 0);
                 } catch (ActivityNotFoundException e) {
                     // TODO: show the user something about not finding the game.
+                    Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);
                 }
             } else {
-                Log.w("Kamcord", "Unable to start recording because reasons.");
+                // TODO: show the user something about selecting a game.
+                Log.w("Kamcord", "Unable to start recording because user has not selected a game to record!");
             }
+        }
+    }
+
+    private void handleServiceRunning() {
+        if (RecordingService.isRunning()) {
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+        } else {
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+        }
+    }
+
+    private static class RecordingServiceConnection implements ServiceConnection {
+        private MediaProjection mediaProjection = null;
+        private Game gameModel = null;
+        private boolean isConnected = false;
+
+        public void initializeForRecording(MediaProjection mediaProjection, Game gameModel) {
+            this.mediaProjection = mediaProjection;
+            this.gameModel = gameModel;
+        }
+
+        public void uninitialize() {
+            this.mediaProjection = null;
+            this.gameModel = null;
+        }
+
+        public boolean isInitializedForRecording() {
+            return mediaProjection != null && gameModel != null;
+        }
+
+        public boolean isConnected()
+        {
+            return isConnected;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            RecordingService recordingService = ((RecordingService.LocalBinder) iBinder).getService();
+            if (isInitializedForRecording()) {
+                recordingService.startRecording(mediaProjection, gameModel);
+                uninitialize();
+            }
+            isConnected = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            uninitialize();
+            isConnected = false;
         }
     }
 }
