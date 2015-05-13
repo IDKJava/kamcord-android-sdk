@@ -1,7 +1,9 @@
 package com.kamcord.app.fragment;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -41,6 +43,7 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.video_playbtn: {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=Wr4EEUPoUWs")));
                 break;
             }
             case R.id.video_uploadbtn: {
