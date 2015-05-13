@@ -22,6 +22,10 @@
     <string name="btn_login">Log In</string>
     <string name="btn_forgetpassword">Forget Password?</string>
 
+    <!-- Upload -->
+    <string name="kamcordAppChooser">Open As</string>
+    <string name="btn_upload">Upload</string>
+
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>
     <string name="paused">Paused</string>

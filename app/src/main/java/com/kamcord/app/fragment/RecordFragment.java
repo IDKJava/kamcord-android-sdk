@@ -114,16 +114,4 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             // TODO: show the user something about this.
         }
     }
-//
-//    public String getVideoThumbnail() {
-//        return thumbnailString;
-//    }
-//
-//    public class CustomReceiver extends BroadcastReceiver {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            thumbnailString = intent.getStringExtra("ThumbNailPath");
-//        }
-//    }
 }
