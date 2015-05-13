@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.CreateProfileFragment;
 import com.kamcord.app.fragment.LoginFragment;
+import com.kamcord.app.fragment.RecordShareFragment;
 
 public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -27,6 +28,7 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
     private Button createProfileButton;
     private Button logInButton;
     private Button skipButton;
+    private Button shareViewButton;
     private String subTitleStr;
     private String subTitleHighLightStr;
     private TextView subTitleTextView;
@@ -64,10 +66,12 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         createProfileButton = (Button) findViewById(R.id.create_profile_btn);
         logInButton = (Button) findViewById(R.id.login_btn);
         skipButton = (Button) findViewById(R.id.skip_btn);
+        shareViewButton = (Button) findViewById(R.id.shareview_btn);
 
         createProfileButton.setOnClickListener(this);
         logInButton.setOnClickListener(this);
         skipButton.setOnClickListener(this);
+        shareViewButton.setOnClickListener(this);
 
     }
 
@@ -93,6 +97,14 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
             case R.id.skip_btn: {
                 Intent mainIntent = new Intent(this, com.kamcord.app.activity.RecordActivity.class);
                 startActivity(mainIntent);
+                break;
+            }
+            case R.id.shareview_btn: {
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
+                        .add(R.id.activity_login_layout, new RecordShareFragment())
+                        .addToBackStack("LoginFragment").commit();
+                panel.setVisibility(View.INVISIBLE);
                 break;
             }
         }

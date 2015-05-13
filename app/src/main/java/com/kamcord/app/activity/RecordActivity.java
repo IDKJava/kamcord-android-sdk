@@ -9,8 +9,6 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -20,11 +18,11 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
+import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.fragment.RecordShareFragment;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.SlidingTabLayout;
-import com.kamcord.app.fragment.RecordFragment;
 
 public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.selectdGameListener {
 
@@ -114,23 +112,19 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
                     mRecordingService.stopRecording();
                     recordButtonResId = -1;
-                    showUploadFragment();
+
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
+                            .add(R.id.main_activity_layout, new RecordShareFragment())
+                            .addToBackStack("LoginFragment").commit();
                 }
             }
         }
     }
 
-    public void showUploadFragment() {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = RecordShareFragment.newInstance();
-        fragmentTransaction.replace(R.id.main_activity_layout, fragment, "tag")
-                .addToBackStack("tag")
-                .commit();
-    }
     @Override
     public void selectedGame(Game gameModel) {
         mSelectedGame = gameModel;
-        Log.d("Selected game:", " " + mSelectedGame.name);
     }
 
     public void obtainMediaProjection() {
