@@ -6,6 +6,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 
@@ -15,7 +16,10 @@ import java.util.Date;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
+import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.Query;
 
 /**
@@ -25,7 +29,29 @@ public class AppServerClient {
     public interface AppServer
     {
         @GET("/app/v3/kcp/games")
-        void getGamesList(@Query("isAndroidOnly") boolean isAndroidOnly, @Query("isIOSOnly") boolean isIOSOnly, Callback<GenericResponse<PaginatedGameList>> cb);
+        void getGamesList(
+                @Query("isAndroidOnly") boolean isAndroidOnly,
+                @Query("isIOSOnly") boolean isIOSOnly,
+                Callback<GenericResponse<PaginatedGameList>> cb);
+
+        @FormUrlEncoded
+        @POST("/app/v3/account/create")
+        void createProfile(
+                @Field("username") String username,
+                @Field("email") String email,
+                @Field("password") String password,
+                Callback<GenericResponse<Account>> cb);
+
+        @FormUrlEncoded
+        @POST("/app/v3/account/login")
+        void login(
+                @Field("username") String username,
+                @Field("password") String password,
+                Callback<GenericResponse<Account>> cb);
+
+        @FormUrlEncoded
+        @POST("/app/v3/account/logout")
+        void logout(Callback<GenericResponse<?>> cb);
     }
 
     private static AppServer instance;
