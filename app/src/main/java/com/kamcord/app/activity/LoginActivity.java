@@ -31,7 +31,7 @@ public class LoginActivity extends ActionBarActivity {
     public int getContainerViewId()
     {
         return containerViewId;
-    }
+            }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,4 +54,4 @@ public class LoginActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-}
+        }

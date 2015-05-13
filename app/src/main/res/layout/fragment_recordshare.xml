@@ -15,9 +15,9 @@
             android:id="@+id/videothumbnail_imageview"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:src="@drawable/default_thumbnails"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-
             android:scaleType="centerCrop" />
 
         <EditText
@@ -40,8 +40,8 @@
             android:text="video_duration"
             android:textColor="@android:color/white" />
 
-        <ImageView
-            android:id="@+id/imageView"
+        <ImageButton
+            android:id="@+id/video_playbtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
@@ -52,7 +52,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/video_uploadbtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

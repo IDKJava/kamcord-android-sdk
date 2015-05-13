@@ -9,8 +9,6 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -97,26 +95,21 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                         Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
                     }
                 } else {
+                    ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
+                            .add(R.id.main_activity_layout, new RecordShareFragment())
+                            .addToBackStack("LoginFragment").commit();
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
-                    showUploadFragment();
                     stopService(new Intent(this, RecordingService.class));
                 }
             }
         }
     }
 
-    public void showUploadFragment() {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = RecordShareFragment.newInstance();
-        fragmentTransaction.replace(R.id.main_activity_layout, fragment, "tag")
-                .addToBackStack("tag")
-                .commit();
-    }
-
     @Override
     public void selectedGame(Game gameModel) {
         mSelectedGame = gameModel;
-        Log.d("Selected game:", " " + mSelectedGame.name);
     }
 
     public void obtainMediaProjection() {

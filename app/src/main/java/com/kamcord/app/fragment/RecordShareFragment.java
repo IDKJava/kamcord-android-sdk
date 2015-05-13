@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.kamcord.app.R;
@@ -15,11 +17,8 @@ import com.kamcord.app.R;
 public class RecordShareFragment extends Fragment implements View.OnClickListener {
 
     private ImageView thumbNailImageView;
-
-    public static RecordShareFragment newInstance() {
-        RecordShareFragment recordShareFragment = new RecordShareFragment();
-        return recordShareFragment;
-    }
+    private ImageButton playImageButton;
+    private Button shareButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,7 +29,24 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
                 return true;
             }
         });
+
+        playImageButton = (ImageButton) v.findViewById(R.id.video_playbtn);
+        shareButton = (Button) v.findViewById(R.id.video_uploadbtn);
+        playImageButton.setOnClickListener(this);
+        shareButton.setOnClickListener(this);
         return v;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.video_playbtn: {
+                break;
+            }
+            case R.id.video_uploadbtn: {
+                break;
+            }
+        }
     }
 
     public Bitmap getVideoThumbnail(String filePath) {
@@ -58,8 +74,4 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
         super.onDestroyView();
     }
 
-    @Override
-    public void onClick(View v) {
-
-    }
 }
