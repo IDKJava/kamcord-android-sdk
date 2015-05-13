@@ -54,6 +54,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (mConnection.isConnected()) {
             unbindService(mConnection);
         }
@@ -94,36 +95,18 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                         Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
                     }
                 } else {
-<<<<<<< HEAD
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
-                    mRecordingService.stopRecording();
-                    recordButtonResId = -1;
-
                     getSupportFragmentManager().beginTransaction()
                             .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
                             .add(R.id.main_activity_layout, new RecordShareFragment())
                             .addToBackStack("LoginFragment").commit();
-=======
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
-                    showUploadFragment();
                     stopService(new Intent(this, RecordingService.class));
->>>>>>> 8f25ad1844995f053b8a68d984f0395ab19469dd
                 }
             }
         }
     }
 
-<<<<<<< HEAD
-=======
-    public void showUploadFragment() {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = RecordShareFragment.newInstance();
-        fragmentTransaction.replace(R.id.main_activity_layout, fragment, "tag")
-                .addToBackStack("tag")
-                .commit();
-    }
-
->>>>>>> 8f25ad1844995f053b8a68d984f0395ab19469dd
     @Override
     public void selectedGame(Game gameModel) {
         mSelectedGame = gameModel;
