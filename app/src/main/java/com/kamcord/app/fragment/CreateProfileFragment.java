@@ -46,9 +46,9 @@ public class CreateProfileFragment extends Fragment implements View.OnClickListe
         createProfileBtn = (Button) v.findViewById(R.id.createprofiel_btn);
         createProfileBtn.setOnClickListener(this);
 
-        termsOfServiceStr = getResources().getString(R.string.kamcordTermsPolicy);
-        highlightStrTerms = getResources().getString(R.string.kamcordTermsOfService);
-        highlightStrPrivacy = getResources().getString(R.string.kamcordPrivacPolicy);
+        termsOfServiceStr = getResources().getString(R.string.termsAndPolicy);
+        highlightStrTerms = getResources().getString(R.string.termsOfService);
+        highlightStrPrivacy = getResources().getString(R.string.privacyPolicy);
 
         subTitleTextView = (TextView) v.findViewById(R.id.terms_textview);
         SpannableStringBuilder textViewStyle = new SpannableStringBuilder(termsOfServiceStr);

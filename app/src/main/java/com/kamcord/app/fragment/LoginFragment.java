@@ -21,7 +21,7 @@ import butterknife.InjectView;
 
 public class LoginFragment extends Fragment implements View.OnClickListener {
 
-    @InjectView(R.id.usernameEditText) private EditText userNameEditText;
+    @InjectView(R.id.usernameEditText) EditText userNameEditText;
     private EditText passwordEditText;
     private Button loginProfileBtn;
     private Context mContext;
@@ -41,7 +41,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         mContext = getActivity().getApplicationContext();
 
         forgetPasswordTextView = (TextView) v.findViewById(R.id.forgetpassword_textview);
-        forgetPasswordStr = getResources().getString(R.string.kamcordPassword);
+        forgetPasswordStr = getResources().getString(R.string.forgotPassword);
         SpannableStringBuilder textViewStyle = new SpannableStringBuilder(forgetPasswordStr);
         URLSpan forgetpasswordSpan = new URLSpan("https://www.kamcord.com/tos/") {
             @Override

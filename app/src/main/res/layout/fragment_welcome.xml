@@ -48,24 +48,20 @@
             android:id="@+id/createProfileButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/loginButton"
-            android:layout_marginRight="8dp"
             android:layout_weight="1"
             android:background="@drawable/login_btnstyle"
-            android:text="Create a Profile"
+            android:text="@string/createAProfile"
             android:textAllCaps="false"
             android:textColor="@color/ButtonTextColor" />
 
         <Button
-            android:id="@+id/login_btn"
+            android:id="@+id/loginButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
             android:layout_marginLeft="8dp"
             android:layout_weight="1"
             android:background="@drawable/login_btnstyle"
-            android:text="Log In"
+            android:text="@string/logIn"
             android:textAllCaps="false"
             android:textColor="@color/ButtonTextColor" />
 

@@ -4,12 +4,11 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.WelcomeFragment;
-
-import java.util.Random;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -19,7 +18,7 @@ public class LoginActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        containerViewId = (new Random()).nextInt();
+        containerViewId = View.generateViewId();
         RelativeLayout contentView = new RelativeLayout(this);
         contentView.setId(containerViewId);
         setContentView(contentView);

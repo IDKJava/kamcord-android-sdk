@@ -49,8 +49,8 @@ public class WelcomeFragment extends Fragment {
 
     private void initializeSubtitleText()
     {
-        String subtitle = getResources().getString(R.string.kamcordSubtitle);
-        String subtitleHighlighted = getResources().getString(R.string.kamcordSubtitleHighlighted);
+        String subtitle = getResources().getString(R.string.socialNetworkForGamers);
+        String subtitleHighlighted = getResources().getString(R.string.gamers);
 
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(subtitle);
         int indexOfMatchStr = subtitle.indexOf(subtitleHighlighted);
