@@ -150,7 +150,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         // Config a MediaCodec and get a surface which we want to record
         try {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_TYPE);
-            MediaCodecInfo.VideoCapabilities videoCapabilities = null;
+            MediaCodecInfo.VideoCapabilities videoCapabilities;
 
             MediaCodecInfo.CodecCapabilities codecCapabilities = mVideoEncoder.getCodecInfo().getCapabilitiesForType(VIDEO_TYPE);
             if( codecCapabilities != null )
@@ -181,14 +181,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mVideoEncoder.start();
         } catch (IOException ioe) {
             releaseEncoders();
-        }
-        catch( MediaCodec.CodecException e )
-        {
-            Log.e("RecordHandlerThread", e.getDiagnosticInfo());
-            Log.e("RecordHandlerThread", "  isRecoverable: " + e.isRecoverable());
-            Log.e("RecordHandlerThread", "  isTransient: " + e.isTransient());
-            e.printStackTrace();
-            this.quitSafely();
         }
     }
 
