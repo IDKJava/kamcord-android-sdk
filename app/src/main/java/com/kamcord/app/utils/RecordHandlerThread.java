@@ -12,6 +12,7 @@ import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -98,6 +99,12 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     }
 
     private boolean isGameInForeground() {
+
+        if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
+        {
+            return false;
+        }
+
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = mActivityManager.getRunningAppProcesses();
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
             if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
