@@ -28,8 +28,6 @@
 
     <!-- Activity -->
     <string name="selectAGame">Please select a game to record.</string>
-    <string name="title_activity_mdrecord">MDRecordActivity</string>
-    <string name="title_activity_login">LoginActivity</string>
     <string name="kamcordRecordTab">Record</string>
     <string name="kamcordProfileTab">Profile</string>
     <string name="kamcordVideoTab">Top Videos</string>

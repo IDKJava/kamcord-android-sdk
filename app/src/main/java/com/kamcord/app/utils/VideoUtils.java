@@ -20,12 +20,12 @@ public class VideoUtils {
             time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             videoDuration = Integer.parseInt(time);
             hours = TimeUnit.MILLISECONDS.toHours(videoDuration);
-            mins = TimeUnit.MILLISECONDS.toMinutes(videoDuration);
+            mins = TimeUnit.MILLISECONDS.toMinutes(videoDuration) % 60;
             secs = TimeUnit.MILLISECONDS.toSeconds(videoDuration) % 60;
             if(hours == 0) {
-                time = String.format("%02d:%02d:%02d", hours, mins, secs);
-            } else {
                 time = String.format("%02d:%02d", mins, secs);
+            } else {
+                time = String.format("%02d:%02d:%02d", hours, mins, secs);
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
