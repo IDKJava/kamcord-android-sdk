@@ -23,6 +23,7 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
     private Button shareButton;
     private String videoDurationStr;
     private TextView videoDuration;
+    private String videoPath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,26 +35,14 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
             }
         });
 
-        final String videoPath = getArguments().getString("videopath");
+        videoPath = getArguments().getString("videopath");
 
         thumbnailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
         playImageButton = (ImageButton) v.findViewById(R.id.video_playbtn);
         shareButton = (Button) v.findViewById(R.id.video_uploadbtn);
         videoDuration = (TextView) v.findViewById(R.id.previewduration_textview);
 
-        playImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("videopath", videoPath);
-                videoPreviewFragment.setArguments(bundle);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_activity_layout, videoPreviewFragment)
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+        playImageButton.setOnClickListener(this);
         shareButton.setOnClickListener(this);
 
         File videoFolder = new File(videoPath);
@@ -68,6 +57,16 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.video_playbtn: {
+                VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("videopath", videoPath);
+                videoPreviewFragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_activity_layout, videoPreviewFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
             case R.id.video_uploadbtn: {
                 // Logic for login
                 break;

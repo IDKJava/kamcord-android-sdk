@@ -64,10 +64,10 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
     public void initMainActivity() {
 
-        tabTitles = new String[3];
+        tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
         tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
-        tabTitles[2] = getResources().getString(R.string.kamcordVideoTab);
+//        tabTitles[2] = getResources().getString(R.string.kamcordVideoTab);
         numberOfTabs = tabTitles.length;
 
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);

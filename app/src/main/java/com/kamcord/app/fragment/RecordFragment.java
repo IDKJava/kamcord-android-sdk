@@ -90,6 +90,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
 
             }
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int i, int i2) {
                 int topRowVerticalPosition = (mRecyclerView == null || mRecyclerView.getChildCount() == 0) ? 0 : mRecyclerView.getChildAt(0).getTop();
@@ -133,10 +134,10 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                 for (Game game : gamesListWrapper.response.game_list) {
                     if (game.play_store_id != null && isAppInstalled(game.play_store_id)) {
                         mSupportedGameList.add(game);
-                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }
                 mRecyclerAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         }
 
