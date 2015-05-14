@@ -8,6 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.kamcord.app.R;
@@ -19,8 +20,7 @@ public class VideoPreviewFragment extends Fragment {
 
     private VideoView mVideoView;
     private ImageButton replayImageBtn;
-    private Boolean videoCompleted = false;
-    private int currentStopPosition = 0;
+    private MediaController mediaController;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,6 +34,15 @@ public class VideoPreviewFragment extends Fragment {
         mVideoView = (VideoView) v.findViewById(R.id.video_preview);
         replayImageBtn = (ImageButton) v.findViewById(R.id.replayButton);
         final String videoPath = getArguments().getString("videopath");
+
+        if(mediaController == null) {
+            mediaController = new MediaController(getActivity());
+        }
+        try {
+            mVideoView.setMediaController(mediaController);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         mVideoView.setVideoPath(videoPath);
         mVideoView.start();
@@ -50,21 +59,7 @@ public class VideoPreviewFragment extends Fragment {
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                videoCompleted = true;
                 replayImageBtn.setVisibility(View.VISIBLE);
-            }
-        });
-
-        mVideoView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (videoCompleted) {
-                    mVideoView.start();
-                }
-                if (mVideoView.isPlaying()) {
-                    mVideoView.pause();
-                }
-                return true;
             }
         });
 

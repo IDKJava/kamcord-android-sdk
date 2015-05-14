@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,8 @@ public class WelcomeFragment extends Fragment {
     Button createProfileButton;
     @InjectView(R.id.loginButton)
     Button loginButton;
+    @InjectView(R.id.testButton)
+    Button testButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -82,6 +85,7 @@ public class WelcomeFragment extends Fragment {
                 .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                 .replace(getContainerViewId(), new CreateProfileFragment())
                 .addToBackStack("CreateProfileFragment").commit();
+        Log.d("dsds", "d " + getContainerViewId());
     }
 
     @OnClick(R.id.loginButton)
@@ -91,5 +95,13 @@ public class WelcomeFragment extends Fragment {
                 .replace(getContainerViewId(), new LoginFragment())
                 .addToBackStack("LoginFragment").commit();
 
+    }
+
+    @OnClick(R.id.testButton)
+    public void testFragment() {
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
+                .replace(getContainerViewId(), new RecordShareFragment())
+                .addToBackStack("TestFragment").commit();
     }
 }
