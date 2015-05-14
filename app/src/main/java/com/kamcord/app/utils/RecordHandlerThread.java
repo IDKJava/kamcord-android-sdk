@@ -127,12 +127,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             int screenHeight = metrics.heightPixels;
             int screenDensity = metrics.densityDpi;
 
-            Log.v(TAG, "got screenWidth: " + screenWidth);
-            Log.v(TAG, "got screenHeight: " + screenHeight);
-            Log.v(TAG, "got screenDensity: " + screenDensity);
-
-            prepareMediaCodec();
-            mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", 720, 1280, screenDensity,
+            prepareMediaCodec(screenWidth, screenHeight);
+            mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
 
             // Video Location
@@ -148,19 +144,38 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         }
     }
 
-    private void prepareMediaCodec() {
+    private void prepareMediaCodec(int screenWidth, int screenHeight) {
         mVideoBufferInfo = new MediaCodec.BufferInfo();
-        MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, 720, 1280);
-
-        // Set format properties
-        mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
-        mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-        mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
 
         // Config a MediaCodec and get a surface which we want to record
         try {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_TYPE);
+            MediaCodecInfo.VideoCapabilities videoCapabilities = null;
+
+            MediaCodecInfo.CodecCapabilities codecCapabilities = mVideoEncoder.getCodecInfo().getCapabilitiesForType(VIDEO_TYPE);
+            if( codecCapabilities != null )
+            {
+                videoCapabilities = codecCapabilities.getVideoCapabilities();
+
+                // Round the dimensions to the nearest multiple that the codec supports.
+                if( videoCapabilities != null )
+                {
+                    int widthAlignment = videoCapabilities.getWidthAlignment();
+                    int heightAlignment = videoCapabilities.getHeightAlignment();
+
+                    screenWidth = roundToNearest(screenWidth, widthAlignment);
+                    screenHeight = roundToNearest(screenHeight, heightAlignment);
+                }
+            }
+
+            MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, screenWidth, screenHeight);
+
+            // Set format properties
+            mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+            mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
+            mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
+            mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+
             mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mSurface = mVideoEncoder.createInputSurface();
             mVideoEncoder.start();
@@ -175,6 +190,26 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             e.printStackTrace();
             this.quitSafely();
         }
+    }
+
+    private int roundToNearest(int intToRound, int modulus)
+    {
+        int rounded = intToRound;
+
+        if( modulus > 0 )
+        {
+            int remainder = intToRound % modulus;
+            if( remainder / 2 < modulus )
+            {
+                rounded -= remainder;
+            }
+            else
+            {
+                rounded += modulus - remainder;
+            }
+        }
+
+        return rounded;
     }
 
     private boolean drainEncoder() {
