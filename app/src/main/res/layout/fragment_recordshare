@@ -15,10 +15,10 @@
             android:id="@+id/videothumbnail_imageview"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/default_thumbnails"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_thumbnails" />
 
         <EditText
             android:id="@+id/editText"
@@ -60,9 +60,9 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:background="@drawable/login_btnstyle"
         android:text="Share This Video"
         android:textAllCaps="false"
-        android:textColor="@color/ButtonTextColor"
-        android:background="@drawable/login_btnstyle" />
+        android:textColor="@color/ButtonTextColor" />
 
 </RelativeLayout>

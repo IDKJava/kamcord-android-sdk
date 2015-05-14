@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.CreateProfileFragment;
 import com.kamcord.app.fragment.LoginFragment;
-import com.kamcord.app.fragment.RecordShareFragment;
 
 public class LoginActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -99,14 +98,14 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
                 startActivity(mainIntent);
                 break;
             }
-            case R.id.shareview_btn: {
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
-                        .add(R.id.activity_login_layout, new RecordShareFragment())
-                        .addToBackStack("LoginFragment").commit();
-                panel.setVisibility(View.INVISIBLE);
-                break;
-            }
+//            case R.id.shareview_btn: {
+//                getSupportFragmentManager().beginTransaction()
+//                        .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
+//                        .add(R.id.activity_login_layout, new RecordShareFragment())
+//                        .addToBackStack("LoginFragment").commit();
+//                panel.setVisibility(View.INVISIBLE);
+//                break;
+//            }
         }
     }
 

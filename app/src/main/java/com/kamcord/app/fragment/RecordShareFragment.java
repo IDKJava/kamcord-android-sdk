@@ -1,10 +1,7 @@
 package com.kamcord.app.fragment;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.kamcord.app.R;
 import com.kamcord.app.utils.VideoUtils;
@@ -28,6 +26,8 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
     private String videoDuraionStr;
     private TextView videoDuration;
 
+    private VideoView mVideoView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -38,41 +38,43 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
             }
         });
 
+        final String videoPath = getArguments().getString("videopath");
+
+        thumbNailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
         playImageButton = (ImageButton) v.findViewById(R.id.video_playbtn);
         shareButton = (Button) v.findViewById(R.id.video_uploadbtn);
-        playImageButton.setOnClickListener(this);
+        videoDuration = (TextView) v.findViewById(R.id.previewduration_textview);
+        mVideoView = (VideoView) v.findViewById(R.id.video_preview);
+
+        playImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("videopath", videoPath);
+                videoPreviewFragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_activity_layout, videoPreviewFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
         shareButton.setOnClickListener(this);
 
-        videoPath = "/sdcard/Kamcord_Android/clip1.mp4";
         File videoFolder = new File(videoPath);
         if (videoFolder.exists()) {
-            videoFolder.mkdir();
-            Log.d("video exists", "exists");
-        } else {
-            Log.d("video exists", "not exists");
+            thumbNailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
+            videoDuraionStr = VideoUtils.getVideoDuration(videoPath);
+            videoDuration.setText(videoDuraionStr);
         }
-        thumbNailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
-        thumbNailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
-
-        videoDuration = (TextView) v.findViewById(R.id.previewduration_textview);
-        videoDuraionStr = VideoUtils.getVideoDuration(videoPath);
-        videoDuration.setText(videoDuraionStr);
-
         return v;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.video_playbtn: {
-                Intent playVideoIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoPath));
-                playVideoIntent.setType("video/mp4");
-                String title = getResources().getString(R.string.kamcordAppChooser);
-                Intent chooser = Intent.createChooser(playVideoIntent, title);
-                startActivity(chooser);
-                break;
-            }
             case R.id.video_uploadbtn: {
+                // Logic for login
                 break;
             }
         }

@@ -1,7 +1,6 @@
 package com.kamcord.app.utils;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
@@ -19,11 +18,13 @@ public class StitchClipsThread extends Thread {
     private Context ffMpegContext;
     private FFmpeg mFFmpeg;
     private static String[] commandArray;
-    private int commentAmount = 4;
+    private int commentAmount = 3;
+    private ExecuteBinaryResponseHandler executeBinaryResponseHandler;
 
-    public StitchClipsThread(String gameSessionFolder, Context context) {
+    public StitchClipsThread(String gameSessionFolder, Context context, ExecuteBinaryResponseHandler executeBinaryResponseHandler) {
         this.gameSessionPath = gameSessionFolder;
         this.ffMpegContext = context;
+        this.executeBinaryResponseHandler = executeBinaryResponseHandler;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class StitchClipsThread extends Thread {
         commandArray[0] = "-f concat -i " + gameSessionPath + "video_cliplist.txt -c copy " + gameSessionPath + "video.mp4";
         commandArray[1] = "-f concat -i " + gameSessionPath + "audio_cliplist.txt -c copy " + gameSessionPath + "audioUntrimmed.aac";
         commandArray[2] = "-i " + gameSessionPath + "video.mp4 -i " + gameSessionPath + "audioUnTrimmed.aac -vcodec copy -acodec copy -bsf:a aac_adtstoasc -strict -2 " + gameSessionPath + "out.mp4";
-        commandArray[3] = "-i " + gameSessionPath + "video.mp4 -vframes 1 -q:v 1 -vf scale=320:-1 -ss 2 " + gameSessionPath + "thumbnails.jpg";
+//        commandArray[3] = "-i " + gameSessionPath + "video.mp4 -vframes 1 -q:v 1 -vf scale=320:-1 -ss 2 " + gameSessionPath + "thumbnails.jpg";
         startStitching();
     }
 
@@ -72,31 +73,7 @@ public class StitchClipsThread extends Thread {
         for (int i = 0; i < commentAmount; i++) {
             try {
                 // Execute "ffmpeg -version" command you just need to pass "-version"
-                mFFmpeg.execute(commandArray[i], new ExecuteBinaryResponseHandler() {
-                    @Override
-                    public void onStart() {
-                    }
-
-                    @Override
-                    public void onProgress(String message) {
-                        Log.d("progress:", message);
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        Log.d("FFmpeg execute:", message);
-                    }
-
-                    @Override
-                    public void onSuccess(String message) {
-                        Log.d("FFmpeg execute:", message);
-                    }
-
-                    @Override
-                    public void onFinish() {
-                    }
-                });
-
+                mFFmpeg.execute(commandArray[i], executeBinaryResponseHandler);
             } catch (FFmpegCommandAlreadyRunningException e) {
                 e.printStackTrace();
             }

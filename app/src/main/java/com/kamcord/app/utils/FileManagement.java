@@ -62,4 +62,8 @@ public class FileManagement {
             gameUUIDFolder.mkdir();
         }
     }
+
+    public String getGamePath() {
+        return gamePath;
+    }
 }

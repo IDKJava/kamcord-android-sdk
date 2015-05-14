@@ -46,7 +46,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 break;
 
             case Message.POLL:
-                Log.v("FindMe", "POLL");
+//                Log.v("FindMe", "POLL");
                 if (!isGameInForeground()) {
                     mHandler.removeMessages(Message.POLL);
                     mHandler.sendEmptyMessageDelayed(Message.POLL, 100);

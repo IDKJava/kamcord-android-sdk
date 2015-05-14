@@ -1,13 +1,9 @@
 package com.kamcord.app.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ImageSpan;
 
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.ProfileFragment;
@@ -49,16 +45,18 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return imageResId.length;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Drawable image = mContext.getResources().getDrawable(imageResId[position]);
-        image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
-        SpannableString sb = new SpannableString(" ");
-        ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
-        sb.setSpan(imageSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return sb;
+
+        return tabTitles[position];
+//        Drawable image = mContext.getResources().getDrawable(imageResId[position]);
+//        image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
+//        SpannableString sb = new SpannableString(" ");
+//        ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
+//        sb.setSpan(imageSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        return sb;
     }
 }
