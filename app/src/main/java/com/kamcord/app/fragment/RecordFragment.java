@@ -1,11 +1,11 @@
 package com.kamcord.app.fragment;
 
 import android.content.pm.PackageManager;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,7 +59,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity().getApplicationContext(), 2));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
@@ -85,6 +86,19 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             }
         });
 
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int state) {
+
+            }
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int i, int i2) {
+                int topRowVerticalPosition = (mRecyclerView == null || mRecyclerView.getChildCount() == 0) ? 0 : mRecyclerView.getChildAt(0).getTop();
+                mSwipeRefreshLayout.setEnabled(topRowVerticalPosition >= 0);
+            }
+
+        });
     }
 
     private boolean isAppInstalled(String packageName) {
