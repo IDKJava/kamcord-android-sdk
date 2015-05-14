@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -30,16 +29,12 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    Toolbar mToolBar;
     ImageButton mFloatingActionButton;
     private ViewPager mViewPager;
     private com.kamcord.app.adapter.MainViewPagerAdapter mainViewPagerAdapter;
     private SlidingTabLayout mTabs;
-    private CharSequence tabTitles[] = {getResources().getString(R.string.kamcordRecordTab),
-            getResources().getString(R.string.kamcordProfileTab),
-            getResources().getString(R.string.kamcordVideoTab)};
-    private int numberOfTabs = tabTitles.length;
-    private RecordingService.StitchSuccessListener mStitchSuccessListener;
+    private CharSequence tabTitles[];
+    private int numberOfTabs;
     public String videoPath;
 
 
@@ -67,6 +62,12 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     }
 
     public void initMainActivity() {
+
+        tabTitles = new String[3];
+        tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
+        tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
+        tabTitles[2] = getResources().getString(R.string.kamcordVideoTab);
+        numberOfTabs = tabTitles.length;
 
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {

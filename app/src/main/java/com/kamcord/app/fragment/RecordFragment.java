@@ -66,9 +66,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
-        mProgressBar = (ProgressBar) v.findViewById(R.id.progress_bar);
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
-
+        mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -120,10 +119,10 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                 for (Game game : gamesListWrapper.response.game_list) {
                     if (game.play_store_id != null && isAppInstalled(game.play_store_id)) {
                         mSupportedGameList.add(game);
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }
                 mRecyclerAdapter.notifyDataSetChanged();
-                mProgressBar.setVisibility(View.GONE);
             }
         }
 
