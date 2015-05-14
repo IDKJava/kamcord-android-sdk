@@ -1,5 +1,6 @@
 package com.kamcord.app.activity;
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,7 +37,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     private CharSequence tabTitles[];
     private int numberOfTabs;
     public String videoPath;
-
+    private ProgressDialog mProgressDialog;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mConnection = new RecordingServiceConnection();
@@ -99,9 +100,14 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     }
                 } else {
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
+                    mProgressDialog = new ProgressDialog(this);
+                    mProgressDialog.show();
+                    mProgressDialog.setMessage(getResources().getString(R.string.stitchingVideos));
+                    mProgressDialog.setCanceledOnTouchOutside(false);
+                    stopService(new Intent(this, RecordingService.class));
                 }
                 mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
-                stopService(new Intent(this, RecordingService.class));
+
             }
         }
     }
@@ -193,11 +199,12 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                         bundle.putString("videopath", videoPath);
                         recordShareFragment.setArguments(bundle);
                         getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
                                 .add(R.id.main_activity_layout, recordShareFragment)
                                 .addToBackStack("ShareFragment").commit();
                     }
+                    mProgressDialog.dismiss();
                 }
+
             });
             if (isInitializedForRecording()) {
                 recordingService.startRecording(mediaProjection, gameModel);

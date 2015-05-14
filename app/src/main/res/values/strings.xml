@@ -34,5 +34,6 @@
     <string name="kamcordRecordTab">Record</string>
     <string name="kamcordProfileTab">Profile</string>
     <string name="kamcordVideoTab">Top Videos</string>
+    <string name="stitchingVideos">Stitching the clips...</string>
 
 </resources>

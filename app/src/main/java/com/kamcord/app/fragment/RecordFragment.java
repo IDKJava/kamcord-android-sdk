@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
@@ -40,7 +39,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private List<Game> mSupportedGameList = new ArrayList<>();
 
     private FileManagement mFileManagement;
-    private ProgressBar mProgressBar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
