@@ -1,11 +1,12 @@
 package com.kamcord.app.adapter;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.kamcord.app.fragment.ProfileFragment;
 import com.kamcord.app.fragment.RecordFragment;
+import com.kamcord.app.fragment.WebFragment;
 
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
@@ -21,13 +22,29 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        Fragment fragment;
+
         switch(position) {
             case 0:
-                return new RecordFragment();
+                fragment = new RecordFragment();
+                break;
+
             case 1:
-                return new ProfileFragment();
+                fragment = new WebFragment();
+
+                Bundle args = new Bundle();
+                String url = "https://www.kamcord.com/";
+                // TODO: append profile/{username} to the url if the user is logged in.
+                args.putString(WebFragment.URL, url);
+                args.putBoolean(WebFragment.RESTRICT_DOMAIN, true);
+                fragment.setArguments(args);
+                break;
+
+            default:
+                fragment = new RecordFragment();
+                break;
         }
-        return new RecordFragment();
+        return fragment;
     }
 
     @Override
