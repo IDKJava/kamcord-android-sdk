@@ -53,7 +53,7 @@ public class RecordingService extends Service {
         // Notification Setting
         Notification.Builder notificationBuilder = new Notification.Builder(this);
         Notification notification = notificationBuilder
-                .setContentTitle(getResources().getString(R.string.toolbar_title))
+                .setContentTitle(getResources().getString(R.string.toolbarTitle))
                 .setContentText(getResources().getString(R.string.idle))
                 .setSmallIcon(R.drawable.kamcord_appicon)
                 .build();
@@ -104,7 +104,7 @@ public class RecordingService extends Service {
 
             Notification.Builder notificationBuilder = new Notification.Builder(this);
             Notification notification = notificationBuilder
-                    .setContentTitle(getResources().getString(R.string.toolbar_title))
+                    .setContentTitle(getResources().getString(R.string.toolbarTitle))
                     .setContentText(getResources().getString(R.string.recording))
                     .setSmallIcon(R.drawable.kamcord_appicon)
                     .build();
