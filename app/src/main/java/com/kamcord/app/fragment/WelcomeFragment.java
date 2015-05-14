@@ -25,16 +25,11 @@ import butterknife.OnClick;
  */
 public class WelcomeFragment extends Fragment {
 
-    @InjectView(R.id.subtitleTextView)
-    TextView subtitleTextView;
-    @InjectView(R.id.skipButton)
-    Button skipButton;
-    @InjectView(R.id.createProfileButton)
-    Button createProfileButton;
-    @InjectView(R.id.loginButton)
-    Button loginButton;
-    @InjectView(R.id.testButton)
-    Button testButton;
+    @InjectView(R.id.subtitleTextView) TextView subtitleTextView;
+    @InjectView(R.id.skipButton) Button skipButton;
+    @InjectView(R.id.createProfileButton) Button createProfileButton;
+    @InjectView(R.id.loginButton) Button loginButton;
+    @InjectView(R.id.testButton) Button testButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
