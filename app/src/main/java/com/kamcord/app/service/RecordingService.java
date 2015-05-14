@@ -146,6 +146,10 @@ public class RecordingService extends Service {
         void getVideoFolderPath(String videoPath);
     }
 
+    public interface StitchFailureListener {
+        // void failureStitch();
+    }
+
     public void setStitchSuccessListener(StitchSuccessListener stitchSuccessListener) {
         this.stitchSuccessListener = stitchSuccessListener;
     }
