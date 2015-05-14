@@ -107,7 +107,6 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     stopService(new Intent(this, RecordingService.class));
                 }
                 mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
-
             }
         }
     }
