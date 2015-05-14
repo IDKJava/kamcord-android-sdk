@@ -1,0 +1,74 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_login_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context="com.kamcord.app.activity.LoginActivity">
+
+    <ImageView
+        android:id="@+id/kamcord_landing_imageview"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/kamcord_landing_logo" />
+
+    <TextView
+        android:id="@+id/subtitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/kamcord_landing_imageview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+    <Button
+        android:id="@+id/skipButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/login_btnstyle"
+        android:text="Skip"
+        android:textAllCaps="false"
+        android:textColor="@color/ButtonTextColor" />
+
+    <View
+        android:id="@+id/spacer"
+        android:layout_width="16dp"
+        android:layout_height="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true" />
+
+    <Button
+        android:id="@+id/createProfileButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/spacer"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/login_btnstyle"
+        android:text="@string/createProfile"
+        android:textAllCaps="false"
+        android:textColor="@color/ButtonTextColor" />
+
+    <Button
+        android:id="@+id/loginButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@id/spacer"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/login_btnstyle"
+        android:text="@string/logIn"
+        android:textAllCaps="false"
+        android:textColor="@color/ButtonTextColor" />
+
+</RelativeLayout>

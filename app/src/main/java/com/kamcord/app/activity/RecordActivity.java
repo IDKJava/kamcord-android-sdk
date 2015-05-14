@@ -63,7 +63,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     public void initMainActivity() {
 
         mToolBar = (Toolbar) findViewById(R.id.md_toolbar);
-        mToolBar.setTitle(R.string.toolbar_title);
+        mToolBar.setTitle(R.string.toolbarTitle);
         setSupportActionBar(mToolBar);
 
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -92,7 +92,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                         mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
                         obtainMediaProjection();
                     } else {
-                        Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
