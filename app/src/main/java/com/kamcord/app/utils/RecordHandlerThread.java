@@ -16,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
+import android.view.WindowManager;
 
 import com.kamcord.app.server.model.Game;
 
@@ -24,6 +25,8 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
+    private static final String TAG = RecordHandlerThread.class.getSimpleName();
+
     private MediaProjection mMediaProjection;
     private Game mGameModel;
     private Context mContext;
@@ -40,17 +43,10 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private int mTrackIndex = -1;
     private int frameRate = 30;
     private static final String VIDEO_TYPE = "video/avc";
-    private int delayFrame = 60;
-
-    private int mDisplayWidth;
-    private int mDisplayHeight;
-    private int mScreenDensity;
 
     private ActivityManager mActivityManager;
     private String mSessionFolderName;
     private int clipNumber = 0;
-
-    private RecordingState mState = RecordingState.IDLE;
 
     public RecordHandlerThread(MediaProjection mediaProjection, Game gameModel, Context context, FileManagement fileManagement) {
         super("KamcordRecordingThread");
@@ -120,19 +116,19 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
             // Get specifications from DisplayMetrics Structure
             DisplayMetrics metrics = new DisplayMetrics();
-            DisplayManager dm = (DisplayManager) mContext.getSystemService(Context.DISPLAY_SERVICE);
-            Display defaultDisplay = dm.getDisplay(Display.DEFAULT_DISPLAY);
+            WindowManager windowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+            Display defaultDisplay = windowManager.getDefaultDisplay();
             if (defaultDisplay == null) {
                 throw new RuntimeException("No display available");
             }
 
             defaultDisplay.getMetrics(metrics);
-            mDisplayWidth = metrics.widthPixels / 2;
-            mDisplayHeight = metrics.heightPixels / 2;
-            mScreenDensity = metrics.densityDpi;
+            int screenWidth = metrics.widthPixels;
+            int screenHeight = metrics.heightPixels;
+            int screenDensity = metrics.densityDpi;
 
-            prepareMediaCodec();
-            mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", mDisplayWidth, mDisplayHeight, mScreenDensity,
+            prepareMediaCodec(screenWidth, screenHeight);
+            mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
 
             // Video Location
@@ -148,25 +144,64 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         }
     }
 
-    private void prepareMediaCodec() {
+    private void prepareMediaCodec(int screenWidth, int screenHeight) {
         mVideoBufferInfo = new MediaCodec.BufferInfo();
-        MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, mDisplayWidth, mDisplayHeight);
-
-        // Set format properties
-        mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
-        mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-        mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
 
         // Config a MediaCodec and get a surface which we want to record
         try {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_TYPE);
+            MediaCodecInfo.VideoCapabilities videoCapabilities;
+
+            MediaCodecInfo.CodecCapabilities codecCapabilities = mVideoEncoder.getCodecInfo().getCapabilitiesForType(VIDEO_TYPE);
+            if( codecCapabilities != null )
+            {
+                videoCapabilities = codecCapabilities.getVideoCapabilities();
+
+                // Round the dimensions to the nearest multiple that the codec supports.
+                if( videoCapabilities != null )
+                {
+                    int widthAlignment = videoCapabilities.getWidthAlignment();
+                    int heightAlignment = videoCapabilities.getHeightAlignment();
+
+                    screenWidth = roundToNearest(screenWidth, widthAlignment);
+                    screenHeight = roundToNearest(screenHeight, heightAlignment);
+                }
+            }
+
+            MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, screenWidth, screenHeight);
+
+            // Set format properties
+            mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+            mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
+            mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
+            mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+
             mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
             mSurface = mVideoEncoder.createInputSurface();
             mVideoEncoder.start();
         } catch (IOException ioe) {
             releaseEncoders();
         }
+    }
+
+    private int roundToNearest(int intToRound, int modulus)
+    {
+        int rounded = intToRound;
+
+        if( modulus > 0 )
+        {
+            int remainder = intToRound % modulus;
+            if( remainder / 2 < modulus )
+            {
+                rounded -= remainder;
+            }
+            else
+            {
+                rounded += modulus - remainder;
+            }
+        }
+
+        return rounded;
     }
 
     private boolean drainEncoder() {
@@ -235,12 +270,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mSurface = null;
         }
         mVideoBufferInfo = null;
-    }
-
-    public enum RecordingState {
-        IDLE,
-        RECORDING,
-        PAUSED,
     }
 
     public static class Message {
