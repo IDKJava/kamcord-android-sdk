@@ -1,6 +1,7 @@
 package com.kamcord.app.utils;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -10,6 +11,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.view.View;
 
 import com.kamcord.app.R;
@@ -18,15 +20,46 @@ import com.kamcord.app.R;
  * Created by donliang1 on 5/12/15.
  */
 public class StringUtils {
+    private static final String TAG = StringUtils.class.getSimpleName();
 
-    public static URLSpan makeURLSpan(final Activity activity, String url) {
-        return new URLSpan(url) {
+    public static URLSpan newURLSpan(final Activity activity, final String url) {
+        URLSpan urlSpan = new URLSpan(url)
+        {
             @Override
-            public void onClick(View widget) {
-                Uri uri = Uri.parse("https://www.kamcord.com/tos/");
-                activity.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+            public void onClick(View v)
+            {
+                try
+                {
+                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                }
+                catch( ActivityNotFoundException e )
+                {
+                    Log.w(TAG, "Could not launch activity for URL " + url, e);
+                }
             }
         };
+        return urlSpan;
+    }
+
+    public static SpannableStringBuilder linkify(Activity activity, String sourceText, String[] linkTexts, String[] linkURLs)
+    {
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(sourceText);
+
+        if( linkTexts.length == linkURLs.length )
+        {
+            for( int i=0; i<linkTexts.length; i++ )
+            {
+                int index = sourceText.indexOf(linkTexts[i]);
+                if( index >= 0 )
+                {
+                    spannableStringBuilder.setSpan(newURLSpan(activity, linkURLs[i]),
+                            index, index + linkTexts[i].length(),
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                }
+            }
+        }
+
+        return spannableStringBuilder;
     }
 
     public static void highLightText(Context context, URLSpan urlSpan, String originStr, String highLightStr, SpannableStringBuilder textViewStyle) {

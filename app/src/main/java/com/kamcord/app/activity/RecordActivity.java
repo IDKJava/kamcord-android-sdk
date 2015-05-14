@@ -95,17 +95,16 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                         obtainMediaProjection();
 
                     } else {
-                        Toast.makeText(getApplicationContext(), R.string.select_a_game, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
                 }
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
-                stopService(new Intent(this, RecordingService.class));
+                    mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+                    stopService(new Intent(this, RecordingService.class));
+                }
             }
         }
-    }
-
 
     @Override
     public void selectedGame(Game gameModel) {
