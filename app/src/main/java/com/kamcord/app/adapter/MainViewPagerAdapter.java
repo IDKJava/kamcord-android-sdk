@@ -1,6 +1,5 @@
 package com.kamcord.app.adapter;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -15,7 +14,6 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private int numberOfTabs;
     private CharSequence tabTitles[];
-    private Context mContext;
 
     private int[] imageResId = {
             R.drawable.ic_videocam_grey600_18dp,
@@ -23,11 +21,10 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
             R.drawable.ic_video_collection_grey600_18dp
     };
 
-    public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs, Context context) {
+    public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs) {
         super(fm);
         this.numberOfTabs = numberOfTabs;
         this.tabTitles = tabTitles;
-        this.mContext = context;
     }
 
     @Override
@@ -45,7 +42,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return imageResId.length;
+        return numberOfTabs;
     }
 
     @Override

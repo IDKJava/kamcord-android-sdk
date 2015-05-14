@@ -35,7 +35,9 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     private ViewPager mViewPager;
     private com.kamcord.app.adapter.MainViewPagerAdapter mainViewPagerAdapter;
     private SlidingTabLayout mTabs;
-    private CharSequence tabTitles[] = {"Record", "Profile", "Top Videos"};
+    private CharSequence tabTitles[] = {getResources().getString(R.string.kamcordRecordTab),
+            getResources().getString(R.string.kamcordProfileTab),
+            getResources().getString(R.string.kamcordVideoTab)};
     private int numberOfTabs = tabTitles.length;
     private RecordingService.StitchSuccessListener mStitchSuccessListener;
     public String videoPath;
@@ -66,21 +68,15 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
     public void initMainActivity() {
 
-//        mToolBar = (Toolbar) findViewById(R.id.md_toolbar);
-//        mToolBar.setTitle(R.string.toolbar_title);
-//        setSupportActionBar(mToolBar);
-
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
-//        mTabs.setDistributeEvenly(true);
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-//        mTabs.setCustomTabView(R.layout.icon_tab, 0);
         mViewPager = (ViewPager) findViewById(R.id.main_pager);
-        mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs, getApplicationContext());
+        mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
 

@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.kamcord.app.R;
 import com.kamcord.app.utils.VideoUtils;
@@ -19,14 +18,11 @@ import java.io.File;
 
 public class RecordShareFragment extends Fragment implements View.OnClickListener {
 
-    private ImageView thumbNailImageView;
+    private ImageView thumbnailImageView;
     private ImageButton playImageButton;
     private Button shareButton;
-    private String videoPath;
-    private String videoDuraionStr;
+    private String videoDurationStr;
     private TextView videoDuration;
-
-    private VideoView mVideoView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,11 +36,10 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
 
         final String videoPath = getArguments().getString("videopath");
 
-        thumbNailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
+        thumbnailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
         playImageButton = (ImageButton) v.findViewById(R.id.video_playbtn);
         shareButton = (Button) v.findViewById(R.id.video_uploadbtn);
         videoDuration = (TextView) v.findViewById(R.id.previewduration_textview);
-        mVideoView = (VideoView) v.findViewById(R.id.video_preview);
 
         playImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,9 +58,9 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
 
         File videoFolder = new File(videoPath);
         if (videoFolder.exists()) {
-            thumbNailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
-            videoDuraionStr = VideoUtils.getVideoDuration(videoPath);
-            videoDuration.setText(videoDuraionStr);
+            thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
+            videoDurationStr = VideoUtils.getVideoDuration(videoPath);
+            videoDuration.setText(videoDurationStr);
         }
         return v;
     }
