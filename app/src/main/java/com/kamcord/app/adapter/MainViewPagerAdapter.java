@@ -31,6 +31,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
             case 1:
                 fragment = new WebFragment();
+
                 Bundle args = new Bundle();
                 String url = "https://www.kamcord.com/";
                 // TODO: append profile/{username} to the url if the user is logged in.
