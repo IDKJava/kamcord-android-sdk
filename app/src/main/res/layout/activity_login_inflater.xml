@@ -14,17 +14,6 @@
         android:textAllCaps="false"
         android:textColor="@color/ButtonTextColor" />
 
-    <Button
-        android:id="@+id/shareview_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/skip_btn"
-        android:layout_below="@+id/skip_btn"
-        android:background="@drawable/login_btnstyle"
-        android:text="Share"
-        android:textAllCaps="false"
-        android:textColor="@color/ButtonTextColor" />
-
     <TableRow
         android:id="@+id/tableRow"
         android:layout_width="match_parent"

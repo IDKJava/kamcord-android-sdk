@@ -30,7 +30,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
         ViewHolder viewHolder;
         View itemLayoutView;
 
-        itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview_row, null);
+        itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gridview_item, null);
         viewHolder = new ViewHolder(itemLayoutView);
         return viewHolder;
     }

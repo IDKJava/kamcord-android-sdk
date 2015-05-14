@@ -65,12 +65,10 @@ public class LoginActivity extends ActionBarActivity implements View.OnClickList
         createProfileButton = (Button) findViewById(R.id.create_profile_btn);
         logInButton = (Button) findViewById(R.id.login_btn);
         skipButton = (Button) findViewById(R.id.skip_btn);
-        shareViewButton = (Button) findViewById(R.id.shareview_btn);
 
         createProfileButton.setOnClickListener(this);
         logInButton.setOnClickListener(this);
         skipButton.setOnClickListener(this);
-        shareViewButton.setOnClickListener(this);
 
     }
 
