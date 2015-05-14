@@ -35,8 +35,7 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
             }
         });
 
-//        videoPath = getArguments().getString("videopath");
-        videoPath = "/sdcard/Kamcord_Android/out.mp4";
+        videoPath = getArguments().getString("videopath");
 
         thumbnailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
         playImageButton = (ImageButton) v.findViewById(R.id.video_playbtn);
@@ -64,19 +63,9 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
                 bundle.putString("videopath", videoPath);
                 videoPreviewFragment.setArguments(bundle);
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                        .replace(1, videoPreviewFragment)
-                        .addToBackStack("TestFragment")
+                        .replace(R.id.main_activity_layout, videoPreviewFragment)
+                        .addToBackStack(null)
                         .commit();
-
-//                VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putString("videopath", videoPath);
-//                videoPreviewFragment.setArguments(bundle);
-//                getActivity().getSupportFragmentManager().beginTransaction()
-//                        .replace(R.id.main_activity_layout, videoPreviewFragment)
-//                        .addToBackStack(null)
-//                        .commit();
             }
             case R.id.video_uploadbtn: {
                 // Logic for login

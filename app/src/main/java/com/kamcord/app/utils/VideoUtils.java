@@ -22,7 +22,11 @@ public class VideoUtils {
             hours = TimeUnit.MILLISECONDS.toHours(videoDuration);
             mins = TimeUnit.MILLISECONDS.toMinutes(videoDuration);
             secs = TimeUnit.MILLISECONDS.toSeconds(videoDuration);
-            time = String.format("%02d:%02d:%02d", hours, mins, secs);
+            if(hours == 0) {
+                time = String.format("%02d:%02d:%02d", hours, mins, secs);
+            } else {
+                time = String.format("%02d:%02d", mins, secs);
+            }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (RuntimeException e) {
