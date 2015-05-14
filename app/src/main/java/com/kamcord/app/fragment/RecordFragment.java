@@ -2,7 +2,6 @@ package com.kamcord.app.fragment;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -65,21 +64,14 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
-        mSwipeRefreshLayout.setColorSchemeColors(R.color.refreshColor);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor), getResources().getColor(R.color.TermsHighLighted));
         mSwipeRefreshLayout.setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mSupportedGameList.clear();
-                        AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 2000);
-
+                mSupportedGameList.clear();
+                AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
             }
         });
 
@@ -92,7 +84,12 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int i, int i2) {
-                mSwipeRefreshLayout.setEnabled( mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) >= 0 );
+                if (mRecyclerView.getChildAt(0) != null) {
+                    mSwipeRefreshLayout.setEnabled(mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) == 0
+                            && mRecyclerView.getChildAt(0).getTop() == getResources().getDimensionPixelSize(R.dimen.grid_margin));
+                } else {
+                    mSwipeRefreshLayout.setEnabled(true);
+                }
             }
 
         });
