@@ -18,7 +18,7 @@
         <FrameLayout
             android:id="@+id/cardRelative"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:orientation="vertical">
 
@@ -38,8 +38,8 @@
                 android:layout_below="@+id/item_image"
                 android:layout_gravity="bottom"
                 android:background="#FFFFFF"
-                android:maxLines="1"
                 android:ellipsize="end"
+                android:maxLines="1"
                 android:padding="10dp"
                 android:text="dsds"
                 android:textAppearance="?android:attr/textAppearanceSmall"
