@@ -104,8 +104,8 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     mProgressDialog.show();
                     mProgressDialog.setMessage(getResources().getString(R.string.stitchingVideos));
                     mProgressDialog.setCanceledOnTouchOutside(false);
+//                    mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                 }
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                 stopService(new Intent(this, RecordingService.class));
             }
         }

@@ -21,7 +21,7 @@ public class VideoUtils {
             videoDuration = Integer.parseInt(time);
             hours = TimeUnit.MILLISECONDS.toHours(videoDuration);
             mins = TimeUnit.MILLISECONDS.toMinutes(videoDuration);
-            secs = TimeUnit.MILLISECONDS.toSeconds(videoDuration);
+            secs = TimeUnit.MILLISECONDS.toSeconds(videoDuration) % 60;
             if(hours == 0) {
                 time = String.format("%02d:%02d:%02d", hours, mins, secs);
             } else {

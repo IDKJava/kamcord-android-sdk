@@ -21,7 +21,6 @@ public class LoginActivity extends ActionBarActivity {
         containerViewId = View.generateViewId();
         RelativeLayout contentView = new RelativeLayout(this);
         contentView.setId(containerViewId);
-        contentView.setBackgroundColor(getResources().getColor(R.color.ColorPrimary));
         setContentView(contentView);
 
         getSupportFragmentManager().beginTransaction()

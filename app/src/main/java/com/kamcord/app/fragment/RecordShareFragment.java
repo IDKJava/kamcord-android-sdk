@@ -22,7 +22,7 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
     private ImageButton playImageButton;
     private Button shareButton;
     private String videoDurationStr;
-    private TextView videoDuration;
+    private TextView videoDurationTextView;
     private String videoPath;
 
     @Override
@@ -40,7 +40,7 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
         thumbnailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
         playImageButton = (ImageButton) v.findViewById(R.id.video_playbtn);
         shareButton = (Button) v.findViewById(R.id.video_uploadbtn);
-        videoDuration = (TextView) v.findViewById(R.id.previewduration_textview);
+        videoDurationTextView = (TextView) v.findViewById(R.id.previewduration_textview);
 
         playImageButton.setOnClickListener(this);
         shareButton.setOnClickListener(this);
@@ -49,7 +49,7 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
         if (videoFolder.exists()) {
             thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
             videoDurationStr = VideoUtils.getVideoDuration(videoPath);
-            videoDuration.setText(videoDurationStr);
+            videoDurationTextView.setText(videoDurationStr);
         }
         return v;
     }
