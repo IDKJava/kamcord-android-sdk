@@ -6,6 +6,8 @@
 
     <color name="tabsScrollColor">#47d894</color>
     <color name="tabTitleColor">#353e44</color>
+    <color name="refreshColor">#47d894</color>
+    <color name="gridTextColor">#353e44</color>
 
     <color name="kamcordGreen">#47d894</color>
 

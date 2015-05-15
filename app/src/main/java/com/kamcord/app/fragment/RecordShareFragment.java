@@ -1,7 +1,5 @@
 package com.kamcord.app.fragment;
 
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,14 +9,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.utils.VideoUtils;
+
+import java.io.File;
 
 public class RecordShareFragment extends Fragment implements View.OnClickListener {
 
-    private ImageView thumbNailImageView;
+    private ImageView thumbnailImageView;
     private ImageButton playImageButton;
     private Button shareButton;
+    private String videoDurationStr;
+    private TextView videoDurationTextView;
+    private String videoPath;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,10 +35,22 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
             }
         });
 
+        videoPath = getArguments().getString("videopath");
+
+        thumbnailImageView = (ImageView) v.findViewById(R.id.videothumbnail_imageview);
         playImageButton = (ImageButton) v.findViewById(R.id.video_playbtn);
         shareButton = (Button) v.findViewById(R.id.video_uploadbtn);
+        videoDurationTextView = (TextView) v.findViewById(R.id.previewduration_textview);
+
         playImageButton.setOnClickListener(this);
         shareButton.setOnClickListener(this);
+
+        File videoFolder = new File(videoPath);
+        if (videoFolder.exists()) {
+            thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
+            videoDurationStr = VideoUtils.getVideoDuration(videoPath);
+            videoDurationTextView.setText(videoDurationStr);
+        }
         return v;
     }
 
@@ -41,32 +58,20 @@ public class RecordShareFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.video_playbtn: {
-                break;
+                VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("videopath", videoPath);
+                videoPreviewFragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_activity_layout, videoPreviewFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
             case R.id.video_uploadbtn: {
+                // Logic for login
                 break;
             }
         }
-    }
-
-    public Bitmap getVideoThumbnail(String filePath) {
-        Bitmap bitmap = null;
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(filePath);
-            bitmap = retriever.getFrameAtTime(2000000);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                retriever.release();
-            } catch (RuntimeException e) {
-                e.printStackTrace();
-            }
-        }
-        return bitmap;
     }
 
     @Override

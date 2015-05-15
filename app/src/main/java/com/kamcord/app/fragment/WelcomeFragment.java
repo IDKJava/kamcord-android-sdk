@@ -41,14 +41,12 @@ public class WelcomeFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
 
-    private void initializeSubtitleText()
-    {
+    private void initializeSubtitleText() {
         String subtitle = getResources().getString(R.string.socialNetworkForGamers);
         String subtitleHighlighted = getResources().getString(R.string.gamers);
 
@@ -61,25 +59,21 @@ public class WelcomeFragment extends Fragment {
         subtitleTextView.setText(spannableStringBuilder);
     }
 
-    private int getContainerViewId()
-    {
-        if( getActivity() instanceof LoginActivity )
-        {
+    private int getContainerViewId() {
+        if (getActivity() instanceof LoginActivity) {
             return ((LoginActivity) getActivity()).getContainerViewId();
         }
         return 0;
     }
 
     @OnClick(R.id.skipButton)
-    public void skip()
-    {
+    public void skip() {
         Intent intent = new Intent(getActivity(), RecordActivity.class);
         startActivity(intent);
     }
 
     @OnClick(R.id.createProfileButton)
-    public void pushCreateProfileFragment()
-    {
+    public void pushCreateProfileFragment() {
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                 .replace(getContainerViewId(), new CreateProfileFragment())
@@ -87,8 +81,7 @@ public class WelcomeFragment extends Fragment {
     }
 
     @OnClick(R.id.loginButton)
-    public void pushLoginFragment()
-    {
+    public void pushLoginFragment() {
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                 .replace(getContainerViewId(), new LoginFragment())

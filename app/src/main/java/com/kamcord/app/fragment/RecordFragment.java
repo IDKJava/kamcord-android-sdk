@@ -3,7 +3,8 @@ package com.kamcord.app.fragment;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private List<Game> mSupportedGameList = new ArrayList<>();
 
     private FileManagement mFileManagement;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,12 +56,43 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity().getApplicationContext(), 2));
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor), getResources().getColor(R.color.TermsHighLighted));
+        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                mSupportedGameList.clear();
+                AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
+            }
+        });
+
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int state) {
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int i, int i2) {
+                if (mRecyclerView.getChildAt(0) != null) {
+                    mSwipeRefreshLayout.setEnabled(mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) == 0
+                            && mRecyclerView.getChildAt(0).getTop() == getResources().getDimensionPixelSize(R.dimen.grid_margin));
+                } else {
+                    mSwipeRefreshLayout.setEnabled(true);
+                }
+            }
+
+        });
     }
 
     private boolean isAppInstalled(String packageName) {
@@ -69,8 +102,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         try {
             pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
             appIsInstalled = true;
-        }
-        catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException e) {
         }
         return appIsInstalled;
     }
@@ -90,20 +122,17 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         void selectedGame(com.kamcord.app.server.model.Game selectedGameModel);
     }
 
-    private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>>
-    {
+    private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
-            if( gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null )
-            {
-                for( Game game : gamesListWrapper.response.game_list )
-                {
-                    if( game.play_store_id != null && isAppInstalled(game.play_store_id) )
-                    {
+            if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
+                for (Game game : gamesListWrapper.response.game_list) {
+                    if (game.play_store_id != null && isAppInstalled(game.play_store_id)) {
                         mSupportedGameList.add(game);
                     }
                 }
                 mRecyclerAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         }
 
@@ -114,16 +143,4 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             // TODO: show the user something about this.
         }
     }
-//
-//    public String getVideoThumbnail() {
-//        return thumbnailString;
-//    }
-//
-//    public class CustomReceiver extends BroadcastReceiver {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            thumbnailString = intent.getStringExtra("ThumbNailPath");
-//        }
-//    }
 }

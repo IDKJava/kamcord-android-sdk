@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.kamcord.app.R;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.utils.AudioRecordThread;
@@ -26,17 +27,18 @@ public class RecordingService extends Service {
     private final IBinder mBinder = new LocalBinder();
 
     private RecordHandlerThread mRecordHandlerThread;
+    private AudioRecordThread mAudioRecordThread;
     private Handler mHandler;
     private Handler mAudioRecordHandler;
-
-    private AudioRecordThread mAudioRecordThread;
+    private ExecuteBinaryResponseHandler executeBinaryResponseHandler;
+    private StitchSuccessListener stitchSuccessListener;
+    private String videoFolderPath;
 
     public RecordingService() {
         super();
     }
 
-    public static boolean isRunning()
-    {
+    public static boolean isRunning() {
         return mIsRunning;
     }
 
@@ -53,7 +55,7 @@ public class RecordingService extends Service {
         Notification notification = notificationBuilder
                 .setContentTitle(getResources().getString(R.string.toolbarTitle))
                 .setContentText(getResources().getString(R.string.idle))
-                .setSmallIcon(R.drawable.kamcord_appicon)
+                .setSmallIcon(R.drawable.kamcord_app_icon)
                 .build();
         startForeground(NOTIFICATION_ID, notification);
 
@@ -63,7 +65,6 @@ public class RecordingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         // If we're getting destroyed, we should probably just stop the current recording session.
         stopRecording();
         mIsRunning = false;
@@ -84,6 +85,7 @@ public class RecordingService extends Service {
             fileManagement.rootFolderInitialize();
             fileManagement.gameFolderInitialize(gameModel.play_store_id);
             fileManagement.sessionFolderInitialize();
+            videoFolderPath = fileManagement.getGamePath();
 
             mRecordHandlerThread = new RecordHandlerThread(mediaProjection, gameModel, getApplicationContext(), fileManagement);
             mRecordHandlerThread.start();
@@ -104,12 +106,49 @@ public class RecordingService extends Service {
             Notification notification = notificationBuilder
                     .setContentTitle(getResources().getString(R.string.toolbarTitle))
                     .setContentText(getResources().getString(R.string.recording))
-                    .setSmallIcon(R.drawable.kamcord_appicon)
+                    .setSmallIcon(R.drawable.kamcord_app_icon)
                     .build();
             ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notification);
+
+            executeBinaryResponseHandler = new ExecuteBinaryResponseHandler() {
+                @Override
+                public void onStart() {
+                }
+
+                @Override
+                public void onProgress(String message) {
+                    Log.d("progress:", message);
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Log.d("FFmpeg execute:", message);
+                }
+
+                @Override
+                public void onSuccess(String message) {
+                    Log.d("FFmpeg execute:", message);
+                }
+                @Override
+                public void onFinish() {
+                    if(stitchSuccessListener != null) {
+                        stitchSuccessListener.getVideoFolderPath(videoFolderPath);
+                    }
+                }
+            };
+
         } else {
             Log.e(TAG, "Unable to start recording session! There is already a currently running recording session.");
         }
+    }
+
+    public interface StitchSuccessListener {
+        void getVideoFolderPath(String videoPath);
+        void failureStitch();
+    }
+
+    public void setStitchSuccessListener(StitchSuccessListener stitchSuccessListener) {
+        this.stitchSuccessListener = stitchSuccessListener;
     }
 
     public synchronized void stopRecording() {
@@ -118,7 +157,9 @@ public class RecordingService extends Service {
             mRecordHandlerThread.quitSafely();
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
             mAudioRecordThread.quitSafely();
-            StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(), getApplicationContext());
+            StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(),
+                    getApplicationContext(),
+                    executeBinaryResponseHandler );
             stitchClipsThread.start();
             ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         } else {

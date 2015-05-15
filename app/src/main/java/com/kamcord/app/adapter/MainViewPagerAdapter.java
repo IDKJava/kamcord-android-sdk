@@ -14,7 +14,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private int numberOfTabs;
     private CharSequence tabTitles[];
 
-    public MainViewPagerAdapter(FragmentManager fm,CharSequence tabTitles[], int numberOfTabs) {
+    public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs) {
         super(fm);
         this.numberOfTabs = numberOfTabs;
         this.tabTitles = tabTitles;
@@ -23,7 +23,6 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;
-
         switch(position) {
             case 0:
                 fragment = new RecordFragment();
@@ -31,7 +30,6 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
             case 1:
                 fragment = new WebFragment();
-
                 Bundle args = new Bundle();
                 String url = "https://www.kamcord.com/";
                 // TODO: append profile/{username} to the url if the user is logged in.
@@ -54,6 +52,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return  tabTitles[position];
+
+        return tabTitles[position];
     }
 }

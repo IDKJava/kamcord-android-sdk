@@ -21,9 +21,16 @@
     <string name="password">Password</string>
     <string name="email">Email</string>
 
+    <!-- Notification -->
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>
     <string name="paused">Paused</string>
 
+    <!-- Activity -->
     <string name="selectAGame">Please select a game to record.</string>
+    <string name="kamcordRecordTab">Record</string>
+    <string name="kamcordProfileTab">Profile</string>
+    <string name="kamcordVideoTab">Top Videos</string>
+    <string name="stitchingVideos">Stitching the clips...</string>
+
 </resources>

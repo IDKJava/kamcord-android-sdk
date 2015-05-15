@@ -1,5 +1,6 @@
 package com.kamcord.app.activity;
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,7 +12,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -24,18 +24,20 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.SlidingTabLayout;
 
+import java.io.File;
+
 public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.selectdGameListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    Toolbar mToolBar;
     ImageButton mFloatingActionButton;
     private ViewPager mViewPager;
     private com.kamcord.app.adapter.MainViewPagerAdapter mainViewPagerAdapter;
     private SlidingTabLayout mTabs;
-    private CharSequence tabTitles[] = {"Record", "Profile"};
-    private int numberOfTabs = 2;
-
+    private CharSequence tabTitles[];
+    private int numberOfTabs;
+    public String videoPath;
+    private ProgressDialog mProgressDialog;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mConnection = new RecordingServiceConnection();
@@ -62,12 +64,12 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
     public void initMainActivity() {
 
-        mToolBar = (Toolbar) findViewById(R.id.md_toolbar);
-        mToolBar.setTitle(R.string.toolbarTitle);
-        setSupportActionBar(mToolBar);
+        tabTitles = new String[2];
+        tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
+        tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
+        numberOfTabs = tabTitles.length;
 
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        mTabs.setDistributeEvenly(true);
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
@@ -91,15 +93,16 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     if (mSelectedGame != null) {
                         mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
                         obtainMediaProjection();
+
                     } else {
                         Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(R.anim.slide_up, 0, 0, R.anim.slide_down)
-                            .add(R.id.main_activity_layout, new RecordShareFragment())
-                            .addToBackStack("LoginFragment").commit();
+                    mProgressDialog = new ProgressDialog(this);
+                    mProgressDialog.show();
+                    mProgressDialog.setMessage(getResources().getString(R.string.stitchingVideos));
+                    mProgressDialog.setCanceledOnTouchOutside(false);
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                     stopService(new Intent(this, RecordingService.class));
                 }
@@ -156,7 +159,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
         }
     }
 
-    private static class RecordingServiceConnection implements ServiceConnection {
+    private class RecordingServiceConnection implements ServiceConnection {
         private MediaProjection mediaProjection = null;
         private Game gameModel = null;
         private boolean isConnected = false;
@@ -175,14 +178,35 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
             return mediaProjection != null && gameModel != null;
         }
 
-        public boolean isConnected()
-        {
+        public boolean isConnected() {
             return isConnected;
         }
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             RecordingService recordingService = ((RecordingService.LocalBinder) iBinder).getService();
+            recordingService.setStitchSuccessListener(new RecordingService.StitchSuccessListener() {
+                @Override
+                public void getVideoFolderPath(String str) {
+                    videoPath = str + "/out.mp4";
+                    File video = new File(videoPath);
+                    if (video.exists()) {
+                        RecordShareFragment recordShareFragment = new RecordShareFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("videopath", videoPath);
+                        recordShareFragment.setArguments(bundle);
+                        getSupportFragmentManager().beginTransaction()
+                                .add(R.id.main_activity_layout, recordShareFragment)
+                                .addToBackStack("ShareFragment").commit();
+                        mProgressDialog.dismiss();
+                    }
+                }
+
+                @Override
+                public void failureStitch() {
+                    // do nothing
+                }
+            });
             if (isInitializedForRecording()) {
                 recordingService.startRecording(mediaProjection, gameModel);
                 uninitialize();

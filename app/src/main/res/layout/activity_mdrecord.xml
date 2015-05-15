@@ -10,12 +10,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            android:id="@+id/md_toolbar"
-            layout="@layout/main_tool_bar"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"/>
-
         <com.kamcord.app.utils.SlidingTabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
@@ -46,6 +40,7 @@
             android:src="@drawable/ic_videocam_white_36dp"
             android:background="@drawable/fab_circle"
             android:id="@+id/main_fab"
+            android:elevation="3dp"
             android:layout_gravity="right|bottom" />
 
     </FrameLayout>
