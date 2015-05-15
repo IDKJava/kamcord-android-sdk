@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.model.Video;
 import com.kamcord.app.utils.VideoUtils;
 
 import java.io.File;
@@ -25,7 +26,6 @@ public class ShareFragment extends Fragment {
     @InjectView(R.id.shareButton) private Button shareButton;
     @InjectView(R.id.videoDurationTextView) private TextView videoDurationTextView;
 
-    private String videoDurationStr;
     private String videoPath;
 
     @Override
@@ -40,14 +40,14 @@ public class ShareFragment extends Fragment {
         File videoFolder = new File(videoPath);
         if (videoFolder.exists()) {
             thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
-            videoDurationStr = VideoUtils.getVideoDuration(videoPath);
+            String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
             videoDurationTextView.setText(videoDurationStr);
         }
         return root;
     }
 
     @OnClick(R.id.thumbnailImageView)
-    public void pushVideoPreviewFragment(View v) {
+    public void pushVideoPreviewFragment() {
         VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
         Bundle bundle = new Bundle();
         bundle.putString("videopath", videoPath);
@@ -59,7 +59,10 @@ public class ShareFragment extends Fragment {
     }
 
     @OnClick(R.id.shareButton)
-    public void share(View v)
+    public void share()
     {
+        Video videoToShare = new Video.Builder()
+                .setVideoPath(videoPath)
+                ;
     }
 }
