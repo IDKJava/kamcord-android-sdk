@@ -9,20 +9,15 @@ import com.kamcord.app.utils.StringUtils;
  * Created by pplunkett on 5/15/15.
  */
 public class Video implements Parcelable {
-    private String videoPath;
-    private String audioPath;
+    private String uuid;
     private String title;
     private String description;
 
     public Video() {
     }
 
-    public String getVideoPath() {
-        return videoPath;
-    }
-
-    public String getAudioPath() {
-        return audioPath;
+    public String getUUID() {
+        return uuid;
     }
 
     public String getTitle() {
@@ -40,8 +35,7 @@ public class Video implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeString(videoPath);
-        parcel.writeString(audioPath);
+        parcel.writeString(uuid);
         parcel.writeString(title);
         parcel.writeString(description);
     }
@@ -58,8 +52,7 @@ public class Video implements Parcelable {
     };
 
     private Video(Parcel in) {
-        videoPath = in.readString();
-        audioPath = in.readString();
+        uuid = in.readString();
         title = in.readString();
         description = in.readString();
     }
@@ -68,12 +61,7 @@ public class Video implements Parcelable {
         private Video video = new Video();
 
         public Builder setVideoPath(String path) {
-            video.videoPath = nonEmptyString(path);
-            return this;
-        }
-
-        public Builder setAudioPath(String path) {
-            video.audioPath = nonEmptyString(path);
+            video.uuid = nonEmptyString(path);
             return this;
         }
 
@@ -103,8 +91,7 @@ public class Video implements Parcelable {
             return false;
 
         Video otherVideo = (Video) other;
-        if( !StringUtils.compare(videoPath, otherVideo.videoPath)
-                || !StringUtils.compare(audioPath, otherVideo.audioPath)
+        if( !StringUtils.compare(uuid, otherVideo.uuid)
                 || !StringUtils.compare(title, otherVideo.title)
                 || !StringUtils.compare(description, otherVideo.description) )
         {
@@ -119,8 +106,7 @@ public class Video implements Parcelable {
     {
         return new StringBuilder()
                 .append("[")
-                .append(videoPath).append(",")
-                .append(audioPath).append(",")
+                .append(uuid).append(",")
                 .append(title).append(",")
                 .append(description)
                 .append("]").toString();
