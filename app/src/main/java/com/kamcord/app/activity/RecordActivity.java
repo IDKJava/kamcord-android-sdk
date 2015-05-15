@@ -67,7 +67,6 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
         tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
-//        tabTitles[2] = getResources().getString(R.string.kamcordVideoTab);
         numberOfTabs = tabTitles.length;
 
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -75,6 +74,27 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
             @Override
             public int getIndicatorColor(int position) {
                 return getResources().getColor(R.color.tabsScrollColor);
+            }
+        });
+        mTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position != 0) {
+                    mFloatingActionButton.animate().translationY(mFloatingActionButton.getHeight());
+                    mFloatingActionButton.setVisibility(View.INVISIBLE);
+                } else {
+                    mFloatingActionButton.animate().translationY(0);
+                    mFloatingActionButton.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
             }
         });
         mViewPager = (ViewPager) findViewById(R.id.main_pager);

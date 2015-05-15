@@ -64,7 +64,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor), getResources().getColor(R.color.TermsHighLighted));
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
