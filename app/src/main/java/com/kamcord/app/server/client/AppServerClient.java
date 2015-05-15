@@ -10,6 +10,9 @@ import com.kamcord.app.BuildConfig;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
+import com.kamcord.app.server.model.ReserveVideoEntity;
+import com.kamcord.app.server.model.ReserveVideoResponse;
+import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.DeviceManager;
 
@@ -20,6 +23,7 @@ import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
+import retrofit.http.Body;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
@@ -58,6 +62,12 @@ public class AppServerClient {
         @FormUrlEncoded
         @POST("/app/v3/account/logout")
         void logout(Callback<GenericResponse<?>> cb);
+
+        @POST("/app/v3/kcp/video/reserve")
+        void reserveVideo(@Body ReserveVideoEntity body, Callback<GenericResponse<ReserveVideoResponse>> cb);
+
+        @POST("app/v3/kcp/video/uploaded")
+        void videoUploaded(@Body VideoUploadedEntity body, Callback<GenericResponse<?>> cb);
     }
 
     private static AppServer instance;
