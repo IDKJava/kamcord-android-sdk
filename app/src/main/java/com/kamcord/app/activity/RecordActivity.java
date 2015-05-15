@@ -67,7 +67,6 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
         tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
-//        tabTitles[2] = getResources().getString(R.string.kamcordVideoTab);
         numberOfTabs = tabTitles.length;
 
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -203,6 +202,10 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     }
                 }
 
+                @Override
+                public void failureStitch() {
+                    // do nothing
+                }
             });
             if (isInitializedForRecording()) {
                 recordingService.startRecording(mediaProjection, gameModel);
