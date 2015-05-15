@@ -65,7 +65,12 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor), getResources().getColor(R.color.TermsHighLighted));
-        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -91,7 +96,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                     mSwipeRefreshLayout.setEnabled(true);
                 }
             }
-
         });
     }
 
