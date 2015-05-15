@@ -57,7 +57,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 break;
 
             case Message.STOP_RECORDING:
-                Log.v("FindMe", "STOP_RECORDING");
                 break;
         }
         return false;

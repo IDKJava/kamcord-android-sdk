@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.PowerManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
@@ -85,7 +84,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         switch (msg.what) {
             case Message.RECORD_CLIP:
-                Log.v("FindMe", "RECORD_CLIP");
                 clipNumber++;
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
@@ -93,7 +91,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.POLL:
-                Log.v("FindMe", "POLL");
                 if (!isGameInForeground()) {
                     mHandler.removeMessages(Message.POLL);
                     mHandler.sendEmptyMessageDelayed(Message.POLL, 100);
@@ -104,7 +101,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.STOP_RECORDING:
-                Log.v("FindMe", "STOP_RECORDING");
                 mMediaProjection.stop();
                 break;
         }
@@ -123,13 +119,11 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
         {
-            Log.v(TAG, "Screen is OFF.");
             return false;
         }
 
         if( ((KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode() )
         {
-            Log.v(TAG, "Screen is LOCKED.");
             return false;
         }
 
