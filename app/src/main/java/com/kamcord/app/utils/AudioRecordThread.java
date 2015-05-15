@@ -1,10 +1,12 @@
 package com.kamcord.app.utils;
 
 import android.app.ActivityManager;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.kamcord.app.server.model.Game;
@@ -38,7 +40,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
 
         switch (msg.what) {
             case Message.RECORD_CLIP:
-                Log.v("FindMe", "RECORD_CLIP");
                 audioNumber++;
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
@@ -56,7 +57,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 break;
 
             case Message.STOP_RECORDING:
-                Log.v("FindMe", "STOP_RECORDING");
                 break;
         }
         return false;
@@ -68,6 +68,17 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     }
 
     private boolean isGameInForeground() {
+
+        if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
+        {
+            return false;
+        }
+
+        if( ((KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode() )
+        {
+            return false;
+        }
+
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = activityManager.getRunningAppProcesses();
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
             if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
