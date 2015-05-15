@@ -223,6 +223,10 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     }
                 }
 
+                @Override
+                public void failureStitch() {
+                    // do nothing
+                }
             });
             if (isInitializedForRecording()) {
                 recordingService.startRecording(mediaProjection, gameModel);

@@ -55,7 +55,7 @@ public class RecordingService extends Service {
         Notification notification = notificationBuilder
                 .setContentTitle(getResources().getString(R.string.toolbarTitle))
                 .setContentText(getResources().getString(R.string.idle))
-                .setSmallIcon(R.drawable.kamcord_appicon)
+                .setSmallIcon(R.drawable.kamcord_app_icon)
                 .build();
         startForeground(NOTIFICATION_ID, notification);
 
@@ -106,7 +106,7 @@ public class RecordingService extends Service {
             Notification notification = notificationBuilder
                     .setContentTitle(getResources().getString(R.string.toolbarTitle))
                     .setContentText(getResources().getString(R.string.recording))
-                    .setSmallIcon(R.drawable.kamcord_appicon)
+                    .setSmallIcon(R.drawable.kamcord_app_icon)
                     .build();
             ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notification);
 
@@ -144,10 +144,7 @@ public class RecordingService extends Service {
 
     public interface StitchSuccessListener {
         void getVideoFolderPath(String videoPath);
-    }
-
-    public interface StitchFailureListener {
-        // void failureStitch();
+        void failureStitch();
     }
 
     public void setStitchSuccessListener(StitchSuccessListener stitchSuccessListener) {

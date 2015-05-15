@@ -29,7 +29,6 @@ public class WelcomeFragment extends Fragment {
     @InjectView(R.id.skipButton) Button skipButton;
     @InjectView(R.id.createProfileButton) Button createProfileButton;
     @InjectView(R.id.loginButton) Button loginButton;
-    @InjectView(R.id.testButton) Button testButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,12 +88,4 @@ public class WelcomeFragment extends Fragment {
                 .addToBackStack("LoginFragment").commit();
 
     }
-
-//    @OnClick(R.id.testButton)
-//    public void testFragment() {
-//        getActivity().getSupportFragmentManager().beginTransaction()
-//                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-//                .replace(getContainerViewId(), new RecordShareFragment())
-//                .addToBackStack("TestFragment").commit();
-//    }
 }
