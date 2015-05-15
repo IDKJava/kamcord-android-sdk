@@ -12,7 +12,8 @@ public class Video implements Parcelable {
     private String title;
     private String description;
 
-    public Video() {}
+    public Video() {
+    }
 
     @Override
     public int describeContents() {
@@ -38,44 +39,41 @@ public class Video implements Parcelable {
         }
     };
 
-    private Video(Parcel in)
-    {
+    private Video(Parcel in) {
         videoPath = in.readString();
         audioPath = in.readString();
         title = in.readString();
         description = in.readString();
     }
 
-    public static class Builder
-    {
+    public static class Builder {
         private Video video = new Video();
 
-        public Builder setVideoPath(String path)
-        {
-            video.videoPath = path;
+        public Builder setVideoPath(String path) {
+            video.videoPath = nonEmptyString(path);
             return this;
         }
 
-        public Builder setAudioPath(String path)
-        {
-            video.audioPath = path;
+        public Builder setAudioPath(String path) {
+            video.audioPath = nonEmptyString(path);
             return this;
         }
 
-        public Builder setTitle(String title)
-        {
-            video.title = title;
+        public Builder setTitle(String title) {
+            video.title = nonEmptyString(title);
             return this;
         }
 
-        public Builder setDescription(String description)
-        {
-            video.description = description;
+        public Builder setDescription(String description) {
+            video.description = nonEmptyString(description);
             return this;
         }
 
-        public Video build()
-        {
+        private String nonEmptyString(String in) {
+            return in == null || in.isEmpty() ? null : in;
+        }
+
+        public Video build() {
             return video;
         }
     }

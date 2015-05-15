@@ -33,4 +33,7 @@
     <string name="kamcordVideoTab">Top Videos</string>
     <string name="stitchingVideos">Stitching the clips...</string>
 
+    <string name="writeATitle">Write a title...</string>
+    <string name="writeADescription">Write a description...</string>
+
 </resources>

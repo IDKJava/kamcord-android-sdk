@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,9 +23,11 @@ import butterknife.OnClick;
 public class ShareFragment extends Fragment {
 
     @InjectView(R.id.thumbnailImageView) ImageView thumbnailImageView;
-    @InjectView(R.id.playImageView) private ImageView playImageView;
-    @InjectView(R.id.shareButton) private Button shareButton;
-    @InjectView(R.id.videoDurationTextView) private TextView videoDurationTextView;
+    @InjectView(R.id.playImageView) ImageView playImageView;
+    @InjectView(R.id.shareButton) Button shareButton;
+    @InjectView(R.id.titleEditText) EditText titleEditText;
+    @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
+    @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
 
     private String videoPath;
 
@@ -35,7 +38,6 @@ public class ShareFragment extends Fragment {
 
         ButterKnife.inject(this, root);
         videoPath = getArguments().getString("videopath");
-
 
         File videoFolder = new File(videoPath);
         if (videoFolder.exists()) {
@@ -63,6 +65,8 @@ public class ShareFragment extends Fragment {
     {
         Video videoToShare = new Video.Builder()
                 .setVideoPath(videoPath)
-                ;
+                .setTitle(titleEditText.getEditableText().toString())
+                .setDescription(descriptionEditText.getEditableText().toString())
+                .build();
     }
 }
