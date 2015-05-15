@@ -1,6 +1,7 @@
 package com.kamcord.app.utils;
 
 import android.app.ActivityManager;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -48,6 +49,26 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private ActivityManager mActivityManager;
     private String mSessionFolderName;
     private int clipNumber = 0;
+
+    private enum AspectRatio
+    {
+        INDETERMINATE,
+        PORTRAIT,
+        LANDSCAPE,
+    }
+    private AspectRatio aspectRatio = AspectRatio.INDETERMINATE;
+
+    private static class Dimensions
+    {
+        public Dimensions(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+        }
+        public int width;
+        public int height;
+    }
+    private Dimensions codecDimensions = null;
 
     public RecordHandlerThread(MediaProjection mediaProjection, Game gameModel, Context context, FileManagement fileManagement) {
         super("KamcordRecordingThread");
@@ -102,6 +123,13 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
         {
+            Log.v(TAG, "Screen is OFF.");
+            return false;
+        }
+
+        if( ((KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode() )
+        {
+            Log.v(TAG, "Screen is LOCKED.");
             return false;
         }
 
@@ -134,6 +162,19 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             int screenHeight = metrics.heightPixels;
             int screenDensity = metrics.densityDpi;
 
+            if( aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight )
+            {
+                int tmp = screenHeight;
+                screenHeight = screenWidth;
+                screenWidth = tmp;
+            }
+            if( aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth )
+            {
+                int tmp = screenWidth;
+                screenWidth = screenHeight;
+                screenHeight = tmp;
+            }
+
             prepareMediaCodec(screenWidth, screenHeight);
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
@@ -151,44 +192,54 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         }
     }
 
-    private void prepareMediaCodec(int screenWidth, int screenHeight) {
+    private void prepareMediaCodec(int width, int height) {
         mVideoBufferInfo = new MediaCodec.BufferInfo();
 
         // Config a MediaCodec and get a surface which we want to record
         try {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_TYPE);
+        } catch (IOException ioe) {
+            releaseEncoders();
+            return;
+        }
+
+        if( codecDimensions == null ) {
             MediaCodecInfo.VideoCapabilities videoCapabilities;
 
             MediaCodecInfo.CodecCapabilities codecCapabilities = mVideoEncoder.getCodecInfo().getCapabilitiesForType(VIDEO_TYPE);
-            if( codecCapabilities != null )
-            {
+            if (codecCapabilities != null) {
                 videoCapabilities = codecCapabilities.getVideoCapabilities();
 
                 // Round the dimensions to the nearest multiple that the codec supports.
-                if( videoCapabilities != null )
-                {
+                if (videoCapabilities != null) {
                     int widthAlignment = videoCapabilities.getWidthAlignment();
                     int heightAlignment = videoCapabilities.getHeightAlignment();
 
-                    screenWidth = roundToNearest(screenWidth, widthAlignment);
-                    screenHeight = roundToNearest(screenHeight, heightAlignment);
+                    codecDimensions = new Dimensions(roundToNearest(width, widthAlignment), roundToNearest(height, heightAlignment));
                 }
             }
 
-            MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, screenWidth, screenHeight);
-
-            // Set format properties
-            mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
-            mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-            mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-
-            mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-            mSurface = mVideoEncoder.createInputSurface();
-            mVideoEncoder.start();
-        } catch (IOException ioe) {
-            releaseEncoders();
+            if (codecDimensions == null) {
+                codecDimensions = new Dimensions(width, height);
+            }
         }
+
+        if( aspectRatio == AspectRatio.INDETERMINATE )
+        {
+            aspectRatio = codecDimensions.width > codecDimensions.height ? AspectRatio.LANDSCAPE : AspectRatio.PORTRAIT;
+        }
+
+        MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, codecDimensions.width, codecDimensions.height);
+
+        // Set format properties
+        mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
+        mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
+        mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+
+        mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        mSurface = mVideoEncoder.createInputSurface();
+        mVideoEncoder.start();
     }
 
     private int roundToNearest(int intToRound, int modulus)
