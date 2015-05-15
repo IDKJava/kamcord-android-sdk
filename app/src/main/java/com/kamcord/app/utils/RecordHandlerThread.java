@@ -156,13 +156,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             int screenHeight = metrics.heightPixels;
             int screenDensity = metrics.densityDpi;
 
-            if( aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight )
-            {
-                int tmp = screenHeight;
-                screenHeight = screenWidth;
-                screenWidth = tmp;
-            }
-            if( aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth )
+            if( (aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight) || (aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth) )
             {
                 int tmp = screenWidth;
                 screenWidth = screenHeight;
