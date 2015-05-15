@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp">
 
         <ImageView
-            android:id="@+id/videothumbnail_imageview"
+            android:id="@+id/thumbnailImageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_alignParentStart="true"
@@ -25,14 +25,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/videothumbnail_imageview"
+            android:layout_below="@+id/thumbnailImageView"
             android:hint="Give your video a title" />
 
         <TextView
-            android:id="@+id/previewduration_textview"
+            android:id="@+id/videoDurationTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/videothumbnail_imageview"
+            android:layout_alignBottom="@+id/thumbnailImageView"
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="21dp"
             android:layout_marginEnd="25dp"
@@ -40,8 +40,8 @@
             android:text="video_duration"
             android:textColor="@android:color/white" />
 
-        <ImageButton
-            android:id="@+id/video_playbtn"
+        <ImageView
+            android:id="@+id/playImageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
@@ -52,7 +52,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/video_uploadbtn"
+        android:id="@+id/shareButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

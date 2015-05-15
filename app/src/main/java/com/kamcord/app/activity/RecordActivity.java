@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.RecordFragment;
-import com.kamcord.app.fragment.RecordShareFragment;
+import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.SlidingTabLayout;
@@ -191,7 +191,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     videoPath = str + "/out.mp4";
                     File video = new File(videoPath);
                     if (video.exists()) {
-                        RecordShareFragment recordShareFragment = new RecordShareFragment();
+                        ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
                         bundle.putString("videopath", videoPath);
                         recordShareFragment.setArguments(bundle);
