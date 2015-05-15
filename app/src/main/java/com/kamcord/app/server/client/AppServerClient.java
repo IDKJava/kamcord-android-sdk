@@ -34,7 +34,7 @@ import retrofit.http.Query;
  * Created by pplunkett on 5/11/15.
  */
 public class AppServerClient {
-    private static final String APP_SERVER_URL = "https://app.kamcord.com";
+    private static final String APP_SERVER_URL = "http://172.29.1.103:8080";
 
     public interface AppServer
     {
@@ -64,10 +64,10 @@ public class AppServerClient {
         void logout(Callback<GenericResponse<?>> cb);
 
         @POST("/app/v3/kcp/video/reserve")
-        void reserveVideo(@Body ReserveVideoEntity body, Callback<GenericResponse<ReserveVideoResponse>> cb);
+        ReserveVideoResponse reserveVideo(@Body ReserveVideoEntity body);
 
         @POST("app/v3/kcp/video/uploaded")
-        void videoUploaded(@Body VideoUploadedEntity body, Callback<GenericResponse<?>> cb);
+        void videoUploaded(@Body VideoUploadedEntity body);
     }
 
     private static AppServer instance;

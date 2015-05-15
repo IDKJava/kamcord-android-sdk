@@ -17,6 +17,22 @@ public class Video implements Parcelable {
     public Video() {
     }
 
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public String getAudioPath() {
+        return audioPath;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public int describeContents() {
         return 0;
