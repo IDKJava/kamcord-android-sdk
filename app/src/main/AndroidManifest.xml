@@ -15,7 +15,7 @@
     <application
         android:name=".application.KamcordApplication"
         android:allowBackup="true"
-        android:icon="@drawable/kamcord_appicon"
+        android:icon="@drawable/kamcord_app_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity

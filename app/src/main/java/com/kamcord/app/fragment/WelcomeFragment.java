@@ -29,7 +29,6 @@ public class WelcomeFragment extends Fragment {
     @InjectView(R.id.skipButton) Button skipButton;
     @InjectView(R.id.createProfileButton) Button createProfileButton;
     @InjectView(R.id.loginButton) Button loginButton;
-    @InjectView(R.id.testButton) Button testButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
