@@ -3,6 +3,8 @@ package com.kamcord.app.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.kamcord.app.utils.StringUtils;
+
 /**
  * Created by pplunkett on 5/15/15.
  */
@@ -76,5 +78,35 @@ public class Video implements Parcelable {
         public Video build() {
             return video;
         }
+    }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if( other == null || !(other instanceof Video) )
+            return false;
+
+        Video otherVideo = (Video) other;
+        if( !StringUtils.compare(videoPath, otherVideo.videoPath)
+                || !StringUtils.compare(audioPath, otherVideo.audioPath)
+                || !StringUtils.compare(title, otherVideo.title)
+                || !StringUtils.compare(description, otherVideo.description) )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return new StringBuilder()
+                .append("[")
+                .append(videoPath).append(",")
+                .append(audioPath).append(",")
+                .append(title).append(",")
+                .append(description)
+                .append("]").toString();
     }
 }

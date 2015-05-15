@@ -1,5 +1,6 @@
 package com.kamcord.app.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.kamcord.app.R;
 import com.kamcord.app.model.Video;
+import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.VideoUtils;
 
 import java.io.File;
@@ -68,5 +70,9 @@ public class ShareFragment extends Fragment {
                 .setTitle(titleEditText.getEditableText().toString())
                 .setDescription(descriptionEditText.getEditableText().toString())
                 .build();
+
+        Intent uploadIntent = new Intent(getActivity(), UploadService.class);
+        uploadIntent.putExtra(UploadService.ARG_VIDEO_TO_SHARE, videoToShare);
+        getActivity().startService(uploadIntent);
     }
 }
