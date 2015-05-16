@@ -104,12 +104,7 @@ public class RecordingSession implements Parcelable {
             return false;
 
         RecordingSession otherVideo = (RecordingSession) other;
-        if( !StringUtils.compare(uuid, otherVideo.uuid)
-                || !StringUtils.compare(videoTitle, otherVideo.videoTitle)
-                || !StringUtils.compare(videoDescription, otherVideo.videoDescription)
-                || !StringUtils.compare(gameServerID, otherVideo.gameServerID)
-                || !StringUtils.compare(gameServerName, otherVideo.gameServerName)
-                || !StringUtils.compare(gamePackageName, otherVideo.gamePackageName) )
+        if( !StringUtils.compare(uuid, otherVideo.uuid) )
         {
             return false;
         }
