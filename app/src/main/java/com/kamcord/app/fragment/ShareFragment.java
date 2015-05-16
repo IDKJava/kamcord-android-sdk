@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.VideoUtils;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class ShareFragment extends Fragment {
     @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
     @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
 
-    private String videoPath;
+    private RecordingSession recordingSession;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,10 +41,12 @@ public class ShareFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_share, container, false);
 
         ButterKnife.inject(this, root);
-        videoPath = getArguments().getString("videopath");
+        recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
 
-        File videoFolder = new File(videoPath);
-        if (videoFolder.exists()) {
+        File videoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
+                FileSystemManager.MERGED_VIDEO_FILENAME);
+        String videoPath = videoFile.getAbsolutePath();
+        if (videoFile.exists()) {
             thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
             String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
             videoDurationTextView.setText(videoDurationStr);
@@ -55,7 +58,9 @@ public class ShareFragment extends Fragment {
     public void pushVideoPreviewFragment() {
         VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("videopath", videoPath);
+        bundle.putString(VideoPreviewFragment.ARG_VIDEO_PATH,
+                new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
+                    FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
         videoPreviewFragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_activity_layout, videoPreviewFragment)
@@ -66,14 +71,11 @@ public class ShareFragment extends Fragment {
     @OnClick(R.id.shareButton)
     public void share()
     {
-        RecordingSession videoToShare = new RecordingSession.Builder()
-                .setVideoPath(videoPath)
-                .setTitle(titleEditText.getEditableText().toString())
-                .setDescription(descriptionEditText.getEditableText().toString())
-                .build();
+        recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+        recordingSession.setVideoDescription(descriptionEditText.getEditableText().toString());
 
         Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-        uploadIntent.putExtra(UploadService.ARG_VIDEO_TO_SHARE, videoToShare);
+        uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
         getActivity().startService(uploadIntent);
     }
 }

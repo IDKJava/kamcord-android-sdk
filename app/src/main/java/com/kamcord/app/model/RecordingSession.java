@@ -54,6 +54,14 @@ public class RecordingSession implements Parcelable {
         return gamePackageName;
     }
 
+    public void setVideoTitle(String videoTitle) {
+        this.videoTitle = videoTitle;
+    }
+
+    public void setVideoDescription(String videoDescription) {
+        this.videoDescription = videoDescription;
+    }
+
     @Override
     public int describeContents() {
         return 0;

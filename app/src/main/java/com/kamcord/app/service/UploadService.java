@@ -16,7 +16,7 @@ import retrofit.RetrofitError;
 public class UploadService extends IntentService {
     private static final String TAG = RecordingService.class.getSimpleName();
 
-    public static final String ARG_VIDEO_TO_SHARE = "video_to_share";
+    public static final String ARG_SESSION_TO_SHARE = "session_to_share";
 
     public UploadService() {
         super("Kamcord Upload Service");
@@ -25,13 +25,13 @@ public class UploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        RecordingSession videoToShare = intent.getParcelableExtra(ARG_VIDEO_TO_SHARE);
+        RecordingSession recordingSession = intent.getParcelableExtra(ARG_SESSION_TO_SHARE);
 
         ReserveVideoEntity reserveVideoEntity = new ReserveVideoEntityBuilder()
-                .setUserTitle(videoToShare.getVideoTitle())
-                .setDescription(videoToShare.getVideoDescription())
+                .setUserTitle(recordingSession.getVideoTitle())
+                .setDescription(recordingSession.getVideoDescription())
                 .setDefaultTitle("default title")
-                .setGameId("17636")
+                .setGameId(recordingSession.getGameServerID())
                 .build();
 
         ReserveVideoResponse reserveVideoResponse;
