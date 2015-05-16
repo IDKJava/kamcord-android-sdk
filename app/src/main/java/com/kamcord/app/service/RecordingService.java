@@ -109,15 +109,6 @@ public class RecordingService extends Service {
         }
     }
 
-    public interface StitchSuccessListener {
-        void onStitchSuccess(RecordingSession recordingSession);
-        void onStitchFailure(RecordingSession recordingSession);
-    }
-
-    public void setStitchSuccessListener(StitchSuccessListener stitchSuccessListener) {
-        this.stitchSuccessListener = stitchSuccessListener;
-    }
-
     public synchronized void stopRecording() {
         if (mRecordHandlerThread != null && mRecordHandlerThread.isAlive()) {
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
@@ -162,6 +153,20 @@ public class RecordingService extends Service {
         } else {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }
+    }
+
+    public void setStitchSuccessListener(StitchSuccessListener stitchSuccessListener) {
+        this.stitchSuccessListener = stitchSuccessListener;
+    }
+
+    public RecordingSession getRecordingSession()
+    {
+        return recordingSession;
+    }
+
+    public interface StitchSuccessListener {
+        void onStitchSuccess(RecordingSession recordingSession);
+        void onStitchFailure(RecordingSession recordingSession);
     }
 
     public class LocalBinder extends Binder {

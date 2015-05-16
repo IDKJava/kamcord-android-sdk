@@ -188,15 +188,17 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            RecordingService recordingService = ((RecordingService.LocalBinder) iBinder).getService();
+            final RecordingService recordingService = ((RecordingService.LocalBinder) iBinder).getService();
             recordingService.setStitchSuccessListener(new RecordingService.StitchSuccessListener() {
                 @Override
                 public void onStitchSuccess(RecordingSession session) {
-                    File video = new File(FileSystemManager.getRecordingSessionCacheDirectory(session), "out.mp4");
+                    File video = new File(
+                            FileSystemManager.getRecordingSessionCacheDirectory(session),
+                            FileSystemManager.MERGED_VIDEO_FILENAME);
                     if (video.exists()) {
                         ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, recordingSession);
+                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, recordingService.getRecordingSession());
                         recordShareFragment.setArguments(bundle);
                         getSupportFragmentManager().beginTransaction()
                                 .add(R.id.main_activity_layout, recordShareFragment)

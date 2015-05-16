@@ -34,7 +34,7 @@ import retrofit.http.Query;
  * Created by pplunkett on 5/11/15.
  */
 public class AppServerClient {
-    private static final String APP_SERVER_URL = "http://172.29.1.103:8080";
+    private static final String APP_SERVER_URL = "https://app.kamcord.com";
 
     public interface AppServer
     {
