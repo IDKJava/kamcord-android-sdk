@@ -30,7 +30,7 @@ public class UploadService extends IntentService {
         ReserveVideoEntity reserveVideoEntity = new ReserveVideoEntityBuilder()
                 .setUserTitle(recordingSession.getVideoTitle())
                 .setDescription(recordingSession.getVideoDescription())
-                .setDefaultTitle("default title")
+                .setDefaultTitle("default title") // TODO: fill this in with something that makes sense.
                 .setGameId(recordingSession.getGameServerID())
                 .build();
 
