@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.kamcord.app.model.Video;
+import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
@@ -25,11 +25,11 @@ public class UploadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Video videoToShare = intent.getParcelableExtra(ARG_VIDEO_TO_SHARE);
+        RecordingSession videoToShare = intent.getParcelableExtra(ARG_VIDEO_TO_SHARE);
 
         ReserveVideoEntity reserveVideoEntity = new ReserveVideoEntityBuilder()
-                .setUserTitle(videoToShare.getTitle())
-                .setDescription(videoToShare.getDescription())
+                .setUserTitle(videoToShare.getVideoTitle())
+                .setDescription(videoToShare.getVideoDescription())
                 .setDefaultTitle("default title")
                 .setGameId("17636")
                 .build();
@@ -49,7 +49,7 @@ public class UploadService extends IntentService {
 
     public interface UploadCallback
     {
-        void uploadStarted(Video theVideo);
-        void videoReserved(Video theVideo, ReserveVideoResponse reserveVideoResponse);
+        void uploadStarted(RecordingSession theVideo);
+        void videoReserved(RecordingSession theVideo, ReserveVideoResponse reserveVideoResponse);
     }
 }

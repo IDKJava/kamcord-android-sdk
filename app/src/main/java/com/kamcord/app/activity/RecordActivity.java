@@ -18,10 +18,13 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
+import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.fragment.ShareFragment;
+import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.SlidingTabLayout;
 
 import java.io.File;
@@ -32,7 +35,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
     ImageButton mFloatingActionButton;
     private ViewPager mViewPager;
-    private com.kamcord.app.adapter.MainViewPagerAdapter mainViewPagerAdapter;
+    private MainViewPagerAdapter mainViewPagerAdapter;
     private SlidingTabLayout mTabs;
     private CharSequence tabTitles[];
     private int numberOfTabs;
@@ -136,7 +139,8 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
                     MediaProjection projection = ((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
                             .getMediaProjection(resultCode, data);
-                    mConnection.initializeForRecording(projection, mSelectedGame);
+                    RecordingSession recordingSession = new RecordingSession(mSelectedGame);
+                    mConnection.initializeForRecording(projection, recordingSession);
 
                     startService(new Intent(this, RecordingService.class));
                     bindService(new Intent(this, RecordingService.class), mConnection, 0);
@@ -161,21 +165,21 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
     private class RecordingServiceConnection implements ServiceConnection {
         private MediaProjection mediaProjection = null;
-        private Game gameModel = null;
+        private RecordingSession recordingSession = null;
         private boolean isConnected = false;
 
-        public void initializeForRecording(MediaProjection mediaProjection, Game gameModel) {
+        public void initializeForRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
             this.mediaProjection = mediaProjection;
-            this.gameModel = gameModel;
+            this.recordingSession = recordingSession;
         }
 
         public void uninitialize() {
             this.mediaProjection = null;
-            this.gameModel = null;
+            this.recordingSession = null;
         }
 
         public boolean isInitializedForRecording() {
-            return mediaProjection != null && gameModel != null;
+            return mediaProjection != null && recordingSession != null;
         }
 
         public boolean isConnected() {
@@ -187,13 +191,12 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
             RecordingService recordingService = ((RecordingService.LocalBinder) iBinder).getService();
             recordingService.setStitchSuccessListener(new RecordingService.StitchSuccessListener() {
                 @Override
-                public void getVideoFolderPath(String str) {
-                    videoPath = str + "/out.mp4";
-                    File video = new File(videoPath);
+                public void onStitchSuccess(RecordingSession session) {
+                    File video = new File(FileSystemManager.getRecordingSessionCacheDirectory(session), "out.mp4");
                     if (video.exists()) {
                         ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putString("videopath", videoPath);
+                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, recordingSession);
                         recordShareFragment.setArguments(bundle);
                         getSupportFragmentManager().beginTransaction()
                                 .add(R.id.main_activity_layout, recordShareFragment)
@@ -203,12 +206,12 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                 }
 
                 @Override
-                public void failureStitch() {
-                    // do nothing
+                public void onStitchFailure(RecordingSession recordingSession) {
+                    // TODO: show the user something about failing to stitch the clips.
                 }
             });
             if (isInitializedForRecording()) {
-                recordingService.startRecording(mediaProjection, gameModel);
+                recordingService.startRecording(mediaProjection, recordingSession);
                 uninitialize();
             }
             isConnected = true;

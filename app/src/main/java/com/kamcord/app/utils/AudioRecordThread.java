@@ -7,10 +7,12 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
-import com.kamcord.app.server.model.Game;
+import com.kamcord.app.model.RecordingSession;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 public class AudioRecordThread extends HandlerThread implements Handler.Callback {
 
@@ -18,19 +20,17 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     private Context mContext;
     private Handler mHandler;
     private int audioNumber = 0;
-    private Game gameModel;
-    private String mSessionFolderName;
 
     private ActivityManager activityManager;
+    private RecordingSession mRecordingSession;
 
 
-    public AudioRecordThread(Game gameModel, Context context, FileManagement fileManagement) {
+    public AudioRecordThread(Context context, RecordingSession recordingSession) {
         super("dsdsd");
-        this.gameModel = gameModel;
         this.mContext = context;
 
         this.activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        mSessionFolderName = fileManagement.getGameName() + "/" + fileManagement.getUUIDString() + "/";
+        this.mRecordingSession = recordingSession;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
             if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                 for (String pkgName : runningAppProcessInfo.pkgList) {
-                    if (pkgName.equals(gameModel.play_store_id)) {
+                    if (pkgName.equals(mRecordingSession.getGamePackageName())) {
                         return true;
                     }
                 }
@@ -82,11 +82,13 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     }
 
     private void recordUntilBackground() {
+        File audioFile = new File(
+                FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
+                String.format(Locale.ENGLISH, "audio%03d.aac", audioNumber));
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
-        String AudioPath = "/sdcard/Kamcord_Android/" + mSessionFolderName + "audio" + audioNumber + ".aac";
-        mRecorder.setOutputFile(AudioPath);
+        mRecorder.setOutputFile(audioFile.getAbsolutePath());
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
 
         try {
@@ -103,13 +105,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
-    }
-
-
-    public enum RecordingState {
-        IDLE,
-        RECORDING,
-        PAUSED,
     }
 
     public static class Message {

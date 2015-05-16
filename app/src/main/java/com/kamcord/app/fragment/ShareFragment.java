@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
-import com.kamcord.app.model.Video;
+import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.VideoUtils;
 
@@ -23,6 +23,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class ShareFragment extends Fragment {
+    public static final String ARG_RECORDING_SESSION = "recording_session";
 
     @InjectView(R.id.thumbnailImageView) ImageView thumbnailImageView;
     @InjectView(R.id.playImageView) ImageView playImageView;
@@ -65,7 +66,7 @@ public class ShareFragment extends Fragment {
     @OnClick(R.id.shareButton)
     public void share()
     {
-        Video videoToShare = new Video.Builder()
+        RecordingSession videoToShare = new RecordingSession.Builder()
                 .setVideoPath(videoPath)
                 .setTitle(titleEditText.getEditableText().toString())
                 .setDescription(descriptionEditText.getEditableText().toString())

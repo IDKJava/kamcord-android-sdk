@@ -18,17 +18,18 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
-import com.kamcord.app.server.model.Game;
+import com.kamcord.app.model.RecordingSession;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Locale;
 
 public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
     private static final String TAG = RecordHandlerThread.class.getSimpleName();
 
     private MediaProjection mMediaProjection;
-    private Game mGameModel;
     private Context mContext;
     private Handler mHandler;
     private Surface mSurface;
@@ -45,17 +46,16 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private static final String VIDEO_TYPE = "video/avc";
 
     private ActivityManager mActivityManager;
-    private String mSessionFolderName;
+    private RecordingSession mRecordingSession;
     private int clipNumber = 0;
 
-    public RecordHandlerThread(MediaProjection mediaProjection, Game gameModel, Context context, FileManagement fileManagement) {
+    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession) {
         super("KamcordRecordingThread");
         this.mMediaProjection = mediaProjection;
-        this.mGameModel = gameModel;
         this.mContext = context;
 
         this.mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
-        mSessionFolderName = fileManagement.getGameName() + "/" + fileManagement.getUUIDString() + "/";
+        this.mRecordingSession = recordingSession;
     }
 
     @Override
@@ -93,8 +93,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mHandler = handler;
     }
 
-    public String getSessionFolderName() {
-        return mSessionFolderName;
+    public RecordingSession getRecordingSession() {
+        return mRecordingSession;
     }
 
     private boolean isGameInForeground() {
@@ -102,7 +102,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
             if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                 for (String pkgName : runningAppProcessInfo.pkgList) {
-                    if (pkgName.equals(mGameModel.play_store_id)) {
+                    if (pkgName.equals(mRecordingSession.getGamePackageName())) {
                         return true;
                     }
                 }
@@ -131,10 +131,13 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
 
-            // Video Location
+            // RecordingSession Location
             try {
-                String clipPath = "/sdcard/Kamcord_Android/" + mSessionFolderName + "clip" + clipNumber + ".mp4";
-                mMuxer = new MediaMuxer(clipPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+
+                File clipFile = new File(
+                        FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
+                        String.format(Locale.ENGLISH, "clip%03d.mp4", clipNumber));
+                mMuxer = new MediaMuxer(clipFile.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }
