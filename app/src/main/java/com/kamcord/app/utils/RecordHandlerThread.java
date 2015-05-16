@@ -43,7 +43,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private boolean mMuxerStart = false;
     private boolean mMuxerWrite = false;
     private int mTrackIndex = -1;
-    private int frameRate = 30;
+    private int frameRate = 60;
     private static final String VIDEO_TYPE = "video/avc";
 
     private ActivityManager mActivityManager;
@@ -70,7 +70,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     }
     private Dimensions codecDimensions = null;
 
-    public RecordHandlerThread(MediaProjection mediaProjection, Game gameModel, Context context, FileManagement fileManagement) {
+    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession) {
         super("KamcordRecordingThread");
         this.mMediaProjection = mediaProjection;
         this.mContext = context;
@@ -109,10 +109,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
     public void setHandler(Handler handler) {
         this.mHandler = handler;
-    }
-
-    public RecordingSession getRecordingSession() {
-        return mRecordingSession;
     }
 
     private boolean isGameInForeground() {

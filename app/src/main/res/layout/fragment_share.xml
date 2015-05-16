@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_below="@id/titleEditText"
-            android:hint="@string/writeATitle" />
+            android:hint="@string/writeADescription" />
 
         <TextView
             android:id="@+id/videoDurationTextView"
