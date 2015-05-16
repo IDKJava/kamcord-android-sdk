@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -39,6 +40,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     private int numberOfTabs;
     public String videoPath;
     private ProgressDialog mProgressDialog;
+    private Toolbar mToolbar;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mConnection = new RecordingServiceConnection();
@@ -65,12 +67,18 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
     public void initMainActivity() {
 
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        mToolbar.setTitle(getString(R.string.app_name));
+        mToolbar.setLogo(R.drawable.toolbar_icon);
+
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
         tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
         numberOfTabs = tabTitles.length;
 
         mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        mTabs.setDistributeEvenly(true);
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
