@@ -1,6 +1,7 @@
 package com.kamcord.app.utils;
 
 import android.app.ActivityManager;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -12,8 +13,8 @@ import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.PowerManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
@@ -49,7 +50,27 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
 
-    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession) {
+    private enum AspectRatio
+    {
+        INDETERMINATE,
+        PORTRAIT,
+        LANDSCAPE,
+    }
+    private AspectRatio aspectRatio = AspectRatio.INDETERMINATE;
+
+    private static class Dimensions
+    {
+        public Dimensions(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+        }
+        public int width;
+        public int height;
+    }
+    private Dimensions codecDimensions = null;
+
+    public RecordHandlerThread(MediaProjection mediaProjection, Game gameModel, Context context, FileManagement fileManagement) {
         super("KamcordRecordingThread");
         this.mMediaProjection = mediaProjection;
         this.mContext = context;
@@ -63,7 +84,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         switch (msg.what) {
             case Message.RECORD_CLIP:
-                Log.v("FindMe", "RECORD_CLIP");
                 clipNumber++;
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
@@ -71,7 +91,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.POLL:
-                Log.v("FindMe", "POLL");
                 if (!isGameInForeground()) {
                     mHandler.removeMessages(Message.POLL);
                     mHandler.sendEmptyMessageDelayed(Message.POLL, 100);
@@ -82,7 +101,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.STOP_RECORDING:
-                Log.v("FindMe", "STOP_RECORDING");
                 mMediaProjection.stop();
                 break;
         }
@@ -98,6 +116,17 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     }
 
     private boolean isGameInForeground() {
+
+        if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
+        {
+            return false;
+        }
+
+        if( ((KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode() )
+        {
+            return false;
+        }
+
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = mActivityManager.getRunningAppProcesses();
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
             if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
@@ -127,6 +156,13 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             int screenHeight = metrics.heightPixels;
             int screenDensity = metrics.densityDpi;
 
+            if( (aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight) || (aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth) )
+            {
+                int tmp = screenWidth;
+                screenWidth = screenHeight;
+                screenHeight = tmp;
+            }
+
             prepareMediaCodec(screenWidth, screenHeight);
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
@@ -147,44 +183,54 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         }
     }
 
-    private void prepareMediaCodec(int screenWidth, int screenHeight) {
+    private void prepareMediaCodec(int width, int height) {
         mVideoBufferInfo = new MediaCodec.BufferInfo();
 
         // Config a MediaCodec and get a surface which we want to record
         try {
             mVideoEncoder = MediaCodec.createEncoderByType(VIDEO_TYPE);
+        } catch (IOException ioe) {
+            releaseEncoders();
+            return;
+        }
+
+        if( codecDimensions == null ) {
             MediaCodecInfo.VideoCapabilities videoCapabilities;
 
             MediaCodecInfo.CodecCapabilities codecCapabilities = mVideoEncoder.getCodecInfo().getCapabilitiesForType(VIDEO_TYPE);
-            if( codecCapabilities != null )
-            {
+            if (codecCapabilities != null) {
                 videoCapabilities = codecCapabilities.getVideoCapabilities();
 
                 // Round the dimensions to the nearest multiple that the codec supports.
-                if( videoCapabilities != null )
-                {
+                if (videoCapabilities != null) {
                     int widthAlignment = videoCapabilities.getWidthAlignment();
                     int heightAlignment = videoCapabilities.getHeightAlignment();
 
-                    screenWidth = roundToNearest(screenWidth, widthAlignment);
-                    screenHeight = roundToNearest(screenHeight, heightAlignment);
+                    codecDimensions = new Dimensions(roundToNearest(width, widthAlignment), roundToNearest(height, heightAlignment));
                 }
             }
 
-            MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, screenWidth, screenHeight);
-
-            // Set format properties
-            mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
-            mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
-            mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
-
-            mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-            mSurface = mVideoEncoder.createInputSurface();
-            mVideoEncoder.start();
-        } catch (IOException ioe) {
-            releaseEncoders();
+            if (codecDimensions == null) {
+                codecDimensions = new Dimensions(width, height);
+            }
         }
+
+        if( aspectRatio == AspectRatio.INDETERMINATE )
+        {
+            aspectRatio = codecDimensions.width > codecDimensions.height ? AspectRatio.LANDSCAPE : AspectRatio.PORTRAIT;
+        }
+
+        MediaFormat mMediaFormat = MediaFormat.createVideoFormat(VIDEO_TYPE, codecDimensions.width, codecDimensions.height);
+
+        // Set format properties
+        mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
+        mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
+        mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+
+        mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        mSurface = mVideoEncoder.createInputSurface();
+        mVideoEncoder.start();
     }
 
     private int roundToNearest(int intToRound, int modulus)
