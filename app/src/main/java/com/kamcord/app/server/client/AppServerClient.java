@@ -66,7 +66,7 @@ public class AppServerClient {
         @POST("/app/v3/kcp/video/reserve")
         GenericResponse<ReserveVideoResponse> reserveVideo(@Body ReserveVideoEntity body);
 
-        @POST("app/v3/kcp/video/uploaded")
+        @POST("/app/v3/kcp/video/uploaded")
         GenericResponse<?> videoUploaded(@Body VideoUploadedEntity body);
     }
 
