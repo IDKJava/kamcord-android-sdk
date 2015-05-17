@@ -35,5 +35,6 @@
 
     <string name="writeATitle">Write a title...</string>
     <string name="writeADescription">Write a description...</string>
+    <string name="installThisGame">Install this game!</string>
 
 </resources>

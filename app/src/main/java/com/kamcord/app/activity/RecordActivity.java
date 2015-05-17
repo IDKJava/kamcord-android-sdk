@@ -30,7 +30,7 @@ import com.kamcord.app.utils.SlidingTabLayout;
 
 import java.io.File;
 
-public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.selectdGameListener {
+public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.SelectedGameListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 

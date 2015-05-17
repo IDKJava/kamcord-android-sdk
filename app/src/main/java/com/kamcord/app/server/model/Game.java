@@ -20,4 +20,6 @@ public class Game {
     public int number_of_players;
     public int number_of_videos;
     public Boolean is_user_following;
+
+    public boolean isInstalled = false;
 }
