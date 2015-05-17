@@ -13,9 +13,8 @@ import android.util.Log;
 
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.kamcord.app.R;
-import com.kamcord.app.server.model.Game;
+import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.utils.AudioRecordThread;
-import com.kamcord.app.utils.FileManagement;
 import com.kamcord.app.utils.RecordHandlerThread;
 import com.kamcord.app.utils.StitchClipsThread;
 
@@ -30,9 +29,8 @@ public class RecordingService extends Service {
     private AudioRecordThread mAudioRecordThread;
     private Handler mHandler;
     private Handler mAudioRecordHandler;
-    private ExecuteBinaryResponseHandler executeBinaryResponseHandler;
     private StitchSuccessListener stitchSuccessListener;
-    private String videoFolderPath;
+    private RecordingSession recordingSession;
 
     public RecordingService() {
         super();
@@ -79,15 +77,12 @@ public class RecordingService extends Service {
     }
 
     /* Interface for starting and stopping a recording session */
-    public synchronized void startRecording(MediaProjection mediaProjection, Game gameModel) {
+    public synchronized void startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
         if (mRecordHandlerThread == null || !mRecordHandlerThread.isAlive()) {
-            FileManagement fileManagement = new FileManagement();
-            fileManagement.rootFolderInitialize();
-            fileManagement.gameFolderInitialize(gameModel.play_store_id);
-            fileManagement.sessionFolderInitialize();
-            videoFolderPath = fileManagement.getGamePath();
 
-            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, gameModel, getApplicationContext(), fileManagement);
+            this.recordingSession = recordingSession;
+
+            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession);
             mRecordHandlerThread.start();
 
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
@@ -95,7 +90,7 @@ public class RecordingService extends Service {
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.POLL);
 
 
-            mAudioRecordThread = new AudioRecordThread(gameModel, getApplicationContext(), fileManagement);
+            mAudioRecordThread = new AudioRecordThread(getApplicationContext(), recordingSession);
             mAudioRecordThread.start();
             mAudioRecordHandler = new Handler(mAudioRecordThread.getLooper(), mAudioRecordThread);
             mAudioRecordThread.setHandler(mAudioRecordHandler);
@@ -109,8 +104,19 @@ public class RecordingService extends Service {
                     .setSmallIcon(R.drawable.kamcord_app_icon)
                     .build();
             ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notification);
+        } else {
+            Log.e(TAG, "Unable to start recording session! There is already a currently running recording session.");
+        }
+    }
 
-            executeBinaryResponseHandler = new ExecuteBinaryResponseHandler() {
+    public synchronized void stopRecording() {
+        if (mRecordHandlerThread != null && mRecordHandlerThread.isAlive()) {
+            mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
+            mRecordHandlerThread.quitSafely();
+            mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
+            mAudioRecordThread.quitSafely();
+
+            ExecuteBinaryResponseHandler executeBinaryResponseHandler = new ExecuteBinaryResponseHandler() {
                 @Override
                 public void onStart() {
                 }
@@ -122,7 +128,10 @@ public class RecordingService extends Service {
 
                 @Override
                 public void onFailure(String message) {
-                    Log.d("FFmpeg execute:", message);
+                    if( stitchSuccessListener != null )
+                    {
+                        stitchSuccessListener.onStitchFailure(recordingSession);
+                    }
                 }
 
                 @Override
@@ -132,32 +141,11 @@ public class RecordingService extends Service {
                 @Override
                 public void onFinish() {
                     if(stitchSuccessListener != null) {
-                        stitchSuccessListener.getVideoFolderPath(videoFolderPath);
+                        stitchSuccessListener.onStitchSuccess(recordingSession);
                     }
                 }
             };
-
-        } else {
-            Log.e(TAG, "Unable to start recording session! There is already a currently running recording session.");
-        }
-    }
-
-    public interface StitchSuccessListener {
-        void getVideoFolderPath(String videoPath);
-        void failureStitch();
-    }
-
-    public void setStitchSuccessListener(StitchSuccessListener stitchSuccessListener) {
-        this.stitchSuccessListener = stitchSuccessListener;
-    }
-
-    public synchronized void stopRecording() {
-        if (mRecordHandlerThread != null && mRecordHandlerThread.isAlive()) {
-            mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
-            mRecordHandlerThread.quitSafely();
-            mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
-            mAudioRecordThread.quitSafely();
-            StitchClipsThread stitchClipsThread = new StitchClipsThread("/sdcard/Kamcord_Android/" + mRecordHandlerThread.getSessionFolderName(),
+            StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
                     getApplicationContext(),
                     executeBinaryResponseHandler );
             stitchClipsThread.start();
@@ -165,6 +153,20 @@ public class RecordingService extends Service {
         } else {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }
+    }
+
+    public void setStitchSuccessListener(StitchSuccessListener stitchSuccessListener) {
+        this.stitchSuccessListener = stitchSuccessListener;
+    }
+
+    public RecordingSession getRecordingSession()
+    {
+        return recordingSession;
+    }
+
+    public interface StitchSuccessListener {
+        void onStitchSuccess(RecordingSession recordingSession);
+        void onStitchFailure(RecordingSession recordingSession);
     }
 
     public class LocalBinder extends Binder {

@@ -77,4 +77,10 @@ public class StringUtils {
                 indexOfMatchStr + highLightStr.length(),
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
     }
+
+    public static boolean compare(String first, String second)
+    {
+        return (first == null && second == null)
+                || (first != null && second != null && first.equals(second));
+    }
 }

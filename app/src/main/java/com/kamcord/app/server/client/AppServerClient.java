@@ -64,10 +64,10 @@ public class AppServerClient {
         void logout(Callback<GenericResponse<?>> cb);
 
         @POST("/app/v3/kcp/video/reserve")
-        void reserveVideo(@Body ReserveVideoEntity body, Callback<GenericResponse<ReserveVideoResponse>> cb);
+        ReserveVideoResponse reserveVideo(@Body ReserveVideoEntity body);
 
         @POST("app/v3/kcp/video/uploaded")
-        void videoUploaded(@Body VideoUploadedEntity body, Callback<GenericResponse<?>> cb);
+        void videoUploaded(@Body VideoUploadedEntity body);
     }
 
     private static AppServer instance;
