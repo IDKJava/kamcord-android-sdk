@@ -15,6 +15,8 @@ import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.FileSystemManager;
+import com.kamcord.app.utils.StitchClipsThread;
+import com.kamcord.app.utils.StitchClipsThread.StitchSuccessListener;
 import com.kamcord.app.utils.VideoUtils;
 
 import java.io.File;
@@ -34,6 +36,37 @@ public class ShareFragment extends Fragment {
     @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
 
     private RecordingSession recordingSession;
+    private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
+        @Override
+        public void onVideoStitchSuccess(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onVideoStitchFailure(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onAudioStitchSuccess(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onAudioStitchFailure(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onMergeSuccess(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onMergeFailure(RecordingSession recordingSession) {
+
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +83,13 @@ public class ShareFragment extends Fragment {
             thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
             String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
             videoDurationTextView.setText(videoDurationStr);
+        }
+        else
+        {
+            StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
+                    getActivity().getApplicationContext(),
+                    stitchSuccessListener );
+            stitchClipsThread.start();
         }
         return root;
     }
