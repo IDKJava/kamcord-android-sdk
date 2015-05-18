@@ -32,6 +32,7 @@
     <string name="kamcordProfileTab">Profile</string>
     <string name="kamcordVideoTab">Top Videos</string>
     <string name="stitchingVideos">Stitching the clips&#8230;</string>
+    <string name="installThisGame">Install this game!</string>
 
     <string name="writeATitle">Write a title&#8230;</string>
     <string name="writeADescription">Write a description&#8230;</string>

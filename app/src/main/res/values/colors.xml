@@ -16,4 +16,6 @@
     <color name="EditTextBackgroundColor">#e2e2e2</color>
     <color name="TermsHighLighted">#353e44</color>
 
+    <color name="transparentWhite">#9fff</color>
+
 </resources>
