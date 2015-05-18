@@ -112,6 +112,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
         mFloatingActionButton = (ImageButton) findViewById(R.id.main_fab);
         mFloatingActionButton.setOnClickListener(this);
+
     }
 
     @Override

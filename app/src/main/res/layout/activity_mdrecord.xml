@@ -9,7 +9,7 @@
         android:id="@+id/main_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?attr/actionBarSize"/>
+        android:layout_marginTop="@dimen/tabsHeight"/>
 
     <LinearLayout
         android:id="@+id/toolBarContainer"
@@ -20,7 +20,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="@dimen/tabsHeight"
             android:background="@color/ColorPrimary" />
 
         <com.kamcord.app.utils.SlidingTabLayout

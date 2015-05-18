@@ -23,6 +23,7 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.utils.FileManagement;
+import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.utils.SpaceItemDecoration;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private LinearLayout toolBarContainer;
     private Toolbar mToolbar;
+    private SlidingTabLayout mSlidingTabLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,15 +63,31 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mSupportedGameList.clear();
         AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
 
+        // Custom Layout Params
+        toolBarContainer = (LinearLayout) getActivity().findViewById(R.id.toolBarContainer);
+        mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        mSlidingTabLayout = (SlidingTabLayout) getActivity().findViewById(R.id.tabs);
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mSlidingTabLayout.getLayoutParams();
+
         mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity().getApplicationContext(), 2));
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
+        View header = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.fragment_recyclerview_header, mRecyclerView, false);
+
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, header, 150);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return mRecyclerAdapter.isHeader(position) ? gridLayoutManager.getSpanCount() : 1;
+            }
+        });
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
+        mSwipeRefreshLayout.setProgressViewOffset(false, layoutParams.height, 200);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -82,14 +100,14 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 mSupportedGameList.clear();
+                mRecyclerAdapter.notifyDataSetChanged();
                 AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
             }
         });
 
-        toolBarContainer = (LinearLayout) getActivity().findViewById(R.id.toolBarContainer);
-        mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            private static final int HIDE_THRESHOLD = 20;
+            private static final int HIDE_THRESHOLD = 128;
+            private static final int SHOW_THRESHOLD = 48;
             private int scrolledDistance = 0;
             private boolean controlsVisible = true;
 
@@ -111,7 +129,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                     hideViews();
                     controlsVisible = false;
                     scrolledDistance = 0;
-                } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+                } else if (scrolledDistance < -SHOW_THRESHOLD && !controlsVisible) {
                     showViews();
                     controlsVisible = true;
                     scrolledDistance = 0;

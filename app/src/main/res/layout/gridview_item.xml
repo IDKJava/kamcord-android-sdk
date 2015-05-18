@@ -36,7 +36,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:padding="10dp"
-            android:text="dsds"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/gridTextColor" />
     </FrameLayout>
