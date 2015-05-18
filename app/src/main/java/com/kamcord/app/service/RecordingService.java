@@ -11,12 +11,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.utils.AudioRecordThread;
 import com.kamcord.app.utils.RecordHandlerThread;
-import com.kamcord.app.utils.StitchClipsThread;
 
 public class RecordingService extends Service {
     private static final String TAG = RecordingService.class.getSimpleName();
@@ -29,7 +27,6 @@ public class RecordingService extends Service {
     private AudioRecordThread mAudioRecordThread;
     private Handler mHandler;
     private Handler mAudioRecordHandler;
-    private StitchSuccessListener stitchSuccessListener;
     private RecordingSession recordingSession;
 
     public RecordingService() {
@@ -115,58 +112,15 @@ public class RecordingService extends Service {
             mRecordHandlerThread.quitSafely();
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
             mAudioRecordThread.quitSafely();
-
-            ExecuteBinaryResponseHandler executeBinaryResponseHandler = new ExecuteBinaryResponseHandler() {
-                @Override
-                public void onStart() {
-                }
-
-                @Override
-                public void onProgress(String message) {
-                    Log.d("progress:", message);
-                }
-
-                @Override
-                public void onFailure(String message) {
-                    if( stitchSuccessListener != null )
-                    {
-                        stitchSuccessListener.onStitchFailure(recordingSession);
-                    }
-                }
-
-                @Override
-                public void onSuccess(String message) {
-                    Log.d("FFmpeg execute:", message);
-                }
-                @Override
-                public void onFinish() {
-                    if(stitchSuccessListener != null) {
-                        stitchSuccessListener.onStitchSuccess(recordingSession);
-                    }
-                }
-            };
-            StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
-                    getApplicationContext(),
-                    executeBinaryResponseHandler );
-            stitchClipsThread.start();
             ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         } else {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }
     }
 
-    public void setStitchSuccessListener(StitchSuccessListener stitchSuccessListener) {
-        this.stitchSuccessListener = stitchSuccessListener;
-    }
-
     public RecordingSession getRecordingSession()
     {
         return recordingSession;
-    }
-
-    public interface StitchSuccessListener {
-        void onStitchSuccess(RecordingSession recordingSession);
-        void onStitchFailure(RecordingSession recordingSession);
     }
 
     public class LocalBinder extends Binder {

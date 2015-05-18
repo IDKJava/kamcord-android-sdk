@@ -25,7 +25,6 @@ import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
-import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.SlidingTabLayout;
 
 import java.io.File;
@@ -123,12 +122,16 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     }
                 } else {
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
-                    mProgressDialog = new ProgressDialog(this);
-                    mProgressDialog.show();
-                    mProgressDialog.setMessage(getResources().getString(R.string.stitchingVideos));
-                    mProgressDialog.setCanceledOnTouchOutside(false);
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                     stopService(new Intent(this, RecordingService.class));
+
+                    ShareFragment recordShareFragment = new ShareFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
+                    recordShareFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.main_activity_layout, recordShareFragment)
+                            .addToBackStack("ShareFragment").commit();
                 }
             }
         }
@@ -185,6 +188,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     }
 
     private class RecordingServiceConnection implements ServiceConnection {
+        private RecordingService recordingService;
         private MediaProjection mediaProjection = null;
         private RecordingSession recordingSession = null;
         private boolean isConnected = false;
@@ -207,32 +211,14 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
             return isConnected;
         }
 
+        public RecordingSession getServiceRecordingSession()
+        {
+            return recordingService != null ? recordingService.getRecordingSession() : null;
+        }
+
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            final RecordingService recordingService = ((RecordingService.LocalBinder) iBinder).getService();
-            recordingService.setStitchSuccessListener(new RecordingService.StitchSuccessListener() {
-                @Override
-                public void onStitchSuccess(RecordingSession session) {
-                    File video = new File(
-                            FileSystemManager.getRecordingSessionCacheDirectory(session),
-                            FileSystemManager.MERGED_VIDEO_FILENAME);
-                    if (video.exists()) {
-                        ShareFragment recordShareFragment = new ShareFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, recordingService.getRecordingSession());
-                        recordShareFragment.setArguments(bundle);
-                        getSupportFragmentManager().beginTransaction()
-                                .add(R.id.main_activity_layout, recordShareFragment)
-                                .addToBackStack("ShareFragment").commit();
-                        mProgressDialog.dismiss();
-                    }
-                }
-
-                @Override
-                public void onStitchFailure(RecordingSession recordingSession) {
-                    // TODO: show the user something about failing to stitch the clips.
-                }
-            });
+            recordingService = ((RecordingService.LocalBinder) iBinder).getService();
             if (isInitializedForRecording()) {
                 recordingService.startRecording(mediaProjection, recordingSession);
                 uninitialize();

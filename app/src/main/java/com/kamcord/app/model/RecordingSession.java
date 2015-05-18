@@ -25,7 +25,7 @@ public class RecordingSession implements Parcelable {
 
     public RecordingSession(Game game) {
         uuid = UUID.randomUUID().toString();
-        gameServerName = game.game_primary_id;
+        gameServerID = game.game_primary_id;
         gameServerName = game.name;
         gamePackageName = game.play_store_id;
     }
