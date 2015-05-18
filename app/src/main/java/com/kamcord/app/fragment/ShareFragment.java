@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +34,7 @@ public class ShareFragment extends Fragment {
     @InjectView(R.id.titleEditText) EditText titleEditText;
     @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
     @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
-    @InjectView(R.id.processingProgressBarContainer) FrameLayout processingProgressBarContainer;
+    @InjectView(R.id.processingProgressBarContainer) ViewGroup processingProgressBarContainer;
 
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
