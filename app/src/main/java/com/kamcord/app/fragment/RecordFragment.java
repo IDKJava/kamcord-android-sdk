@@ -129,19 +129,20 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
 
-                if (scrolledDistance > HIDE_THRESHOLD && controlsVisible && mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) > 0) {
+                    if (scrolledDistance > HIDE_THRESHOLD && controlsVisible && mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) > 0) {
 
-                    hideViews();
-                    controlsVisible = false;
-                    scrolledDistance = 0;
-                } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-                    showViews();
-                    controlsVisible = true;
-                    scrolledDistance = 0;
-                }
+                        hideViews();
+                        controlsVisible = false;
+                        scrolledDistance = 0;
+                    } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+                        showViews();
+                        controlsVisible = true;
+                        scrolledDistance = 0;
+                    }
 
-                if ((controlsVisible && i2 > 0) || (!controlsVisible && i2 < 0)) {
-                    scrolledDistance += i2;
+                    if ((controlsVisible && i2 > 0) || (!controlsVisible && i2 < 0)) {
+                        scrolledDistance += i2;
+                    }
                 }
             }
         });
