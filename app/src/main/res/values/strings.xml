@@ -36,4 +36,6 @@
     <string name="writeATitle">Write a title...</string>
     <string name="writeADescription">Write a description...</string>
 
+    <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
+
 </resources>

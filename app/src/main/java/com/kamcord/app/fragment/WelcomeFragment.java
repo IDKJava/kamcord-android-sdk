@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
-import com.kamcord.app.server.model.Account;
 import com.kamcord.app.utils.AccountManager;
 
 import butterknife.ButterKnife;
@@ -39,8 +38,7 @@ public class WelcomeFragment extends Fragment {
         ButterKnife.inject(this, root);
         initializeSubtitleText();
 
-        Account account = AccountManager.getStoredAccount();
-        if( account != null && account.token != null)
+        if( AccountManager.isLoggedIn() )
         {
             createProfileButton.setVisibility(View.GONE);
             loginButton.setVisibility(View.GONE);
@@ -48,10 +46,11 @@ public class WelcomeFragment extends Fragment {
                 @Override
                 public void run() {
                     Intent intent = new Intent(getActivity(), RecordActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                    getActivity().finish();
                 }
             }, 3000);
+            // TODO: cancel this delayed message if this activity is already finished.
         }
         else
         {
@@ -92,6 +91,7 @@ public class WelcomeFragment extends Fragment {
     @OnClick(R.id.skipButton)
     public void skip() {
         Intent intent = new Intent(getActivity(), RecordActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 

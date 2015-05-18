@@ -30,7 +30,8 @@
         <activity
             android:name=".activity.RecordActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.UploadService" />
