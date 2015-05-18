@@ -1,14 +1,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main_activity_layout"
     tools:context="com.kamcord.app.activity.RecordActivity">
 
-    <LinearLayout
+    <android.support.v4.view.ViewPager
+        android:id="@+id/main_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/tabsHeight"/>
+
+    <LinearLayout
+        android:id="@+id/toolBarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tabsHeight"
+            android:background="@color/ColorPrimary" />
 
         <com.kamcord.app.utils.SlidingTabLayout
             android:id="@+id/tabs"
@@ -17,13 +30,8 @@
             android:background="@color/ColorPrimary"
             android:elevation="2dp" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/main_pager"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:layout_weight="1" />
-
     </LinearLayout>
+
 
     <FrameLayout
         android:id="@+id/md_main_layout"
@@ -34,14 +42,14 @@
         android:layout_alignParentTop="true">
 
         <ImageButton
-            android:layout_margin="15dp"
+            android:id="@+id/main_fab"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:src="@drawable/ic_videocam_white_36dp"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="15dp"
             android:background="@drawable/fab_circle"
-            android:id="@+id/main_fab"
-            android:elevation="3dp"
-            android:layout_gravity="right|bottom" />
+            android:elevation="4dp"
+            android:src="@drawable/ic_videocam_white_36dp" />
 
     </FrameLayout>
 
