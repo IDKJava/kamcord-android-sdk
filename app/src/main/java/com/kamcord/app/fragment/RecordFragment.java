@@ -6,10 +6,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
@@ -39,6 +43,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
     private FileManagement mFileManagement;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private LinearLayout toolBarContainer;
+    private Toolbar mToolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -80,7 +86,12 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             }
         });
 
+        toolBarContainer = (LinearLayout) getActivity().findViewById(R.id.toolBarContainer);
+        mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            private static final int HIDE_THRESHOLD = 20;
+            private int scrolledDistance = 0;
+            private boolean controlsVisible = true;
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
@@ -95,8 +106,30 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
                 }
+
+                if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
+                    hideViews();
+                    controlsVisible = false;
+                    scrolledDistance = 0;
+                } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+                    showViews();
+                    controlsVisible = true;
+                    scrolledDistance = 0;
+                }
+
+                if ((controlsVisible && i2 > 0) || (!controlsVisible && i2 < 0)) {
+                    scrolledDistance += i2;
+                }
             }
         });
+    }
+
+    private void hideViews() {
+        toolBarContainer.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+    }
+
+    private void showViews() {
+        toolBarContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
     private boolean isAppInstalled(String packageName) {

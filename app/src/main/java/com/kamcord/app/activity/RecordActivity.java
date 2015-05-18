@@ -40,7 +40,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     private int numberOfTabs;
     public String videoPath;
     private ProgressDialog mProgressDialog;
-    private Toolbar mToolbar;
+    public Toolbar mToolbar;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mConnection = new RecordingServiceConnection();
