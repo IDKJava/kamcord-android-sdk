@@ -60,7 +60,7 @@ public class ShareFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putString(VideoPreviewFragment.ARG_VIDEO_PATH,
                 new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
-                    FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
+                        FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
         videoPreviewFragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_activity_layout, videoPreviewFragment)
@@ -69,8 +69,7 @@ public class ShareFragment extends Fragment {
     }
 
     @OnClick(R.id.shareButton)
-    public void share()
-    {
+    public void share() {
         recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
         recordingSession.setVideoDescription(descriptionEditText.getEditableText().toString());
 
