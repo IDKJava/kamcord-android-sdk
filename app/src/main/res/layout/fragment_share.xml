@@ -29,7 +29,8 @@
             android:layout_alignTop="@id/thumbnailImageView"
             android:layout_alignRight="@id/thumbnailImageView"
             android:layout_alignBottom="@id/thumbnailImageView"
-            android:background="#9fff" >
+            android:background="#9fff"
+            android:orientation="horizontal">
             <ProgressBar
                 android:layout_width="50dp"
                 android:layout_height="50dp"
