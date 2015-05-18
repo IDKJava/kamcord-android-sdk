@@ -81,7 +81,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
                 public void onClick(View v) {
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemClick(itemLayoutView, getAdapterPosition());
-
                     }
                 }
             });

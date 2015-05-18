@@ -24,6 +24,8 @@ import com.kamcord.app.utils.FileManagement;
 import com.kamcord.app.utils.SpaceItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit.Callback;
@@ -149,6 +151,12 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                         mSupportedGameList.add(game);
                     }
                 }
+                Collections.sort(mSupportedGameList, new Comparator<Game>() {
+                    @Override
+                    public int compare(Game g1, Game g2) {
+                        return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
+                    }
+                });
                 mRecyclerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
