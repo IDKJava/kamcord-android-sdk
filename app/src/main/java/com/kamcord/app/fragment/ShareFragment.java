@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ public class ShareFragment extends Fragment {
     @InjectView(R.id.titleEditText) EditText titleEditText;
     @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
     @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
+    @InjectView(R.id.processingProgressBarContainer) FrameLayout processingProgressBarContainer;
 
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
@@ -59,12 +61,13 @@ public class ShareFragment extends Fragment {
 
         @Override
         public void onMergeSuccess(RecordingSession recordingSession) {
-
+            videoPrepared(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
+                    FileSystemManager.MERGED_VIDEO_FILENAME));
         }
 
         @Override
         public void onMergeFailure(RecordingSession recordingSession) {
-
+            // TODO: show the user something about failing to process the video.
         }
     };
 
@@ -78,14 +81,13 @@ public class ShareFragment extends Fragment {
 
         File videoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                 FileSystemManager.MERGED_VIDEO_FILENAME);
-        String videoPath = videoFile.getAbsolutePath();
         if (videoFile.exists()) {
-            thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
-            String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
-            videoDurationTextView.setText(videoDurationStr);
+            videoPrepared(videoFile);
         }
         else
         {
+            processingProgressBarContainer.setVisibility(View.VISIBLE);
+            playImageView.setVisibility(View.GONE);
             StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
                     getActivity().getApplicationContext(),
                     stitchSuccessListener );
@@ -117,5 +119,21 @@ public class ShareFragment extends Fragment {
         Intent uploadIntent = new Intent(getActivity(), UploadService.class);
         uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
         getActivity().startService(uploadIntent);
+    }
+
+    private void videoPrepared(File videoFile)
+    {
+        String videoPath = videoFile.getAbsolutePath();
+        thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
+        String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
+        videoDurationTextView.setText(videoDurationStr);
+        processingProgressBarContainer.setVisibility(View.GONE);
+        playImageView.setVisibility(View.VISIBLE);
+    }
+
+    private void videoProcessing()
+    {
+        processingProgressBarContainer.setVisibility(View.VISIBLE);
+        playImageView.setVisibility(View.GONE);
     }
 }
