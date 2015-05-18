@@ -94,6 +94,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                 } else {
                     mFloatingActionButton.animate().translationY(0);
                 }
+
             }
 
             @Override

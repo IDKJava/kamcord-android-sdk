@@ -37,5 +37,8 @@
     <string name="writeADescription">Write a description...</string>
 
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
+    <string name="signInProfilePrompt">You must sign in to Kamcord to view your profile page.</string>
+    <string name="signIn">Sign In</string>
+
 
 </resources>
