@@ -20,21 +20,23 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
+import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
-import com.kamcord.app.fragment.RecordShareFragment;
+import com.kamcord.app.fragment.ShareFragment;
+import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.SlidingTabLayout;
 
 import java.io.File;
 
-public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.selectdGameListener {
+public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.SelectedGameListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
     ImageButton mFloatingActionButton;
     private ViewPager mViewPager;
-    private com.kamcord.app.adapter.MainViewPagerAdapter mainViewPagerAdapter;
+    private MainViewPagerAdapter mainViewPagerAdapter;
     private SlidingTabLayout mTabs;
     private CharSequence tabTitles[];
     private int numberOfTabs;
@@ -129,12 +131,16 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     }
                 } else {
                     ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
-                    mProgressDialog = new ProgressDialog(this);
-                    mProgressDialog.show();
-                    mProgressDialog.setMessage(getResources().getString(R.string.stitchingVideos));
-                    mProgressDialog.setCanceledOnTouchOutside(false);
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                     stopService(new Intent(this, RecordingService.class));
+
+                    ShareFragment recordShareFragment = new ShareFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
+                    recordShareFragment.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.main_activity_layout, recordShareFragment)
+                            .addToBackStack("ShareFragment").commit();
                 }
             }
         }
@@ -166,7 +172,8 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
 
                     MediaProjection projection = ((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
                             .getMediaProjection(resultCode, data);
-                    mConnection.initializeForRecording(projection, mSelectedGame);
+                    RecordingSession recordingSession = new RecordingSession(mSelectedGame);
+                    mConnection.initializeForRecording(projection, recordingSession);
 
                     startService(new Intent(this, RecordingService.class));
                     bindService(new Intent(this, RecordingService.class), mConnection, 0);
@@ -190,55 +197,39 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     }
 
     private class RecordingServiceConnection implements ServiceConnection {
+        private RecordingService recordingService;
         private MediaProjection mediaProjection = null;
-        private Game gameModel = null;
+        private RecordingSession recordingSession = null;
         private boolean isConnected = false;
 
-        public void initializeForRecording(MediaProjection mediaProjection, Game gameModel) {
+        public void initializeForRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
             this.mediaProjection = mediaProjection;
-            this.gameModel = gameModel;
+            this.recordingSession = recordingSession;
         }
 
         public void uninitialize() {
             this.mediaProjection = null;
-            this.gameModel = null;
+            this.recordingSession = null;
         }
 
         public boolean isInitializedForRecording() {
-            return mediaProjection != null && gameModel != null;
+            return mediaProjection != null && recordingSession != null;
         }
 
         public boolean isConnected() {
             return isConnected;
         }
 
+        public RecordingSession getServiceRecordingSession()
+        {
+            return recordingService != null ? recordingService.getRecordingSession() : null;
+        }
+
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            RecordingService recordingService = ((RecordingService.LocalBinder) iBinder).getService();
-            recordingService.setStitchSuccessListener(new RecordingService.StitchSuccessListener() {
-                @Override
-                public void getVideoFolderPath(String str) {
-                    videoPath = str + "/out.mp4";
-                    File video = new File(videoPath);
-                    if (video.exists()) {
-                        RecordShareFragment recordShareFragment = new RecordShareFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("videopath", videoPath);
-                        recordShareFragment.setArguments(bundle);
-                        getSupportFragmentManager().beginTransaction()
-                                .add(R.id.main_activity_layout, recordShareFragment)
-                                .addToBackStack("ShareFragment").commit();
-                        mProgressDialog.dismiss();
-                    }
-                }
-
-                @Override
-                public void failureStitch() {
-                    // do nothing
-                }
-            });
+            recordingService = ((RecordingService.LocalBinder) iBinder).getService();
             if (isInitializedForRecording()) {
-                recordingService.startRecording(mediaProjection, gameModel);
+                recordingService.startRecording(mediaProjection, recordingSession);
                 uninitialize();
             }
             isConnected = true;

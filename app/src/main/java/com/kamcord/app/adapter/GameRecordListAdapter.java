@@ -16,6 +16,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.Optional;
+
 public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAdapter.ViewHolder> {
 
     private Context mContext;
@@ -63,7 +67,13 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
                     .load(game.icons.regular)
                     .tag(game.play_store_id)
                     .into(viewHolder.itemImage);
+            if (game.isInstalled) {
+                viewHolder.installGameTextView.setVisibility(View.GONE);
+            } else {
+                viewHolder.installGameTextView.setVisibility(View.VISIBLE);
+            }
         }
+
     }
 
     @Override
@@ -86,19 +96,18 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView itemPackageName;
-        private ImageView itemImage;
+        @Optional @InjectView(R.id.item_packagename) TextView itemPackageName;
+        @Optional @InjectView(R.id.item_image) ImageView itemImage;
+        @Optional @InjectView(R.id.installGameTextView) TextView installGameTextView;
 
         public ViewHolder(final View itemLayoutView) {
             super(itemLayoutView);
-            itemPackageName = (TextView) itemLayoutView.findViewById(R.id.item_packagename);
-            itemImage = (ImageView) itemLayoutView.findViewById(R.id.item_image);
+            ButterKnife.inject(this, itemLayoutView);
             itemLayoutView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mItemClickListener != null) {
                         mItemClickListener.onItemClick(itemLayoutView, getAdapterPosition());
-
                     }
                 }
             });

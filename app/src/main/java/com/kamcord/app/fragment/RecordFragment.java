@@ -1,6 +1,8 @@
 package com.kamcord.app.fragment;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,6 +29,8 @@ import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.utils.SpaceItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit.Callback;
@@ -106,8 +110,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         });
 
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            private static final int HIDE_THRESHOLD = 128;
-            private static final int SHOW_THRESHOLD = 48;
+            private static final int HIDE_THRESHOLD = 20;
             private int scrolledDistance = 0;
             private boolean controlsVisible = true;
 
@@ -119,17 +122,19 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             @Override
             public void onScrolled(RecyclerView recyclerView, int i, int i2) {
                 if (mRecyclerView.getChildAt(0) != null) {
+                    Log.v("FindMe", " wat. " + mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)));
+                    Log.d("dsdsd", " " + mRecyclerView.getChildAt(0).getTop());
                     mSwipeRefreshLayout.setEnabled(mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) == 0
                             && mRecyclerView.getChildAt(0).getTop() == getResources().getDimensionPixelSize(R.dimen.grid_margin));
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
-                }
 
-                if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
+                if (scrolledDistance > HIDE_THRESHOLD && controlsVisible && mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) > 0) {
+
                     hideViews();
                     controlsVisible = false;
                     scrolledDistance = 0;
-                } else if (scrolledDistance < -SHOW_THRESHOLD && !controlsVisible) {
+                } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
                     showViews();
                     controlsVisible = true;
                     scrolledDistance = 0;
@@ -164,16 +169,25 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
     @Override
     public void onItemClick(View view, int position) {
-        mSelectedGame = mSupportedGameList.get(position);
-        selectdGameListener listener = (selectdGameListener) getActivity();
-        listener.selectedGame(mSelectedGame);
-        Toast.makeText(getActivity(),
-                "You will record " + mSelectedGame.name,
-                Toast.LENGTH_SHORT)
-                .show();
+        Game game = mSupportedGameList.get(position);
+        if( game.isInstalled ) {
+            mSelectedGame = game;
+            SelectedGameListener listener = (SelectedGameListener) getActivity();
+            listener.selectedGame(mSelectedGame);
+            Toast.makeText(getActivity(),
+                    "You will record " + mSelectedGame.name,
+                    Toast.LENGTH_SHORT)
+                    .show();
+        } else {
+            mSelectedGame = null;
+            Intent intent = new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + game.play_store_id));
+            getActivity().startActivity(intent);
+        }
     }
 
-    public interface selectdGameListener {
+    public interface SelectedGameListener {
         void selectedGame(com.kamcord.app.server.model.Game selectedGameModel);
     }
 
@@ -182,10 +196,19 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
                 for (Game game : gamesListWrapper.response.game_list) {
-                    if (game.play_store_id != null && isAppInstalled(game.play_store_id)) {
+                    if (game.play_store_id != null ) {
+                        if (isAppInstalled(game.play_store_id)) {
+                            game.isInstalled = true;
+                        }
                         mSupportedGameList.add(game);
                     }
                 }
+                Collections.sort(mSupportedGameList, new Comparator<Game>() {
+                    @Override
+                    public int compare(Game g1, Game g2) {
+                        return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
+                    }
+                });
                 mRecyclerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }

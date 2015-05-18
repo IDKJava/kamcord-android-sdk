@@ -17,6 +17,7 @@ import com.kamcord.app.R;
  * Created by donliang1 on 5/13/15.
  */
 public class VideoPreviewFragment extends Fragment {
+    public static final String ARG_VIDEO_PATH = "video_path";
 
     private VideoView mVideoView;
     private ImageButton replayImageBtn;
@@ -33,7 +34,7 @@ public class VideoPreviewFragment extends Fragment {
 
         mVideoView = (VideoView) v.findViewById(R.id.video_preview);
         replayImageBtn = (ImageButton) v.findViewById(R.id.replayButton);
-        final String videoPath = getArguments().getString("videopath");
+        final String videoPath = getArguments().getString(ARG_VIDEO_PATH);
 
         if(mediaController == null) {
             mediaController = new MediaController(getActivity());

@@ -4,9 +4,9 @@ import android.content.Context;
 
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
-import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
+import com.kamcord.app.model.RecordingSession;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,92 +14,131 @@ import java.io.IOException;
 
 public class StitchClipsThread extends Thread {
 
-    private String gameSessionPath;
+    public interface StitchSuccessListener {
+        void onVideoStitchSuccess(RecordingSession recordingSession);
+        void onVideoStitchFailure(RecordingSession recordingSession);
+        void onAudioStitchSuccess(RecordingSession recordingSession);
+        void onAudioStitchFailure(RecordingSession recordingSession);
+        void onMergeSuccess(RecordingSession recordingSession);
+        void onMergeFailure(RecordingSession recordingSession);
+    }
+
+    private RecordingSession mRecordingSession;
     private Context ffMpegContext;
     private FFmpeg mFFmpeg;
-    private static String[] commandArray;
-    private int commentAmount = 3;
-    private ExecuteBinaryResponseHandler executeBinaryResponseHandler;
+    private StitchSuccessListener listener;
 
-    public StitchClipsThread(String gameSessionFolder, Context context, ExecuteBinaryResponseHandler executeBinaryResponseHandler) {
-        this.gameSessionPath = gameSessionFolder;
+    public StitchClipsThread(RecordingSession recordingSession, Context context, StitchSuccessListener listener) {
+        this.mRecordingSession = recordingSession;
         this.ffMpegContext = context;
-        this.executeBinaryResponseHandler = executeBinaryResponseHandler;
+        this.listener = listener;
     }
 
     @Override
     public void run() {
-
-        File ResultFolder = new File(gameSessionPath);
-        if (!ResultFolder.exists() || !ResultFolder.isDirectory()) {
-            ResultFolder.mkdir();
-        }
-
-        writeClipFile();
-
         mFFmpeg = FFmpeg.getInstance(ffMpegContext);
         try {
-            mFFmpeg.loadBinary(new LoadBinaryResponseHandler() {
-                @Override
-                public void onStart() {
-                }
-
-                @Override
-                public void onFailure() {
-                }
-
-                @Override
-                public void onSuccess() {
-                }
-
-                @Override
-                public void onFinish() {
-                }
-            });
+            mFFmpeg.loadBinary(null);
         } catch (FFmpegNotSupportedException e) {
             e.printStackTrace();
         }
 
-        commandArray = new String[commentAmount];
-        commandArray[0] = "-f concat -i " + gameSessionPath + "video_cliplist.txt -c copy " + gameSessionPath + "video.mp4";
-        commandArray[1] = "-f concat -i " + gameSessionPath + "audio_cliplist.txt -c copy " + gameSessionPath + "audioUntrimmed.aac";
-        commandArray[2] = "-i " + gameSessionPath + "video.mp4 -i " + gameSessionPath + "audioUnTrimmed.aac -vcodec copy -acodec copy -bsf:a aac_adtstoasc -strict -2 " + gameSessionPath + "out.mp4";
-        startStitching();
-    }
+        writeClipFiles();
 
-    public void startStitching() {
+        File recordingSessionCacheDirectory = FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession);
+        File videoClipListFile = new File(recordingSessionCacheDirectory, FileSystemManager.VIDEO_CLIPLIST_FILENAME);
+        File audioClipListFile = new File(recordingSessionCacheDirectory, FileSystemManager.AUDIO_CLIPLIST_FILENAME);
+        File stitchedVideoFile = new File(recordingSessionCacheDirectory, FileSystemManager.STITCHED_VIDEO_FILENAME);
+        File stitchedAudioFile = new File(recordingSessionCacheDirectory, FileSystemManager.STITCHED_AUDIO_FILENAME);
+        File mergedFile = new File(recordingSessionCacheDirectory, FileSystemManager.MERGED_VIDEO_FILENAME);
 
-        for (int i = 0; i < commentAmount; i++) {
-            try {
-                // Execute "ffmpeg -version" command you just need to pass "-version"
-                mFFmpeg.execute(commandArray[i], executeBinaryResponseHandler);
-            } catch (FFmpegCommandAlreadyRunningException e) {
-                e.printStackTrace();
+        stitchClips(videoClipListFile, stitchedVideoFile, new ExecuteBinaryResponseHandler() {
+            @Override
+            public void onSuccess(String message)
+            {
+                listener.onVideoStitchSuccess(mRecordingSession);
             }
-        }
+            @Override
+            public void onFailure(String message)
+            {
+                listener.onVideoStitchFailure(mRecordingSession);
+            }
+        });
 
+        stitchClips(audioClipListFile, stitchedAudioFile, new ExecuteBinaryResponseHandler() {
+            @Override
+            public void onSuccess(String message)
+            {
+                listener.onAudioStitchSuccess(mRecordingSession);
+            }
+            @Override
+            public void onFailure(String message)
+            {
+                listener.onAudioStitchFailure(mRecordingSession);
+            }
+        });
+
+        mergeVideoAndAudio(stitchedVideoFile, stitchedVideoFile, mergedFile, new ExecuteBinaryResponseHandler() {
+            @Override
+            public void onSuccess(String message)
+            {
+                listener.onMergeSuccess(mRecordingSession);
+            }
+            @Override
+            public void onFailure(String message)
+            {
+                listener.onMergeFailure(mRecordingSession);
+            }
+        });
     }
 
-    private void writeClipFile() {
+    private void stitchClips(File clipListFile, File result, ExecuteBinaryResponseHandler handler)
+    {
+        String command = "-f concat -i " + clipListFile.getAbsolutePath() + " -c copy " + result.getAbsolutePath();
         try {
-            File gameSessionFolder = new File(gameSessionPath);
-            FileWriter fileWriter = new FileWriter(gameSessionPath + "/video_cliplist.txt");
-            for (final File file : gameSessionFolder.listFiles()) {
-                if (file.getName().endsWith(".mp4")) {
-                    fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
-                }
-            }
-            fileWriter.close();
+            mFFmpeg.execute(command, handler);
+        } catch (FFmpegCommandAlreadyRunningException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-            fileWriter = new FileWriter(gameSessionPath + "/audio_cliplist.txt");
-            for (final File file : gameSessionFolder.listFiles()) {
-                if (file.getName().endsWith(".aac")) {
-                    fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
-                }
-            }
-            fileWriter.close();
+    private void mergeVideoAndAudio(File videoFile, File audioFile, File result, ExecuteBinaryResponseHandler handler)
+    {
+        String command = "-i " + videoFile.getAbsolutePath() + " -i " + audioFile.getAbsolutePath()
+                + " -vcodec copy -acodec copy -bsf:a aac_adtstoasc -strict -2 " + result.getAbsolutePath();
+        try {
+            mFFmpeg.execute(command, handler);
+        } catch( FFmpegCommandAlreadyRunningException e ) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeClipFiles() {
+        try {
+            File recordingSessionCacheDirectory = FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession);
+            File videoClipListFile = new File(
+                    FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
+                    FileSystemManager.VIDEO_CLIPLIST_FILENAME);
+            File audioClipListFile = new File(
+                    FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
+                    FileSystemManager.AUDIO_CLIPLIST_FILENAME);
+
+            writeFileNamesWithExtensionToFile(videoClipListFile, recordingSessionCacheDirectory, ".mp4");
+            writeFileNamesWithExtensionToFile(audioClipListFile, recordingSessionCacheDirectory, ".aac");
         } catch (IOException iox) {
             iox.printStackTrace();
         }
+    }
+
+    private void writeFileNamesWithExtensionToFile(File outFile, File directory, String fileExtension) throws IOException
+    {
+        FileWriter fileWriter = new FileWriter(outFile);
+        for (final File file : directory.listFiles()) {
+            if (file.getName().endsWith(fileExtension)) {
+                fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
+            }
+        }
+        fileWriter.close();
     }
 }

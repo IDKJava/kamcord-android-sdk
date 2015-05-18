@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp">
 
         <ImageView
-            android:id="@+id/videothumbnail_imageview"
+            android:id="@+id/thumbnailImageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_alignParentStart="true"
@@ -20,28 +20,59 @@
             android:scaleType="centerCrop"
             android:src="@drawable/default_thumbnails" />
 
+        <LinearLayout
+            android:id="@+id/processingProgressBarContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_alignLeft="@id/thumbnailImageView"
+            android:layout_alignTop="@id/thumbnailImageView"
+            android:layout_alignRight="@id/thumbnailImageView"
+            android:layout_alignBottom="@id/thumbnailImageView"
+            android:background="#9fff"
+            android:orientation="horizontal">
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="8dp"
+                android:indeterminate="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/processing"/>
+        </LinearLayout>
+
         <EditText
-            android:id="@+id/editText"
+            android:id="@+id/titleEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/videothumbnail_imageview"
-            android:hint="Give your video a title" />
+            android:layout_below="@+id/thumbnailImageView"
+            android:hint="@string/writeATitle" />
+
+        <EditText
+            android:id="@+id/descriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/titleEditText"
+            android:hint="@string/writeADescription" />
 
         <TextView
-            android:id="@+id/previewduration_textview"
+            android:id="@+id/videoDurationTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/videothumbnail_imageview"
+            android:layout_alignBottom="@+id/thumbnailImageView"
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="21dp"
             android:layout_marginEnd="25dp"
             android:background="#CC000000"
-            android:text="video_duration"
             android:textColor="@android:color/white" />
 
-        <ImageButton
-            android:id="@+id/video_playbtn"
+        <ImageView
+            android:id="@+id/playImageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
@@ -52,7 +83,7 @@
     </RelativeLayout>
 
     <Button
-        android:id="@+id/video_uploadbtn"
+        android:id="@+id/shareButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
