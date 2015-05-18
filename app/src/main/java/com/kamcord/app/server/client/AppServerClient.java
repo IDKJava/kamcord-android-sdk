@@ -34,7 +34,7 @@ import retrofit.http.Query;
  * Created by pplunkett on 5/11/15.
  */
 public class AppServerClient {
-    private static final String APP_SERVER_URL = "https://app.kamcord.com";
+    private static final String BASE_URL = "https://app.kamcord.com";
 
     public interface AppServer
     {
@@ -64,10 +64,10 @@ public class AppServerClient {
         void logout(Callback<GenericResponse<?>> cb);
 
         @POST("/app/v3/kcp/video/reserve")
-        ReserveVideoResponse reserveVideo(@Body ReserveVideoEntity body);
+        GenericResponse<ReserveVideoResponse> reserveVideo(@Body ReserveVideoEntity body);
 
-        @POST("app/v3/kcp/video/uploaded")
-        void videoUploaded(@Body VideoUploadedEntity body);
+        @POST("/app/v3/kcp/video/uploaded")
+        GenericResponse<?> videoUploaded(@Body VideoUploadedEntity body);
     }
 
     private static AppServer instance;
@@ -103,7 +103,7 @@ public class AppServerClient {
                     .create();
 
             RestAdapter restAdapter = new RestAdapter.Builder()
-                    .setEndpoint(APP_SERVER_URL)
+                    .setEndpoint(BASE_URL)
                     .setConverter(new GsonConverter(gson))
                     .setRequestInterceptor(addHeadersInterceptor)
                     .setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
