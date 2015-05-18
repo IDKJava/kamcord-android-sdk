@@ -27,14 +27,10 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
     private static OnItemClickListener mItemClickListener;
     private static final int ITEM_VIEW_TYPE_HEADER = 0;
     private static final int ITEM_VIEW_TYPE_ITEM = 1;
-    private final View header;
-    private int height;
 
-    public GameRecordListAdapter(Context context, List<Game> games, View header, int height) {
+    public GameRecordListAdapter(Context context, List<Game> games) {
         this.mContext = context;
         this.mGames = games;
-        this.header = header;
-        this.height = height;
     }
 
     @Override
@@ -43,7 +39,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
         View itemLayoutView;
 
         if (viewType == ITEM_VIEW_TYPE_HEADER) {
-
             itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_recyclerview_header, null);
             itemLayoutView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getTabsHeight(mContext)));
             viewHolder = new ViewHolder(itemLayoutView);

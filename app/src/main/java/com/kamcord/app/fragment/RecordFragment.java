@@ -78,9 +78,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
-        View header = LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.fragment_recyclerview_header, mRecyclerView, false);
-
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, header, 150);
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -91,7 +89,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         });
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
-        mSwipeRefreshLayout.setProgressViewOffset(false, layoutParams.height, 200);
+        mSwipeRefreshLayout.setProgressViewOffset(false, layoutParams.height, getResources().getDimensionPixelOffset(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -122,27 +120,25 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             @Override
             public void onScrolled(RecyclerView recyclerView, int i, int i2) {
                 if (mRecyclerView.getChildAt(0) != null) {
-                    Log.v("FindMe", " wat. " + mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)));
-                    Log.d("dsdsd", " " + mRecyclerView.getChildAt(0).getTop());
                     mSwipeRefreshLayout.setEnabled(mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) == 0
                             && mRecyclerView.getChildAt(0).getTop() == getResources().getDimensionPixelSize(R.dimen.grid_margin));
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
+                }
 
-                    if (scrolledDistance > HIDE_THRESHOLD && controlsVisible && mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) > 0) {
+                if (scrolledDistance > HIDE_THRESHOLD && controlsVisible && mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) > 0) {
 
-                        hideViews();
-                        controlsVisible = false;
-                        scrolledDistance = 0;
-                    } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-                        showViews();
-                        controlsVisible = true;
-                        scrolledDistance = 0;
-                    }
+                    hideViews();
+                    controlsVisible = false;
+                    scrolledDistance = 0;
+                } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+                    showViews();
+                    controlsVisible = true;
+                    scrolledDistance = 0;
+                }
 
-                    if ((controlsVisible && i2 > 0) || (!controlsVisible && i2 < 0)) {
-                        scrolledDistance += i2;
-                    }
+                if ((controlsVisible && i2 > 0) || (!controlsVisible && i2 < 0)) {
+                    scrolledDistance += i2;
                 }
             }
         });
@@ -170,8 +166,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
     @Override
     public void onItemClick(View view, int position) {
-        Game game = mSupportedGameList.get(position);
-        if( game.isInstalled ) {
+        Game game = mSupportedGameList.get(position - 1);
+        if (game.isInstalled) {
             mSelectedGame = game;
             SelectedGameListener listener = (SelectedGameListener) getActivity();
             listener.selectedGame(mSelectedGame);
@@ -197,7 +193,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
                 for (Game game : gamesListWrapper.response.game_list) {
-                    if (game.play_store_id != null ) {
+                    if (game.play_store_id != null) {
                         if (isAppInstalled(game.play_store_id)) {
                             game.isInstalled = true;
                         }
