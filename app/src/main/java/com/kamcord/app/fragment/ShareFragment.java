@@ -15,6 +15,8 @@ import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.FileSystemManager;
+import com.kamcord.app.utils.StitchClipsThread;
+import com.kamcord.app.utils.StitchClipsThread.StitchSuccessListener;
 import com.kamcord.app.utils.VideoUtils;
 
 import java.io.File;
@@ -32,8 +34,41 @@ public class ShareFragment extends Fragment {
     @InjectView(R.id.titleEditText) EditText titleEditText;
     @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
     @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
+    @InjectView(R.id.processingProgressBarContainer) ViewGroup processingProgressBarContainer;
 
     private RecordingSession recordingSession;
+    private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
+        @Override
+        public void onVideoStitchSuccess(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onVideoStitchFailure(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onAudioStitchSuccess(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onAudioStitchFailure(RecordingSession recordingSession) {
+
+        }
+
+        @Override
+        public void onMergeSuccess(RecordingSession recordingSession) {
+            videoPrepared(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
+                    FileSystemManager.MERGED_VIDEO_FILENAME));
+        }
+
+        @Override
+        public void onMergeFailure(RecordingSession recordingSession) {
+            // TODO: show the user something about failing to process the video.
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,11 +80,17 @@ public class ShareFragment extends Fragment {
 
         File videoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                 FileSystemManager.MERGED_VIDEO_FILENAME);
-        String videoPath = videoFile.getAbsolutePath();
         if (videoFile.exists()) {
-            thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
-            String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
-            videoDurationTextView.setText(videoDurationStr);
+            videoPrepared(videoFile);
+        }
+        else
+        {
+            processingProgressBarContainer.setVisibility(View.VISIBLE);
+            playImageView.setVisibility(View.GONE);
+            StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
+                    getActivity().getApplicationContext(),
+                    stitchSuccessListener );
+            stitchClipsThread.start();
         }
         return root;
     }
@@ -77,5 +118,21 @@ public class ShareFragment extends Fragment {
         Intent uploadIntent = new Intent(getActivity(), UploadService.class);
         uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
         getActivity().startService(uploadIntent);
+    }
+
+    private void videoPrepared(File videoFile)
+    {
+        String videoPath = videoFile.getAbsolutePath();
+        thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
+        String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
+        videoDurationTextView.setText(videoDurationStr);
+        processingProgressBarContainer.setVisibility(View.GONE);
+        playImageView.setVisibility(View.VISIBLE);
+    }
+
+    private void videoProcessing()
+    {
+        processingProgressBarContainer.setVisibility(View.VISIBLE);
+        playImageView.setVisibility(View.GONE);
     }
 }
