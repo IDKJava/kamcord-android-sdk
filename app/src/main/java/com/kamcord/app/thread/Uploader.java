@@ -12,7 +12,6 @@ import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.server.model.builder.ReserveVideoEntityBuilder;
 import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
-import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.FileSystemManager;
 
 import org.apache.http.Header;
@@ -33,7 +32,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
-import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -55,14 +53,10 @@ public class Uploader extends Thread
         VOICE
     }
 
-    private WeakReference<UploadService> mServiceReference;
     private RecordingSession mRecordingSession;
-//    private static Set<UploadListener> mListeners = new HashSet<UploadListener>();
 
     private int mTotalParts = 0;
-    private long mTotalBytesWritten = 0;
     private FileInputStream mPartInputStream;
-    private long mTotalBytesToWrite = 0;
 
     private static XmlPullParserFactory xmlParserFactory;
 
@@ -74,9 +68,7 @@ public class Uploader extends Thread
     private static final long S3_GENERIC_PART_SIZE = 5 * 1024 * 1024;
 
     private String mServerVideoId = "";
-    private String mLocalVideoId = "";
     private String mVideoBucketName = null;
-    private String mThumbnailBucketName = null;
     private String mVoiceBucketName = null;
     private String mVideoKeyName = null;
     private String mVoiceKeyName = null;
@@ -84,10 +76,6 @@ public class Uploader extends Thread
 
     private String[] mVideoEtags;
     private String mS3UploadId = null;
-
-    private boolean mIsReshare = false;
-
-    public static String audioCodecName = null;
 
     static
     {
@@ -103,11 +91,9 @@ public class Uploader extends Thread
         }
     }
 
-    public Uploader(UploadService service, RecordingSession recordingSession)
+    public Uploader(RecordingSession recordingSession)
     {
-        mServiceReference = new WeakReference<UploadService>(service);
         mRecordingSession = recordingSession;
-        mLocalVideoId = recordingSession.getUUID();
     }
 
     @Override
@@ -118,26 +104,12 @@ public class Uploader extends Thread
                 if( initialize() )
                 {
                     reserveVideoUpload();
-//                    if( mIntentModel.voice_enabled )
-//                    {
-//                        convertWavToMp4();
-//                    }
-                    // requestS3Credentials();
                     startUploadToS3(UploadType.VIDEO);
                     for( int part = 0; part < mTotalParts; part++ )
                     {
                         uploadPartToS3(part, UploadType.VIDEO);
                     }
                     finishUploadToS3(UploadType.VIDEO);
-//                    if( mIntentModel.voice_enabled )
-//                    {
-//                        startUploadToS3(UploadType.VOICE);
-//                        for( int part = 0; part < mTotalParts; part++ )
-//                        {
-//                            uploadPartToS3(part, UploadType.VOICE);
-//                        }
-//                        finishUploadToS3(UploadType.VOICE);
-//                    }
                     informKamcordUploadFinished();
                 }
 
@@ -150,16 +122,11 @@ public class Uploader extends Thread
             }
 
         Log.e(TAG, "Unable to upload video, giving up.");
-//        notifyUploaderDone(false);
     }
     
     private boolean initialize() throws Exception
     {
         mTotalParts = 0;
-        mTotalBytesToWrite = new File(
-                FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
-                FileSystemManager.MERGED_VIDEO_FILENAME).length();
-
         return true;
     }
 
@@ -201,16 +168,9 @@ public class Uploader extends Thread
             mS3AccessKey = genericResponse.response.credentials.access_key_id;
             mS3SecretKey = genericResponse.response.credentials.secret_access_key;
             mS3SessionToken = genericResponse.response.credentials.session_token;
-            mTotalBytesWritten = 0;
-
-//            notifyReceivedVideoId(mServerVideoId);
 
             // Once we have the video id, we can share to the specified social networks.
             // TODO: handle this when we start sharing to external networks.
-//            if( mIntentModel.shares != null && mIntentModel.shares.size() > 0 )
-//            {
-//                this.notifyShareTo(mIntentModel.shares, mLocalVideoId, mServerVideoId);
-//            }
         }
         catch( Exception e )
         {
@@ -334,7 +294,6 @@ public class Uploader extends Thread
         if ( mVideoEtags[partNumber] != null )
         {
             Log.v(TAG, "Already uploaded part " + partNumber + ", continuing with next part");
-            mTotalBytesWritten += S3_GENERIC_PART_SIZE;
             return;
         }
 
@@ -461,20 +420,6 @@ public class Uploader extends Thread
             Log.e(TAG, "Invalid status code returned while attempting to finish file upload...");
             throw new Exception();
         }
-
-        // Finally, handle the response from Amazon.
-        switch( uploadType )
-        {
-        case VOICE:
-//            notifyVoiceUploadFinished();
-//            notifyUploadFinished();
-            break;
-        default:
-        case VIDEO:
-//            notifyVideoUploadFinished();
-//            notifyUploadFinished();
-            break;
-        }
     }
 
     private void informKamcordUploadFinished() throws Exception
@@ -495,11 +440,6 @@ public class Uploader extends Thread
             Log.e(TAG, "Invalid status code returned while attempting to complete upload.");
             throw new Exception();
         }
-
-        // Finally, handle the response.
-//        notifyUploaderDone(true);
-//        UploadService service = mServiceReference.get();
-//        service.doCleanup(mLocalVideoId);
     }
 
     private HttpEntityEnclosingRequestBase makeRequestForS3(String method, String contentType, String bucketName, String onlineId, String suffix) throws Exception
@@ -610,21 +550,18 @@ public class Uploader extends Thread
         public void write(int b) throws IOException
         {
             outstream.write(b);
-            addToBytesWritten(1);
         }
 
         @Override
         public void write(byte[] b) throws IOException
         {
             outstream.write(b);
-            addToBytesWritten(b.length);
         }
 
         @Override
         public void write(byte[] b, int off, int len) throws IOException
         {
             outstream.write(b, off, len);
-            addToBytesWritten(len);
         }
 
         @Override
@@ -638,145 +575,5 @@ public class Uploader extends Thread
         {
             outstream.close();
         }
-
-        public void addToBytesWritten(long addition)
-        {
-            mTotalBytesWritten += addition;
-//            notifyUploadProgressed();
-        }
     }
-
-    /*
-    public static void addListener(UploadListener listener)
-    {
-        mListeners.add(listener);
-    }
-
-    public static boolean removeListener(UploadListener listener)
-    {
-        return mListeners.remove(listener);
-    }
-
-    public void notifyReceivedVideoId(String id)
-    {
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.receivedVideoId(mLocalVideoId, mServerVideoId);
-        }
-    }
-
-    public void notifyShareTo(List<ShareModel> shares, String localVideoId, String serverVideoId)
-    {
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.shareTo(shares, localVideoId, serverVideoId);
-        }
-    }
-
-    public void notifyUploadStarted(String url)
-    {
-        lastUploadProgress = 0;
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.uploadStarted(mLocalVideoId, mTries);
-        }
-        Kamcord.notifyVideoWillBeginUploading(mServerVideoId, url);
-    }
-
-    public void notifyVideoUploadStarted()
-    {
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.videoUploadStarted(mLocalVideoId);
-        }
-    }
-
-    public void notifyVoiceUploadStarted()
-    {
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.voiceUploadStarted(mLocalVideoId);
-        }
-    }
-
-    private long lastUploadProgress = 0;
-    private long uploadProgressNotifyFrequency = (long) 1e9; // Once every second.
-
-    public void notifyUploadProgressed()
-    {
-        if( System.nanoTime() - lastUploadProgress > uploadProgressNotifyFrequency )
-        {
-            lastUploadProgress = System.nanoTime();
-            try
-            {
-                if( mTotalBytesToWrite > 0 )
-                {
-                    float progress = (float) mTotalBytesWritten / mTotalBytesToWrite;
-                    Set<UploadListener> copy = new HashSet<UploadListener>();
-                    copy.addAll(mListeners);
-                    for( UploadListener listener : copy )
-                    {
-                        listener.uploadProgressed(mLocalVideoId, progress);
-                    }
-                    Kamcord.notifyVideoUploadProgressed(mServerVideoId, progress);
-                }
-            }
-            catch( Exception e )
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void notifyUploadFinished()
-    {
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.uploadFinished(mLocalVideoId);
-        }
-    }
-
-    public void notifyVideoUploadFinished()
-    {
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.videoUploadFinished(mLocalVideoId);
-        }
-    }
-
-    public void notifyVoiceUploadFinished()
-    {
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.voiceUploadFinished(mLocalVideoId);
-        }
-    }
-
-    public void notifyUploaderDone(boolean success)
-    {
-        Set<UploadListener> copy = new HashSet<UploadListener>();
-        copy.addAll(mListeners);
-        for( UploadListener listener : copy )
-        {
-            listener.uploaderDone(mLocalVideoId, success);
-        }
-        Kamcord.notifyVideoFinishedUploading(mServerVideoId, success);
-    }
-    */
 }

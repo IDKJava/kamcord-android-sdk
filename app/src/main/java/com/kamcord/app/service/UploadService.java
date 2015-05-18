@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import com.kamcord.app.model.RecordingSession;
-import com.kamcord.app.server.model.ReserveVideoResponse;
 import com.kamcord.app.thread.Uploader;
 
 public class UploadService extends IntentService {
@@ -20,7 +19,7 @@ public class UploadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         RecordingSession recordingSession = intent.getParcelableExtra(ARG_SESSION_TO_SHARE);
 
-        Uploader uploader = new Uploader(this, recordingSession);
+        Uploader uploader = new Uploader(recordingSession);
         uploader.start();
         try {
             uploader.join();
@@ -28,12 +27,5 @@ public class UploadService extends IntentService {
             e.printStackTrace();
         }
 
-    }
-
-    public interface UploadCallback
-    {
-        void uploadStarted(RecordingSession theSession);
-        void videoReserved(RecordingSession theSession, ReserveVideoResponse reserveVideoResponse);
-        void uploadFailed(RecordingSession theSession);
     }
 }
