@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
+import com.kamcord.app.server.model.Account;
+import com.kamcord.app.utils.AccountManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -36,6 +38,27 @@ public class WelcomeFragment extends Fragment {
 
         ButterKnife.inject(this, root);
         initializeSubtitleText();
+
+        Account account = AccountManager.getStoredAccount();
+        if( account != null && account.token != null)
+        {
+            createProfileButton.setVisibility(View.GONE);
+            loginButton.setVisibility(View.GONE);
+            root.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(getActivity(), RecordActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+            }, 3000);
+        }
+        else
+        {
+            AccountManager.clearStoredAccount();
+            createProfileButton.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.VISIBLE);
+        }
 
         return root;
     }

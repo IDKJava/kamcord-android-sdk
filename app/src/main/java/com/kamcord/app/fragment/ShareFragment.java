@@ -54,6 +54,13 @@ public class ShareFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onDestroyView()
+    {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
     @OnClick(R.id.thumbnailImageView)
     public void pushVideoPreviewFragment() {
         VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
