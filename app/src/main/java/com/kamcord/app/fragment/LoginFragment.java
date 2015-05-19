@@ -80,6 +80,7 @@ public class LoginFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), RecordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                getActivity().finish();
             }
             else
             {
