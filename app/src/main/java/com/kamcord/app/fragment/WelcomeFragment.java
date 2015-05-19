@@ -27,6 +27,8 @@ import butterknife.OnClick;
  */
 public class WelcomeFragment extends Fragment {
 
+    public static final int CLEAR_DELAY_MS = 2500;
+
     @InjectView(R.id.subtitleTextView) TextView subtitleTextView;
     @InjectView(R.id.skipButton) Button skipButton;
     @InjectView(R.id.createProfileButton) Button createProfileButton;
@@ -59,7 +61,7 @@ public class WelcomeFragment extends Fragment {
             {
                 clearHandler = new Handler();
             }
-            clearHandler.postDelayed(clearRunnable, 2500);
+            clearHandler.postDelayed(clearRunnable, CLEAR_DELAY_MS);
         }
         else
         {
