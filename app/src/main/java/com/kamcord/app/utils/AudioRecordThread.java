@@ -41,6 +41,10 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     private ActivityManager activityManager;
     private RecordingSession mRecordingSession;
 
+    private static class CodecSettings {
+        public static final int SAMPLE_RATE = 44100;
+        public static final int BIT_RATE = 64 * 1024;
+    }
 
     public AudioRecordThread(Context context, RecordingSession recordingSession) {
         super("dsdsd");
@@ -111,10 +115,10 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
 
         mAudioRecord = new AudioRecord(
                 MediaRecorder.AudioSource.MIC,
-                44100,
+                CodecSettings.SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
-                AudioRecord.getMinBufferSize(44100,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT));
+                AudioRecord.getMinBufferSize(CodecSettings.SAMPLE_RATE,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT));
 
         prepareMediaCodec();
 
@@ -130,7 +134,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
 
         if( mAudioCodec != null && mMediaMuxer != null)
         {
-
             MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
             mCurrentTimestampUs = 0;
             mAudioRecord.startRecording();
@@ -149,8 +152,8 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     {
         try {
             mAudioCodec = MediaCodec.createEncoderByType("audio/mp4a-latm");
-            MediaFormat format = MediaFormat.createAudioFormat("audio/mp4a-latm", 44100, 1);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, 64 * 1024);
+            MediaFormat format = MediaFormat.createAudioFormat("audio/mp4a-latm", CodecSettings.SAMPLE_RATE, 1);
+            format.setInteger(MediaFormat.KEY_BIT_RATE, CodecSettings.BIT_RATE);
             format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
             mAudioCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         } catch(IOException e)
@@ -166,7 +169,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             ByteBuffer buffer = mAudioCodec.getInputBuffer(bufferIndex);
             int numBytesRead = mAudioRecord.read(buffer, buffer.capacity());
             mAudioCodec.queueInputBuffer(bufferIndex, 0, numBytesRead, mCurrentTimestampUs, 0);
-            mCurrentTimestampUs += 1000000 * (numBytesRead / 2) / 44100;
+            mCurrentTimestampUs += 1000000 * (numBytesRead / 2) / CodecSettings.SAMPLE_RATE;
         }
     }
 

@@ -43,12 +43,18 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private boolean mMuxerStart = false;
     private boolean mMuxerWrite = false;
     private int mTrackIndex = -1;
-    private int frameRate = 15;
     private static final String VIDEO_TYPE = "video/avc";
 
     private ActivityManager mActivityManager;
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
+
+    private static class CodecSettings
+    {
+        private static final int FRAME_RATE = 30;
+        private static final int BIT_RATE = 4000000;
+        private static final float RESOLUTION_MULTIPLIER = 0.5f;
+    }
 
     private enum AspectRatio
     {
@@ -148,8 +154,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             }
 
             defaultDisplay.getMetrics(metrics);
-            int screenWidth = metrics.widthPixels / 2;
-            int screenHeight = metrics.heightPixels / 2;
+            int screenWidth = (int) (metrics.widthPixels * CodecSettings.RESOLUTION_MULTIPLIER);
+            int screenHeight = (int) (metrics.heightPixels * CodecSettings.RESOLUTION_MULTIPLIER);
             int screenDensity = metrics.densityDpi;
 
             if( (aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight) || (aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth) )
@@ -220,8 +226,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         // Set format properties
         mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 4000000);
-        mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
+        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, CodecSettings.BIT_RATE);
+        mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, CodecSettings.FRAME_RATE);
         mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
 
         mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
