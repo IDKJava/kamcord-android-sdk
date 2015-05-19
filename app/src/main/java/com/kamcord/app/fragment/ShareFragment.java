@@ -76,7 +76,7 @@ public class ShareFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_shareview, container, false);
+        View root = inflater.inflate(R.layout.fragment_share, container, false);
 
         ButterKnife.inject(this, root);
         recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
