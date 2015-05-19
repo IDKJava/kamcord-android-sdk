@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,10 +28,12 @@ import java.io.File;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 
 public class ShareFragment extends Fragment {
     public static final String ARG_RECORDING_SESSION = "recording_session";
 
+    @InjectView(R.id.share_scrollview) ScrollView scrollView;
     @InjectView(R.id.thumbnailImageView) ImageView thumbnailImageView;
     @InjectView(R.id.playImageView) ImageView playImageView;
     @InjectView(R.id.shareButton) Button shareButton;
@@ -85,17 +88,21 @@ public class ShareFragment extends Fragment {
                 FileSystemManager.MERGED_VIDEO_FILENAME);
         if (videoFile.exists()) {
             videoPrepared(videoFile);
-        }
-        else
-        {
+        } else {
             processingProgressBarContainer.setVisibility(View.VISIBLE);
             playImageView.setVisibility(View.GONE);
             StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
                     getActivity().getApplicationContext(),
-                    stitchSuccessListener );
+                    stitchSuccessListener);
             stitchClipsThread.start();
         }
         return root;
+    }
+
+    @OnTouch({R.id.titleEditText, R.id.descriptionEditText})
+    public boolean scrollToBottom() {
+        scrollView.smoothScrollTo(0, scrollView.getBottom());
+        return false;
     }
 
     @Override
@@ -138,8 +145,7 @@ public class ShareFragment extends Fragment {
         }
     }
 
-    private void videoPrepared(File videoFile)
-    {
+    private void videoPrepared(File videoFile) {
         String videoPath = videoFile.getAbsolutePath();
         thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
         String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
@@ -148,8 +154,7 @@ public class ShareFragment extends Fragment {
         playImageView.setVisibility(View.VISIBLE);
     }
 
-    private void videoProcessing()
-    {
+    private void videoProcessing() {
         processingProgressBarContainer.setVisibility(View.VISIBLE);
         playImageView.setVisibility(View.GONE);
     }
