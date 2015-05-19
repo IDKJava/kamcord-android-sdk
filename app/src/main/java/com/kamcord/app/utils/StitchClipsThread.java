@@ -78,7 +78,7 @@ public class StitchClipsThread extends Thread {
             }
         });
 
-        mergeVideoAndAudio(stitchedVideoFile, stitchedVideoFile, mergedFile, new ExecuteBinaryResponseHandler() {
+        mergeVideoAndAudio(stitchedVideoFile, stitchedAudioFile, mergedFile, new ExecuteBinaryResponseHandler() {
             @Override
             public void onSuccess(String message)
             {
