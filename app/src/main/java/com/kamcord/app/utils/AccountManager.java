@@ -20,6 +20,12 @@ public class AccountManager {
         preferences = context.getApplicationContext()
                 .getSharedPreferences(ACCOUNT_PREFS, Context.MODE_PRIVATE);
     }
+
+    public static boolean isLoggedIn()
+    {
+        Account account = getStoredAccount();
+        return account != null && account.token != null;
+    }
     public static Account getStoredAccount()
     {
         Account account = null;

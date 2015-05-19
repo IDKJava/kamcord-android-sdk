@@ -2,6 +2,7 @@ package com.kamcord.app.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
+import com.kamcord.app.utils.AccountManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -25,10 +27,24 @@ import butterknife.OnClick;
  */
 public class WelcomeFragment extends Fragment {
 
+    public static final int CLEAR_DELAY_MS = 2500;
+
     @InjectView(R.id.subtitleTextView) TextView subtitleTextView;
     @InjectView(R.id.skipButton) Button skipButton;
     @InjectView(R.id.createProfileButton) Button createProfileButton;
     @InjectView(R.id.loginButton) Button loginButton;
+
+    private Handler clearHandler;
+    private final Runnable clearRunnable = new Runnable()
+    {
+        @Override
+        public void run() {
+            Intent intent = new Intent(getActivity(), RecordActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            getActivity().finish();
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,6 +52,23 @@ public class WelcomeFragment extends Fragment {
 
         ButterKnife.inject(this, root);
         initializeSubtitleText();
+
+        if( AccountManager.isLoggedIn() )
+        {
+            createProfileButton.setVisibility(View.GONE);
+            loginButton.setVisibility(View.GONE);
+            if( clearHandler == null )
+            {
+                clearHandler = new Handler();
+            }
+            clearHandler.postDelayed(clearRunnable, CLEAR_DELAY_MS);
+        }
+        else
+        {
+            AccountManager.clearStoredAccount();
+            createProfileButton.setVisibility(View.VISIBLE);
+            loginButton.setVisibility(View.VISIBLE);
+        }
 
         return root;
     }
@@ -68,8 +101,14 @@ public class WelcomeFragment extends Fragment {
 
     @OnClick(R.id.skipButton)
     public void skip() {
+        if( clearHandler != null )
+        {
+            clearHandler.removeCallbacks(clearRunnable);
+        }
         Intent intent = new Intent(getActivity(), RecordActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+        getActivity().finish();
     }
 
     @OnClick(R.id.createProfileButton)

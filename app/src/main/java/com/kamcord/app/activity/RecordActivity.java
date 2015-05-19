@@ -28,8 +28,6 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.SlidingTabLayout;
 
-import java.io.File;
-
 public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.SelectedGameListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
@@ -53,15 +51,27 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
         setContentView(R.layout.activity_mdrecord);
 
         initMainActivity();
+    }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
         if (RecordingService.isRunning()) {
             bindService(new Intent(this, RecordingService.class), mConnection, 0);
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onResume() {
+        super.onResume();
+        handleServiceRunning();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
         if (mConnection.isConnected()) {
             unbindService(mConnection);
         }
@@ -101,6 +111,7 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                 } else {
                     mFloatingActionButton.animate().translationY(0);
                 }
+
             }
 
             @Override
@@ -134,13 +145,20 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                     stopService(new Intent(this, RecordingService.class));
 
-                    ShareFragment recordShareFragment = new ShareFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
-                    recordShareFragment.setArguments(bundle);
-                    getSupportFragmentManager().beginTransaction()
-                            .add(R.id.main_activity_layout, recordShareFragment)
-                            .addToBackStack("ShareFragment").commit();
+                    RecordingSession recordingSession = mConnection.getServiceRecordingSession();
+                    if( recordingSession != null ) {
+                        ShareFragment recordShareFragment = new ShareFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
+                        recordShareFragment.setArguments(bundle);
+                        getSupportFragmentManager().beginTransaction()
+                                .add(R.id.main_activity_layout, recordShareFragment)
+                                .addToBackStack("ShareFragment").commit();
+                    }
+                    else
+                    {
+                        // TODO: show the user something about being unable to get the recording session.
+                    }
                 }
             }
         }
@@ -154,12 +172,6 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     public void obtainMediaProjection() {
         startActivityForResult(((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
                 .createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        handleServiceRunning();
     }
 
     @Override
