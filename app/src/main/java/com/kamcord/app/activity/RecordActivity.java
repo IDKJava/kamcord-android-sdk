@@ -28,8 +28,6 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.SlidingTabLayout;
 
-import java.io.File;
-
 public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.SelectedGameListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
@@ -134,13 +132,20 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                     stopService(new Intent(this, RecordingService.class));
 
-                    ShareFragment recordShareFragment = new ShareFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
-                    recordShareFragment.setArguments(bundle);
-                    getSupportFragmentManager().beginTransaction()
-                            .add(R.id.main_activity_layout, recordShareFragment)
-                            .addToBackStack("ShareFragment").commit();
+                    RecordingSession recordingSession = mConnection.getServiceRecordingSession();
+                    if( recordingSession != null ) {
+                        ShareFragment recordShareFragment = new ShareFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
+                        recordShareFragment.setArguments(bundle);
+                        getSupportFragmentManager().beginTransaction()
+                                .add(R.id.main_activity_layout, recordShareFragment)
+                                .addToBackStack("ShareFragment").commit();
+                    }
+                    else
+                    {
+                        // TODO: show the user something about being unable to get the recording session.
+                    }
                 }
             }
         }
