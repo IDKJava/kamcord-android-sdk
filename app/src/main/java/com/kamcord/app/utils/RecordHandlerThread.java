@@ -43,7 +43,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private boolean mMuxerStart = false;
     private boolean mMuxerWrite = false;
     private int mTrackIndex = -1;
-    private int frameRate = 60;
+    private int frameRate = 15;
     private static final String VIDEO_TYPE = "video/avc";
 
     private ActivityManager mActivityManager;
@@ -148,8 +148,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             }
 
             defaultDisplay.getMetrics(metrics);
-            int screenWidth = metrics.widthPixels;
-            int screenHeight = metrics.heightPixels;
+            int screenWidth = metrics.widthPixels / 2;
+            int screenHeight = metrics.heightPixels / 2;
             int screenDensity = metrics.densityDpi;
 
             if( (aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight) || (aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth) )
@@ -168,7 +168,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
                 File clipFile = new File(
                         FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
-                        String.format(Locale.ENGLISH, "clip%03d.mp4", clipNumber));
+                        String.format(Locale.ENGLISH, "video%03d.mp4", clipNumber));
                 mMuxer = new MediaMuxer(clipFile.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
@@ -220,7 +220,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         // Set format properties
         mMediaFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 1000000);
+        mMediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 4000000);
         mMediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, frameRate);
         mMediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
 
