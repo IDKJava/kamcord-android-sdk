@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
@@ -28,13 +30,22 @@ import butterknife.OnClick;
 public class ShareFragment extends Fragment {
     public static final String ARG_RECORDING_SESSION = "recording_session";
 
-    @InjectView(R.id.thumbnailImageView) ImageView thumbnailImageView;
-    @InjectView(R.id.playImageView) ImageView playImageView;
-    @InjectView(R.id.shareButton) Button shareButton;
-    @InjectView(R.id.titleEditText) EditText titleEditText;
-    @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
-    @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
-    @InjectView(R.id.processingProgressBarContainer) ViewGroup processingProgressBarContainer;
+    @InjectView(R.id.share_scrollview)
+    ScrollView scrollView;
+    @InjectView(R.id.thumbnailImageView)
+    ImageView thumbnailImageView;
+    @InjectView(R.id.playImageView)
+    ImageView playImageView;
+    @InjectView(R.id.shareButton)
+    Button shareButton;
+    @InjectView(R.id.titleEditText)
+    EditText titleEditText;
+    @InjectView(R.id.descriptionEditText)
+    EditText descriptionEditText;
+    @InjectView(R.id.videoDurationTextView)
+    TextView videoDurationTextView;
+    @InjectView(R.id.processingProgressBarContainer)
+    ViewGroup processingProgressBarContainer;
 
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
@@ -73,7 +84,7 @@ public class ShareFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_share, container, false);
+        View root = inflater.inflate(R.layout.fragment_shareview, container, false);
 
         ButterKnife.inject(this, root);
         recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
@@ -82,16 +93,29 @@ public class ShareFragment extends Fragment {
                 FileSystemManager.MERGED_VIDEO_FILENAME);
         if (videoFile.exists()) {
             videoPrepared(videoFile);
-        }
-        else
-        {
+        } else {
             processingProgressBarContainer.setVisibility(View.VISIBLE);
             playImageView.setVisibility(View.GONE);
             StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
                     getActivity().getApplicationContext(),
-                    stitchSuccessListener );
+                    stitchSuccessListener);
             stitchClipsThread.start();
         }
+
+        titleEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                scrollView.smoothScrollTo(0, scrollView.getBottom());
+                return false;
+            }
+        });
+        descriptionEditText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                scrollView.smoothScrollTo(0, scrollView.getBottom());
+                return false;
+            }
+        });
         return root;
     }
 
@@ -101,7 +125,7 @@ public class ShareFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putString(VideoPreviewFragment.ARG_VIDEO_PATH,
                 new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
-                    FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
+                        FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
         videoPreviewFragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_activity_layout, videoPreviewFragment)
@@ -110,8 +134,7 @@ public class ShareFragment extends Fragment {
     }
 
     @OnClick(R.id.shareButton)
-    public void share()
-    {
+    public void share() {
         recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
         recordingSession.setVideoDescription(descriptionEditText.getEditableText().toString());
 
@@ -120,8 +143,7 @@ public class ShareFragment extends Fragment {
         getActivity().startService(uploadIntent);
     }
 
-    private void videoPrepared(File videoFile)
-    {
+    private void videoPrepared(File videoFile) {
         String videoPath = videoFile.getAbsolutePath();
         thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
         String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
@@ -130,8 +152,7 @@ public class ShareFragment extends Fragment {
         playImageView.setVisibility(View.VISIBLE);
     }
 
-    private void videoProcessing()
-    {
+    private void videoProcessing() {
         processingProgressBarContainer.setVisibility(View.VISIBLE);
         playImageView.setVisibility(View.GONE);
     }
