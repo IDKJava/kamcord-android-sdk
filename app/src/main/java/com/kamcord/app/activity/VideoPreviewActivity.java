@@ -63,6 +63,6 @@ public class VideoPreviewActivity extends Activity {
 
     @Override
     public void onDestroy() {
-
+        super.onDestroy();
     }
 }
