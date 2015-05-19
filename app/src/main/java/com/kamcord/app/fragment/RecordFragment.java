@@ -18,6 +18,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.GameRecordListAdapter;
 import com.kamcord.app.server.client.AppServerClient;
@@ -192,6 +193,20 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
+                if(BuildConfig.DEBUG)
+                {
+                    Game ripples = new Game();
+                    ripples.name = "Ripple Test";
+                    ripples.game_primary_id = "3047";
+                    ripples.play_store_id = "com.kamcord.ripples";
+                    ripples.icons = new Game.Icons();
+                    ripples.icons.regular = "https://www.kamcord.com/images/core/logo-kamcord@2x.png";
+                    if( isAppInstalled(ripples.play_store_id) )
+                    {
+                        ripples.isInstalled = true;
+                    }
+                    mSupportedGameList.add(ripples);
+                }
                 for (Game game : gamesListWrapper.response.game_list) {
                     if (game.play_store_id != null) {
                         if (isAppInstalled(game.play_store_id)) {
