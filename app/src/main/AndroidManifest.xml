@@ -34,8 +34,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.VideoPreviewActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
+            android:label="@string/app_name" />
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.UploadService" />

@@ -1,8 +1,11 @@
 package com.kamcord.app.activity;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.MediaController;
@@ -19,6 +22,9 @@ public class VideoPreviewActivity extends Activity {
     private VideoView mVideoView;
     private ImageButton replayImageBtn;
     private MediaController mediaController;
+    private MediaMetadataRetriever mediaMetadataRetriever;
+    private int videoHeight;
+    private int videoWidth;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -28,9 +34,27 @@ public class VideoPreviewActivity extends Activity {
     }
 
     public void initVideoPreview() {
-        mVideoView = (VideoView) findViewById(R.id.video_preview);
+        mVideoView = (VideoView) findViewById(R.id.videoview_preview);
         replayImageBtn = (ImageButton) findViewById(R.id.replayButton);
         final String videoPath = getIntent().getExtras().getString(ARG_VIDEO_PATH);
+        Log.d("VideoPath", videoPath);
+
+        // Determine videoview orientation
+        mediaMetadataRetriever = new MediaMetadataRetriever();
+        mediaMetadataRetriever.setDataSource(videoPath);
+        videoHeight = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+        videoWidth = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+        if(videoHeight <= videoWidth) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+
+        replayImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replayImageBtn.setVisibility(View.INVISIBLE);
+                mVideoView.start();
+            }
+        });
 
         if(mediaController == null) {
             mediaController = new MediaController(getApplicationContext());
@@ -44,14 +68,6 @@ public class VideoPreviewActivity extends Activity {
         mVideoView.setVideoPath(videoPath);
         mVideoView.start();
         mVideoView.requestFocus();
-
-        replayImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replayImageBtn.setVisibility(View.INVISIBLE);
-                mVideoView.start();
-            }
-        });
 
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
