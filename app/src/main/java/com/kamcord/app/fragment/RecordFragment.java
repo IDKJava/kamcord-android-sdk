@@ -1,5 +1,6 @@
 package com.kamcord.app.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -156,11 +157,14 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private boolean isAppInstalled(String packageName) {
         boolean appIsInstalled = false;
 
-        PackageManager pm = getActivity().getPackageManager();
-        try {
-            pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
-            appIsInstalled = true;
-        } catch (PackageManager.NameNotFoundException e) {
+        Activity activity = getActivity();
+        if( activity != null ) {
+            PackageManager pm = activity.getPackageManager();
+            try {
+                pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+                appIsInstalled = true;
+            } catch (PackageManager.NameNotFoundException e) {
+            }
         }
         return appIsInstalled;
     }
