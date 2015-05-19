@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,6 +25,7 @@ import java.io.File;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 
 public class ShareFragment extends Fragment {
     public static final String ARG_RECORDING_SESSION = "recording_session";
@@ -93,22 +93,13 @@ public class ShareFragment extends Fragment {
                     stitchSuccessListener);
             stitchClipsThread.start();
         }
-
-        titleEditText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                scrollView.smoothScrollTo(0, scrollView.getBottom());
-                return false;
-            }
-        });
-        descriptionEditText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                scrollView.smoothScrollTo(0, scrollView.getBottom());
-                return false;
-            }
-        });
         return root;
+    }
+
+    @OnTouch({R.id.titleEditText, R.id.descriptionEditText})
+    public boolean scrollToBottom() {
+        scrollView.smoothScrollTo(0, scrollView.getBottom());
+        return false;
     }
 
     @OnClick(R.id.thumbnailImageView)
