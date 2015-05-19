@@ -3,22 +3,37 @@ package com.kamcord.app.utils;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
+import android.media.MediaFormat;
+import android.media.MediaMuxer;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.PowerManager;
-import android.util.Log;
 
 import com.kamcord.app.model.RecordingSession;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
 
 public class AudioRecordThread extends HandlerThread implements Handler.Callback {
 
-    private MediaRecorder mRecorder = null;
+    private MediaCodec mAudioCodec = null;
+    private AudioRecord mAudioRecord = null;
+    private MediaMuxer mMediaMuxer = null;
+
+    private long mCurrentTimestampUs = 0;
+    private boolean mMuxerStart = false;
+    private boolean mMuxerWrite = false;
+    private int mTrackIndex = -1;
+
+
     private Context mContext;
     private Handler mHandler;
     private int audioNumber = 0;
@@ -26,6 +41,10 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     private ActivityManager activityManager;
     private RecordingSession mRecordingSession;
 
+    private static class CodecSettings {
+        public static final int SAMPLE_RATE = 44100;
+        public static final int BIT_RATE = 64 * 1024;
+    }
 
     public AudioRecordThread(Context context, RecordingSession recordingSession) {
         super("dsdsd");
@@ -93,29 +112,123 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     }
 
     private void recordUntilBackground() {
-        File audioFile = new File(
-                FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
-                String.format(Locale.ENGLISH, "audio%03d.aac", audioNumber));
-        mRecorder = new MediaRecorder();
-        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
-        mRecorder.setOutputFile(audioFile.getAbsolutePath());
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+
+        mAudioRecord = new AudioRecord(
+                MediaRecorder.AudioSource.MIC,
+                CodecSettings.SAMPLE_RATE,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT,
+                AudioRecord.getMinBufferSize(CodecSettings.SAMPLE_RATE,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT));
+
+        prepareMediaCodec();
 
         try {
-            mRecorder.prepare();
-        } catch (IOException e) {
-            Log.e("Recorder", "prepare() failed");
+            File audioFile = new File(
+                    FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
+                    String.format(Locale.ENGLISH, "audio%03d.mp4", audioNumber));
+            mMediaMuxer = new MediaMuxer(audioFile.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+        } catch( IOException e)
+        {
+            mMediaMuxer = null;
         }
 
-        mRecorder.start();
+        if( mAudioCodec != null && mMediaMuxer != null)
+        {
+            MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
+            mCurrentTimestampUs = 0;
+            mAudioRecord.startRecording();
+            mAudioCodec.start();
 
-        while (isGameInForeground()) {
+            while(isGameInForeground()) {
+                queueEncoder();
+                drainEncoder(info);
+            }
+
+            releaseEncoder();
         }
+    }
 
-        mRecorder.stop();
-        mRecorder.release();
-        mRecorder = null;
+    private void prepareMediaCodec()
+    {
+        try {
+            mAudioCodec = MediaCodec.createEncoderByType("audio/mp4a-latm");
+            MediaFormat format = MediaFormat.createAudioFormat("audio/mp4a-latm", CodecSettings.SAMPLE_RATE, 1);
+            format.setInteger(MediaFormat.KEY_BIT_RATE, CodecSettings.BIT_RATE);
+            format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
+            mAudioCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        } catch(IOException e)
+        {
+            mAudioCodec = null;
+        }
+    }
+
+    private void queueEncoder() {
+        int bufferIndex = mAudioCodec.dequeueInputBuffer(1000);
+        if (bufferIndex >= 0)
+        {
+            ByteBuffer buffer = mAudioCodec.getInputBuffer(bufferIndex);
+            int numBytesRead = mAudioRecord.read(buffer, buffer.capacity());
+            mAudioCodec.queueInputBuffer(bufferIndex, 0, numBytesRead, mCurrentTimestampUs, 0);
+            mCurrentTimestampUs += 1000000 * (numBytesRead / 2) / CodecSettings.SAMPLE_RATE;
+        }
+    }
+
+    private void drainEncoder(MediaCodec.BufferInfo info) {
+        int encoderStatus = mAudioCodec.dequeueOutputBuffer(info, 0);
+        if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
+            // No output available
+        } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+            if (!mMuxerStart) {
+                mTrackIndex = mMediaMuxer.addTrack(mAudioCodec.getOutputFormat());
+                mMediaMuxer.start();
+                mMuxerStart = true;
+            }
+        } else if (encoderStatus < 0) {
+            // ignore it, but why?
+        } else {
+            ByteBuffer encodedData = mAudioCodec.getOutputBuffer(encoderStatus);
+            if (encodedData == null) {
+                throw new RuntimeException("Could not fetch buffer." + encoderStatus);
+            }
+
+            if ((info.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0) {
+                info.size = 0;
+            }
+
+            if (info.size != 0) {
+                if (mMuxerStart) {
+                    encodedData.position(info.offset);
+                    encodedData.limit(info.offset + info.size);
+                    mMediaMuxer.writeSampleData(mTrackIndex, encodedData, info);
+                    mMuxerWrite = true;
+                }
+            }
+
+            mAudioCodec.releaseOutputBuffer(encoderStatus, false);
+        }
+    }
+
+    private void releaseEncoder()
+    {
+        if (mAudioCodec != null) {
+            mAudioCodec.stop();
+            mAudioCodec.release();
+            mAudioCodec = null;
+        }
+        if( mAudioRecord != null )
+        {
+            mAudioRecord.stop();
+            mAudioRecord.release();
+            mAudioRecord = null;
+        }
+        if (mMediaMuxer != null) {
+            if (mMuxerStart && mMuxerWrite) {
+                mMediaMuxer.stop();
+            }
+            mMediaMuxer.release();
+            mMediaMuxer = null;
+            mMuxerStart = false;
+        }
     }
 
     public static class Message {

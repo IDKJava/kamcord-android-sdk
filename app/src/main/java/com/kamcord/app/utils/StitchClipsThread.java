@@ -106,7 +106,7 @@ public class StitchClipsThread extends Thread {
     private void mergeVideoAndAudio(File videoFile, File audioFile, File result, ExecuteBinaryResponseHandler handler)
     {
         String command = "-i " + videoFile.getAbsolutePath() + " -i " + audioFile.getAbsolutePath()
-                + " -vcodec copy -acodec copy -bsf:a aac_adtstoasc -strict -2 " + result.getAbsolutePath();
+                + " -vcodec copy -acodec copy " + result.getAbsolutePath();
         try {
             mFFmpeg.execute(command, handler);
         } catch( FFmpegCommandAlreadyRunningException e ) {
@@ -124,18 +124,18 @@ public class StitchClipsThread extends Thread {
                     FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
                     FileSystemManager.AUDIO_CLIPLIST_FILENAME);
 
-            writeFileNamesWithExtensionToFile(videoClipListFile, recordingSessionCacheDirectory, ".mp4");
-            writeFileNamesWithExtensionToFile(audioClipListFile, recordingSessionCacheDirectory, ".aac");
+            writeFileNamesWithExtensionToFile(videoClipListFile, recordingSessionCacheDirectory, "video[0-9][0-9][0-9].mp4");
+            writeFileNamesWithExtensionToFile(audioClipListFile, recordingSessionCacheDirectory, "audio[0-9][0-9][0-9].mp4");
         } catch (IOException iox) {
             iox.printStackTrace();
         }
     }
 
-    private void writeFileNamesWithExtensionToFile(File outFile, File directory, String fileExtension) throws IOException
+    private void writeFileNamesWithExtensionToFile(File outFile, File directory, String regex) throws IOException
     {
         FileWriter fileWriter = new FileWriter(outFile);
         for (final File file : directory.listFiles()) {
-            if (file.getName().endsWith(fileExtension)) {
+            if (file.getName().matches(regex)) {
                 fileWriter.write("file '" + file.getAbsolutePath() + "'\n");
             }
         }

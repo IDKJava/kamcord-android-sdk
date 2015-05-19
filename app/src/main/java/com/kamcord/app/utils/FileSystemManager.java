@@ -14,7 +14,7 @@ public class FileSystemManager {
     public static final String VIDEO_CLIPLIST_FILENAME = "video_cliplist.txt";
     public static final String AUDIO_CLIPLIST_FILENAME = "audio_cliplist.txt";
     public static final String STITCHED_VIDEO_FILENAME = "video.mp4";
-    public static final String STITCHED_AUDIO_FILENAME = "audio.aac";
+    public static final String STITCHED_AUDIO_FILENAME = "audio.mp4";
     public static final String MERGED_VIDEO_FILENAME = "merged.mp4";
 
     public static File getCacheDirectory()
