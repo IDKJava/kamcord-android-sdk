@@ -12,51 +12,50 @@ import android.widget.VideoView;
 
 import com.kamcord.app.R;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
 /**
  * Created by donliang1 on 5/18/15.
  */
 public class VideoPreviewActivity extends Activity {
     public static final String ARG_VIDEO_PATH = "video_path";
 
-    private VideoView mVideoView;
-    private ImageButton replayImageBtn;
+    @InjectView(R.id.videoview_preview)
+    VideoView mVideoView;
+    @InjectView(R.id.replayButton)
+    ImageButton replayImageBtn;
     private MediaController mediaController;
     private MediaMetadataRetriever mediaMetadataRetriever;
     private int videoHeight;
     private int videoWidth;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_videopreview);
         initVideoPreview();
     }
 
     public void initVideoPreview() {
-        mVideoView = (VideoView) findViewById(R.id.videoview_preview);
-        replayImageBtn = (ImageButton) findViewById(R.id.replayButton);
+        ButterKnife.inject(this);
         final String videoPath = getIntent().getExtras().getString(ARG_VIDEO_PATH);
 
         // Determine videoview orientation
         mediaMetadataRetriever = new MediaMetadataRetriever();
-        if(videoPath != null) {
+        if (videoPath != null) {
             mediaMetadataRetriever.setDataSource(videoPath);
             videoHeight = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
             videoWidth = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
-            if(videoHeight <= videoWidth) {
+            if (videoHeight <= videoWidth) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            } else {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         }
 
-        replayImageBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replayImageBtn.setVisibility(View.INVISIBLE);
-                mVideoView.start();
-            }
-        });
-
-        if(mediaController == null) {
+        if (mediaController == null) {
             mediaController = new MediaController(this);
             try {
                 mVideoView.setMediaController(mediaController);
@@ -75,6 +74,12 @@ public class VideoPreviewActivity extends Activity {
                 replayImageBtn.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    @OnClick(R.id.replayButton)
+    public void replayVideo() {
+        replayImageBtn.setVisibility(View.INVISIBLE);
+        mVideoView.start();
     }
 
     @Override
