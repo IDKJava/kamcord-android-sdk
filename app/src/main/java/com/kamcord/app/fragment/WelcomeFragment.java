@@ -2,6 +2,7 @@ package com.kamcord.app.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -31,6 +32,18 @@ public class WelcomeFragment extends Fragment {
     @InjectView(R.id.createProfileButton) Button createProfileButton;
     @InjectView(R.id.loginButton) Button loginButton;
 
+    private Handler clearHandler;
+    private final Runnable clearRunnable = new Runnable()
+    {
+        @Override
+        public void run() {
+            Intent intent = new Intent(getActivity(), RecordActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            getActivity().finish();
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_welcome, container, false);
@@ -42,15 +55,11 @@ public class WelcomeFragment extends Fragment {
         {
             createProfileButton.setVisibility(View.GONE);
             loginButton.setVisibility(View.GONE);
-            root.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(getActivity(), RecordActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                }
-            }, 3000);
-            // TODO: cancel this delayed message if this activity is already finished.
+            if( clearHandler == null )
+            {
+                clearHandler = new Handler();
+            }
+            clearHandler.postDelayed(clearRunnable, 2500);
         }
         else
         {
@@ -90,6 +99,10 @@ public class WelcomeFragment extends Fragment {
 
     @OnClick(R.id.skipButton)
     public void skip() {
+        if( clearHandler != null )
+        {
+            clearHandler.removeCallbacks(clearRunnable);
+        }
         Intent intent = new Intent(getActivity(), RecordActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
