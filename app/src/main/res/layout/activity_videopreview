@@ -5,7 +5,7 @@
     android:background="@android:color/black">
 
     <VideoView
-        android:id="@+id/video_preview"
+        android:id="@+id/videoview_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true" />

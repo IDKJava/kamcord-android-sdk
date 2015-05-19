@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
+import com.kamcord.app.activity.VideoPreviewActivity;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
@@ -113,17 +114,14 @@ public class ShareFragment extends Fragment {
     }
 
     @OnClick(R.id.thumbnailImageView)
-    public void pushVideoPreviewFragment() {
-        VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
+    public void showVideoPreviewActivity() {
         Bundle bundle = new Bundle();
-        bundle.putString(VideoPreviewFragment.ARG_VIDEO_PATH,
+        bundle.putString(VideoPreviewActivity.ARG_VIDEO_PATH,
                 new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                         FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
-        videoPreviewFragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_activity_layout, videoPreviewFragment)
-                .addToBackStack(null)
-                .commit();
+        Intent intent = new Intent(getActivity().getApplicationContext(), VideoPreviewActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     @OnClick(R.id.shareButton)
