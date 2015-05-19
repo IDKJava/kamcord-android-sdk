@@ -51,15 +51,27 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
         setContentView(R.layout.activity_mdrecord);
 
         initMainActivity();
+    }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
         if (RecordingService.isRunning()) {
             bindService(new Intent(this, RecordingService.class), mConnection, 0);
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onResume() {
+        super.onResume();
+        handleServiceRunning();
+    }
+
+    @Override
+    protected void onStop()
+    {
+        super.onStop();
         if (mConnection.isConnected()) {
             unbindService(mConnection);
         }
@@ -159,12 +171,6 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     public void obtainMediaProjection() {
         startActivityForResult(((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
                 .createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        handleServiceRunning();
     }
 
     @Override
