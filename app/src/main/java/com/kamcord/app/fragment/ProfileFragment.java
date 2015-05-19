@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +30,8 @@ import butterknife.OnClick;
  */
 public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String KAMCORD_DOMAIN = "www.kamcord.com";
-    private static final String KAMCORD_PROFILE_BASE_URL = "https://" + KAMCORD_DOMAIN + "/profile/";
+    private static final String KAMCORD_DOMAIN = "kamcord.com";
+    private static final String KAMCORD_PROFILE_BASE_URL = "https://www." + KAMCORD_DOMAIN + "/profile/";
     private static final Pattern domainPattern = Pattern.compile(".*?([^.]+\\.[^.]+)$");
 
     @InjectView(R.id.webView) WebView webView;
@@ -64,9 +65,23 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         if(AccountManager.isLoggedIn()) {
             signInPromptContainer.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
-            Account account = AccountManager.getStoredAccount();
+
             webView.getSettings().setJavaScriptEnabled(true);
             webView.setWebViewClient(new SameDomainWebViewClient(KAMCORD_DOMAIN));
+            webView.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                    WebView wv = (WebView) view;
+                    if(keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                            && keyCode == KeyEvent.KEYCODE_BACK
+                            && wv.canGoBack() )
+                    {
+                        wv.goBack();
+                        return true;
+                    }
+                    return false;
+                }
+            });
 
             webViewRefreshLayout.setEnabled(false);
             webViewRefreshLayout.setOnRefreshListener(this);
@@ -77,7 +92,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 }
             });
 
-            webView.loadUrl(KAMCORD_PROFILE_BASE_URL + account.username);
+            webView.loadUrl(KAMCORD_PROFILE_BASE_URL + AccountManager.getStoredAccount().username);
         }
         else
         {
