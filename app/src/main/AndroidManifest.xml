@@ -38,7 +38,6 @@
         <activity
             android:name=".activity.VideoPreviewActivity"
             android:label="@string/app_name" />
-            android:launchMode="singleTop" />
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.UploadService" />
