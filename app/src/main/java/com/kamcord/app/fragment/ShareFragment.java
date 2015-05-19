@@ -30,22 +30,14 @@ import butterknife.OnClick;
 public class ShareFragment extends Fragment {
     public static final String ARG_RECORDING_SESSION = "recording_session";
 
-    @InjectView(R.id.share_scrollview)
-    ScrollView scrollView;
-    @InjectView(R.id.thumbnailImageView)
-    ImageView thumbnailImageView;
-    @InjectView(R.id.playImageView)
-    ImageView playImageView;
-    @InjectView(R.id.shareButton)
-    Button shareButton;
-    @InjectView(R.id.titleEditText)
-    EditText titleEditText;
-    @InjectView(R.id.descriptionEditText)
-    EditText descriptionEditText;
-    @InjectView(R.id.videoDurationTextView)
-    TextView videoDurationTextView;
-    @InjectView(R.id.processingProgressBarContainer)
-    ViewGroup processingProgressBarContainer;
+    @InjectView(R.id.share_scrollview) ScrollView scrollView;
+    @InjectView(R.id.thumbnailImageView) ImageView thumbnailImageView;
+    @InjectView(R.id.playImageView) ImageView playImageView;
+    @InjectView(R.id.shareButton) Button shareButton;
+    @InjectView(R.id.titleEditText) EditText titleEditText;
+    @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
+    @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
+    @InjectView(R.id.processingProgressBarContainer) ViewGroup processingProgressBarContainer;
 
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
