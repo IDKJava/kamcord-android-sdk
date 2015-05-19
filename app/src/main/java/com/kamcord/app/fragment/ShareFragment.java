@@ -11,10 +11,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kamcord.app.R;
+import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
+import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StitchClipsThread;
 import com.kamcord.app.utils.StitchClipsThread.StitchSuccessListener;
@@ -102,6 +105,13 @@ public class ShareFragment extends Fragment {
         return false;
     }
 
+    @Override
+    public void onDestroyView()
+    {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
     @OnClick(R.id.thumbnailImageView)
     public void pushVideoPreviewFragment() {
         VideoPreviewFragment videoPreviewFragment = new VideoPreviewFragment();
@@ -118,12 +128,21 @@ public class ShareFragment extends Fragment {
 
     @OnClick(R.id.shareButton)
     public void share() {
-        recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
-        recordingSession.setVideoDescription(descriptionEditText.getEditableText().toString());
 
-        Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-        uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
-        getActivity().startService(uploadIntent);
+        if(AccountManager.isLoggedIn()) {
+            recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+            recordingSession.setVideoDescription(descriptionEditText.getEditableText().toString());
+
+            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
+            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
+            getActivity().startService(uploadIntent);
+        }
+        else
+        {
+            Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT);
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            getActivity().startActivity(intent);
+        }
     }
 
     private void videoPrepared(File videoFile) {

@@ -91,7 +91,9 @@ public class CreateProfileFragment extends Fragment {
             {
                 AccountManager.setStoredAccount(accountWrapper.response);
                 Intent intent = new Intent(getActivity(), RecordActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                getActivity().finish();
             }
             else
             {
