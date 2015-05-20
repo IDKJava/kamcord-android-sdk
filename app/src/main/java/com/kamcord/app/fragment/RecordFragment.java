@@ -82,12 +82,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                return mRecyclerAdapter.isHeader(position) ? gridLayoutManager.getSpanCount() : 1;
-            }
-        });
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));

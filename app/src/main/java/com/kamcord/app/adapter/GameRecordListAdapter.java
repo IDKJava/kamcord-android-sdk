@@ -5,13 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
 import com.kamcord.app.server.model.Game;
-import com.kamcord.app.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -25,8 +23,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
     private Context mContext;
     private List<Game> mGames;
     private static OnItemClickListener mItemClickListener;
-    private static final int ITEM_VIEW_TYPE_HEADER = 0;
-    private static final int ITEM_VIEW_TYPE_ITEM = 1;
 
     public GameRecordListAdapter(Context context, List<Game> games) {
         this.mContext = context;
@@ -38,51 +34,29 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
         ViewHolder viewHolder;
         View itemLayoutView;
 
-        if (viewType == ITEM_VIEW_TYPE_HEADER) {
-            itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_recyclerview_header, null);
-            itemLayoutView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, Utils.getTabsHeight(mContext)));
-            viewHolder = new ViewHolder(itemLayoutView);
-            return viewHolder;
-        }
         itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gridview_item, null);
         viewHolder = new ViewHolder(itemLayoutView);
         return viewHolder;
-
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        if (viewHolder.getItemViewType() == 0) {
-            return;
+        Game game = getItem(position);
+        viewHolder.itemPackageName.setText(game.name);
+        Picasso.with(mContext)
+                .load(game.icons.regular)
+                .tag(game.play_store_id)
+                .into(viewHolder.itemImage);
+        if (game.isInstalled) {
+            viewHolder.installGameTextView.setVisibility(View.GONE);
+        } else {
+            viewHolder.installGameTextView.setVisibility(View.VISIBLE);
         }
-        Game game = getItem(position - 1);
-        if (viewHolder.getItemViewType() != 0) {
-            viewHolder.itemPackageName.setText(game.name);
-            Picasso.with(mContext)
-                    .load(game.icons.regular)
-                    .tag(game.play_store_id)
-                    .into(viewHolder.itemImage);
-            if (game.isInstalled) {
-                viewHolder.installGameTextView.setVisibility(View.GONE);
-            } else {
-                viewHolder.installGameTextView.setVisibility(View.VISIBLE);
-            }
-        }
-
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return isHeader(position) ? ITEM_VIEW_TYPE_HEADER : ITEM_VIEW_TYPE_ITEM;
-    }
-
-    public boolean isHeader(int position) {
-        return position == 0;
     }
 
     @Override
     public int getItemCount() {
-        return mGames.size() + 1;
+        return mGames.size();
     }
 
     public Game getItem(int position) {
