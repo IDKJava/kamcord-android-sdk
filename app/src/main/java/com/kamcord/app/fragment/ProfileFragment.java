@@ -1,6 +1,7 @@
 package com.kamcord.app.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -151,6 +152,11 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         {
             webViewRefreshLayout.setEnabled(true);
             webViewRefreshLayout.setRefreshing(false);
+            int px = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
+            int dp = Math.round(pxToDp(px, getActivity()));
+
+            String js = String.format("document.body.style.marginTop= \"%dpx\"", dp);
+            webView.evaluateJavascript(js, null);
         }
 
         private boolean hasThisDomain(Uri uri)
@@ -164,5 +170,12 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
             return uriDomain.equals(domain);
         }
+    }
+
+    private static float pxToDp(float px, Context context) {
+        if( context != null ) {
+            return px / context.getResources().getDisplayMetrics().density;
+        }
+        return px;
     }
 }

@@ -65,6 +65,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     @Override
     public void onDetach()
     {
+        super.onDetach();
         onRecyclerViewScrollListener = null;
     }
 

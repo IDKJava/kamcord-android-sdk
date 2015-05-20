@@ -118,7 +118,6 @@ public class RecordActivity extends ActionBarActivity implements
         mTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -134,6 +133,10 @@ public class RecordActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                if( state == ViewPager.SCROLL_STATE_DRAGGING )
+                {
+                    showToolbar();
+                }
             }
         });
         mViewPager = (ViewPager) findViewById(R.id.main_pager);
@@ -147,11 +150,17 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     private void hideToolbar() {
-        toolbarContainer.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+        toolbarContainer.animate()
+                .translationY(-mToolbar.getHeight())
+                .setInterpolator(new AccelerateInterpolator(2));
+        controlsVisible = false;
     }
 
     private void showToolbar() {
-        toolbarContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        toolbarContainer.animate()
+                .translationY(0)
+                .setInterpolator(new DecelerateInterpolator(2));
+        controlsVisible = true;
     }
 
     @Override
@@ -244,11 +253,9 @@ public class RecordActivity extends ActionBarActivity implements
                 && recyclerView.getChildCount() > 0
                 && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) > 0) {
             hideToolbar();
-            controlsVisible = false;
             recyclerViewScrolledDistance = 0;
         } else if (recyclerViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
             showToolbar();
-            controlsVisible = true;
             recyclerViewScrolledDistance = 0;
         }
 
