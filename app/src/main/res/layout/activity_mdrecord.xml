@@ -9,10 +9,12 @@
         android:id="@+id/main_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/tabsHeight"/>
+        android:layout_marginTop="@dimen/tabsHeight"
+        android:clipToPadding="false"
+        android:clipChildren="false" />
 
     <LinearLayout
-        android:id="@+id/toolBarContainer"
+        android:id="@+id/toolbarContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -38,14 +40,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true">
 
         <ImageButton
             android:id="@+id/main_fab"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_gravity="right|bottom"
+            android:layout_gravity="end|bottom"
             android:layout_margin="15dp"
             android:background="@drawable/fab_circle"
             android:elevation="4dp"
