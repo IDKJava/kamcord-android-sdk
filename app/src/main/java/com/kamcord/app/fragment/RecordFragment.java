@@ -9,14 +9,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.kamcord.app.BuildConfig;
@@ -26,8 +22,6 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
-import com.kamcord.app.utils.FileManagement;
-import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.utils.SpaceItemDecoration;
 
 import java.util.ArrayList;
@@ -48,11 +42,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
     private List<Game> mSupportedGameList = new ArrayList<>();
 
-    private FileManagement mFileManagement;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private LinearLayout toolBarContainer;
-    private Toolbar mToolbar;
-    private SlidingTabLayout mSlidingTabLayout;
+    private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,19 +52,26 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         return v;
     }
 
-    public void initKamcordRecordFragment(View v) {
+    @Override
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        if( activity instanceof RecyclerViewScrollListener)
+        {
+            onRecyclerViewScrollListener = (RecyclerViewScrollListener) activity;
+        }
+    }
 
-        mFileManagement = new FileManagement();
-        mFileManagement.rootFolderInitialize();
+    @Override
+    public void onDetach()
+    {
+        onRecyclerViewScrollListener = null;
+    }
+
+    public void initKamcordRecordFragment(View v) {
 
         mSupportedGameList.clear();
         AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
-
-        // Custom Layout Params
-        toolBarContainer = (LinearLayout) getActivity().findViewById(R.id.toolBarContainer);
-        mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-        mSlidingTabLayout = (SlidingTabLayout) getActivity().findViewById(R.id.tabs);
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mSlidingTabLayout.getLayoutParams();
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
@@ -91,7 +89,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         });
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
-        mSwipeRefreshLayout.setProgressViewOffset(false, layoutParams.height, getResources().getDimensionPixelOffset(R.dimen.refreshEnd));
+        mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
@@ -110,17 +108,17 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         });
 
         mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            private static final int HIDE_THRESHOLD = 20;
-            private int scrolledDistance = 0;
-            private boolean controlsVisible = true;
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-
+                if( onRecyclerViewScrollListener != null )
+                {
+                    onRecyclerViewScrollListener.onRecyclerViewScrollStateChanged(recyclerView, state);
+                }
             }
 
             @Override
-            public void onScrolled(RecyclerView recyclerView, int i, int i2) {
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (mRecyclerView.getChildAt(0) != null) {
                     mSwipeRefreshLayout.setEnabled(mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) == 0
                             && mRecyclerView.getChildAt(0).getTop() == getResources().getDimensionPixelSize(R.dimen.grid_margin));
@@ -128,30 +126,12 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                     mSwipeRefreshLayout.setEnabled(true);
                 }
 
-                if (scrolledDistance > HIDE_THRESHOLD && controlsVisible && mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) > 0) {
-
-                    hideViews();
-                    controlsVisible = false;
-                    scrolledDistance = 0;
-                } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-                    showViews();
-                    controlsVisible = true;
-                    scrolledDistance = 0;
-                }
-
-                if ((controlsVisible && i2 > 0) || (!controlsVisible && i2 < 0)) {
-                    scrolledDistance += i2;
+                if( onRecyclerViewScrollListener != null )
+                {
+                    onRecyclerViewScrollListener.onRecyclerViewScrolled(recyclerView, dy, dy);
                 }
             }
         });
-    }
-
-    private void hideViews() {
-        toolBarContainer.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-    }
-
-    private void showViews() {
-        toolBarContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
     private boolean isAppInstalled(String packageName) {
@@ -191,6 +171,11 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
     public interface SelectedGameListener {
         void selectedGame(com.kamcord.app.server.model.Game selectedGameModel);
+    }
+
+    public interface RecyclerViewScrollListener {
+        void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
+        void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy);
     }
 
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {

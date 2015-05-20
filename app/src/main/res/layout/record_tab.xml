@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:clipChildren="false" >
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/recordfragment_refreshlayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:clipChildren="false" >
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/record_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingTop="@dimen/tabsHeight"
             android:clipToPadding="false"
+            android:clipChildren="false"
             android:scrollbars="vertical" />
 
     </android.support.v4.widget.SwipeRefreshLayout>

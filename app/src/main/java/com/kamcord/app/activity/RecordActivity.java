@@ -12,9 +12,13 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -27,8 +31,14 @@ import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.SlidingTabLayout;
+import com.kamcord.app.view.ObservableWebView;
 
-public class RecordActivity extends ActionBarActivity implements View.OnClickListener, RecordFragment.SelectedGameListener {
+
+public class RecordActivity extends ActionBarActivity implements
+        View.OnClickListener,
+        RecordFragment.SelectedGameListener,
+        RecordFragment.RecyclerViewScrollListener,
+        ObservableWebView.ObservableWebViewScrollListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
@@ -40,10 +50,16 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
     private int numberOfTabs;
     public String videoPath;
     private ProgressDialog mProgressDialog;
+    private ViewGroup toolbarContainer;
     public Toolbar mToolbar;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mConnection = new RecordingServiceConnection();
+
+    private static final int HIDE_THRESHOLD = 20;
+    private boolean controlsVisible = true;
+    private int recyclerViewScrolledDistance = 0;
+    private int webViewScrolledDistance = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +99,8 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
         mToolbar.setLogo(R.drawable.toolbar_icon);
+
+        toolbarContainer = (ViewGroup) findViewById(R.id.toolbarContainer);
 
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
@@ -126,6 +144,14 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
         mFloatingActionButton = (ImageButton) findViewById(R.id.main_fab);
         mFloatingActionButton.setOnClickListener(this);
 
+    }
+
+    private void hideToolbar() {
+        toolbarContainer.animate().translationY(-mToolbar.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+    }
+
+    private void showToolbar() {
+        toolbarContainer.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
     }
 
     @Override
@@ -205,6 +231,47 @@ public class RecordActivity extends ActionBarActivity implements View.OnClickLis
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
         } else {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+        }
+    }
+
+    @Override
+    public void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state) {
+    }
+
+    @Override
+    public void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy) {
+        if (recyclerViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
+                && recyclerView.getChildCount() > 0
+                && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) > 0) {
+            hideToolbar();
+            controlsVisible = false;
+            recyclerViewScrolledDistance = 0;
+        } else if (recyclerViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+            showToolbar();
+            controlsVisible = true;
+            recyclerViewScrolledDistance = 0;
+        }
+
+        if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
+            recyclerViewScrolledDistance += dy;
+        }
+    }
+
+    @Override
+    public void onObservableWebViewScrolled(ObservableWebView webView, int dx, int dy) {
+        if (webViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
+                && webView.getScrollY() >= getResources().getDimensionPixelSize(R.dimen.tabsHeight) ) {
+            hideToolbar();
+            controlsVisible = false;
+            webViewScrolledDistance = 0;
+        } else if (webViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+            showToolbar();
+            controlsVisible = true;
+            webViewScrolledDistance = 0;
+        }
+
+        if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
+            webViewScrolledDistance += dy;
         }
     }
 
