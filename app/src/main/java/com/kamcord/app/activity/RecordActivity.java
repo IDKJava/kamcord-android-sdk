@@ -250,8 +250,10 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     public void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy) {
         if (recyclerViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
-                && recyclerView.getChildCount() > 0
-                && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) > 0) {
+                && !(recyclerView.getChildCount() > 0
+                        && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) == 0
+                        && recyclerView.getChildAt(0).getTop() > 0) )
+        {
             hideToolbar();
             recyclerViewScrolledDistance = 0;
         } else if (recyclerViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {

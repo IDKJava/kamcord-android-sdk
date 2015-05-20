@@ -115,8 +115,10 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (mRecyclerView.getChildAt(0) != null) {
+                    int gridMargin = getResources().getDimensionPixelSize(R.dimen.grid_margin);
+                    int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
                     mSwipeRefreshLayout.setEnabled(mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) == 0
-                            && mRecyclerView.getChildAt(0).getTop() == getResources().getDimensionPixelSize(R.dimen.grid_margin));
+                            && mRecyclerView.getChildAt(0).getTop() == gridMargin + tabsHeight);
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
                 }
