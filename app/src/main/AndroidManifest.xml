@@ -41,6 +41,9 @@
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.UploadService" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="658cda3c063565dc206501acd9ce961c5f835a01" />
     </application>
 
 </manifest>

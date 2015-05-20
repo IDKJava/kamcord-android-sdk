@@ -27,7 +27,6 @@ public class VideoPreviewActivity extends Activity {
     @InjectView(R.id.replayButton)
     ImageButton replayImageBtn;
     private MediaController mediaController;
-    private MediaMetadataRetriever mediaMetadataRetriever;
     private int videoHeight;
     private int videoWidth;
 
@@ -43,7 +42,7 @@ public class VideoPreviewActivity extends Activity {
         final String videoPath = getIntent().getExtras().getString(ARG_VIDEO_PATH);
 
         // Determine videoview orientation
-        mediaMetadataRetriever = new MediaMetadataRetriever();
+        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         if (videoPath != null) {
             mediaMetadataRetriever.setDataSource(videoPath);
             videoHeight = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
@@ -54,6 +53,7 @@ public class VideoPreviewActivity extends Activity {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         }
+        mediaMetadataRetriever.release();
 
         if (mediaController == null) {
             mediaController = new MediaController(this);
@@ -85,6 +85,5 @@ public class VideoPreviewActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mediaMetadataRetriever.release();
     }
 }

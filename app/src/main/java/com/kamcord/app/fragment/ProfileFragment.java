@@ -1,5 +1,7 @@
 package com.kamcord.app.fragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.view.ObservableWebView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +37,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private static final String KAMCORD_PROFILE_BASE_URL = "https://www." + KAMCORD_DOMAIN + "/profile/";
     private static final Pattern domainPattern = Pattern.compile(".*?([^.]+\\.[^.]+)$");
 
-    @InjectView(R.id.webView) WebView webView;
+    @InjectView(R.id.webView) ObservableWebView webView;
     @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
     @InjectView(R.id.signInPromptButton) Button signInPromptButton;
     @InjectView(R.id.webViewRefreshLayout) SwipeRefreshLayout webViewRefreshLayout;
@@ -46,6 +49,14 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         ButterKnife.inject(this, root);
 
         webViewRefreshLayout.setEnabled(false);
+        webViewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        webViewRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+
+        Activity activity = getActivity();
+        if( activity != null && activity instanceof ObservableWebView.ObservableWebViewScrollListener)
+        {
+            webView.setObservableWebViewScrollListener((ObservableWebView.ObservableWebViewScrollListener) activity);
+        }
 
         return root;
     }
@@ -72,10 +83,9 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 @Override
                 public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
                     WebView wv = (WebView) view;
-                    if(keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
                             && keyCode == KeyEvent.KEYCODE_BACK
-                            && wv.canGoBack() )
-                    {
+                            && wv.canGoBack()) {
                         wv.goBack();
                         return true;
                     }
@@ -142,6 +152,11 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         {
             webViewRefreshLayout.setEnabled(true);
             webViewRefreshLayout.setRefreshing(false);
+            int px = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
+            int dp = Math.round(pxToDp(px, getActivity()));
+
+            String js = String.format("document.body.style.marginTop= \"%dpx\"", dp);
+            webView.evaluateJavascript(js, null);
         }
 
         private boolean hasThisDomain(Uri uri)
@@ -155,5 +170,12 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
             return uriDomain.equals(domain);
         }
+    }
+
+    private static float pxToDp(float px, Context context) {
+        if( context != null ) {
+            return px / context.getResources().getDisplayMetrics().density;
+        }
+        return px;
     }
 }
