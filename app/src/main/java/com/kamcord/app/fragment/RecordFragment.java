@@ -45,6 +45,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private RecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
+    private String mayInstallGame = null;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
 
@@ -172,6 +173,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     @Override
     public void onItemClick(View view, int position) {
         Game game = mSupportedGameList.get(position - 1);
+        mayInstallGame = game.play_store_id;
         if (game.isInstalled) {
             mSelectedGame = game;
             SelectedGameListener listener = (SelectedGameListener) getActivity();
@@ -191,6 +193,18 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
     public interface SelectedGameListener {
         void selectedGame(com.kamcord.app.server.model.Game selectedGameModel);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(isAppInstalled(mayInstallGame)) {
+            mSupportedGameList.clear();
+            mRecyclerAdapter.notifyDataSetChanged();
+            AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
+        } else {
+            Log.d("Game is ", "not installed");
+        }
     }
 
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
