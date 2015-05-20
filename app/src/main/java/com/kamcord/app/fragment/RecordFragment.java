@@ -46,6 +46,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
     private String mayInstallGame = null;
+    private GridLayoutManager gridLayoutManager;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
 
@@ -77,7 +78,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mSlidingTabLayout.getLayoutParams();
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
@@ -130,7 +131,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                 }
 
                 if (scrolledDistance > HIDE_THRESHOLD && controlsVisible && mRecyclerView.getChildAdapterPosition(mRecyclerView.getChildAt(0)) > 0) {
-
                     hideViews();
                     controlsVisible = false;
                     scrolledDistance = 0;
@@ -159,7 +159,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         boolean appIsInstalled = false;
 
         Activity activity = getActivity();
-        if( activity != null ) {
+        if (activity != null) {
             PackageManager pm = activity.getPackageManager();
             try {
                 pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
@@ -192,35 +192,41 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     }
 
     public interface SelectedGameListener {
-        void selectedGame(com.kamcord.app.server.model.Game selectedGameModel);
+        void selectedGame(com.kamcord.app.server.model.Game selectedG0ameModel);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(isAppInstalled(mayInstallGame)) {
+        if (isAppInstalled(mayInstallGame)) {
+            showViews();
+            mSwipeRefreshLayout.setRefreshing(true);
             mSupportedGameList.clear();
-            mRecyclerAdapter.notifyDataSetChanged();
             AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
-        } else {
-            Log.d("Game is ", "not installed");
         }
+    }
+
+    public int scrollToNewInstalledGame() {
+        for (Game game : mSupportedGameList) {
+            if (game.play_store_id.equals(mayInstallGame)) {
+                return mSupportedGameList.indexOf(game) + 2;
+            }
+        }
+        return 0;
     }
 
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
-                if(BuildConfig.DEBUG)
-                {
+                if (BuildConfig.DEBUG) {
                     Game ripples = new Game();
                     ripples.name = "Ripple Test";
                     ripples.game_primary_id = "3047";
                     ripples.play_store_id = "com.kamcord.ripples";
                     ripples.icons = new Game.Icons();
                     ripples.icons.regular = "https://www.kamcord.com/images/core/logo-kamcord@2x.png";
-                    if( isAppInstalled(ripples.play_store_id) )
-                    {
+                    if (isAppInstalled(ripples.play_store_id)) {
                         ripples.isInstalled = true;
                     }
                     mSupportedGameList.add(ripples);
@@ -241,6 +247,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                 });
                 mRecyclerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
+                gridLayoutManager.scrollToPositionWithOffset(scrollToNewInstalledGame(), mToolbar.getHeight());
+                mayInstallGame = null;
             }
         }
 
