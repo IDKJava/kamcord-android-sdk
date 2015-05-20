@@ -45,7 +45,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private RecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
-    private String mayInstallGame = null;
     private GridLayoutManager gridLayoutManager;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
@@ -173,7 +172,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     @Override
     public void onItemClick(View view, int position) {
         Game game = mSupportedGameList.get(position - 1);
-        mayInstallGame = game.play_store_id;
         if (game.isInstalled) {
             mSelectedGame = game;
             SelectedGameListener listener = (SelectedGameListener) getActivity();
@@ -198,21 +196,22 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     @Override
     public void onResume() {
         super.onResume();
-        if (isAppInstalled(mayInstallGame)) {
-            showViews();
-            mSwipeRefreshLayout.setRefreshing(true);
-            mSupportedGameList.clear();
-            AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
-        }
-    }
-
-    public int scrollToNewInstalledGame() {
         for (Game game : mSupportedGameList) {
-            if (game.play_store_id.equals(mayInstallGame)) {
-                return mSupportedGameList.indexOf(game) + 2;
+            if (game.play_store_id != null) {
+                if (isAppInstalled(game.play_store_id) && !game.isInstalled) {
+                    showViews();
+                    game.isInstalled = true;
+                    Collections.sort(mSupportedGameList, new Comparator<Game>() {
+                        @Override
+                        public int compare(Game g1, Game g2) {
+                            return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
+                        }
+                    });
+                    gridLayoutManager.scrollToPositionWithOffset(mSupportedGameList.indexOf(game) + 2, mToolbar.getHeight());
+                }
             }
         }
-        return 0;
+        mRecyclerAdapter.notifyDataSetChanged();
     }
 
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
@@ -247,8 +246,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                 });
                 mRecyclerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
-                gridLayoutManager.scrollToPositionWithOffset(scrollToNewInstalledGame(), mToolbar.getHeight());
-                mayInstallGame = null;
             }
         }
 
