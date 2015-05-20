@@ -197,21 +197,23 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     public void onResume() {
         super.onResume();
         for (Game game : mSupportedGameList) {
-            if (game.play_store_id != null) {
-                if (isAppInstalled(game.play_store_id) && !game.isInstalled) {
-                    showViews();
-                    game.isInstalled = true;
-                    Collections.sort(mSupportedGameList, new Comparator<Game>() {
-                        @Override
-                        public int compare(Game g1, Game g2) {
-                            return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
-                        }
-                    });
-                    gridLayoutManager.scrollToPositionWithOffset(mSupportedGameList.indexOf(game) + 2, mToolbar.getHeight());
-                }
+            if (isAppInstalled(game.play_store_id) && !game.isInstalled) {
+                showViews();
+                game.isInstalled = true;
+                sortGameList(mSupportedGameList);
+                gridLayoutManager.scrollToPositionWithOffset(mSupportedGameList.indexOf(game) + 2, mToolbar.getHeight());
             }
+            mRecyclerAdapter.notifyDataSetChanged();
         }
-        mRecyclerAdapter.notifyDataSetChanged();
+    }
+
+    public void sortGameList(List<Game> supportedGameList) {
+        Collections.sort(supportedGameList, new Comparator<Game>() {
+            @Override
+            public int compare(Game g1, Game g2) {
+                return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
+            }
+        });
     }
 
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
@@ -238,12 +240,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                         mSupportedGameList.add(game);
                     }
                 }
-                Collections.sort(mSupportedGameList, new Comparator<Game>() {
-                    @Override
-                    public int compare(Game g1, Game g2) {
-                        return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
-                    }
-                });
+                sortGameList(mSupportedGameList);
                 mRecyclerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
