@@ -33,6 +33,7 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.thread.Uploader;
+import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
@@ -357,7 +358,7 @@ public class RecordActivity extends ActionBarActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_mdrecord, menu);
+        getMenuInflater().inflate(R.menu.menu_record, menu);
         return true;
     }
 
@@ -366,6 +367,14 @@ public class RecordActivity extends ActionBarActivity implements
         switch (item.getItemId()) {
             case R.id.action_cleancache: {
                 FileSystemManager.cleanCache(cacheDirectory, cacheDirectory);
+            }
+            case R.id.action_signout: {
+                if( AccountManager.isLoggedIn() ){
+                    AccountManager.clearStoredAccount();
+                    Intent loginIntent = new Intent(this, LoginActivity.class);
+                    startActivity(loginIntent);
+                    finish();
+                }
             }
         }
         return super.onOptionsItemSelected(item);
