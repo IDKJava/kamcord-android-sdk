@@ -119,7 +119,7 @@ public class Uploader extends Thread {
             informKamcordUploadFinished();
             long end = System.currentTimeMillis();
             videoParams.put(mContext.getResources().getString(R.string.flurryVideoID), mServerVideoId);
-            videoParams.put(mContext.getResources().getString(R.string.flurryDuration), Long.toString(start - end));
+            videoParams.put(mContext.getResources().getString(R.string.flurryDuration), Long.toString(end - start));
             videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "true");
             FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
             return;
