@@ -99,7 +99,6 @@ public class ShareFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_share, container, false);
-        
         ButterKnife.inject(this, root);
         RecordActivity activity = ((RecordActivity) getActivity());
         activity.setSupportActionBar(mToolbar);
@@ -109,6 +108,7 @@ public class ShareFragment extends Fragment {
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha, null);
         upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         actionbar.setHomeAsUpIndicator(upArrow);
+
         setHasOptionsMenu(true);
 
         recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
