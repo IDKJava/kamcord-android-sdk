@@ -104,6 +104,7 @@ public class Uploader extends Thread {
         Account account = accountManager.getStoredAccount();
         Map<String, String> videoParams = new HashMap<>();
         videoParams.put(mContext.getResources().getString(R.string.flurryGameName), mRecordingSession.getGamePackageName());
+        videoParams.put(mContext.getResources().getString(R.string.flurryGameID), mRecordingSession.getGameServerID());
         videoParams.put(mContext.getResources().getString(R.string.flurryUserName), account.username);
         videoParams.put(mContext.getResources().getString(R.string.flurryUserID), account.id);
 
@@ -117,7 +118,7 @@ public class Uploader extends Thread {
             finishUploadToS3(UploadType.VIDEO);
             informKamcordUploadFinished();
             long end = System.currentTimeMillis();
-            videoParams.put(mContext.getResources().getString(R.string.flurryGameID), mRecordingSession.getGameServerID());
+            videoParams.put(mContext.getResources().getString(R.string.flurryVideoID), mServerVideoId);
             videoParams.put(mContext.getResources().getString(R.string.flurryDuration), Long.toString(start - end));
             videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "true");
             FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);

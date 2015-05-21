@@ -10,6 +10,7 @@
     <string name="flurryReplayShareView">Replay on Share View</string>
     <string name="flurryGameName">GameName</string>
     <string name="flurryGameID">GameID</string>
+    <string name="flurryVideoID">VideoID</string>
     <string name="flurryUserName">UserName</string>
     <string name="flurryUserID">UserID</string>
     <string name="flurryDuration">Duration</string>
