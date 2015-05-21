@@ -43,5 +43,10 @@
     <string name="signInProfilePrompt">You must sign in to Kamcord to view your profile page.</string>
     <string name="signIn">Sign In</string>
 
+    <string name="uploading">Uploading&#8230;</string>
+    <string name="yourVideoIsUploading">Your video \"%s\" is uploading!</string>
+    <string name="yourVideoFinishedUploading">Your video \"%s\" finished uploading!</string>
+    <string name="yourVideoIsUploadingNoTitle">Your video is uploading!</string>
+    <string name="yourVideoFinishedUploadingNoTitle">Your video finished uploading!</string>
 
 </resources>

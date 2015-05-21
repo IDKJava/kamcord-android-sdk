@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.server.client.AppServerClient;
@@ -89,6 +90,7 @@ public class CreateProfileFragment extends Fragment {
                     && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
                     && accountWrapper.response != null )
             {
+                FlurryAgent.logEvent(getResources().getString(R.string.flurryCreateProfile));
                 AccountManager.setStoredAccount(accountWrapper.response);
                 Intent intent = new Intent(getActivity(), RecordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -1,15 +1,12 @@
 package com.kamcord.app.activity;
 
-import android.app.ProgressDialog;
+import android.animation.ObjectAnimator;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
@@ -23,8 +20,10 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
@@ -38,28 +37,40 @@ import com.kamcord.app.view.ObservableWebView;
 
 import java.io.File;
 
+import com.kamcord.app.service.connection.RecordingServiceConnection;
+import com.kamcord.app.thread.Uploader;
+
+import java.util.Locale;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+
 public class RecordActivity extends ActionBarActivity implements
         View.OnClickListener,
         RecordFragment.SelectedGameListener,
         RecordFragment.RecyclerViewScrollListener,
-        ObservableWebView.ObservableWebViewScrollListener {
+        ObservableWebView.ObservableWebViewScrollListener,
+        Uploader.UploadStatusListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    ImageButton mFloatingActionButton;
-    private ViewPager mViewPager;
+    @InjectView(R.id.main_fab) ImageButton mFloatingActionButton;
+    @InjectView(R.id.main_pager) ViewPager mViewPager;
+    @InjectView(R.id.tabs) SlidingTabLayout mTabs;
+    @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
+    @InjectView(R.id.toolbar) Toolbar mToolbar;
+    @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
+
     private MainViewPagerAdapter mainViewPagerAdapter;
-    private SlidingTabLayout mTabs;
     private CharSequence tabTitles[];
     private int numberOfTabs;
-    public String videoPath;
-    private ProgressDialog mProgressDialog;
-    private ViewGroup toolbarContainer;
-    public Toolbar mToolbar;
+
     private File cacheDirectory;
 
+
     private Game mSelectedGame = null;
-    private RecordingServiceConnection mConnection = new RecordingServiceConnection();
+    private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
 
     private static final int HIDE_THRESHOLD = 20;
     private boolean controlsVisible = true;
@@ -69,8 +80,10 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mdrecord);
 
+        setContentView(R.layout.activity_mdrecord);
+        FlurryAgent.onStartSession(this);
+        ButterKnife.inject(this);
         initMainActivity();
     }
 
@@ -78,8 +91,9 @@ public class RecordActivity extends ActionBarActivity implements
     protected void onStart() {
         super.onStart();
         if (RecordingService.isRunning()) {
-            bindService(new Intent(this, RecordingService.class), mConnection, 0);
+            bindService(new Intent(this, RecordingService.class), mRecordingServiceConnection, 0);
         }
+        Uploader.setUploadStatusListener(this);
     }
 
     @Override
@@ -91,28 +105,25 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        if (mConnection.isConnected()) {
-            unbindService(mConnection);
+        if (mRecordingServiceConnection.isConnected()) {
+            unbindService(mRecordingServiceConnection);
         }
+        Uploader.setUploadStatusListener(null);
     }
 
     public void initMainActivity() {
 
         cacheDirectory = FileSystemManager.getCacheDirectory();
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
         mToolbar.setLogo(R.drawable.toolbar_icon);
-
-        toolbarContainer = (ViewGroup) findViewById(R.id.toolbarContainer);
 
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
         tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
         numberOfTabs = tabTitles.length;
 
-        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         mTabs.setDistributeEvenly(true);
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
@@ -143,12 +154,10 @@ public class RecordActivity extends ActionBarActivity implements
                 }
             }
         });
-        mViewPager = (ViewPager) findViewById(R.id.main_pager);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
 
-        mFloatingActionButton = (ImageButton) findViewById(R.id.main_fab);
         mFloatingActionButton.setOnClickListener(this);
 
     }
@@ -184,11 +193,12 @@ public class RecordActivity extends ActionBarActivity implements
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                     stopService(new Intent(this, RecordingService.class));
 
-                    RecordingSession recordingSession = mConnection.getServiceRecordingSession();
+                    RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
                     if (recordingSession != null) {
+                        FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
                         ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
+                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
                         recordShareFragment.setArguments(bundle);
                         getSupportFragmentManager().beginTransaction()
                                 .add(R.id.main_activity_layout, recordShareFragment)
@@ -217,15 +227,16 @@ public class RecordActivity extends ActionBarActivity implements
             if (mSelectedGame != null) {
                 try {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
+                    FlurryAgent.logEvent(getResources().getString(R.string.flurryRecordStarted));
                     startActivity(launchIntent);
 
                     MediaProjection projection = ((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
                             .getMediaProjection(resultCode, data);
                     RecordingSession recordingSession = new RecordingSession(mSelectedGame);
-                    mConnection.initializeForRecording(projection, recordingSession);
+                    mRecordingServiceConnection.initializeForRecording(projection, recordingSession);
 
                     startService(new Intent(this, RecordingService.class));
-                    bindService(new Intent(this, RecordingService.class), mConnection, 0);
+                    bindService(new Intent(this, RecordingService.class), mRecordingServiceConnection, 0);
                 } catch (ActivityNotFoundException e) {
                     // TODO: show the user something about not finding the game.
                     Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);
@@ -285,49 +296,65 @@ public class RecordActivity extends ActionBarActivity implements
         }
     }
 
-    private class RecordingServiceConnection implements ServiceConnection {
-        private RecordingService recordingService;
-        private MediaProjection mediaProjection = null;
-        private RecordingSession recordingSession = null;
-        private boolean isConnected = false;
+    ObjectAnimator progressBarAnimator = null;
 
-        public void initializeForRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
-            this.mediaProjection = mediaProjection;
-            this.recordingSession = recordingSession;
-        }
-
-        public void uninitialize() {
-            this.mediaProjection = null;
-            this.recordingSession = null;
-        }
-
-        public boolean isInitializedForRecording() {
-            return mediaProjection != null && recordingSession != null;
-        }
-
-        public boolean isConnected() {
-            return isConnected;
-        }
-
-        public RecordingSession getServiceRecordingSession() {
-            return recordingService != null ? recordingService.getRecordingSession() : null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            recordingService = ((RecordingService.LocalBinder) iBinder).getService();
-            if (isInitializedForRecording()) {
-                recordingService.startRecording(mediaProjection, recordingSession);
-                uninitialize();
+    @Override
+    public void onUploadStart(final RecordingSession recordingSession) {
+        uploadProgress.post(new Runnable() {
+            @Override
+            public void run() {
+                String toastText = recordingSession.getVideoTitle() != null
+                        ? String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoIsUploading), recordingSession.getVideoTitle())
+                        : getResources().getString(R.string.yourVideoIsUploadingNoTitle);
+                Toast.makeText(RecordActivity.this, toastText, Toast.LENGTH_SHORT).show();
+                uploadProgress.setVisibility(View.VISIBLE);
+                uploadProgress.setAlpha(1f);
+                uploadProgress.setProgress(0);
             }
-            isConnected = true;
-        }
+        });
+    }
 
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            uninitialize();
-            isConnected = false;
-        }
+    @Override
+    public void onUploadProgress(RecordingSession recordingSession, final float progress) {
+        uploadProgress.post(new Runnable() {
+            @Override
+            public void run() {
+                if (progressBarAnimator != null) {
+                    progressBarAnimator.cancel();
+                }
+                int oldProgress = uploadProgress.getProgress();
+                int newProgress = (int) (progress * uploadProgress.getMax());
+                progressBarAnimator = ObjectAnimator.ofInt(uploadProgress, "progress", oldProgress, newProgress)
+                        .setDuration(400);
+                progressBarAnimator.start();
+            }
+        });
+    }
+
+    @Override
+    public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
+        uploadProgress.post(new Runnable() {
+            @Override
+            public void run() {
+                String toastText = recordingSession.getVideoTitle() != null
+                        ? String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoFinishedUploading), recordingSession.getVideoTitle())
+                        : getResources().getString(R.string.yourVideoFinishedUploadingNoTitle);
+                Toast.makeText(RecordActivity.this, toastText, Toast.LENGTH_SHORT).show();
+                uploadProgress.setIndeterminate(false);
+                uploadProgress.animate().setStartDelay(500).alpha(0f).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadProgress.setVisibility(View.GONE);
+                    }
+                }).start();
+            }
+        });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FlurryAgent.onEndSession(this);
     }
 
     @Override
