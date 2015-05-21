@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,15 +40,24 @@ import butterknife.OnTouch;
 public class ShareFragment extends Fragment {
     public static final String ARG_RECORDING_SESSION = "recording_session";
 
-    @InjectView(R.id.share_scrollview) ScrollView scrollView;
-    @InjectView(R.id.thumbnailImageView) ImageView thumbnailImageView;
-    @InjectView(R.id.playImageView) ImageView playImageView;
-    @InjectView(R.id.shareButton) Button shareButton;
-    @InjectView(R.id.titleEditText) EditText titleEditText;
-    @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
-    @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
-    @InjectView(R.id.processingProgressBarContainer) ViewGroup processingProgressBarContainer;
-    @InjectView(R.id.share_toolbar) Toolbar mToolbar;
+    @InjectView(R.id.share_scrollview)
+    ScrollView scrollView;
+    @InjectView(R.id.thumbnailImageView)
+    ImageView thumbnailImageView;
+    @InjectView(R.id.playImageView)
+    ImageView playImageView;
+    @InjectView(R.id.shareButton)
+    Button shareButton;
+    @InjectView(R.id.titleEditText)
+    EditText titleEditText;
+    @InjectView(R.id.descriptionEditText)
+    EditText descriptionEditText;
+    @InjectView(R.id.videoDurationTextView)
+    TextView videoDurationTextView;
+    @InjectView(R.id.processingProgressBarContainer)
+    ViewGroup processingProgressBarContainer;
+    @InjectView(R.id.share_toolbar)
+    Toolbar mToolbar;
 
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
@@ -88,11 +99,12 @@ public class ShareFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_share, container, false);
 
         ButterKnife.inject(this, root);
-        RecordActivity activity = ((RecordActivity)getActivity());
+        RecordActivity activity = ((RecordActivity) getActivity());
         activity.setSupportActionBar(mToolbar);
         ActionBar actionbar = activity.getSupportActionBar();
         actionbar.setTitle("");
         actionbar.setDisplayHomeAsUpEnabled(true);
+        setHasOptionsMenu(true);
 
         recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
 
@@ -118,8 +130,7 @@ public class ShareFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
@@ -138,16 +149,14 @@ public class ShareFragment extends Fragment {
     @OnClick(R.id.shareButton)
     public void share() {
 
-        if(AccountManager.isLoggedIn()) {
+        if (AccountManager.isLoggedIn()) {
             recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
             recordingSession.setVideoDescription(descriptionEditText.getEditableText().toString());
 
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
             getActivity().startService(uploadIntent);
-        }
-        else
-        {
+        } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT);
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(intent);
@@ -169,11 +178,26 @@ public class ShareFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_cleancache);
+        item.setVisible(false);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_share, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 getActivity().onBackPressed();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

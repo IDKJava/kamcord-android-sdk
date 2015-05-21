@@ -15,6 +15,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -30,9 +32,11 @@ import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
 
+import java.io.File;
 
 public class RecordActivity extends ActionBarActivity implements
         View.OnClickListener,
@@ -52,6 +56,7 @@ public class RecordActivity extends ActionBarActivity implements
     private ProgressDialog mProgressDialog;
     private ViewGroup toolbarContainer;
     public Toolbar mToolbar;
+    private File cacheDirectory;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mConnection = new RecordingServiceConnection();
@@ -70,8 +75,7 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         if (RecordingService.isRunning()) {
             bindService(new Intent(this, RecordingService.class), mConnection, 0);
@@ -85,8 +89,7 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     @Override
-    protected void onStop()
-    {
+    protected void onStop() {
         super.onStop();
         if (mConnection.isConnected()) {
             unbindService(mConnection);
@@ -94,6 +97,8 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     public void initMainActivity() {
+
+        cacheDirectory = FileSystemManager.getCacheDirectory();
 
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
@@ -133,8 +138,7 @@ public class RecordActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                if( state == ViewPager.SCROLL_STATE_DRAGGING )
-                {
+                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
                     showToolbar();
                 }
             }
@@ -181,7 +185,7 @@ public class RecordActivity extends ActionBarActivity implements
                     stopService(new Intent(this, RecordingService.class));
 
                     RecordingSession recordingSession = mConnection.getServiceRecordingSession();
-                    if( recordingSession != null ) {
+                    if (recordingSession != null) {
                         ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
@@ -189,9 +193,7 @@ public class RecordActivity extends ActionBarActivity implements
                         getSupportFragmentManager().beginTransaction()
                                 .add(R.id.main_activity_layout, recordShareFragment)
                                 .addToBackStack("ShareFragment").commit();
-                    }
-                    else
-                    {
+                    } else {
                         // TODO: show the user something about being unable to get the recording session.
                     }
                 }
@@ -251,9 +253,8 @@ public class RecordActivity extends ActionBarActivity implements
     public void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy) {
         if (recyclerViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
                 && !(recyclerView.getChildCount() > 0
-                        && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) == 0
-                        && recyclerView.getChildAt(0).getTop() > 0) )
-        {
+                && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) == 0
+                && recyclerView.getChildAt(0).getTop() > 0)) {
             hideToolbar();
             recyclerViewScrolledDistance = 0;
         } else if (recyclerViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
@@ -269,7 +270,7 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     public void onObservableWebViewScrolled(ObservableWebView webView, int dx, int dy) {
         if (webViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
-                && webView.getScrollY() >= getResources().getDimensionPixelSize(R.dimen.tabsHeight) ) {
+                && webView.getScrollY() >= getResources().getDimensionPixelSize(R.dimen.tabsHeight)) {
             hideToolbar();
             controlsVisible = false;
             webViewScrolledDistance = 0;
@@ -308,8 +309,7 @@ public class RecordActivity extends ActionBarActivity implements
             return isConnected;
         }
 
-        public RecordingSession getServiceRecordingSession()
-        {
+        public RecordingSession getServiceRecordingSession() {
             return recordingService != null ? recordingService.getRecordingSession() : null;
         }
 
@@ -327,6 +327,38 @@ public class RecordActivity extends ActionBarActivity implements
         public void onServiceDisconnected(ComponentName componentName) {
             uninitialize();
             isConnected = false;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_mdrecord, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_cleancache: {
+                cleanCache(cacheDirectory);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void cleanCache(File directory) {
+        try {
+            if(directory.isDirectory()) {
+                for(File file : directory.listFiles()) {
+                    file.delete();
+                    cleanCache(file);
+                }
+            }
+            if(directory.compareTo(cacheDirectory) != 0) {
+                directory.delete();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
