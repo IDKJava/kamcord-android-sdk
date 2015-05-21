@@ -1,7 +1,5 @@
 package com.kamcord.app.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -26,6 +24,7 @@ import android.widget.Toast;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
+import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
@@ -172,34 +171,6 @@ public class RecordActivity extends ActionBarActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.main_fab: {
-                new Thread(new Runnable() {
-                    RecordingSession session = new RecordingSession();
-                    @Override
-                    public void run() {
-                        try {
-                            synchronized (this) {
-                                onUploadStart(session);
-                                wait(500);
-                                onUploadProgress(session, 0.2f);
-                                wait(500);
-                                onUploadProgress(session, 0.4f);
-                                wait(500);
-                                onUploadProgress(session, 0.6f);
-                                wait(500);
-                                onUploadProgress(session, 0.8f);
-                                wait(500);
-                                onUploadProgress(session, 1f);
-                                wait(500);
-                                onUploadFinish(session, true);
-                            }
-                        }
-                        catch( Exception e )
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-                /*
                 if (!RecordingService.isRunning()) {
                     if (mSelectedGame != null) {
                         mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
@@ -228,7 +199,6 @@ public class RecordActivity extends ActionBarActivity implements
                         // TODO: show the user something about being unable to get the recording session.
                     }
                 }
-                */
             }
         }
     }
@@ -321,7 +291,6 @@ public class RecordActivity extends ActionBarActivity implements
     ObjectAnimator progressBarAnimator = null;
     @Override
     public void onUploadStart(final RecordingSession recordingSession) {
-        Log.v("FindMe", "onUploadStart(" + recordingSession + ")");
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -329,14 +298,12 @@ public class RecordActivity extends ActionBarActivity implements
                 uploadProgress.setVisibility(View.VISIBLE);
                 uploadProgress.setAlpha(1f);
                 uploadProgress.setProgress(0);
-//                uploadProgress.setIndeterminate(true);
             }
         });
     }
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, final float progress) {
-        Log.v("FindMe", "onUploadProgress(" + recordingSession + ", " + progress + ")");
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -348,17 +315,6 @@ public class RecordActivity extends ActionBarActivity implements
                 int newProgress = (int) (progress * uploadProgress.getMax());
                 progressBarAnimator = ObjectAnimator.ofInt(uploadProgress, "progress", oldProgress, newProgress)
                         .setDuration(400);
-                progressBarAnimator.addListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationStart(Animator animation)
-                            {
-                                uploadProgress.setIndeterminate(false);
-                            }
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-//                                uploadProgress.setIndeterminate(true);
-                            }
-                        });
                 progressBarAnimator.start();
             }
         });
@@ -366,7 +322,6 @@ public class RecordActivity extends ActionBarActivity implements
 
     @Override
     public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
-        Log.v("FindMe", "onUploadFinish(" + recordingSession + ", " + success + ")");
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
