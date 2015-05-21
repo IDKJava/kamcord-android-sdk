@@ -77,6 +77,8 @@ public class Uploader extends Thread
     private String[] mVideoEtags;
     private String mS3UploadId = null;
 
+    private static UploadStatusListener sListener = null;
+
     static
     {
         try
@@ -91,6 +93,11 @@ public class Uploader extends Thread
         }
     }
 
+    public static void setUploadStatusListener(UploadStatusListener listener)
+    {
+        sListener = listener;
+    }
+
     public Uploader(RecordingSession recordingSession)
     {
         mRecordingSession = recordingSession;
@@ -103,14 +110,27 @@ public class Uploader extends Thread
             {
                 if( initialize() )
                 {
+                    if( sListener != null )
+                    {
+                        sListener.onUploadStart(mRecordingSession);
+                    }
                     reserveVideoUpload();
                     startUploadToS3(UploadType.VIDEO);
                     for( int part = 0; part < mTotalParts; part++ )
                     {
                         uploadPartToS3(part, UploadType.VIDEO);
+                        if( sListener != null )
+                        {
+                            sListener.onUploadProgress(mRecordingSession, (float) (part+1) / (float) mTotalParts);
+                        }
                     }
                     finishUploadToS3(UploadType.VIDEO);
                     informKamcordUploadFinished();
+                    if( sListener != null )
+                    {
+                        sListener.onUploadFinish(mRecordingSession, true);
+                        sListener = null;
+                    }
                 }
 
                 return;
@@ -121,9 +141,15 @@ public class Uploader extends Thread
                 e.printStackTrace();
             }
 
+        if( sListener != null )
+        {
+            sListener.onUploadFinish(mRecordingSession, false);
+            sListener = null;
+        }
+
         Log.e(TAG, "Unable to upload video, giving up.");
     }
-    
+
     private boolean initialize() throws Exception
     {
         mTotalParts = 0;
@@ -575,5 +601,12 @@ public class Uploader extends Thread
         {
             outstream.close();
         }
+    }
+
+    public interface UploadStatusListener
+    {
+        void onUploadStart(RecordingSession recordingSession);
+        void onUploadProgress(RecordingSession recordingSession, float progress);
+        void onUploadFinish(RecordingSession recordingSession, boolean success);
     }
 }

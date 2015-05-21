@@ -134,10 +134,11 @@ public class ShareFragment extends Fragment {
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
             getActivity().startService(uploadIntent);
+            getActivity().onBackPressed();
         }
         else
         {
-            Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT);
+            Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(intent);
         }

@@ -42,5 +42,6 @@
     <string name="signInProfilePrompt">You must sign in to Kamcord to view your profile page.</string>
     <string name="signIn">Sign In</string>
 
+    <string name="uploading">Uploading&#8230;</string>
 
 </resources>

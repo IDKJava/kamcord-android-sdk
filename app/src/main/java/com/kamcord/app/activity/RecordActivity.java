@@ -1,15 +1,11 @@
 package com.kamcord.app.activity;
 
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +26,8 @@ import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.service.connection.RecordingServiceConnection;
+import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
 
@@ -38,7 +36,8 @@ public class RecordActivity extends ActionBarActivity implements
         View.OnClickListener,
         RecordFragment.SelectedGameListener,
         RecordFragment.RecyclerViewScrollListener,
-        ObservableWebView.ObservableWebViewScrollListener {
+        ObservableWebView.ObservableWebViewScrollListener,
+        Uploader.UploadStatusListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
@@ -48,13 +47,11 @@ public class RecordActivity extends ActionBarActivity implements
     private SlidingTabLayout mTabs;
     private CharSequence tabTitles[];
     private int numberOfTabs;
-    public String videoPath;
-    private ProgressDialog mProgressDialog;
     private ViewGroup toolbarContainer;
     public Toolbar mToolbar;
 
     private Game mSelectedGame = null;
-    private RecordingServiceConnection mConnection = new RecordingServiceConnection();
+    private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
 
     private static final int HIDE_THRESHOLD = 20;
     private boolean controlsVisible = true;
@@ -74,8 +71,9 @@ public class RecordActivity extends ActionBarActivity implements
     {
         super.onStart();
         if (RecordingService.isRunning()) {
-            bindService(new Intent(this, RecordingService.class), mConnection, 0);
+            bindService(new Intent(this, RecordingService.class), mRecordingServiceConnection, 0);
         }
+        Uploader.setUploadStatusListener(this);
     }
 
     @Override
@@ -88,9 +86,10 @@ public class RecordActivity extends ActionBarActivity implements
     protected void onStop()
     {
         super.onStop();
-        if (mConnection.isConnected()) {
-            unbindService(mConnection);
+        if (mRecordingServiceConnection.isConnected()) {
+            unbindService(mRecordingServiceConnection);
         }
+        Uploader.setUploadStatusListener(null);
     }
 
     public void initMainActivity() {
@@ -180,11 +179,11 @@ public class RecordActivity extends ActionBarActivity implements
                     mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
                     stopService(new Intent(this, RecordingService.class));
 
-                    RecordingSession recordingSession = mConnection.getServiceRecordingSession();
+                    RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
                     if( recordingSession != null ) {
                         ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
+                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
                         recordShareFragment.setArguments(bundle);
                         getSupportFragmentManager().beginTransaction()
                                 .add(R.id.main_activity_layout, recordShareFragment)
@@ -220,10 +219,10 @@ public class RecordActivity extends ActionBarActivity implements
                     MediaProjection projection = ((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
                             .getMediaProjection(resultCode, data);
                     RecordingSession recordingSession = new RecordingSession(mSelectedGame);
-                    mConnection.initializeForRecording(projection, recordingSession);
+                    mRecordingServiceConnection.initializeForRecording(projection, recordingSession);
 
                     startService(new Intent(this, RecordingService.class));
-                    bindService(new Intent(this, RecordingService.class), mConnection, 0);
+                    bindService(new Intent(this, RecordingService.class), mRecordingServiceConnection, 0);
                 } catch (ActivityNotFoundException e) {
                     // TODO: show the user something about not finding the game.
                     Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);
@@ -284,49 +283,18 @@ public class RecordActivity extends ActionBarActivity implements
         }
     }
 
-    private class RecordingServiceConnection implements ServiceConnection {
-        private RecordingService recordingService;
-        private MediaProjection mediaProjection = null;
-        private RecordingSession recordingSession = null;
-        private boolean isConnected = false;
+    @Override
+    public void onUploadStart(RecordingSession recordingSession) {
+        Log.v("FindMe", "onUploadStart(" + recordingSession + ")");
+    }
 
-        public void initializeForRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
-            this.mediaProjection = mediaProjection;
-            this.recordingSession = recordingSession;
-        }
+    @Override
+    public void onUploadProgress(RecordingSession recordingSession, float progress) {
+        Log.v("FindMe", "onUploadProgress(" + recordingSession + ", " + progress + ")");
+    }
 
-        public void uninitialize() {
-            this.mediaProjection = null;
-            this.recordingSession = null;
-        }
-
-        public boolean isInitializedForRecording() {
-            return mediaProjection != null && recordingSession != null;
-        }
-
-        public boolean isConnected() {
-            return isConnected;
-        }
-
-        public RecordingSession getServiceRecordingSession()
-        {
-            return recordingService != null ? recordingService.getRecordingSession() : null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            recordingService = ((RecordingService.LocalBinder) iBinder).getService();
-            if (isInitializedForRecording()) {
-                recordingService.startRecording(mediaProjection, recordingSession);
-                uninitialize();
-            }
-            isConnected = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            uninitialize();
-            isConnected = false;
-        }
+    @Override
+    public void onUploadFinish(RecordingSession recordingSession, boolean success) {
+        Log.v("FindMe", "onUploadFinish(" + recordingSession + ", " + success + ")");
     }
 }
