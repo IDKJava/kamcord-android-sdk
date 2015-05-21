@@ -1,4 +1,4 @@
-package com.kamcord.app.utils;
+package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
@@ -15,6 +15,8 @@ import android.os.HandlerThread;
 import android.os.PowerManager;
 
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.FileSystemManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +39,8 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     private Context mContext;
     private Handler mHandler;
     private int audioNumber = 0;
+
+    private long clipStartTimeNs = 0;
 
     private ActivityManager activityManager;
     private RecordingSession mRecordingSession;
@@ -139,7 +143,12 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             mAudioRecord.startRecording();
             mAudioCodec.start();
 
+            clipStartTimeNs = System.nanoTime();
             while(isGameInForeground()) {
+                if( System.nanoTime() - clipStartTimeNs < RecordingService.DROP_FIRST_NS )
+                {
+                    continue;
+                }
                 queueEncoder();
                 drainEncoder(info);
             }

@@ -1,4 +1,4 @@
-package com.kamcord.app.utils;
+package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
@@ -20,6 +20,8 @@ import android.view.Surface;
 import android.view.WindowManager;
 
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.FileSystemManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,6 +50,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private ActivityManager mActivityManager;
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
+    private long clipStartTimeNs = 0;
 
     private static class CodecSettings
     {
@@ -180,6 +183,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 throw new RuntimeException("Muxer failed.", ioe);
             }
 
+
+            clipStartTimeNs = System.nanoTime();
             drainEncoder();
             releaseEncoders();
         }
@@ -280,13 +285,11 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                     mVideoBufferInfo.size = 0;
                 }
 
-                if (mVideoBufferInfo.size != 0) {
-                    if (mMuxerStart) {
-                        encodedData.position(mVideoBufferInfo.offset);
-                        encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
-                        mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
-                        mMuxerWrite = true;
-                    }
+                if (mVideoBufferInfo.size != 0 && mMuxerStart && System.nanoTime() - clipStartTimeNs > RecordingService.DROP_FIRST_NS) {
+                    encodedData.position(mVideoBufferInfo.offset);
+                    encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
+                    mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
+                    mMuxerWrite = true;
                 }
 
                 mVideoEncoder.releaseOutputBuffer(encoderStatus, false);

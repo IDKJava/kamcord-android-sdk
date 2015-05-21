@@ -13,13 +13,15 @@ import android.util.Log;
 
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
-import com.kamcord.app.utils.AudioRecordThread;
-import com.kamcord.app.utils.RecordHandlerThread;
+import com.kamcord.app.thread.AudioRecordThread;
+import com.kamcord.app.thread.RecordHandlerThread;
 
 public class RecordingService extends Service {
     private static final String TAG = RecordingService.class.getSimpleName();
     private static int NOTIFICATION_ID = 3141592;
     private static volatile boolean mIsRunning = false;
+
+    public static final long DROP_FIRST_NS = 500000;
 
     private final IBinder mBinder = new LocalBinder();
 
