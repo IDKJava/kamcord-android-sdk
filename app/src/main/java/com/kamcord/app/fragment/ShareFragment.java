@@ -61,6 +61,7 @@ public class ShareFragment extends Fragment {
     @InjectView(R.id.share_toolbar)
     Toolbar mToolbar;
 
+    private String videoPath;
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
         @Override
@@ -162,9 +163,7 @@ public class ShareFragment extends Fragment {
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
-        }
-        else
-        {
+        } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(intent);
@@ -172,12 +171,20 @@ public class ShareFragment extends Fragment {
     }
 
     private void videoPrepared(File videoFile) {
-        String videoPath = videoFile.getAbsolutePath();
-        thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
+        videoPath = videoFile.getAbsolutePath();
+        if (thumbnailImageView != null && VideoUtils.getVideoThumbnail(videoPath) != null) {
+            thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
+        }
         String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
-        videoDurationTextView.setText(videoDurationStr);
-        processingProgressBarContainer.setVisibility(View.GONE);
-        playImageView.setVisibility(View.VISIBLE);
+        if (videoDurationTextView != null && videoDurationStr != null) {
+            videoDurationTextView.setText(videoDurationStr);
+        }
+        if (processingProgressBarContainer != null) {
+            processingProgressBarContainer.setVisibility(View.GONE);
+        }
+        if (playImageView != null) {
+            playImageView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void videoProcessing() {
