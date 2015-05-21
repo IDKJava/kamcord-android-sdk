@@ -79,8 +79,7 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         if (RecordingService.isRunning()) {
             bindService(new Intent(this, RecordingService.class), mRecordingServiceConnection, 0);
@@ -95,8 +94,7 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     @Override
-    protected void onStop()
-    {
+    protected void onStop() {
         super.onStop();
         if (mRecordingServiceConnection.isConnected()) {
             unbindService(mRecordingServiceConnection);
@@ -140,8 +138,7 @@ public class RecordActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                if( state == ViewPager.SCROLL_STATE_DRAGGING )
-                {
+                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
                     showToolbar();
                 }
             }
@@ -186,7 +183,7 @@ public class RecordActivity extends ActionBarActivity implements
                     stopService(new Intent(this, RecordingService.class));
 
                     RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
-                    if( recordingSession != null ) {
+                    if (recordingSession != null) {
                         FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
                         ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
@@ -195,9 +192,7 @@ public class RecordActivity extends ActionBarActivity implements
                         getSupportFragmentManager().beginTransaction()
                                 .add(R.id.main_activity_layout, recordShareFragment)
                                 .addToBackStack("ShareFragment").commit();
-                    }
-                    else
-                    {
+                    } else {
                         // TODO: show the user something about being unable to get the recording session.
                     }
                 }
@@ -258,9 +253,8 @@ public class RecordActivity extends ActionBarActivity implements
     public void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy) {
         if (recyclerViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
                 && !(recyclerView.getChildCount() > 0
-                        && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) == 0
-                        && recyclerView.getChildAt(0).getTop() > 0) )
-        {
+                && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) == 0
+                && recyclerView.getChildAt(0).getTop() > 0)) {
             hideToolbar();
             recyclerViewScrolledDistance = 0;
         } else if (recyclerViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
@@ -276,7 +270,7 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     public void onObservableWebViewScrolled(ObservableWebView webView, int dx, int dy) {
         if (webViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
-                && webView.getScrollY() >= getResources().getDimensionPixelSize(R.dimen.tabsHeight) ) {
+                && webView.getScrollY() >= getResources().getDimensionPixelSize(R.dimen.tabsHeight)) {
             hideToolbar();
             controlsVisible = false;
             webViewScrolledDistance = 0;
@@ -292,6 +286,7 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     ObjectAnimator progressBarAnimator = null;
+
     @Override
     public void onUploadStart(final RecordingSession recordingSession) {
         uploadProgress.post(new Runnable() {
@@ -304,29 +299,28 @@ public class RecordActivity extends ActionBarActivity implements
                 uploadProgress.setVisibility(View.VISIBLE);
                 uploadProgress.setAlpha(1f);
                 uploadProgress.setProgress(0);
-        }
+            }
         });
-        }
+    }
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, final float progress) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
-                if( progressBarAnimator != null )
-                {
+                if (progressBarAnimator != null) {
                     progressBarAnimator.cancel();
-        }
+                }
                 int oldProgress = uploadProgress.getProgress();
                 int newProgress = (int) (progress * uploadProgress.getMax());
                 progressBarAnimator = ObjectAnimator.ofInt(uploadProgress, "progress", oldProgress, newProgress)
                         .setDuration(400);
                 progressBarAnimator.start();
-        }
+            }
         });
-        }
+    }
 
-        @Override
+    @Override
     public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
         uploadProgress.post(new Runnable() {
             @Override
@@ -340,15 +334,14 @@ public class RecordActivity extends ActionBarActivity implements
                     @Override
                     public void run() {
                         uploadProgress.setVisibility(View.GONE);
-            }
+                    }
                 }).start();
-        }
+            }
         });
-        }
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         FlurryAgent.onEndSession(this);
     }
