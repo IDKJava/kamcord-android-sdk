@@ -125,7 +125,6 @@ public class Uploader extends Thread {
             return;
 
         } catch (Throwable e) {
-            videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "upload_false");
             Log.e(TAG, "Something unexpected happened during video upload, trying again...");
             e.printStackTrace();
         }
