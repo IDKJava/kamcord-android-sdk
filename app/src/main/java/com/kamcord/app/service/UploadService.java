@@ -42,7 +42,7 @@ public class UploadService extends IntentService {
                 .build();
         startForeground(NOTIFICATION_ID, notification);
 
-        Uploader uploader = new Uploader(currentlyUploadingSession);
+        Uploader uploader = new Uploader(currentlyUploadingSession, getApplicationContext());
         uploader.start();
         try {
             uploader.join();
@@ -58,7 +58,7 @@ public class UploadService extends IntentService {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
-    }
+}
 
     public RecordingSession getCurrentlyUploadingSession()
     {

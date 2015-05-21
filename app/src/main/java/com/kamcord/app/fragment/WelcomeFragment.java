@@ -27,7 +27,7 @@ import butterknife.OnClick;
  */
 public class WelcomeFragment extends Fragment {
 
-    public static final int CLEAR_DELAY_MS = 2500;
+    public static final int CLEAR_DELAY_MS = 1000;
 
     @InjectView(R.id.subtitleTextView) TextView subtitleTextView;
     @InjectView(R.id.skipButton) Button skipButton;

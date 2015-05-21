@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
@@ -72,8 +73,8 @@ public class RecordActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_mdrecord);
+        FlurryAgent.onStartSession(this);
         ButterKnife.inject(this);
-
         initMainActivity();
     }
 
@@ -186,6 +187,7 @@ public class RecordActivity extends ActionBarActivity implements
 
                     RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
                     if( recordingSession != null ) {
+                        FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
                         ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
@@ -219,6 +221,7 @@ public class RecordActivity extends ActionBarActivity implements
             if (mSelectedGame != null) {
                 try {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
+                    FlurryAgent.logEvent(getResources().getString(R.string.flurryRecordStarted));
                     startActivity(launchIntent);
 
                     MediaProjection projection = ((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
@@ -301,9 +304,9 @@ public class RecordActivity extends ActionBarActivity implements
                 uploadProgress.setVisibility(View.VISIBLE);
                 uploadProgress.setAlpha(1f);
                 uploadProgress.setProgress(0);
-            }
+        }
         });
-    }
+        }
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, final float progress) {
@@ -313,17 +316,17 @@ public class RecordActivity extends ActionBarActivity implements
                 if( progressBarAnimator != null )
                 {
                     progressBarAnimator.cancel();
-                }
+        }
                 int oldProgress = uploadProgress.getProgress();
                 int newProgress = (int) (progress * uploadProgress.getMax());
                 progressBarAnimator = ObjectAnimator.ofInt(uploadProgress, "progress", oldProgress, newProgress)
                         .setDuration(400);
                 progressBarAnimator.start();
-            }
+        }
         });
-    }
+        }
 
-    @Override
+        @Override
     public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
         uploadProgress.post(new Runnable() {
             @Override
@@ -337,9 +340,16 @@ public class RecordActivity extends ActionBarActivity implements
                     @Override
                     public void run() {
                         uploadProgress.setVisibility(View.GONE);
-                    }
-                }).start();
             }
+                }).start();
+        }
         });
+        }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        FlurryAgent.onEndSession(this);
     }
 }
