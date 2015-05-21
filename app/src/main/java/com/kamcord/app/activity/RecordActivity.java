@@ -294,7 +294,10 @@ public class RecordActivity extends ActionBarActivity implements
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(RecordActivity.this, String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoIsUploading), recordingSession.getVideoTitle()), Toast.LENGTH_SHORT).show();
+                String toastText = recordingSession.getVideoTitle() != null
+                        ? String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoIsUploading), recordingSession.getVideoTitle())
+                        : getResources().getString(R.string.yourVideoIsUploadingNoTitle);
+                Toast.makeText(RecordActivity.this, toastText, Toast.LENGTH_SHORT).show();
                 uploadProgress.setVisibility(View.VISIBLE);
                 uploadProgress.setAlpha(1f);
                 uploadProgress.setProgress(0);
@@ -325,9 +328,12 @@ public class RecordActivity extends ActionBarActivity implements
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(RecordActivity.this, String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoFinishedUploading), recordingSession.getVideoTitle()), Toast.LENGTH_SHORT).show();
+                String toastText = recordingSession.getVideoTitle() != null
+                        ? String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoFinishedUploading), recordingSession.getVideoTitle())
+                        : getResources().getString(R.string.yourVideoFinishedUploadingNoTitle);
+                Toast.makeText(RecordActivity.this, toastText, Toast.LENGTH_SHORT).show();
                 uploadProgress.setIndeterminate(false);
-                uploadProgress.animate().setStartDelay(1000).alpha(0f).withEndAction(new Runnable() {
+                uploadProgress.animate().setStartDelay(500).alpha(0f).withEndAction(new Runnable() {
                     @Override
                     public void run() {
                         uploadProgress.setVisibility(View.GONE);
