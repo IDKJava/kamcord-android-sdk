@@ -47,4 +47,20 @@ public class FileSystemManager {
         cacheDirectory.mkdirs();
         return cacheDirectory;
     }
+
+    public static void cleanCache(File directory, File cacheDirectory) {
+        try {
+            if(directory.isDirectory()) {
+                for(File file : directory.listFiles()) {
+                    file.delete();
+                    cleanCache(file, cacheDirectory);
+                }
+            }
+            if(directory.compareTo(cacheDirectory) != 0) {
+                directory.delete();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -34,9 +34,6 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-            <!--<meta-data-->
-                <!--android:name="android.support.PARENT_ACTIVITY"-->
-                <!--android:value=".activity.RecordActivity"/>-->
         <activity
             android:name=".activity.VideoPreviewActivity"
             android:label="@string/app_name" />

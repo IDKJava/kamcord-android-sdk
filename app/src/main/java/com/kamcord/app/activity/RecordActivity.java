@@ -31,15 +31,13 @@ import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.service.connection.RecordingServiceConnection;
+import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
 
 import java.io.File;
-
-import com.kamcord.app.service.connection.RecordingServiceConnection;
-import com.kamcord.app.thread.Uploader;
-
 import java.util.Locale;
 
 import butterknife.ButterKnife;
@@ -67,7 +65,6 @@ public class RecordActivity extends ActionBarActivity implements
     private int numberOfTabs;
 
     private File cacheDirectory;
-
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
@@ -201,6 +198,7 @@ public class RecordActivity extends ActionBarActivity implements
                         bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
                         recordShareFragment.setArguments(bundle);
                         getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.abc_fade_in, R.anim.abc_fade_out, R.anim.abc_fade_in, R.anim.abc_fade_out)
                                 .add(R.id.main_activity_layout, recordShareFragment)
                                 .addToBackStack("ShareFragment").commit();
                     } else {
@@ -367,25 +365,10 @@ public class RecordActivity extends ActionBarActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_cleancache: {
-                cleanCache(cacheDirectory);
+                FileSystemManager.cleanCache(cacheDirectory, cacheDirectory);
             }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void cleanCache(File directory) {
-        try {
-            if(directory.isDirectory()) {
-                for(File file : directory.listFiles()) {
-                    file.delete();
-                    cleanCache(file);
-                }
-            }
-            if(directory.compareTo(cacheDirectory) != 0) {
-                directory.delete();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
