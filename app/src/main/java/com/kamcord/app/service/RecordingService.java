@@ -16,12 +16,14 @@ import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.AudioRecordThread;
 import com.kamcord.app.thread.RecordHandlerThread;
 
+import java.util.concurrent.CyclicBarrier;
+
 public class RecordingService extends Service {
     private static final String TAG = RecordingService.class.getSimpleName();
     private static int NOTIFICATION_ID = 3141592;
     private static volatile boolean mIsRunning = false;
 
-    public static final long DROP_FIRST_NS = 500000;
+    public static final long DROP_FIRST_NS = 1000000;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -81,19 +83,19 @@ public class RecordingService extends Service {
 
             this.recordingSession = recordingSession;
 
-            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession);
-            mRecordHandlerThread.start();
+            CyclicBarrier clipStartBarrier = new CyclicBarrier(2);
 
+            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession, clipStartBarrier);
+            mRecordHandlerThread.start();
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
             mRecordHandlerThread.setHandler(mHandler);
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.POLL);
 
 
-            mAudioRecordThread = new AudioRecordThread(getApplicationContext(), recordingSession);
+            mAudioRecordThread = new AudioRecordThread(getApplicationContext(), recordingSession, clipStartBarrier);
             mAudioRecordThread.start();
             mAudioRecordHandler = new Handler(mAudioRecordThread.getLooper(), mAudioRecordThread);
             mAudioRecordThread.setHandler(mAudioRecordHandler);
-
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.POLL);
 
             Notification.Builder notificationBuilder = new Notification.Builder(this);

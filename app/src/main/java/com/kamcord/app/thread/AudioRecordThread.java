@@ -23,12 +23,14 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CyclicBarrier;
 
 public class AudioRecordThread extends HandlerThread implements Handler.Callback {
 
     private MediaCodec mAudioCodec = null;
     private AudioRecord mAudioRecord = null;
     private MediaMuxer mMediaMuxer = null;
+    private CyclicBarrier clipStartBarrier = null;
 
     private long mCurrentTimestampUs = 0;
     private boolean mMuxerStart = false;
@@ -50,12 +52,13 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         public static final int BIT_RATE = 64 * 1024;
     }
 
-    public AudioRecordThread(Context context, RecordingSession recordingSession) {
+    public AudioRecordThread(Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier) {
         super("dsdsd");
         this.mContext = context;
 
         this.activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         this.mRecordingSession = recordingSession;
+        this.clipStartBarrier = clipStartBarrier;
     }
 
     @Override
@@ -143,10 +146,18 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             mAudioRecord.startRecording();
             mAudioCodec.start();
 
+            try {
+                clipStartBarrier.await();
+            } catch (Exception e) {
+                e.printStackTrace();
+                releaseEncoder();
+                return;
+            }
             clipStartTimeNs = System.nanoTime();
             while(isGameInForeground()) {
                 if( System.nanoTime() - clipStartTimeNs < RecordingService.DROP_FIRST_NS )
                 {
+                    Thread.yield();
                     continue;
                 }
                 queueEncoder();

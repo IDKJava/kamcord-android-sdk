@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CyclicBarrier;
 
 public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
     private static final String TAG = RecordHandlerThread.class.getSimpleName();
@@ -41,6 +42,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private MediaCodec mVideoEncoder;
     private MediaCodec.BufferInfo mVideoBufferInfo;
     private VirtualDisplay mVirtualDisplay;
+
+    private CyclicBarrier clipStartBarrier = null;
 
     private boolean mMuxerStart = false;
     private boolean mMuxerWrite = false;
@@ -79,13 +82,14 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     }
     private Dimensions codecDimensions = null;
 
-    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession) {
+    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier) {
         super("KamcordRecordingThread");
         this.mMediaProjection = mediaProjection;
         this.mContext = context;
 
         this.mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         this.mRecordingSession = recordingSession;
+        this.clipStartBarrier = clipStartBarrier;
     }
 
     @Override
@@ -184,6 +188,15 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             }
 
 
+            try
+            {
+                clipStartBarrier.await();
+                clipStartBarrier.reset();
+            }
+            catch(Exception e )
+            {
+                e.printStackTrace();
+            }
             clipStartTimeNs = System.nanoTime();
             drainEncoder();
             releaseEncoders();
