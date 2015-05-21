@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
@@ -65,7 +66,7 @@ public class RecordActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mdrecord);
-
+        FlurryAgent.onStartSession(this);
         initMainActivity();
     }
 
@@ -182,6 +183,7 @@ public class RecordActivity extends ActionBarActivity implements
 
                     RecordingSession recordingSession = mConnection.getServiceRecordingSession();
                     if( recordingSession != null ) {
+                        FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
                         ShareFragment recordShareFragment = new ShareFragment();
                         Bundle bundle = new Bundle();
                         bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mConnection.getServiceRecordingSession());
@@ -215,6 +217,7 @@ public class RecordActivity extends ActionBarActivity implements
             if (mSelectedGame != null) {
                 try {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
+                    FlurryAgent.logEvent(getResources().getString(R.string.flurryRecordStarted));
                     startActivity(launchIntent);
 
                     MediaProjection projection = ((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
@@ -328,5 +331,11 @@ public class RecordActivity extends ActionBarActivity implements
             uninitialize();
             isConnected = false;
         }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        FlurryAgent.onEndSession(this);
     }
 }

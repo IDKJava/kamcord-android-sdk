@@ -19,7 +19,7 @@ public class UploadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         RecordingSession recordingSession = intent.getParcelableExtra(ARG_SESSION_TO_SHARE);
 
-        Uploader uploader = new Uploader(recordingSession);
+        Uploader uploader = new Uploader(recordingSession, getApplicationContext());
         uploader.start();
         try {
             uploader.join();
