@@ -1,9 +1,11 @@
 package com.kamcord.app.thread;
 
+import android.content.Context;
 import android.util.Base64;
 import android.util.Log;
 
 import com.flurry.android.FlurryAgent;
+import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
@@ -50,7 +52,7 @@ import retrofit.RetrofitError;
 
 public class Uploader extends Thread {
     private static final String TAG = Uploader.class.getSimpleName();
-    private static final String VIDEO_UPLOAD = "Video Share";
+    private Context mContext;
 
     enum UploadType {
         VIDEO,
@@ -91,8 +93,9 @@ public class Uploader extends Thread {
         }
     }
 
-    public Uploader(RecordingSession recordingSession) {
+    public Uploader(RecordingSession recordingSession, Context context) {
         mRecordingSession = recordingSession;
+        mContext = context;
     }
 
     @Override
@@ -100,13 +103,12 @@ public class Uploader extends Thread {
         AccountManager accountManager = new AccountManager();
         Account account = accountManager.getStoredAccount();
         Map<String, String> videoParams = new HashMap<>();
-        videoParams.put("GameName", mRecordingSession.getGamePackageName());
-        videoParams.put("GameID", mServerVideoId);
-        videoParams.put("UserName", account.username);
-        videoParams.put("UserID", account.id);
+        videoParams.put(mContext.getResources().getString(R.string.flurryGameName), mRecordingSession.getGamePackageName());
+        videoParams.put(mContext.getResources().getString(R.string.flurryGameID), mServerVideoId);
+        videoParams.put(mContext.getResources().getString(R.string.flurryUserName), account.username);
+        videoParams.put(mContext.getResources().getString(R.string.flurryUserID), account.id);
 
         try {
-            FlurryAgent.logEvent("Video_Share", videoParams);
             long start = System.currentTimeMillis();
             reserveVideoUpload();
             startUploadToS3(UploadType.VIDEO);
@@ -116,18 +118,19 @@ public class Uploader extends Thread {
             finishUploadToS3(UploadType.VIDEO);
             informKamcordUploadFinished();
             long end = System.currentTimeMillis();
-            videoParams.put("Duration", Long.toString(start - end));
-            FlurryAgent.logEvent("Video Share Params: ", videoParams, true);
+            videoParams.put(mContext.getResources().getString(R.string.flurryDuration), Long.toString(start - end));
+            videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "true");
+            FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
             return;
 
         } catch (Throwable e) {
 
-            FlurryAgent.logEvent("Video_Share_Params: ", videoParams, false);
             Log.e(TAG, "Something unexpected happened during video upload, trying again...");
             e.printStackTrace();
         }
 
-        FlurryAgent.logEvent("Video_Share_Params: ", videoParams, false);
+        videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "false");
+        FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
         Log.e(TAG, "Unable to upload video, giving up.");
     }
 
