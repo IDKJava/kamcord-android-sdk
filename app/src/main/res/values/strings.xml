@@ -43,5 +43,7 @@
     <string name="signIn">Sign In</string>
 
     <string name="uploading">Uploading&#8230;</string>
+    <string name="yourVideoIsUploading">Your video \"%s\" is uploading!</string>
+    <string name="yourVideoFinishedUploading">Your video \"%s\" finished uploading!</string>
 
 </resources>

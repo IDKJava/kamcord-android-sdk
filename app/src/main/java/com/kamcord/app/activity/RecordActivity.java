@@ -17,6 +17,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
@@ -31,6 +32,11 @@ import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
 
+import java.util.Locale;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 
 public class RecordActivity extends ActionBarActivity implements
         View.OnClickListener,
@@ -41,14 +47,16 @@ public class RecordActivity extends ActionBarActivity implements
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    ImageButton mFloatingActionButton;
-    private ViewPager mViewPager;
+    @InjectView(R.id.main_fab) ImageButton mFloatingActionButton;
+    @InjectView(R.id.main_pager) ViewPager mViewPager;
+    @InjectView(R.id.tabs) SlidingTabLayout mTabs;
+    @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
+    @InjectView(R.id.toolbar) Toolbar mToolbar;
+    @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
+
     private MainViewPagerAdapter mainViewPagerAdapter;
-    private SlidingTabLayout mTabs;
     private CharSequence tabTitles[];
     private int numberOfTabs;
-    private ViewGroup toolbarContainer;
-    public Toolbar mToolbar;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
@@ -61,7 +69,9 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_mdrecord);
+        ButterKnife.inject(this);
 
         initMainActivity();
     }
@@ -94,19 +104,15 @@ public class RecordActivity extends ActionBarActivity implements
 
     public void initMainActivity() {
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
         mToolbar.setLogo(R.drawable.toolbar_icon);
-
-        toolbarContainer = (ViewGroup) findViewById(R.id.toolbarContainer);
 
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
         tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
         numberOfTabs = tabTitles.length;
 
-        mTabs = (SlidingTabLayout) findViewById(R.id.tabs);
         mTabs.setDistributeEvenly(true);
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
@@ -138,12 +144,10 @@ public class RecordActivity extends ActionBarActivity implements
                 }
             }
         });
-        mViewPager = (ViewPager) findViewById(R.id.main_pager);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
 
-        mFloatingActionButton = (ImageButton) findViewById(R.id.main_fab);
         mFloatingActionButton.setOnClickListener(this);
 
     }
@@ -284,17 +288,44 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void onUploadStart(RecordingSession recordingSession) {
+    public void onUploadStart(final RecordingSession recordingSession) {
         Log.v("FindMe", "onUploadStart(" + recordingSession + ")");
+        uploadProgress.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(RecordActivity.this, String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoIsUploading), recordingSession.getVideoTitle()), Toast.LENGTH_SHORT).show();
+                uploadProgress.setVisibility(View.VISIBLE);
+                uploadProgress.setProgress(0);
+            }
+        });
     }
 
     @Override
-    public void onUploadProgress(RecordingSession recordingSession, float progress) {
+    public void onUploadProgress(RecordingSession recordingSession, final float progress) {
         Log.v("FindMe", "onUploadProgress(" + recordingSession + ", " + progress + ")");
+        uploadProgress.post(new Runnable() {
+            @Override
+            public void run() {
+                uploadProgress.setProgress((int) (progress * uploadProgress.getMax()));
+            }
+        });
     }
 
     @Override
-    public void onUploadFinish(RecordingSession recordingSession, boolean success) {
+    public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
         Log.v("FindMe", "onUploadFinish(" + recordingSession + ", " + success + ")");
+        uploadProgress.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(RecordActivity.this, String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoFinishedUploading), recordingSession.getVideoTitle()), Toast.LENGTH_SHORT).show();
+                uploadProgress.setProgress(uploadProgress.getMax());
+                uploadProgress.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadProgress.setVisibility(View.GONE);
+                    }
+                }, 1000);
+            }
+        });
     }
 }
