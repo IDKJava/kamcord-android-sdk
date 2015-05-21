@@ -3,7 +3,10 @@ package com.kamcord.app.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,8 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
-import com.kamcord.app.activity.VideoPreviewActivity;
 import com.kamcord.app.activity.LoginActivity;
+import com.kamcord.app.activity.RecordActivity;
+import com.kamcord.app.activity.VideoPreviewActivity;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.AccountManager;
@@ -42,6 +46,7 @@ public class ShareFragment extends Fragment {
     @InjectView(R.id.descriptionEditText) EditText descriptionEditText;
     @InjectView(R.id.videoDurationTextView) TextView videoDurationTextView;
     @InjectView(R.id.processingProgressBarContainer) ViewGroup processingProgressBarContainer;
+    @InjectView(R.id.share_toolbar) Toolbar mToolbar;
 
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
@@ -83,6 +88,12 @@ public class ShareFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_share, container, false);
 
         ButterKnife.inject(this, root);
+        RecordActivity activity = ((RecordActivity)getActivity());
+        activity.setSupportActionBar(mToolbar);
+        ActionBar actionbar = activity.getSupportActionBar();
+        actionbar.setTitle("");
+        actionbar.setDisplayHomeAsUpEnabled(true);
+
         recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
 
         File videoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
@@ -155,5 +166,14 @@ public class ShareFragment extends Fragment {
     private void videoProcessing() {
         processingProgressBarContainer.setVisibility(View.VISIBLE);
         playImageView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                getActivity().onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
