@@ -41,7 +41,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     private Handler mHandler;
     private int audioNumber = 0;
 
-    private long clipStartTimeNs = 0;
     private long presentationStartUs = -1;
 
     private ActivityManager activityManager;
@@ -67,6 +66,11 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         switch (msg.what) {
             case Message.RECORD_CLIP:
                 audioNumber++;
+                try {
+                    Thread.sleep(RecordingService.DROP_FIRST_MS);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
                 mHandler.sendEmptyMessage(Message.POLL);
@@ -142,7 +146,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         if( mAudioCodec != null && mMediaMuxer != null)
         {
             MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-            mAudioRecord.startRecording();
             mAudioCodec.start();
 
             try {
@@ -152,8 +155,8 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 releaseEncoder();
                 return;
             }
-            clipStartTimeNs = System.nanoTime();
             presentationStartUs = -1;
+            mAudioRecord.startRecording();
             while(isGameInForeground()) {
                 queueEncoder();
                 drainEncoder(info);
@@ -210,7 +213,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 info.size = 0;
             }
 
-            if (info.size != 0 && mMuxerStart && (float) (System.nanoTime() - clipStartTimeNs) / 1000000000f > RecordingService.DROP_FIRST_SECONDS) {
+            if (info.size != 0 && mMuxerStart ) {
                 encodedData.position(info.offset);
                 encodedData.limit(info.offset + info.size);
                 if( presentationStartUs < 0 )
