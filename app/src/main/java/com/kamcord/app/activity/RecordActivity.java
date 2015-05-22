@@ -76,7 +76,6 @@ public class RecordActivity extends ActionBarActivity implements
     private CharSequence tabTitles[];
     private int numberOfTabs;
 
-    private File cacheDirectory;
     private Menu optionsMenu;
 
     private Game mSelectedGame = null;
@@ -122,8 +121,6 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     public void initMainActivity() {
-
-        cacheDirectory = FileSystemManager.getCacheDirectory();
 
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
@@ -383,7 +380,7 @@ public class RecordActivity extends ActionBarActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_cleancache: {
-                FileSystemManager.cleanCache(cacheDirectory, cacheDirectory);
+                FileSystemManager.cleanCache();
                 break;
             }
             case R.id.action_signout: {

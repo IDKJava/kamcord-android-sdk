@@ -48,19 +48,21 @@ public class FileSystemManager {
         return cacheDirectory;
     }
 
-    public static void cleanCache(File directory, File cacheDirectory) {
+    public static void cleanCache() {
         try {
-            if(directory.isDirectory()) {
-                for(File file : directory.listFiles()) {
-                    file.delete();
-                    cleanCache(file, cacheDirectory);
-                }
-            }
-            if(directory.compareTo(cacheDirectory) != 0) {
-                directory.delete();
-            }
+            clearCacheRecursive(getCacheDirectory());
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void clearCacheRecursive(File file)
+    {
+        if(file.isDirectory()) {
+            for(File child : file.listFiles()) {
+                clearCacheRecursive(child);
+            }
+        }
+        file.delete();
     }
 }
