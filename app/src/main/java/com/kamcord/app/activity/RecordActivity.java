@@ -39,7 +39,7 @@ import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
-import com.kamcord.app.utils.SlidingTabLayout;
+import com.kamcord.app.view.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
 
 import java.util.Locale;
@@ -61,18 +61,12 @@ public class RecordActivity extends ActionBarActivity implements
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    @InjectView(R.id.main_fab)
-    ImageButton mFloatingActionButton;
-    @InjectView(R.id.main_pager)
-    ViewPager mViewPager;
-    @InjectView(R.id.tabs)
-    SlidingTabLayout mTabs;
-    @InjectView(R.id.toolbarContainer)
-    ViewGroup toolbarContainer;
-    @InjectView(R.id.toolbar)
-    Toolbar mToolbar;
-    @InjectView(R.id.uploadProgressBar)
-    ProgressBar uploadProgress;
+    @InjectView(R.id.main_fab) ImageButton mFloatingActionButton;
+    @InjectView(R.id.main_pager) ViewPager mViewPager;
+    @InjectView(R.id.tabs) SlidingTabLayout mTabs;
+    @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
+    @InjectView(R.id.toolbar) Toolbar mToolbar;
+    @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
 
     private MainViewPagerAdapter mainViewPagerAdapter;
     private CharSequence tabTitles[];
@@ -99,8 +93,7 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     @Override
-    protected void attachBaseContext(Context newBase)
-    {
+    protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
@@ -151,7 +144,7 @@ public class RecordActivity extends ActionBarActivity implements
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (!controlsVisible) {
                     showToolbar();
-            }
+                }
             }
 
             @Override
@@ -167,8 +160,7 @@ public class RecordActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                if( state == ViewPager.SCROLL_STATE_DRAGGING && !controlsVisible )
-                {
+                if (state == ViewPager.SCROLL_STATE_DRAGGING && !controlsVisible) {
                     showToolbar();
                 }
             }
@@ -374,7 +366,7 @@ public class RecordActivity extends ActionBarActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_record, menu);
         optionsMenu = menu;
-        if(!AccountManager.isLoggedIn()) {
+        if (!AccountManager.isLoggedIn()) {
             MenuItem signoutItem = optionsMenu.getItem(1);
             signoutItem.setVisible(false);
         }
@@ -400,23 +392,20 @@ public class RecordActivity extends ActionBarActivity implements
             }
             case R.id.action_request_game: {
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[] {getResources().getString(R.string.communityEmail),});
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getResources().getString(R.string.communityEmail),});
                 intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.canIRecord));
                 String body = getResources().getString(R.string.iWantToRecord) + " \n"
                         + "\n";
-                if( AccountManager.isLoggedIn() )
-                {
+                if (AccountManager.isLoggedIn()) {
                     Account account = AccountManager.getStoredAccount();
                     body += String.format(Locale.ENGLISH, getResources().getString(R.string.sincerely), account.username);
                 }
                 intent.putExtra(Intent.EXTRA_TEXT, body);
                 intent.setType("*/*");
                 intent.setData(Uri.parse("mailto:"));
-                if( intent.resolveActivity(getPackageManager()) != null ) {
+                if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
-                }
-                else
-                {
+                } else {
                     // TODO: show the user there's no app to handle emails.
                 }
                 break;
