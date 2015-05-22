@@ -97,6 +97,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
+                mSupportedGameList.clear();
+                mRecyclerAdapter.notifyDataSetChanged();
                 AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
             }
         });
