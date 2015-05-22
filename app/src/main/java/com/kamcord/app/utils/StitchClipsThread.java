@@ -92,20 +92,15 @@ public class StitchClipsThread extends Thread {
         mergeVideoAndAudio(stitchedVideoFile, stitchedAudioFile, mergedFile, new ExecuteBinaryResponseHandler() {
             @Override
             public void onSuccess(String message) {
-
+                if (listener != null) {
+                    listener.onMergeSuccess(mRecordingSession);
+                }
             }
 
             @Override
             public void onFailure(String message) {
                 if (listener != null) {
                     listener.onMergeFailure(mRecordingSession);
-                }
-            }
-
-            @Override
-            public void onFinish() {
-                if (listener != null) {
-                    listener.onMergeSuccess(mRecordingSession);
                 }
             }
         });

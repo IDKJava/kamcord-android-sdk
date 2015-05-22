@@ -1,6 +1,7 @@
 package com.kamcord.app.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -172,8 +173,9 @@ public class ShareFragment extends Fragment {
 
     private void videoPrepared(File videoFile) {
         videoPath = videoFile.getAbsolutePath();
-        if (thumbnailImageView != null && VideoUtils.getVideoThumbnail(videoPath) != null) {
-            thumbnailImageView.setImageBitmap(VideoUtils.getVideoThumbnail(videoPath));
+        Bitmap bitmap = VideoUtils.getVideoThumbnail(videoPath);
+        if (thumbnailImageView != null && bitmap != null) {
+            thumbnailImageView.setImageBitmap(bitmap);
         }
         String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
         if (videoDurationTextView != null && videoDurationStr != null) {
