@@ -23,7 +23,7 @@ public class RecordingService extends Service {
     private static int NOTIFICATION_ID = 3141592;
     private static volatile boolean mIsRunning = false;
 
-    public static final long DROP_FIRST_NS = 1000000;
+    public static final float DROP_FIRST_SECONDS = 3f;
 
     private final IBinder mBinder = new LocalBinder();
 

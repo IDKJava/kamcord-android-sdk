@@ -54,6 +54,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
     private long clipStartTimeNs = 0;
+    private long presentationStartUs = -1;
 
     private static class CodecSettings
     {
@@ -175,6 +176,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             prepareMediaCodec(screenWidth, screenHeight);
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
+            mVideoEncoder.start();
 
             // RecordingSession Location
             try {
@@ -187,7 +189,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 throw new RuntimeException("Muxer failed.", ioe);
             }
 
-
             try
             {
                 clipStartBarrier.await();
@@ -197,6 +198,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             {
                 e.printStackTrace();
             }
+            presentationStartUs = -1;
             clipStartTimeNs = System.nanoTime();
             drainEncoder();
             releaseEncoders();
@@ -250,7 +252,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         mVideoEncoder.configure(mMediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         mSurface = mVideoEncoder.createInputSurface();
-        mVideoEncoder.start();
     }
 
     private int roundToNearest(int intToRound, int modulus)
@@ -298,10 +299,14 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                     mVideoBufferInfo.size = 0;
                 }
 
-                if (mVideoBufferInfo.size != 0 && mMuxerStart && System.nanoTime() - clipStartTimeNs > RecordingService.DROP_FIRST_NS) {
+                if (mVideoBufferInfo.size != 0 && mMuxerStart && (float) (System.nanoTime() - clipStartTimeNs) / 1000000000f > RecordingService.DROP_FIRST_SECONDS) {
                     encodedData.position(mVideoBufferInfo.offset);
                     encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
                     mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
+                    if( presentationStartUs < 0 )
+                    {
+                        presentationStartUs = mVideoBufferInfo.presentationTimeUs;
+                    }
                     mMuxerWrite = true;
                 }
 
