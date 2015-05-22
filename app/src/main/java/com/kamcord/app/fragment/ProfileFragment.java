@@ -116,6 +116,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
     {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
+        getActivity().finish();
     }
 
     @Override

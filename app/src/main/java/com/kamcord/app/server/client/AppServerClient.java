@@ -58,8 +58,7 @@ public class AppServerClient {
                 @Field("username") String username,
                 @Field("password") String password,
                 Callback<GenericResponse<Account>> cb);
-
-        @FormUrlEncoded
+        
         @POST("/app/v3/account/logout")
         void logout(Callback<GenericResponse<?>> cb);
 

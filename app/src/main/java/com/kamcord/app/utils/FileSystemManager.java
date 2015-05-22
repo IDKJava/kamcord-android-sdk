@@ -47,4 +47,22 @@ public class FileSystemManager {
         cacheDirectory.mkdirs();
         return cacheDirectory;
     }
+
+    public static void cleanCache() {
+        try {
+            clearCacheRecursive(getCacheDirectory());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void clearCacheRecursive(File file)
+    {
+        if(file.isDirectory()) {
+            for(File child : file.listFiles()) {
+                clearCacheRecursive(child);
+            }
+        }
+        file.delete();
+    }
 }

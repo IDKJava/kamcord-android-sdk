@@ -17,10 +17,15 @@ public class StitchClipsThread extends Thread {
 
     public interface StitchSuccessListener {
         void onVideoStitchSuccess(RecordingSession recordingSession);
+
         void onVideoStitchFailure(RecordingSession recordingSession);
+
         void onAudioStitchSuccess(RecordingSession recordingSession);
+
         void onAudioStitchFailure(RecordingSession recordingSession);
+
         void onMergeSuccess(RecordingSession recordingSession);
+
         void onMergeFailure(RecordingSession recordingSession);
     }
 
@@ -55,62 +60,68 @@ public class StitchClipsThread extends Thread {
 
         stitchClips(videoClipListFile, stitchedVideoFile, new ExecuteBinaryResponseHandler() {
             @Override
-            public void onSuccess(String message)
-            {
-                listener.onVideoStitchSuccess(mRecordingSession);
+            public void onSuccess(String message) {
+                if (listener != null) {
+                    listener.onVideoStitchSuccess(mRecordingSession);
+                }
             }
+
             @Override
-            public void onFailure(String message)
-            {
-                listener.onVideoStitchFailure(mRecordingSession);
+            public void onFailure(String message) {
+                if (listener != null) {
+                    listener.onVideoStitchFailure(mRecordingSession);
+                }
             }
         });
 
         stitchClips(audioClipListFile, stitchedAudioFile, new ExecuteBinaryResponseHandler() {
             @Override
-            public void onSuccess(String message)
-            {
-                listener.onAudioStitchSuccess(mRecordingSession);
+            public void onSuccess(String message) {
+                if (listener != null) {
+                    listener.onAudioStitchSuccess(mRecordingSession);
+                }
             }
+
             @Override
-            public void onFailure(String message)
-            {
-                listener.onAudioStitchFailure(mRecordingSession);
+            public void onFailure(String message) {
+                if (listener != null) {
+                    listener.onAudioStitchFailure(mRecordingSession);
+                }
             }
         });
 
         mergeVideoAndAudio(stitchedVideoFile, stitchedAudioFile, mergedFile, new ExecuteBinaryResponseHandler() {
             @Override
-            public void onSuccess(String message)
-            {
-                listener.onMergeSuccess(mRecordingSession);
+            public void onSuccess(String message) {
+                if (listener != null) {
+                    listener.onMergeSuccess(mRecordingSession);
+                }
             }
+
             @Override
-            public void onFailure(String message)
-            {
-                listener.onMergeFailure(mRecordingSession);
+            public void onFailure(String message) {
+                if (listener != null) {
+                    listener.onMergeFailure(mRecordingSession);
+                }
             }
         });
     }
 
-    private void stitchClips(File clipListFile, File result, ExecuteBinaryResponseHandler handler)
-    {
+    private void stitchClips(File clipListFile, File result, ExecuteBinaryResponseHandler handler) {
         String command = "-f concat -i " + clipListFile.getAbsolutePath() + " -c copy " + result.getAbsolutePath();
         try {
             mFFmpeg.execute(command, handler);
-        } catch (FFmpegCommandAlreadyRunningException e)
-        {
+        } catch (FFmpegCommandAlreadyRunningException e) {
             e.printStackTrace();
         }
     }
 
-    private void mergeVideoAndAudio(File videoFile, File audioFile, File result, ExecuteBinaryResponseHandler handler)
-    {
+    private void mergeVideoAndAudio(File videoFile, File audioFile, File result, ExecuteBinaryResponseHandler handler) {
         String command = "-i " + videoFile.getAbsolutePath() + " -i " + audioFile.getAbsolutePath()
                 + " -vcodec copy -acodec copy " + result.getAbsolutePath();
         try {
             mFFmpeg.execute(command, handler);
-        } catch( FFmpegCommandAlreadyRunningException e ) {
+        } catch (FFmpegCommandAlreadyRunningException e) {
             e.printStackTrace();
         }
     }
@@ -132,8 +143,7 @@ public class StitchClipsThread extends Thread {
         }
     }
 
-    private void writeFileNamesWithExtensionToFile(File outFile, File directory, String regex) throws IOException
-    {
+    private void writeFileNamesWithExtensionToFile(File outFile, File directory, String regex) throws IOException {
         FileWriter fileWriter = new FileWriter(outFile);
         for (final File file : directory.listFiles()) {
             if (file.getName().matches(regex)) {

@@ -3,7 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="grid_margin">3dp</dimen>
-    <dimen name="tabsHeight">48dp</dimen>
+    <dimen name="tabsHeight">56dp</dimen>
     <dimen name="refreshEnd">100dp</dimen>
     <dimen name="uploadProgressSize">3dp</dimen>
 </resources>

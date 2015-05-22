@@ -12,6 +12,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
@@ -27,17 +29,25 @@ import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
+import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.thread.Uploader;
+import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
 
+import java.io.File;
 import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class RecordActivity extends ActionBarActivity implements
@@ -49,16 +59,24 @@ public class RecordActivity extends ActionBarActivity implements
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    @InjectView(R.id.main_fab) ImageButton mFloatingActionButton;
-    @InjectView(R.id.main_pager) ViewPager mViewPager;
-    @InjectView(R.id.tabs) SlidingTabLayout mTabs;
-    @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
-    @InjectView(R.id.toolbar) Toolbar mToolbar;
-    @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
+    @InjectView(R.id.main_fab)
+    ImageButton mFloatingActionButton;
+    @InjectView(R.id.main_pager)
+    ViewPager mViewPager;
+    @InjectView(R.id.tabs)
+    SlidingTabLayout mTabs;
+    @InjectView(R.id.toolbarContainer)
+    ViewGroup toolbarContainer;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
+    @InjectView(R.id.uploadProgressBar)
+    ProgressBar uploadProgress;
 
     private MainViewPagerAdapter mainViewPagerAdapter;
     private CharSequence tabTitles[];
     private int numberOfTabs;
+
+    private Menu optionsMenu;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
@@ -194,6 +212,7 @@ public class RecordActivity extends ActionBarActivity implements
                         bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
                         recordShareFragment.setArguments(bundle);
                         getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                                 .add(R.id.main_activity_layout, recordShareFragment)
                                 .addToBackStack("ShareFragment").commit();
                     } else {
@@ -349,4 +368,46 @@ public class RecordActivity extends ActionBarActivity implements
         super.onDestroy();
         FlurryAgent.onEndSession(this);
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_record, menu);
+        optionsMenu = menu;
+        if(!AccountManager.isLoggedIn()) {
+            MenuItem signoutItem = optionsMenu.getItem(1);
+            signoutItem.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_cleancache: {
+                FileSystemManager.cleanCache();
+                break;
+            }
+            case R.id.action_signout: {
+                if (AccountManager.isLoggedIn()) {
+                    AccountManager.clearStoredAccount();
+                    AppServerClient.getInstance().logout(logoutCallback);
+                    Intent loginIntent = new Intent(this, LoginActivity.class);
+                    startActivity(loginIntent);
+                    finish();
+                }
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+        }
+    };
 }

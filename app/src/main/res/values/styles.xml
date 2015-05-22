@@ -12,4 +12,9 @@
         <item name="android:textColor">@color/kamcordGreen</item>
     </style>
 
+    <!-- ToolBar -->
+    <style name="ToolBarStyle" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@color/ColorPrimaryDark</item>
+    </style>
+
 </resources>
