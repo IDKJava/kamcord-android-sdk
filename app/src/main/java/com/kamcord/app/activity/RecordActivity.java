@@ -50,6 +50,7 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class RecordActivity extends ActionBarActivity implements
@@ -95,6 +96,12 @@ public class RecordActivity extends ActionBarActivity implements
         FlurryAgent.onStartSession(this);
         ButterKnife.inject(this);
         initMainActivity();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     @Override
@@ -166,6 +173,7 @@ public class RecordActivity extends ActionBarActivity implements
                 }
             }
         });
+        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);

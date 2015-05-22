@@ -1,6 +1,7 @@
 package com.kamcord.app.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
@@ -15,6 +16,7 @@ import com.kamcord.app.R;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * Created by donliang1 on 5/18/15.
@@ -35,6 +37,12 @@ public class VideoPreviewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_videopreview);
         initVideoPreview();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     public void initVideoPreview() {
