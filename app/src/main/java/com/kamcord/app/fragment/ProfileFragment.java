@@ -17,6 +17,7 @@ import android.widget.Button;
 
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
+import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.view.ObservableWebView;
@@ -145,6 +146,15 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         public boolean shouldOverrideUrlLoading(WebView webView, String url)
         {
             Uri uri = Uri.parse(url);
+            boolean override = !hasThisDomain(uri);
+            if( !override )
+            {
+                Activity activity = getActivity();
+                if( activity instanceof RecordActivity )
+                {
+                    ((RecordActivity) activity).showToolbar();
+                }
+            }
             return !hasThisDomain(uri);
         }
 
