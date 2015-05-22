@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -30,6 +31,7 @@ import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
+import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.service.RecordingService;
@@ -44,13 +46,13 @@ import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
 public class RecordActivity extends ActionBarActivity implements
-        View.OnClickListener,
         RecordFragment.SelectedGameListener,
         RecordFragment.RecyclerViewScrollListener,
         ObservableWebView.ObservableWebViewScrollListener,
@@ -167,9 +169,6 @@ public class RecordActivity extends ActionBarActivity implements
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
-
-        mFloatingActionButton.setOnClickListener(this);
-
     }
 
     public void hideToolbar() {
@@ -186,38 +185,33 @@ public class RecordActivity extends ActionBarActivity implements
         controlsVisible = true;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.main_fab: {
-                if (!RecordingService.isRunning()) {
-                    if (mSelectedGame != null) {
-                        mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
-                        obtainMediaProjection();
+    @OnClick(R.id.main_fab)
+    public void floatingActionButtonClicked() {
+        if (!RecordingService.isRunning()) {
+            if (mSelectedGame != null) {
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+                obtainMediaProjection();
 
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    ((ImageButton) v).setImageResource(R.drawable.ic_videocam_white_36dp);
-                    mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
-                    stopService(new Intent(this, RecordingService.class));
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            stopService(new Intent(this, RecordingService.class));
 
-                    RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
-                    if (recordingSession != null) {
-                        FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
-                        ShareFragment recordShareFragment = new ShareFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
-                        recordShareFragment.setArguments(bundle);
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                                .add(R.id.main_activity_layout, recordShareFragment)
-                                .addToBackStack("ShareFragment").commit();
-                    } else {
-                        // TODO: show the user something about being unable to get the recording session.
-                    }
-                }
+            RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
+            if (recordingSession != null) {
+                FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
+                ShareFragment recordShareFragment = new ShareFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
+                recordShareFragment.setArguments(bundle);
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
+                        .add(R.id.main_activity_layout, recordShareFragment)
+                        .addToBackStack("ShareFragment").commit();
+            } else {
+                // TODO: show the user something about being unable to get the recording session.
             }
         }
     }
@@ -393,6 +387,29 @@ public class RecordActivity extends ActionBarActivity implements
                     Intent loginIntent = new Intent(this, LoginActivity.class);
                     startActivity(loginIntent);
                     finish();
+                }
+                break;
+            }
+            case R.id.action_request_game: {
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[] {getResources().getString(R.string.communityEmail),});
+                intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.canIRecord));
+                String body = getResources().getString(R.string.iWantToRecord) + " \n"
+                        + "\n";
+                if( AccountManager.isLoggedIn() )
+                {
+                    Account account = AccountManager.getStoredAccount();
+                    body += String.format(Locale.ENGLISH, getResources().getString(R.string.sincerely), account.username);
+                }
+                intent.putExtra(Intent.EXTRA_TEXT, body);
+                intent.setType("*/*");
+                intent.setData(Uri.parse("mailto:"));
+                if( intent.resolveActivity(getPackageManager()) != null ) {
+                    startActivity(intent);
+                }
+                else
+                {
+                    // TODO: show the user there's no app to handle emails.
                 }
                 break;
             }
