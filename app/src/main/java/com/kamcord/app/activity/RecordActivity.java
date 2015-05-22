@@ -77,6 +77,7 @@ public class RecordActivity extends ActionBarActivity implements
     private int numberOfTabs;
 
     private File cacheDirectory;
+    private Menu optionsMenu;
 
     private Game mSelectedGame = null;
     private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
@@ -370,8 +371,9 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_record, menu);
+        optionsMenu = menu;
         if(!AccountManager.isLoggedIn()) {
-            MenuItem signoutItem = menu.getItem(R.id.action_signout);
+            MenuItem signoutItem = optionsMenu.getItem(1);
             signoutItem.setVisible(false);
         }
         return true;
