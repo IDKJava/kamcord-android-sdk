@@ -40,7 +40,6 @@ import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
 
-import java.io.File;
 import java.util.Locale;
 
 import butterknife.ButterKnife;
@@ -173,14 +172,14 @@ public class RecordActivity extends ActionBarActivity implements
 
     }
 
-    private void hideToolbar() {
+    public void hideToolbar() {
         toolbarContainer.animate()
                 .translationY(-mToolbar.getHeight())
                 .setInterpolator(new AccelerateInterpolator(2));
         controlsVisible = false;
     }
 
-    private void showToolbar() {
+    public void showToolbar() {
         toolbarContainer.animate()
                 .translationY(0)
                 .setInterpolator(new DecelerateInterpolator(2));
