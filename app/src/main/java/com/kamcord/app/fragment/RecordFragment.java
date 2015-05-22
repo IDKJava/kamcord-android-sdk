@@ -76,7 +76,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
-        gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
+        gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 

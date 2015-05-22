@@ -105,7 +105,8 @@ public class AppServerClient {
                     .setEndpoint(BASE_URL)
                     .setConverter(new GsonConverter(gson))
                     .setRequestInterceptor(addHeadersInterceptor)
-                    .setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
+                            .setLogLevel(RestAdapter.LogLevel.FULL)
+//                    .setLogLevel(BuildConfig.DEBUG ? RestAdapter.LogLevel.FULL : RestAdapter.LogLevel.NONE)
                     .build();
             instance = restAdapter.create(AppServer.class);
         }

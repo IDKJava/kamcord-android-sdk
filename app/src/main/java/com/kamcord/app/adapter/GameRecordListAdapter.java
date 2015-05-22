@@ -5,11 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
 import com.kamcord.app.server.model.Game;
+import com.kamcord.app.utils.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -66,7 +66,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         @Optional @InjectView(R.id.item_packagename) TextView itemPackageName;
-        @Optional @InjectView(R.id.item_image) ImageView itemImage;
+        @Optional @InjectView(R.id.item_image) RoundedImageView itemImage;
         @Optional @InjectView(R.id.installGameTextView) TextView installGameTextView;
 
         public ViewHolder(final View itemLayoutView) {
