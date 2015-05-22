@@ -123,6 +123,9 @@ public class RecordActivity extends ActionBarActivity implements
         mTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (!controlsVisible) {
+                    showToolbar();
+            }
             }
 
             @Override
@@ -138,7 +141,8 @@ public class RecordActivity extends ActionBarActivity implements
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                if( state == ViewPager.SCROLL_STATE_DRAGGING && !controlsVisible )
+                {
                     showToolbar();
                 }
             }

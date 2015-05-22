@@ -1,4 +1,4 @@
-package com.kamcord.app.utils;
+package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
@@ -15,20 +15,23 @@ import android.os.HandlerThread;
 import android.os.PowerManager;
 
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.FileSystemManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CyclicBarrier;
 
 public class AudioRecordThread extends HandlerThread implements Handler.Callback {
 
     private MediaCodec mAudioCodec = null;
     private AudioRecord mAudioRecord = null;
     private MediaMuxer mMediaMuxer = null;
+    private CyclicBarrier clipStartBarrier = null;
 
-    private long mCurrentTimestampUs = 0;
     private boolean mMuxerStart = false;
     private boolean mMuxerWrite = false;
     private int mTrackIndex = -1;
@@ -38,6 +41,9 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     private Handler mHandler;
     private int audioNumber = 0;
 
+    private long clipStartTimeNs = 0;
+    private long presentationStartUs = -1;
+
     private ActivityManager activityManager;
     private RecordingSession mRecordingSession;
 
@@ -46,12 +52,13 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         public static final int BIT_RATE = 64 * 1024;
     }
 
-    public AudioRecordThread(Context context, RecordingSession recordingSession) {
+    public AudioRecordThread(Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier) {
         super("dsdsd");
         this.mContext = context;
 
         this.activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         this.mRecordingSession = recordingSession;
+        this.clipStartBarrier = clipStartBarrier;
     }
 
     @Override
@@ -135,10 +142,18 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         if( mAudioCodec != null && mMediaMuxer != null)
         {
             MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
-            mCurrentTimestampUs = 0;
             mAudioRecord.startRecording();
             mAudioCodec.start();
 
+            try {
+                clipStartBarrier.await();
+            } catch (Exception e) {
+                e.printStackTrace();
+                releaseEncoder();
+                return;
+            }
+            clipStartTimeNs = System.nanoTime();
+            presentationStartUs = -1;
             while(isGameInForeground()) {
                 queueEncoder();
                 drainEncoder(info);
@@ -168,11 +183,11 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         {
             ByteBuffer buffer = mAudioCodec.getInputBuffer(bufferIndex);
             int numBytesRead = mAudioRecord.read(buffer, buffer.capacity());
-            mAudioCodec.queueInputBuffer(bufferIndex, 0, numBytesRead, mCurrentTimestampUs, 0);
-            mCurrentTimestampUs += 1000000 * (numBytesRead / 2) / CodecSettings.SAMPLE_RATE;
+            mAudioCodec.queueInputBuffer(bufferIndex, 0, numBytesRead, System.nanoTime() / 1000, 0);
         }
     }
 
+    private long lastPresentationTimeUs = -1;
     private void drainEncoder(MediaCodec.BufferInfo info) {
         int encoderStatus = mAudioCodec.dequeueOutputBuffer(info, 0);
         if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
@@ -195,11 +210,16 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 info.size = 0;
             }
 
-            if (info.size != 0) {
-                if (mMuxerStart) {
-                    encodedData.position(info.offset);
-                    encodedData.limit(info.offset + info.size);
+            if (info.size != 0 && mMuxerStart && (float) (System.nanoTime() - clipStartTimeNs) / 1000000000f > RecordingService.DROP_FIRST_SECONDS) {
+                encodedData.position(info.offset);
+                encodedData.limit(info.offset + info.size);
+                if( presentationStartUs < 0 )
+                {
+                    presentationStartUs = info.presentationTimeUs;
+                }
+                if( info.presentationTimeUs > lastPresentationTimeUs ) {
                     mMediaMuxer.writeSampleData(mTrackIndex, encodedData, info);
+                    lastPresentationTimeUs = info.presentationTimeUs;
                     mMuxerWrite = true;
                 }
             }
