@@ -83,6 +83,8 @@ public class Uploader extends Thread {
     private String[] mVideoEtags;
     private String mS3UploadId = null;
 
+    private static UploadStatusListener sListener = null;
+
     static {
         try {
             xmlParserFactory = XmlPullParserFactory.newInstance();
@@ -91,6 +93,11 @@ public class Uploader extends Thread {
             Log.e(TAG, "Unexpected exception during XML parser initialization...");
             e.printStackTrace();
         }
+    }
+
+    public static void setUploadStatusListener(UploadStatusListener listener)
+    {
+        sListener = listener;
     }
 
     public Uploader(RecordingSession recordingSession, Context context) {
@@ -110,13 +117,26 @@ public class Uploader extends Thread {
 
         try {
             long start = System.currentTimeMillis();
+            if( sListener != null )
+            {
+                sListener.onUploadStart(mRecordingSession);
+            }
             reserveVideoUpload();
             startUploadToS3(UploadType.VIDEO);
             for (int part = 0; part < mTotalParts; part++) {
                 uploadPartToS3(part, UploadType.VIDEO);
+                        if( sListener != null )
+                        {
+                            sListener.onUploadProgress(mRecordingSession, (float) (part+1) / (float) mTotalParts);
             }
+                    }
             finishUploadToS3(UploadType.VIDEO);
             informKamcordUploadFinished();
+            if( sListener != null )
+            {
+                sListener.onUploadFinish(mRecordingSession, true);
+                sListener = null;
+            }
             long end = System.currentTimeMillis();
             videoParams.put(mContext.getResources().getString(R.string.flurryVideoID), mServerVideoId);
             videoParams.put(mContext.getResources().getString(R.string.flurryDuration), Long.toString(end - start));
@@ -129,6 +149,11 @@ public class Uploader extends Thread {
             e.printStackTrace();
         }
 
+        if( sListener != null )
+        {
+            sListener.onUploadFinish(mRecordingSession, false);
+            sListener = null;
+        }
         videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "false");
         FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
         Log.e(TAG, "Unable to upload video, giving up.");
@@ -514,4 +539,11 @@ public class Uploader extends Thread {
             outstream.close();
         }
     }
+
+    public interface UploadStatusListener
+    {
+        void onUploadStart(RecordingSession recordingSession);
+        void onUploadProgress(RecordingSession recordingSession, float progress);
+        void onUploadFinish(RecordingSession recordingSession, boolean success);
+}
 }
