@@ -41,7 +41,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     private Handler mHandler;
     private int audioNumber = 0;
 
-    private long clipStartTimeNs = 0;
     private long presentationStartUs = -1;
 
     private ActivityManager activityManager;
@@ -156,7 +155,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 releaseEncoder();
                 return;
             }
-            clipStartTimeNs = System.nanoTime();
             presentationStartUs = -1;
             mAudioRecord.startRecording();
             while(isGameInForeground()) {

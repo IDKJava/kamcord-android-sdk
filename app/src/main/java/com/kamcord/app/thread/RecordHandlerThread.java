@@ -53,7 +53,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private ActivityManager mActivityManager;
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
-    private long clipStartTimeNs = 0;
     private long presentationStartUs = -1;
 
     private static class CodecSettings
@@ -202,7 +201,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 e.printStackTrace();
             }
             presentationStartUs = -1;
-            clipStartTimeNs = System.nanoTime();
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
             drainEncoder();
