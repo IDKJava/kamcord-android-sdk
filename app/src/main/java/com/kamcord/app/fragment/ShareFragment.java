@@ -29,8 +29,8 @@ import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
-import com.kamcord.app.utils.StitchClipsThread;
-import com.kamcord.app.utils.StitchClipsThread.StitchSuccessListener;
+import com.kamcord.app.thread.StitchClipsThread;
+import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
 import com.kamcord.app.utils.VideoUtils;
 
 import java.io.File;

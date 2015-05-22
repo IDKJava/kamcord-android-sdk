@@ -1,4 +1,4 @@
-package com.kamcord.app.utils;
+package com.kamcord.app.thread;
 
 import android.content.Context;
 
@@ -7,6 +7,7 @@ import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.utils.FileSystemManager;
 
 import java.io.File;
 import java.io.FileWriter;
