@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.kamcord.app.server.model.Game;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by pplunkett on 5/22/15.
@@ -27,10 +27,9 @@ public class GameListUtils {
     public static List<Game> getCachedGameList() {
         List<Game> cachedGameList = new ArrayList<>();
         try {
-            Set<String> cachedGameSet = preferences.getStringSet(GAME_LIST, new HashSet<String>());
-            for (String gameString : cachedGameSet) {
-                cachedGameList.add(new Gson().fromJson(gameString, Game.class));
-            }
+            String jsonGameList = preferences.getString(GAME_LIST, "[]");
+            Type type = new TypeToken<List<Game>>() {}.getType();
+            cachedGameList = new Gson().fromJson(jsonGameList, type);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,12 +38,8 @@ public class GameListUtils {
 
     public static void saveGameList(List<Game> gameList) {
         try {
-            Set<String> gameStringsSet = new HashSet<>();
-            for (Game game : gameList) {
-                gameStringsSet.add(new Gson().toJson(game));
-            }
             preferences.edit()
-                    .putStringSet(GAME_LIST, gameStringsSet)
+                    .putString(GAME_LIST, new Gson().toJson(gameList))
                     .apply();
         } catch (Exception e) {
             e.printStackTrace();
