@@ -22,7 +22,7 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
-import com.kamcord.app.utils.SpaceItemDecoration;
+import com.kamcord.app.view.SpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Collections;
