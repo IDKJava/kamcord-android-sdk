@@ -65,6 +65,9 @@ public class LoginFragment extends Fragment {
     private void handleLoginFailure(GenericResponse<Account> accountWrapper)
     {
         AccountManager.clearStoredAccount();
+        if( accountWrapper != null )
+        {
+        }
         // TODO: show the user something about failing to log in here.
     }
 
