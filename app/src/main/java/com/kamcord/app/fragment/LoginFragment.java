@@ -1,5 +1,7 @@
 package com.kamcord.app.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
+import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
@@ -48,6 +51,13 @@ public class LoginFragment extends Fragment {
         ButterKnife.reset(this);
     }
 
+    private int getContainerViewId() {
+        if (getActivity() instanceof LoginActivity) {
+            return ((LoginActivity) getActivity()).getContainerViewId();
+        }
+        return 0;
+    }
+
     @OnClick(R.id.loginButton)
     public void login()
     {
@@ -67,6 +77,22 @@ public class LoginFragment extends Fragment {
         AccountManager.clearStoredAccount();
         if( accountWrapper != null )
         {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.loginFailed)
+                    .setMessage(R.string.loginFailureMessage)
+                    .setNeutralButton(android.R.string.ok, null)
+                    .setPositiveButton(R.string.resetPassword,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                    getActivity().getSupportFragmentManager().beginTransaction()
+                                            .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
+                                            .replace(getContainerViewId(), new ResetPasswordFragment())
+                                            .addToBackStack(null).commit();
+                                }
+                            })
+                    .show();
         }
         // TODO: show the user something about failing to log in here.
     }
