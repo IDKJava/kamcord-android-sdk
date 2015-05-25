@@ -24,7 +24,8 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.utils.DynamicRecyclerView;
-import com.kamcord.app.utils.SpaceItemDecoration;
+import com.kamcord.app.utils.GameListUtils;
+import com.kamcord.app.view.SpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,8 +76,12 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
     public void initKamcordRecordFragment(View v) {
 
-        mSupportedGameList.clear();
-        AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
+        mSupportedGameList = GameListUtils.getCachedGameList();
+        if( mSupportedGameList == null )
+        {
+            mSupportedGameList = new ArrayList<>();
+        }
+        sortGameList(mSupportedGameList);
 
         mRecyclerView = (DynamicRecyclerView) v.findViewById(R.id.record_recyclerview);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
@@ -88,23 +93,24 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
+        if( mSupportedGameList.size() == 0 ) {
+            mSwipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+            });
+            AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
+        }
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                mSupportedGameList.clear();
-                mRecyclerAdapter.notifyDataSetChanged();
                 AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
             }
         });
 
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
@@ -203,6 +209,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
+                mSupportedGameList.clear();
                 if (BuildConfig.DEBUG) {
                     Game ripples = new Game();
                     ripples.name = "Ripple Test";
@@ -224,6 +231,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                     }
                 }
                 sortGameList(mSupportedGameList);
+                GameListUtils.saveGameList(mSupportedGameList);
                 mRecyclerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }

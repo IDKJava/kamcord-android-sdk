@@ -1,4 +1,4 @@
-package com.kamcord.app.utils;
+package com.kamcord.app.view;
 
 /*
  * Copyright 2014 Google Inc. All rights reserved.

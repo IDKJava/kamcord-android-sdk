@@ -1,4 +1,4 @@
-package com.kamcord.app.utils;
+package com.kamcord.app.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.graphics.Rect;

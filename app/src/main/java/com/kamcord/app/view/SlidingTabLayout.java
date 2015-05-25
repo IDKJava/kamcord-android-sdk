@@ -1,4 +1,4 @@
-package com.kamcord.app.utils;
+package com.kamcord.app.view;
 
 /*
  * Copyright 2014 Google Inc. All rights reserved.
@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.utils.ViewUtils;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -170,7 +171,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
         textView.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, Utils.getTabsHeight(context)));
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewUtils.getTabsHeight(context)));
 
         TypedValue outValue = new TypedValue();
         getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground,

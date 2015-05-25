@@ -1,5 +1,6 @@
 package com.kamcord.app.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -9,6 +10,8 @@ import android.widget.RelativeLayout;
 
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.WelcomeFragment;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -26,6 +29,12 @@ public class LoginActivity extends ActionBarActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(containerViewId, new WelcomeFragment())
                 .commit();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase)
+    {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     public int getContainerViewId() {

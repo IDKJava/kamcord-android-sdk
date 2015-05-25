@@ -35,7 +35,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.VideoPreviewActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.UploadService" />
