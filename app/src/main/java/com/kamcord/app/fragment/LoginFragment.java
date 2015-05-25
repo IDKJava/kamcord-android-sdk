@@ -67,9 +67,12 @@ public class LoginFragment extends Fragment {
     }
 
     @OnClick(R.id.forgotPasswordTextView)
-    public void pushForgotPasswordFragment()
+    public void pushResetPasswordFragment()
     {
-        // TODO: push a forgot password fragment.
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
+                .replace(getContainerViewId(), new ResetPasswordFragment())
+                .addToBackStack(null).commit();
     }
 
     private void handleLoginFailure(GenericResponse<Account> accountWrapper)
@@ -86,10 +89,7 @@ public class LoginFragment extends Fragment {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialogInterface.dismiss();
-                                    getActivity().getSupportFragmentManager().beginTransaction()
-                                            .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                                            .replace(getContainerViewId(), new ResetPasswordFragment())
-                                            .addToBackStack(null).commit();
+                                    pushResetPasswordFragment();
                                 }
                             })
                     .show();

@@ -70,6 +70,12 @@ public class AppServerClient {
                 @Field("email") String email,
                 Callback<GenericResponse<UserErrorCode>> cb);
 
+        @FormUrlEncoded
+        @POST("/app/v3/account/password/reset")
+        void resetPassword(
+                @Field("username") String email,
+                Callback<GenericResponse<?>> cb);
+
         @POST("/app/v3/account/logout")
         void logout(Callback<GenericResponse<?>> cb);
 
