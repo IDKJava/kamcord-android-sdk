@@ -65,7 +65,7 @@ public class AppServerClient {
                 @Query("username") String username,
                 Callback<GenericResponse<UserErrorCode>> cb);
 
-        @GET("/app/v3/account/username/validate")
+        @GET("/app/v3/account/email/validate")
         void validateEmail(
                 @Query("email") String email,
                 Callback<GenericResponse<UserErrorCode>> cb);

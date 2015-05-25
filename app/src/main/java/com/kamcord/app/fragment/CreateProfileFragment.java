@@ -115,7 +115,7 @@ public class CreateProfileFragment extends Fragment {
     private void handleLoginFailure(GenericResponse<Account> accountWrapper)
     {
         AccountManager.clearStoredAccount();
-        // TODO: show the user something about failing to create a profile here.
+        
     }
 
     private final HashMap<UserErrorCode, Integer> errorCodeStringMap = new HashMap<UserErrorCode, Integer>()
