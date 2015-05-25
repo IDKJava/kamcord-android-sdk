@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
+import com.kamcord.app.utils.DynamicRecyclerView;
 import com.kamcord.app.utils.SpaceItemDecoration;
 
 import java.util.ArrayList;
@@ -36,10 +38,11 @@ import retrofit.client.Response;
 public class RecordFragment extends Fragment implements GameRecordListAdapter.OnItemClickListener {
     private static final String TAG = RecordFragment.class.getSimpleName();
 
-    private RecyclerView mRecyclerView;
+    private DynamicRecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
     private GridLayoutManager gridLayoutManager;
+    private int spanCount = 3;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
 
@@ -75,11 +78,9 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         mSupportedGameList.clear();
         AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
 
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
-        gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 3);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView = (DynamicRecyclerView) v.findViewById(R.id.record_recyclerview);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
