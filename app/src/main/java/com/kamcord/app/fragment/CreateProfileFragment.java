@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +64,7 @@ public class CreateProfileFragment extends Fragment {
         usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus && isAdded()) {
+                if (!hasFocus && isResumed()) {
                     String username = usernameEditText.getEditableText().toString();
                     if (username.isEmpty()) {
                         usernameEditText.setError(getResources().getString(R.string.youMustEnterUsername));
@@ -77,7 +78,7 @@ public class CreateProfileFragment extends Fragment {
         emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                if( !hasFocus && isAdded()) {
+                if( !hasFocus && isResumed()) {
                     String email = emailEditText.getEditableText().toString();
                     if (email.isEmpty()) {
                         emailEditText.setError(getResources().getString(R.string.youMustEnterEmail));
@@ -96,12 +97,12 @@ public class CreateProfileFragment extends Fragment {
         String termsText = getResources().getString(R.string.termsOfService);
         String policyText = getResources().getString(R.string.privacyPolicy);
 
-        SpannableStringBuilder linkedSpan = StringUtils.linkify(getActivity(),
-                termsAndPolicyText,
+        SpannableStringBuilder linkedSpan = StringUtils.linkify(termsAndPolicyText,
                 new String[]{termsText, policyText},
                 new String[]{"https://www.kamcord.com/tos/", "https://www.kamcord.com/privacy/"});
 
         termsAndPolicyTextView.setText(linkedSpan);
+        termsAndPolicyTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @OnClick(R.id.createProfileButton)
@@ -136,7 +137,7 @@ public class CreateProfileFragment extends Fragment {
         }};
     private void handleInvalidUsername(GenericResponse<UserErrorCode> responseWrapper)
     {
-        if( responseWrapper != null && responseWrapper.response != null && isAdded())
+        if( responseWrapper != null && responseWrapper.response != null && isResumed())
         {
             int errorStringId = R.string.invalidUsername;
             if( errorCodeStringMap.containsKey(responseWrapper.response) )
@@ -150,7 +151,7 @@ public class CreateProfileFragment extends Fragment {
 
     private void handleInvalidEmail(GenericResponse<UserErrorCode> responseWrapper)
     {
-        if( responseWrapper != null && responseWrapper.response != null && isAdded())
+        if( responseWrapper != null && responseWrapper.response != null && isResumed())
         {
             int errorStringId = R.string.invalidEmail;
             if( errorCodeStringMap.containsKey(responseWrapper.response) )
@@ -168,7 +169,7 @@ public class CreateProfileFragment extends Fragment {
             if( accountWrapper != null
                     && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
                     && accountWrapper.response != null
-                    && isAdded())
+                    && isResumed())
             {
                 FlurryAgent.logEvent(getResources().getString(R.string.flurryCreateProfile));
                 AccountManager.setStoredAccount(accountWrapper.response);
@@ -194,7 +195,7 @@ public class CreateProfileFragment extends Fragment {
         public void success(GenericResponse<UserErrorCode> responseWrapper, Response response) {
             if( responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
                     && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
-                    && isAdded())
+                    && isResumed())
             {
                 usernameEditText.setError(null);
             }
@@ -215,7 +216,7 @@ public class CreateProfileFragment extends Fragment {
         public void success(GenericResponse<UserErrorCode> responseWrapper, Response response) {
             if( responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
                     && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
-                    && isAdded())
+                    && isResumed())
             {
                 emailEditText.setError(null);
             }
