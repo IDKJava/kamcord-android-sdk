@@ -41,6 +41,20 @@ public class CreateProfileFragment extends Fragment {
     @InjectView(R.id.createProfileButton) Button createProfileButton;
     @InjectView(R.id.termsAndPolicyTextView) TextView termsAndPolicyTextView;
 
+    private static final HashMap<UserErrorCode, Integer> ERROR_CODE_STRING_MAP = new HashMap<UserErrorCode, Integer>()
+        {{
+            put(UserErrorCode.INVALID_CHARACTERS, R.string.invalidCharacters);
+            put(UserErrorCode.USERNAME_MISSING, R.string.youMustEnterUsername);
+            put(UserErrorCode.USERNAME_TAKEN, R.string.usernameTaken);
+            put(UserErrorCode.USERNAME_SHORT, R.string.usernameTooShort);
+            put(UserErrorCode.USERNAME_LONG, R.string.usernameTooLong);
+            put(UserErrorCode.EMAIL_INVALID, R.string.invalidEmail);
+            put(UserErrorCode.EMAIL_LONG, R.string.emailTooLong);
+            put(UserErrorCode.EMAIL_TAKEN, R.string.emailTaken);
+            put(UserErrorCode.EMAIL_MISSING, R.string.youMustEnterEmail);
+        }};
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_create_profile, container, false);
@@ -123,26 +137,14 @@ public class CreateProfileFragment extends Fragment {
                 .show();
     }
 
-    private final HashMap<UserErrorCode, Integer> errorCodeStringMap = new HashMap<UserErrorCode, Integer>()
-        {{
-            put(UserErrorCode.INVALID_CHARACTERS, R.string.invalidCharacters);
-            put(UserErrorCode.USERNAME_MISSING, R.string.youMustEnterUsername);
-            put(UserErrorCode.USERNAME_TAKEN, R.string.usernameTaken);
-            put(UserErrorCode.USERNAME_SHORT, R.string.usernameTooShort);
-            put(UserErrorCode.USERNAME_LONG, R.string.usernameTooLong);
-            put(UserErrorCode.EMAIL_INVALID, R.string.invalidEmail);
-            put(UserErrorCode.EMAIL_LONG, R.string.emailTooLong);
-            put(UserErrorCode.EMAIL_TAKEN, R.string.emailTaken);
-            put(UserErrorCode.EMAIL_MISSING, R.string.youMustEnterEmail);
-        }};
     private void handleInvalidUsername(GenericResponse<UserErrorCode> responseWrapper)
     {
         if( responseWrapper != null && responseWrapper.response != null && isResumed())
         {
             int errorStringId = R.string.invalidUsername;
-            if( errorCodeStringMap.containsKey(responseWrapper.response) )
+            if( ERROR_CODE_STRING_MAP.containsKey(responseWrapper.response) )
             {
-                errorStringId = errorCodeStringMap.get(responseWrapper.response);
+                errorStringId = ERROR_CODE_STRING_MAP.get(responseWrapper.response);
             }
             String errorString = getResources().getString(errorStringId);
             usernameEditText.setError(errorString);
@@ -154,9 +156,9 @@ public class CreateProfileFragment extends Fragment {
         if( responseWrapper != null && responseWrapper.response != null && isResumed())
         {
             int errorStringId = R.string.invalidEmail;
-            if( errorCodeStringMap.containsKey(responseWrapper.response) )
+            if( ERROR_CODE_STRING_MAP.containsKey(responseWrapper.response) )
             {
-                errorStringId = errorCodeStringMap.get(responseWrapper.response);
+                errorStringId = ERROR_CODE_STRING_MAP.get(responseWrapper.response);
             }
             emailEditText.setError(getResources().getString(errorStringId));
         }
