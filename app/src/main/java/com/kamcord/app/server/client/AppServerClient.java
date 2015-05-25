@@ -62,12 +62,12 @@ public class AppServerClient {
 
         @GET("/app/v3/account/username/validate")
         void validateUsername(
-                @Field("username") String username,
+                @Query("username") String username,
                 Callback<GenericResponse<UserErrorCode>> cb);
 
         @GET("/app/v3/account/username/validate")
         void validateEmail(
-                @Field("email") String email,
+                @Query("email") String email,
                 Callback<GenericResponse<UserErrorCode>> cb);
 
         @FormUrlEncoded

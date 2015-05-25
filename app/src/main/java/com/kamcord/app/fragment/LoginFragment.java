@@ -94,7 +94,6 @@ public class LoginFragment extends Fragment {
                             })
                     .show();
         }
-        // TODO: show the user something about failing to log in here.
     }
 
     Callback<GenericResponse<Account>> loginCallback = new Callback<GenericResponse<Account>>()

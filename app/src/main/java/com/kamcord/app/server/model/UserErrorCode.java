@@ -25,16 +25,22 @@ public class UserErrorCode {
     @Override
     public boolean equals(Object otherStatus)
     {
-        if( otherStatus == null || !(otherStatus instanceof StatusCode) )
+        if( otherStatus == null || !(otherStatus instanceof UserErrorCode) )
         {
             return false;
         }
 
-        if( this.error_code != ((StatusCode) otherStatus).status_code )
+        if( this.error_code != ((UserErrorCode) otherStatus).error_code )
         {
             return false;
         }
 
         return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.error_code;
     }
 }

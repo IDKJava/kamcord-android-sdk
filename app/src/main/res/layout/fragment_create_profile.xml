@@ -22,15 +22,6 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/passwordEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:padding="8dp"
-            android:hint="@string/password"
-            android:inputType="textPassword" />
-
-        <EditText
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,6 +29,15 @@
             android:padding="8dp"
             android:hint="@string/email"
             android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:padding="8dp"
+            android:hint="@string/password"
+            android:inputType="textPassword" />
 
         <TextView
             android:id="@+id/termsAndPolicyTextView"

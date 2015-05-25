@@ -34,6 +34,17 @@
     <string name="checkYourEmail">Check your email for a link to reset your password.</string>
     <string name="resetPasswordProblem">There was a problem resetting your password. Try again later.</string>
 
+    <string name="invalidUsername">Invalid username.</string>
+    <string name="youMustEnterUsername">You must enter a username.</string>
+    <string name="usernameTooShort">Username too short.</string>
+    <string name="usernameTooLong">Username too long.</string>
+    <string name="invalidCharacters">Invalid characters.</string>
+    <string name="usernameTaken">Username already taken.</string>
+    <string name="invalidEmail">Invalid email.</string>
+    <string name="youMustEnterEmail">You must enter an email address.</string>
+    <string name="emailTooLong">Email address too long.</string>
+    <string name="emailTaken">Email address already taken.</string>
+
     <!-- Notification -->
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>
