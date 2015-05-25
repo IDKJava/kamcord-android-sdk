@@ -3,6 +3,7 @@ package com.kamcord.app.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,7 +116,10 @@ public class CreateProfileFragment extends Fragment {
     private void handleLoginFailure(GenericResponse<Account> accountWrapper)
     {
         AccountManager.clearStoredAccount();
-        
+        new AlertDialog.Builder(getActivity())
+                .setMessage(R.string.createProfileErrorMessage)
+                .setNeutralButton(android.R.string.ok, null)
+                .show();
     }
 
     private final HashMap<UserErrorCode, Integer> errorCodeStringMap = new HashMap<UserErrorCode, Integer>()
