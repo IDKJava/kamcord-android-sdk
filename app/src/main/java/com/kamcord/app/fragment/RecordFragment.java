@@ -84,8 +84,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
         mRecyclerView = (DynamicRecyclerView) v.findViewById(R.id.record_recyclerview);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
-        mRecyclerAdapter.setOnItemClickListener(this);
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
