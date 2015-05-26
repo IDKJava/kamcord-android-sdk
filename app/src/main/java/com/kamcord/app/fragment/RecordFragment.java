@@ -22,6 +22,7 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
+import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.SpaceItemDecoration;
 
@@ -37,10 +38,11 @@ import retrofit.client.Response;
 public class RecordFragment extends Fragment implements GameRecordListAdapter.OnItemClickListener {
     private static final String TAG = RecordFragment.class.getSimpleName();
 
-    private RecyclerView mRecyclerView;
+    private DynamicRecyclerView mRecyclerView;
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
     private GridLayoutManager gridLayoutManager;
+    private int spanCount = 3;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
 
@@ -80,11 +82,8 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         }
         sortGameList(mSupportedGameList);
 
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.record_recyclerview);
-        gridLayoutManager = new GridLayoutManager(getActivity().getApplicationContext(), 2);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView = (DynamicRecyclerView) v.findViewById(R.id.record_recyclerview);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
@@ -109,14 +108,13 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             }
         });
 
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-                if( onRecyclerViewScrollListener != null )
-                {
+                if (onRecyclerViewScrollListener != null) {
                     onRecyclerViewScrollListener.onRecyclerViewScrollStateChanged(recyclerView, state);
-            }
+                }
             }
 
             @Override
@@ -130,11 +128,10 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                     mSwipeRefreshLayout.setEnabled(true);
                 }
 
-                if( onRecyclerViewScrollListener != null )
-                {
+                if (onRecyclerViewScrollListener != null) {
                     onRecyclerViewScrollListener.onRecyclerViewScrolled(recyclerView, dy, dy);
                 }
-                }
+            }
         });
     }
 
