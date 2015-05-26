@@ -382,7 +382,6 @@ public class RecordActivity extends ActionBarActivity implements
             }
             case R.id.action_signout: {
                 if (AccountManager.isLoggedIn()) {
-                    AccountManager.clearStoredAccount();
                     AppServerClient.getInstance().logout(logoutCallback);
                     Intent loginIntent = new Intent(this, LoginActivity.class);
                     startActivity(loginIntent);
@@ -417,10 +416,12 @@ public class RecordActivity extends ActionBarActivity implements
     private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
+            AccountManager.clearStoredAccount();
         }
 
         @Override
         public void failure(RetrofitError error) {
+            AccountManager.clearStoredAccount();
         }
     };
 }
