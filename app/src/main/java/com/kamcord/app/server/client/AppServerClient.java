@@ -12,6 +12,7 @@ import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
+import com.kamcord.app.server.model.UserErrorCode;
 import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.DeviceManager;
@@ -58,7 +59,23 @@ public class AppServerClient {
                 @Field("username") String username,
                 @Field("password") String password,
                 Callback<GenericResponse<Account>> cb);
-        
+
+        @GET("/app/v3/account/username/validate")
+        void validateUsername(
+                @Query("username") String username,
+                Callback<GenericResponse<UserErrorCode>> cb);
+
+        @GET("/app/v3/account/email/validate")
+        void validateEmail(
+                @Query("email") String email,
+                Callback<GenericResponse<UserErrorCode>> cb);
+
+        @FormUrlEncoded
+        @POST("/app/v3/account/password/reset")
+        void resetPassword(
+                @Field("username") String email,
+                Callback<GenericResponse<?>> cb);
+
         @POST("/app/v3/account/logout")
         void logout(Callback<GenericResponse<?>> cb);
 

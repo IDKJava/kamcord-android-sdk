@@ -87,6 +87,11 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
                             && keyCode == KeyEvent.KEYCODE_BACK
                             && wv.canGoBack()) {
+                        Activity activity = getActivity();
+                        if( activity instanceof RecordActivity )
+                        {
+                            ((RecordActivity) activity).showToolbar();
+                        }
                         wv.goBack();
                         return true;
                     }
@@ -125,6 +130,11 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         webViewRefreshLayout.setEnabled(false);
         if (AccountManager.isLoggedIn()) {
             Account account = AccountManager.getStoredAccount();
+            Activity activity = getActivity();
+            if( activity instanceof RecordActivity )
+            {
+                ((RecordActivity) activity).showToolbar();
+            }
             webViewRefreshLayout.setRefreshing(true);
             webView.loadUrl(KAMCORD_PROFILE_BASE_URL + account.username);
         }
