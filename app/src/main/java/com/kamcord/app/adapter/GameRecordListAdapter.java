@@ -40,7 +40,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 //        switch( viewType )
 //        {
 //            case VIEW_TYPE_FIRST_INSTALLED:
-//                itemLayoutView = inflater.inflate(R.layout.gridview_item, null);
+//                itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed, null);
 //                viewHolder = new NotInstalledViewHolder(itemLayoutView, mItemClickListener);
 //                break;
 //
@@ -48,7 +48,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 //
 //        }
 
-        itemLayoutView = inflater.inflate(R.layout.gridview_item, null);
+        itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed, null);
         viewHolder = new NotInstalledViewHolder(itemLayoutView, mItemClickListener);
 
         return viewHolder;
