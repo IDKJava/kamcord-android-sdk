@@ -2,6 +2,7 @@ package com.kamcord.app.utils;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.util.TypedValue;
 
 import com.kamcord.app.R;
 
@@ -18,5 +19,9 @@ public class ViewUtils {
 
     public static int getTabsHeight(Context context) {
         return (int) context.getResources().getDimension(R.dimen.tabsHeight);
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 }

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 import com.kamcord.app.R;
+import com.kamcord.app.utils.ViewUtils;
 
 /**
  * Created by donliang1 on 5/22/15.
@@ -34,8 +35,8 @@ public class DynamicRecyclerView extends RecyclerView {
 
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
-            TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.AutoGridItem);
-            columnWidth = array.getInteger(R.styleable.AutoGridItem_GridItemWidth, 300);
+            TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.DynamicRecyclerView);
+            columnWidth = array.getDimensionPixelSize(R.styleable.DynamicRecyclerView_minGridItemWidth, ViewUtils.dpToPx(getContext(), 150));
             array.recycle();
         }
         gridLayoutManager = new GridLayoutManager(getContext(), columnNumber);
