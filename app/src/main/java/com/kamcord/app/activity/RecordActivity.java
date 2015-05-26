@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
-import com.kamcord.app.adapter.GameRecordListAdapter;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.fragment.ShareFragment;
@@ -40,8 +39,8 @@ import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
-import com.kamcord.app.view.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
+import com.kamcord.app.view.SlidingTabLayout;
 
 import java.util.Locale;
 
@@ -58,12 +57,10 @@ public class RecordActivity extends ActionBarActivity implements
         RecordFragment.SelectedGameListener,
         RecordFragment.RecyclerViewScrollListener,
         ObservableWebView.ObservableWebViewScrollListener,
-        Uploader.UploadStatusListener,
-        GameRecordListAdapter.OnRecordButtonClickListener {
+        Uploader.UploadStatusListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    @InjectView(R.id.main_fab) ImageButton mFloatingActionButton;
     @InjectView(R.id.main_pager) ViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
     @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
@@ -151,13 +148,6 @@ public class RecordActivity extends ActionBarActivity implements
 
             @Override
             public void onPageSelected(int position) {
-                if (position != 0) {
-                    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mFloatingActionButton.getLayoutParams();
-                    mFloatingActionButton.animate().translationY(mFloatingActionButton.getHeight() + layoutParams.bottomMargin);
-                } else {
-                    mFloatingActionButton.animate().translationY(0);
-                }
-
             }
 
             @Override
@@ -192,7 +182,6 @@ public class RecordActivity extends ActionBarActivity implements
         if (!RecordingService.isRunning()) {
             if (mSelectedGame != null) {
                 mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
-                obtainMediaProjection();
 
             } else {
                 Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
@@ -219,8 +208,9 @@ public class RecordActivity extends ActionBarActivity implements
     }
 
     @Override
-    public void selectedGame(Game gameModel) {
+    public void onGameSelected(Game gameModel) {
         mSelectedGame = gameModel;
+        obtainMediaProjection();
     }
 
     public void obtainMediaProjection() {
@@ -425,9 +415,4 @@ public class RecordActivity extends ActionBarActivity implements
         public void failure(RetrofitError error) {
         }
     };
-
-    @Override
-    public void onRecordButtonClick(Game game) {
-
-    }
 }

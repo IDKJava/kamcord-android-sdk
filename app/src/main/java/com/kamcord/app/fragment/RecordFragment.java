@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
@@ -22,8 +21,8 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
-import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.utils.GameListUtils;
+import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.SpaceItemDecoration;
 
 import java.util.ArrayList;
@@ -35,7 +34,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class RecordFragment extends Fragment implements GameRecordListAdapter.OnItemClickListener {
+public class RecordFragment extends Fragment implements
+        GameRecordListAdapter.OnItemClickListener,
+        GameRecordListAdapter.OnRecordButtonClickListener {
     private static final String TAG = RecordFragment.class.getSimpleName();
 
     private DynamicRecyclerView mRecyclerView;
@@ -84,7 +85,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
         mRecyclerView = (DynamicRecyclerView) v.findViewById(R.id.record_recyclerview);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, this);
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, this, this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
@@ -152,25 +153,13 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     @Override
     public void onItemClick(View view, int position) {
         Game game = mSupportedGameList.get(position);
-        if (game.isInstalled) {
-            mSelectedGame = game;
-            SelectedGameListener listener = (SelectedGameListener) getActivity();
-            listener.selectedGame(mSelectedGame);
-            Toast.makeText(getActivity(),
-                    "You will record " + mSelectedGame.name,
-                    Toast.LENGTH_SHORT)
-                    .show();
-        } else {
+        if (!game.isInstalled) {
             mSelectedGame = null;
             Intent intent = new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("market://details?id=" + game.play_store_id));
             getActivity().startActivity(intent);
         }
-    }
-
-    public interface SelectedGameListener {
-        void selectedGame(com.kamcord.app.server.model.Game selectedG0ameModel);
     }
 
     public interface RecyclerViewScrollListener {
@@ -238,5 +227,16 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             Log.e(TAG, "  " + retrofitError.toString());
             // TODO: show the user something about this.
         }
+    }
+
+    @Override
+    public void onRecordButtonClick(Game game) {
+        mSelectedGame = game;
+        SelectedGameListener listener = (SelectedGameListener) getActivity();
+        listener.onGameSelected(mSelectedGame);
+    }
+
+    public interface SelectedGameListener {
+        void onGameSelected(Game selectedGame);
     }
 }
