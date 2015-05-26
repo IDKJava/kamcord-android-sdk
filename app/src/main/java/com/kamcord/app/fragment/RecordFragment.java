@@ -102,8 +102,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                     AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
                 }
             });
-        } else {
-            refreshRecordTab.setVisibility(View.INVISIBLE);
         }
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -245,11 +243,14 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         public void failure(RetrofitError retrofitError) {
             Log.e(TAG, "Unable to get list of KCP games.");
             Log.e(TAG, "  " + retrofitError.toString());
-            if(refreshRecordTab.getVisibility() == View.INVISIBLE) {
-                refreshRecordTab.setVisibility(View.VISIBLE);
-            }
             mSwipeRefreshLayout.setRefreshing(false);
             // TODO: show the user something about this.
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ButterKnife.reset(getActivity());
     }
 }
