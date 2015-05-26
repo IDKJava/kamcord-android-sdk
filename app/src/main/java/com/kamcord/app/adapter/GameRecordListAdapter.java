@@ -26,11 +26,13 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     private Context mContext;
     private List<Game> mGames;
     private OnItemClickListener mItemClickListener;
+    private OnRecordButtonClickListener mOnRecordButtonClickListener;
 
-    public GameRecordListAdapter(Context context, List<Game> games, OnItemClickListener listener) {
+    public GameRecordListAdapter(Context context, List<Game> games, OnItemClickListener itemClickListener, OnRecordButtonClickListener recordButtonClickListener) {
         this.mContext = context;
         this.mGames = games;
-        this.mItemClickListener = listener;
+        this.mItemClickListener = itemClickListener;
+        this.mOnRecordButtonClickListener = recordButtonClickListener;
     }
 
     @Override
@@ -44,17 +46,17 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         {
             case VIEW_TYPE_FIRST_INSTALLED:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_first_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView, mItemClickListener);
+                viewHolder = new InstalledViewHolder(itemLayoutView);
                 break;
 
             case VIEW_TYPE_INSTALLED:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView, mItemClickListener);
+                viewHolder = new InstalledViewHolder(itemLayoutView);
                 break;
 
             case VIEW_TYPE_LAST_INSTALLED:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_last_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView, mItemClickListener);
+                viewHolder = new InstalledViewHolder(itemLayoutView);
                 break;
 
             default:
@@ -67,7 +69,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-        Game game = mGames.get(position);
+        final Game game = mGames.get(position);
 
         if( viewHolder instanceof NotInstalledViewHolder )
         {
@@ -94,7 +96,15 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                     String.format(Locale.ENGLISH,
                             mContext.getResources().getString(R.string.followersWithCount),
                             game.number_of_followers));
-
+            firstInstalledViewHolder.recordImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if( mOnRecordButtonClickListener != null )
+                    {
+                        mOnRecordButtonClickListener.onRecordButtonClick(game);
+                    }
+                }
+            });
         }
     }
 
@@ -112,7 +122,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
             if (position == 0) {
                 viewType = VIEW_TYPE_FIRST_INSTALLED;
 
-            } else if (position + 1 < mGames.size() && !mGames.get(position + 1).isInstalled) {
+            } else if (position + 1 > mGames.size() || !mGames.get(position + 1).isInstalled) {
                 viewType = VIEW_TYPE_LAST_INSTALLED;
 
             } else {
@@ -125,5 +135,9 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
+    }
+
+    public interface OnRecordButtonClickListener {
+        void onRecordButtonClick(Game game);
     }
 }

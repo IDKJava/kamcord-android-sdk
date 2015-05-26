@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
-import com.kamcord.app.adapter.GameRecordListAdapter;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -26,16 +25,8 @@ public class InstalledViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.recordImageButton)
     public ImageButton recordImageButton;
 
-    public InstalledViewHolder(final View itemLayoutView, final GameRecordListAdapter.OnItemClickListener listener) {
+    public InstalledViewHolder(View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
-        itemLayoutView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onItemClick(itemLayoutView, getAdapterPosition());
-                }
-            }
-        });
     }
 }

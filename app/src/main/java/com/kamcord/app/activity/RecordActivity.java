@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
+import com.kamcord.app.adapter.GameRecordListAdapter;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.fragment.ShareFragment;
@@ -57,7 +58,8 @@ public class RecordActivity extends ActionBarActivity implements
         RecordFragment.SelectedGameListener,
         RecordFragment.RecyclerViewScrollListener,
         ObservableWebView.ObservableWebViewScrollListener,
-        Uploader.UploadStatusListener {
+        Uploader.UploadStatusListener,
+        GameRecordListAdapter.OnRecordButtonClickListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
@@ -423,4 +425,9 @@ public class RecordActivity extends ActionBarActivity implements
         public void failure(RetrofitError error) {
         }
     };
+
+    @Override
+    public void onRecordButtonClick(Game game) {
+
+    }
 }
