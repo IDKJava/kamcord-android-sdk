@@ -1,19 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.kamcord.app.activity.RecordActivity">
 
     <item android:id="@+id/action_request_game"
         android:orderInCategory="1"
         android:title="@string/action_request_game"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
     <item android:id="@+id/action_cleancache"
         android:orderInCategory="2"
         android:title="@string/action_cleancache"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
 
     <item android:id="@+id/action_signout"
-        android:orderInCategory="100"
+        android:orderInCategory="3"
         android:title="@string/action_signout"
-        android:showAsAction="never" />
+        app:showAsAction="never" />
 
 </menu>
