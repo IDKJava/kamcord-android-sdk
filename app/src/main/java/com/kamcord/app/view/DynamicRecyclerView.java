@@ -1,11 +1,13 @@
-package com.kamcord.app.utils;
+package com.kamcord.app.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-import com.kamcord.app.adapter.GameRecordListAdapter;
+import com.kamcord.app.R;
+import com.kamcord.app.utils.ViewUtils;
 
 /**
  * Created by donliang1 on 5/22/15.
@@ -13,7 +15,8 @@ import com.kamcord.app.adapter.GameRecordListAdapter;
 public class DynamicRecyclerView extends RecyclerView {
 
     private GridLayoutManager gridLayoutManager;
-    private int columnWidth = 300;
+    private int columnWidth = 0;
+    private int columnNumber = 3;
 
     public DynamicRecyclerView(Context context) {
         super(context);
@@ -31,7 +34,12 @@ public class DynamicRecyclerView extends RecyclerView {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        gridLayoutManager = new GridLayoutManager(getContext(), 3);
+        if (attrs != null) {
+            TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.DynamicRecyclerView);
+            columnWidth = array.getDimensionPixelSize(R.styleable.DynamicRecyclerView_minGridItemWidth, ViewUtils.dpToPx(getContext(), 150));
+            array.recycle();
+        }
+        gridLayoutManager = new GridLayoutManager(getContext(), columnNumber);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -59,8 +67,8 @@ public class DynamicRecyclerView extends RecyclerView {
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
-            int spanCount = Math.max(3, getMeasuredWidth() / columnWidth);
-            gridLayoutManager.setSpanCount(spanCount);
+        int spanCount = Math.max(columnNumber, getMeasuredWidth() / columnWidth);
+        gridLayoutManager.setSpanCount(spanCount);
     }
 
 }

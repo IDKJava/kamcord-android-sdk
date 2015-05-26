@@ -1,7 +1,5 @@
 package com.kamcord.app.utils;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -22,17 +20,18 @@ import com.kamcord.app.R;
 public class StringUtils {
     private static final String TAG = StringUtils.class.getSimpleName();
 
-    public static URLSpan newURLSpan(final Activity activity, final String url) {
+    public static URLSpan newURLSpan(final String url) {
         URLSpan urlSpan = new URLSpan(url)
         {
             @Override
             public void onClick(View v)
             {
+                Log.v("FindMe", "huh?");
                 try
                 {
-                    activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 }
-                catch( ActivityNotFoundException e )
+                catch( Exception e )
                 {
                     Log.w(TAG, "Could not launch activity for URL " + url, e);
                 }
@@ -41,7 +40,7 @@ public class StringUtils {
         return urlSpan;
     }
 
-    public static SpannableStringBuilder linkify(Activity activity, String sourceText, String[] linkTexts, String[] linkURLs)
+    public static SpannableStringBuilder linkify(String sourceText, String[] linkTexts, String[] linkURLs)
     {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(sourceText);
 
@@ -52,9 +51,9 @@ public class StringUtils {
                 int index = sourceText.indexOf(linkTexts[i]);
                 if( index >= 0 )
                 {
-                    spannableStringBuilder.setSpan(newURLSpan(activity, linkURLs[i]),
+                    spannableStringBuilder.setSpan(newURLSpan(linkURLs[i]),
                             index, index + linkTexts[i].length(),
-                            Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
         }

@@ -22,7 +22,7 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
-import com.kamcord.app.utils.DynamicRecyclerView;
+import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.SpaceItemDecoration;
 
@@ -111,10 +111,9 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-                if( onRecyclerViewScrollListener != null )
-                {
+                if (onRecyclerViewScrollListener != null) {
                     onRecyclerViewScrollListener.onRecyclerViewScrollStateChanged(recyclerView, state);
-            }
+                }
             }
 
             @Override
@@ -128,11 +127,10 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                     mSwipeRefreshLayout.setEnabled(true);
                 }
 
-                if( onRecyclerViewScrollListener != null )
-                {
+                if (onRecyclerViewScrollListener != null) {
                     onRecyclerViewScrollListener.onRecyclerViewScrolled(recyclerView, dy, dy);
                 }
-                }
+            }
         });
     }
 

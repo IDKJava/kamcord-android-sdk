@@ -30,10 +30,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp"
-        android:background="@drawable/login_btnstyle"
-        android:text="Skip"
-        android:textAllCaps="false"
-        android:textColor="@color/ButtonTextColor" />
+        style="@style/KamcordButton"
+        android:text="Skip" />
 
     <View
         android:id="@+id/spacer"
@@ -51,10 +49,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_toLeftOf="@id/spacer"
-        android:background="@drawable/login_btnstyle"
-        android:text="@string/createProfile"
-        android:textAllCaps="false"
-        android:textColor="@color/ButtonTextColor" />
+        style="@style/KamcordButton"
+        android:text="@string/createProfile" />
 
     <Button
         android:id="@+id/loginButton"
@@ -65,9 +61,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:layout_toRightOf="@id/spacer"
-        android:background="@drawable/login_btnstyle"
-        android:text="@string/logIn"
-        android:textAllCaps="false"
-        android:textColor="@color/ButtonTextColor" />
+        style="@style/KamcordButton"
+        android:text="@string/logIn" />
 
 </RelativeLayout>

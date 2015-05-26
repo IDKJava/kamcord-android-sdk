@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
@@ -12,14 +13,15 @@
         android:clipToPadding="false"
         android:clipChildren="false" >
 
-        <com.kamcord.app.utils.DynamicRecyclerView
+        <com.kamcord.app.view.DynamicRecyclerView
             android:id="@+id/record_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="@dimen/tabsHeight"
             android:clipToPadding="false"
             android:clipChildren="false"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            app:minGridItemWidth="@dimen/griditem_width" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
