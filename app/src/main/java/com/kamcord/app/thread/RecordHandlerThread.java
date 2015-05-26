@@ -2,6 +2,7 @@ package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -32,6 +33,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
     private static final String TAG = RecordHandlerThread.class.getSimpleName();
+    private static int NOTIFICATION_ID = 3141592;
 
     private MediaProjection mMediaProjection;
     private Context mContext;
@@ -106,6 +108,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
                 mHandler.sendEmptyMessage(Message.POLL);
+                this.notificationBuilder.setContentText("Paused");
+                ((NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
                 break;
 
             case Message.POLL:
@@ -115,6 +119,8 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 } else {
                     mHandler.removeMessages(Message.RECORD_CLIP);
                     mHandler.sendEmptyMessage(Message.RECORD_CLIP);
+                    this.notificationBuilder.setContentText("Recording");
+                    ((NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
                 }
                 break;
 
