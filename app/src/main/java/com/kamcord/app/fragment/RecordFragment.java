@@ -42,7 +42,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
     private GridLayoutManager gridLayoutManager;
-    private int spanCount = 3;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
 
@@ -237,6 +236,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         public void failure(RetrofitError retrofitError) {
             Log.e(TAG, "Unable to get list of KCP games.");
             Log.e(TAG, "  " + retrofitError.toString());
+            mSwipeRefreshLayout.setRefreshing(false);
             // TODO: show the user something about this.
         }
     }
