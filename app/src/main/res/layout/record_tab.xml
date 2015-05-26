@@ -12,7 +12,7 @@
         android:clipToPadding="false"
         android:clipChildren="false" >
 
-        <com.kamcord.app.utils.DynamicRecyclerView
+        <com.kamcord.app.view.DynamicRecyclerView
             android:id="@+id/record_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

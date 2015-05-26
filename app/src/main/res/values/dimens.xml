@@ -6,8 +6,5 @@
     <dimen name="tabsHeight">56dp</dimen>
     <dimen name="refreshEnd">100dp</dimen>
     <dimen name="uploadProgressSize">3dp</dimen>
-
-    <dimen name="suggest_item_width">196dp</dimen>
-    <dimen name="suggest_item_height">240dp</dimen>
-    <dimen name="suggest_item_margin">5dp</dimen>>
+    <dimen name="suggest_item_margin">5dp</dimen>
 </resources>
