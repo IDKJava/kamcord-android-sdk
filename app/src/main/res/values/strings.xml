@@ -75,7 +75,7 @@
 
     <string name="communityEmail">community@kamcord.com</string>
     <string name="canIRecord">Can I record this game?</string>
-    <string name="iWantToRecord">I want to record this game:</string>
+    <string name="iWantToRecord">I want to record this game: [[[PUT THE NAME OF YOUR GAME HERE!]]]</string>
     <string name="sincerely">Sincerely, %s</string>
 
 </resources>
