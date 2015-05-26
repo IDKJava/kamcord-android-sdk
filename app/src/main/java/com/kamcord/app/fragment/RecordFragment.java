@@ -13,7 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kamcord.app.BuildConfig;
@@ -40,17 +40,16 @@ import retrofit.client.Response;
 
 public class RecordFragment extends Fragment implements GameRecordListAdapter.OnItemClickListener {
 
-    @InjectView(R.id.refreshRecordTab)
-    LinearLayout refreshRecordTab;
-    private static final String TAG = RecordFragment.class.getSimpleName();
+    @InjectView(R.id.refreshRecordTab) TextView refreshRecordTab;
+    @InjectView(R.id.recordfragment_refreshlayout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @InjectView(R.id.record_recyclerview) DynamicRecyclerView mRecyclerView;
 
-    private DynamicRecyclerView mRecyclerView;
+    private static final String TAG = RecordFragment.class.getSimpleName();
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
     private GridLayoutManager gridLayoutManager;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     @Override
@@ -87,16 +86,15 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         }
         sortGameList(mSupportedGameList);
 
-        mRecyclerView = (DynamicRecyclerView) v.findViewById(R.id.record_recyclerview);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
         if( mSupportedGameList.size() == 0 ) {
+            refreshRecordTab.setVisibility(View.VISIBLE);
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
@@ -247,6 +245,9 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         public void failure(RetrofitError retrofitError) {
             Log.e(TAG, "Unable to get list of KCP games.");
             Log.e(TAG, "  " + retrofitError.toString());
+            if(refreshRecordTab.getVisibility() == View.INVISIBLE) {
+                refreshRecordTab.setVisibility(View.VISIBLE);
+            }
             mSwipeRefreshLayout.setRefreshing(false);
             // TODO: show the user something about this.
         }
