@@ -74,9 +74,11 @@ public class VideoPreviewActivity extends Activity {
             }
         }
 
-        mVideoView.setVideoPath(videoPath);
-        mVideoView.start();
-        mVideoView.requestFocus();
+        if(videoPath != null) {
+            mVideoView.setVideoPath(videoPath);
+            mVideoView.start();
+            mVideoView.requestFocus();
+        }
 
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
