@@ -5,7 +5,7 @@ import android.content.res.TypedArray;
 
 import com.kamcord.app.R;
 
-public class Utils {
+public class ViewUtils {
 
     public static int getToolbarHeight(Context context) {
         final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
