@@ -29,6 +29,7 @@ import java.util.HashMap;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -60,7 +61,6 @@ public class CreateProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_create_profile, container, false);
 
         ButterKnife.inject(this, root);
-        initializeEditTexts();
         initializeTermsAndPolicyString();
 
         return root;
@@ -73,36 +73,32 @@ public class CreateProfileFragment extends Fragment {
         ButterKnife.reset(this);
     }
 
-    private void initializeEditTexts()
+    @OnFocusChange(R.id.usernameEditText)
+    public void validateUsername(boolean hasFocus)
     {
-        usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus && isResumed()) {
-                    String username = usernameEditText.getEditableText().toString();
-                    if (username.isEmpty()) {
-                        usernameEditText.setError(getResources().getString(R.string.youMustEnterUsername));
-                    } else {
-                        usernameEditText.setError(null);
-                        AppServerClient.getInstance().validateUsername(username, validateUsernameCallback);
-                    }
-                }
+        if (!hasFocus && isResumed()) {
+            String username = usernameEditText.getEditableText().toString();
+            if (username.isEmpty()) {
+                usernameEditText.setError(getResources().getString(R.string.youMustEnterUsername));
+            } else {
+                usernameEditText.setError(null);
+                AppServerClient.getInstance().validateUsername(username, validateUsernameCallback);
             }
-        });
-        emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if( !hasFocus && isResumed()) {
-                    String email = emailEditText.getEditableText().toString();
-                    if (email.isEmpty()) {
-                        emailEditText.setError(getResources().getString(R.string.youMustEnterEmail));
-                    } else {
-                        emailEditText.setError(null);
-                        AppServerClient.getInstance().validateEmail(email, validateEmailCallback);
-                    }
-                }
+        }
+    }
+
+    @OnFocusChange(R.id.emailEditText)
+    public void validateEmail(boolean hasFocus)
+    {
+        if (!hasFocus && isResumed()) {
+            String email = emailEditText.getEditableText().toString();
+            if (email.isEmpty()) {
+                emailEditText.setError(getResources().getString(R.string.youMustEnterEmail));
+            } else {
+                emailEditText.setError(null);
+                AppServerClient.getInstance().validateEmail(email, validateEmailCallback);
             }
-        });
+        }
     }
 
     private void initializeTermsAndPolicyString()
