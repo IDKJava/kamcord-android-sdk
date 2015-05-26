@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 import com.kamcord.app.R;
+import com.kamcord.app.adapter.GameRecordListAdapter;
 import com.kamcord.app.utils.ViewUtils;
 
 /**

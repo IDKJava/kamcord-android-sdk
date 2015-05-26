@@ -11,7 +11,7 @@
 
     <color name="kamcordGreen">#47d894</color>
     <color name="kamcordDarkText">#353e44</color>
-    <color name="kamcordLightText">#353e44</color>
+    <color name="kamcordLightText">#aab</color>
 
     <color name="ButtonTextColor">#40d18b</color>
     <color name="ButtonOutlineColor">#40d18b</color>

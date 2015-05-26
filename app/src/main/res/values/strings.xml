@@ -78,4 +78,8 @@
     <string name="iWantToRecord">I want to record this game:</string>
     <string name="sincerely">Sincerely, %s</string>
 
+    <string name="recordTheseGames">Record These Games!</string>
+    <string name="wantToRecordThese">Want to record these games?</string>
+    <string name="followersWithCount">%d Followers</string>
+
 </resources>

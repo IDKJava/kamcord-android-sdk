@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kamcord.app.R;
+import com.kamcord.app.adapter.viewholder.InstalledViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledViewHolder;
 import com.kamcord.app.server.model.Game;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
@@ -33,23 +35,32 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder;
-        View itemLayoutView;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-//        switch( viewType )
-//        {
-//            case VIEW_TYPE_FIRST_INSTALLED:
-//                itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed, null);
-//                viewHolder = new NotInstalledViewHolder(itemLayoutView, mItemClickListener);
-//                break;
-//
-//            case VIEW_TYPE_INSTALLED:
-//
-//        }
+        View itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed, null);
+        RecyclerView.ViewHolder viewHolder = new NotInstalledViewHolder(itemLayoutView, mItemClickListener);
 
-        itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed, null);
-        viewHolder = new NotInstalledViewHolder(itemLayoutView, mItemClickListener);
+        switch( viewType )
+        {
+            case VIEW_TYPE_FIRST_INSTALLED:
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_first_installed, null);
+                viewHolder = new InstalledViewHolder(itemLayoutView, mItemClickListener);
+                break;
+
+            case VIEW_TYPE_INSTALLED:
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_installed, null);
+                viewHolder = new InstalledViewHolder(itemLayoutView, mItemClickListener);
+                break;
+
+            case VIEW_TYPE_LAST_INSTALLED:
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_last_installed, null);
+                viewHolder = new InstalledViewHolder(itemLayoutView, mItemClickListener);
+                break;
+
+            default:
+                break;
+        }
+
 
         return viewHolder;
     }
@@ -71,6 +82,19 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
             } else {
                 notInstalledViewHolder.installGameTextView.setVisibility(View.VISIBLE);
             }
+
+        } else if( viewHolder instanceof InstalledViewHolder) {
+            InstalledViewHolder firstInstalledViewHolder = (InstalledViewHolder) viewHolder;
+            Picasso.with(mContext)
+                    .load(game.icons.regular)
+                    .tag(game.play_store_id)
+                    .into(firstInstalledViewHolder.gameThumbnailImageView);
+            firstInstalledViewHolder.gameNameTextView.setText(game.name);
+            firstInstalledViewHolder.gameFollowerCountTextView.setText(
+                    String.format(Locale.ENGLISH,
+                            mContext.getResources().getString(R.string.followersWithCount),
+                            game.number_of_followers));
+
         }
     }
 
