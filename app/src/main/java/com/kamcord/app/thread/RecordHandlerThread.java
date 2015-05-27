@@ -2,6 +2,7 @@ package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
@@ -39,6 +40,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private Context mContext;
     private Handler mHandler;
     private Surface mSurface;
+    private Notification.Builder notificationBuilder;
 
     private MediaMuxer mMuxer;
     private MediaCodec mVideoEncoder;
@@ -84,7 +86,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     }
     private Dimensions codecDimensions = null;
 
-    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier) {
+    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier, Notification.Builder notificationBuilder) {
         super("KamcordRecordingThread");
         this.mMediaProjection = mediaProjection;
         this.mContext = context;
@@ -92,6 +94,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         this.mRecordingSession = recordingSession;
         this.clipStartBarrier = clipStartBarrier;
+        this.notificationBuilder = notificationBuilder;
     }
 
     @Override

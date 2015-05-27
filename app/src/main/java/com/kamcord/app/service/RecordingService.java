@@ -84,11 +84,23 @@ public class RecordingService extends Service {
     public synchronized void startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
         if (mRecordHandlerThread == null || !mRecordHandlerThread.isAlive()) {
 
+            Notification.Builder notificationBuilder = new Notification.Builder(this)
+                    .setContentTitle(getResources().getString(R.string.toolbarTitle))
+                    .setContentText(getResources().getString(R.string.recording))
+                    .setSmallIcon(R.drawable.kamcord_app_icon);
+            Intent backToAppIntent = new Intent(this, RecordActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(RecordActivity.class);
+            stackBuilder.addNextIntent(backToAppIntent);
+            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            notificationBuilder.setContentIntent(pendingIntent);
+            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+
             this.recordingSession = recordingSession;
 
             CyclicBarrier clipStartBarrier = new CyclicBarrier(2);
 
-            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession, clipStartBarrier);
+            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession, clipStartBarrier, notificationBuilder);
             mRecordHandlerThread.start();
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
             mRecordHandlerThread.setHandler(mHandler);
@@ -101,17 +113,6 @@ public class RecordingService extends Service {
             mAudioRecordThread.setHandler(mAudioRecordHandler);
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.POLL);
 
-            Notification.Builder notificationBuilder = new Notification.Builder(this)
-                    .setContentTitle(getResources().getString(R.string.toolbarTitle))
-                    .setContentText(getResources().getString(R.string.recording))
-                    .setSmallIcon(R.drawable.kamcord_app_icon);
-            Intent backToAppIntent = new Intent(this, RecordActivity.class);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(RecordActivity.class);
-            stackBuilder.addNextIntent(backToAppIntent);
-            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-            notificationBuilder.setContentIntent(pendingIntent);
-            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
         } else {
             Log.e(TAG, "Unable to start recording session! There is already a currently running recording session.");
         }
