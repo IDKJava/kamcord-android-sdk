@@ -190,6 +190,7 @@ public class RecordActivity extends ActionBarActivity implements
         if (!RecordingService.isRunning()) {
             if (mSelectedGame != null) {
                 mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+                mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
                 obtainMediaProjection();
 
             } else {
@@ -197,6 +198,7 @@ public class RecordActivity extends ActionBarActivity implements
             }
         } else {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
             stopService(new Intent(this, RecordingService.class));
 
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
@@ -256,8 +258,10 @@ public class RecordActivity extends ActionBarActivity implements
     private void handleServiceRunning() {
         if (RecordingService.isRunning()) {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
         } else {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
         }
     }
 
