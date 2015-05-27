@@ -54,10 +54,10 @@ public class RecordAndPostTest extends BaseTest {
         mDevice.openNotification();
         notTimedOut =  mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.toolbarTitle))), UI_TIMEOUT_MS);
-        assertTrue("Recording notification failed to show!", notTimedOut);
+        assertTrue("Notification failed to show!", notTimedOut);
         notTimedOut =  mDevice
-                .wait(Until.hasObject(By.text(getStrByID(R.string.recording))), UI_TIMEOUT_MS);
-        assertTrue("Recording notification status not recording!", notTimedOut);
+                .wait(Until.hasObject(By.text(getStrByID(R.string.paused))), UI_TIMEOUT_MS);
+        assertTrue("Paused notification status not recording!", notTimedOut);
         //close notifications
         mDevice.pressBack();
 
