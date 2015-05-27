@@ -53,6 +53,7 @@
 
     <!-- Activity -->
     <string name="selectAGame">Please select a game to record.</string>
+    <string name="pressTheButton">Press the green button to start recording %s!</string>
     <string name="kamcordRecordTab">Record</string>
     <string name="kamcordProfileTab">Profile</string>
     <string name="kamcordVideoTab">Top Videos</string>

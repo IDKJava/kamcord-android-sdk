@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -150,6 +151,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         return appIsInstalled;
     }
 
+    private Toast startRecordingToast = null;
     @Override
     public void onItemClick(View view, int position) {
         Game game = mSupportedGameList.get(position);
@@ -157,10 +159,14 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             mSelectedGame = game;
             SelectedGameListener listener = (SelectedGameListener) getActivity();
             listener.selectedGame(mSelectedGame);
-            Toast.makeText(getActivity(),
-                    "You will record " + mSelectedGame.name,
-                    Toast.LENGTH_SHORT)
-                    .show();
+            if( startRecordingToast != null )
+            {
+                startRecordingToast.cancel();
+            }
+            startRecordingToast = Toast.makeText(getActivity(),
+                    String.format(Locale.ENGLISH, getResources().getString(R.string.pressTheButton), mSelectedGame.name),
+                    Toast.LENGTH_SHORT);
+            startRecordingToast.show();
         } else {
             mSelectedGame = null;
             Intent intent = new Intent(
