@@ -60,7 +60,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:6.1.0'
     // compile 'com.kamcord:app-server-models:1.0.1'
     compile files('libs/FlurryAnalytics-5.5.0.jar')
-    compile('com.crashlytics.sdk.android:crashlytics:2.2.4@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.3.0@aar') {
         transitive = true;
     }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'

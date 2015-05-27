@@ -38,7 +38,7 @@ public class UploadService extends IntentService {
         Notification notification = notificationBuilder
                 .setContentTitle(getResources().getString(R.string.toolbarTitle))
                 .setContentText(getResources().getString(R.string.uploading))
-                .setSmallIcon(R.drawable.kamcord_app_icon)
+                .setSmallIcon(R.drawable.app_icon)
                 .build();
         startForeground(NOTIFICATION_ID, notification);
 

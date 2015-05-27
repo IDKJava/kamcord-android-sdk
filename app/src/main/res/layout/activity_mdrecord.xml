@@ -61,7 +61,7 @@
             android:layout_margin="15dp"
             android:background="@drawable/fab_circle"
             android:elevation="4dp"
-            android:src="@drawable/ic_videocam_white_36dp" />
+            android:src="@drawable/ic_videocam_white_48dp" />
 
     </FrameLayout>
 

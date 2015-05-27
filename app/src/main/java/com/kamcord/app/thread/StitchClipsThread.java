@@ -136,8 +136,8 @@ public class StitchClipsThread extends Thread {
                     FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
                     FileSystemManager.AUDIO_CLIPLIST_FILENAME);
 
-            writeFileNamesWithExtensionToFile(videoClipListFile, recordingSessionCacheDirectory, "video[0-9][0-9][0-9].mp4");
-            writeFileNamesWithExtensionToFile(audioClipListFile, recordingSessionCacheDirectory, "audio[0-9][0-9][0-9].mp4");
+            writeFileNamesWithExtensionToFile(videoClipListFile, recordingSessionCacheDirectory, FileSystemManager.VIDEO_CLIP_REGEX);
+            writeFileNamesWithExtensionToFile(audioClipListFile, recordingSessionCacheDirectory, FileSystemManager.AUDIO_CLIP_REGEX);
         } catch (IOException iox) {
             iox.printStackTrace();
         }

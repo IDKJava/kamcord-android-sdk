@@ -60,4 +60,5 @@ public class VideoUtils {
         }
         return bitmap;
     }
+
 }

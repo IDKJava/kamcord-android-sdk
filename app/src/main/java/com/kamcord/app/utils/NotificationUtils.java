@@ -26,7 +26,7 @@ public class NotificationUtils {
         notification = notificationBuilder
                 .setContentTitle(context.getResources().getString(R.string.toolbarTitle))
                 .setContentText(context.getResources().getString(R.string.idle))
-                .setSmallIcon(R.drawable.kamcord_app_icon)
+                .setSmallIcon(R.drawable.app_icon)
                 .build();
 
         Intent backToAppIntent = new Intent(context, RecordActivity.class);
