@@ -110,6 +110,12 @@ public class RecordActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
         handleServiceRunning();
+        MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
+        if (AccountManager.isLoggedIn()) {
+            signoutItem.setVisible(true);
+        } else {
+            signoutItem.setVisible(false);
+        }
     }
 
     @Override
