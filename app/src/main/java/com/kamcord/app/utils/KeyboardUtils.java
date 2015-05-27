@@ -1,5 +1,6 @@
 package com.kamcord.app.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.inputmethod.InputMethodManager;
 
@@ -11,5 +12,6 @@ public class KeyboardUtils {
     public static void hideSoftKeyboard(Context context) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+        imm.hideSoftInputFromWindow(((Activity)context).getCurrentFocus().getWindowToken(), 0);
     }
 }
