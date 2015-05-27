@@ -165,7 +165,7 @@ public class RecordActivity extends AppCompatActivity implements
                 }
             }
         });
-        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview);
+        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview_layout);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
@@ -209,7 +209,7 @@ public class RecordActivity extends AppCompatActivity implements
                 recordShareFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                        .add(R.id.activity_mdrecord, recordShareFragment)
+                        .add(R.id.activity_mdrecord_layout, recordShareFragment)
                         .addToBackStack("ShareFragment").commit();
             } else {
                 // TODO: show the user something about being unable to get the recording session.

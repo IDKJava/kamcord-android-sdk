@@ -10,6 +10,7 @@ public class RecordAndPotsLoggedInLong extends RecordAndPostTestBase{
     @Test
     public void recordRippleTestLoginFirstLong(){
         doLogin();
-        recordAndPostGameVideo(RIPPLE_TEST_APP_NAME, 10 * MS_PER_MIN);
+        //TODO: What do we do with the really long tests?
+        //recordAndPostGameVideo(RIPPLE_TEST_APP_NAME, 10 * MS_PER_MIN);
     }
 }

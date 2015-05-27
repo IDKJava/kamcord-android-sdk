@@ -94,7 +94,7 @@ public abstract class TestBase {
     }
     protected boolean isLoggedIn(){
         UiObject2 loginActivity = mDevice
-                .findObject(By.res(getResByID(R.id.fragment_welcome)));
+                .findObject(By.res(getResByID(R.id.fragment_welcome_layout)));
         if (loginActivity != null){
             UiObject2 loginButton = mDevice.findObject(By.res(getResByID(R.id.loginButton)));
             if (loginButton != null)
@@ -114,12 +114,12 @@ public abstract class TestBase {
     protected boolean doLogin(){
         // only works from login screen.
         // need to build a state machine to make this work for all states.
-        if(mDevice.hasObject(By.res(getResByID(R.id.fragment_welcome)))){
+        if(mDevice.hasObject(By.res(getResByID(R.id.fragment_welcome_layout)))){
             //we're on login screen, handle it
             handleWelcomeLoginView();
 
             boolean notTimedOut =
-                    mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord))),
+                    mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord_layout))),
                             UI_TIMEOUT_MS);
             return notTimedOut;
         }
@@ -133,7 +133,7 @@ public abstract class TestBase {
         mDevice.findObject(By.res(getResByID(R.id.loginButton))).click();
 
         notTimedOut =
-                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.fragment_login))),
+                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.fragment_login_layout))),
                         APP_TIMEOUT_MS);
         assertTrue("Login screen timed out while loading!", notTimedOut);
         UiObject2 uname  = mDevice.findObject(By.res(getResByID(R.id.usernameEditText)));
@@ -148,7 +148,7 @@ public abstract class TestBase {
     }
     protected boolean doLogout(){
         boolean success = false;
-        if(mDevice.hasObject(By.res(getResByID(R.id.fragment_welcome))) &&
+        if(mDevice.hasObject(By.res(getResByID(R.id.fragment_welcome_layout))) &&
                 mDevice.hasObject(By.res(getResByID(R.id.loginButton)))) {
             return true;
         } else {
@@ -169,7 +169,7 @@ public abstract class TestBase {
             if (signOut != null) {
                 signOut.click();
                 success = mDevice.wait(Until.hasObject(
-                        By.res(getResByID(R.id.fragment_welcome))), APP_TIMEOUT_MS);
+                        By.res(getResByID(R.id.fragment_welcome_layout))), APP_TIMEOUT_MS);
             }
         }
         return success;
