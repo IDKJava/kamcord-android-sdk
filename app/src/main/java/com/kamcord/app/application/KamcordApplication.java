@@ -15,7 +15,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class KamcordApplication extends Application {
 
-    private final static String FLURRY_API_KEY = "WMPGQQFYFHW74XG4MGVY";
+    private final static String FLURRY_API_KEY = "PDK8Q3PP86J4M3DBXQJH";
     @Override
     public void onCreate() {
         super.onCreate();

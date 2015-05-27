@@ -9,7 +9,7 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -39,8 +39,8 @@ import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
-import com.kamcord.app.view.SlidingTabLayout;
 import com.kamcord.app.view.ObservableWebView;
+import com.kamcord.app.view.SlidingTabLayout;
 
 import java.util.Locale;
 
@@ -53,7 +53,7 @@ import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
-public class RecordActivity extends ActionBarActivity implements
+public class RecordActivity extends AppCompatActivity implements
         RecordFragment.SelectedGameListener,
         RecordFragment.RecyclerViewScrollListener,
         ObservableWebView.ObservableWebViewScrollListener,
@@ -125,7 +125,7 @@ public class RecordActivity extends ActionBarActivity implements
 
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
-        mToolbar.setLogo(R.drawable.toolbar_icon);
+        mToolbar.setLogo(R.drawable.kamcord_tabbar_icon);
 
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
@@ -189,16 +189,17 @@ public class RecordActivity extends ActionBarActivity implements
     public void floatingActionButtonClicked() {
         if (!RecordingService.isRunning()) {
             if (mSelectedGame != null) {
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+                mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
                 obtainMediaProjection();
 
             } else {
                 Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
             }
         } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
             stopService(new Intent(this, RecordingService.class));
-
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
             if (recordingSession != null) {
                 FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
@@ -255,9 +256,11 @@ public class RecordActivity extends ActionBarActivity implements
 
     private void handleServiceRunning() {
         if (RecordingService.isRunning()) {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
         } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
         }
     }
 
@@ -382,7 +385,6 @@ public class RecordActivity extends ActionBarActivity implements
             }
             case R.id.action_signout: {
                 if (AccountManager.isLoggedIn()) {
-                    AccountManager.clearStoredAccount();
                     AppServerClient.getInstance().logout(logoutCallback);
                     Intent loginIntent = new Intent(this, LoginActivity.class);
                     startActivity(loginIntent);
@@ -417,10 +419,12 @@ public class RecordActivity extends ActionBarActivity implements
     private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
+            AccountManager.clearStoredAccount();
         }
 
         @Override
         public void failure(RetrofitError error) {
+            AccountManager.clearStoredAccount();
         }
     };
 }

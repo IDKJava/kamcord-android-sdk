@@ -90,6 +90,7 @@ public class ShareFragment extends Fragment {
         public void onMergeSuccess(RecordingSession recordingSession) {
             videoPrepared(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                     FileSystemManager.MERGED_VIDEO_FILENAME));
+            FileSystemManager.deleteUnmerged(recordingSession);
         }
 
         @Override
@@ -180,6 +181,7 @@ public class ShareFragment extends Fragment {
         }
         String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
         if (videoDurationTextView != null && videoDurationStr != null) {
+            videoDurationTextView.setVisibility(View.VISIBLE);
             videoDurationTextView.setText(videoDurationStr);
         }
         if (processingProgressBarContainer != null) {
