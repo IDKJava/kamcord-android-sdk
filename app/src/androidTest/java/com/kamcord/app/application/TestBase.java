@@ -14,6 +14,7 @@ import android.support.test.uiautomator.Until;
 
 import com.kamcord.app.R;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
@@ -26,13 +27,14 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 21)
-public abstract class BaseTest {
+public abstract class TestBase {
 
     protected static final int APP_TIMEOUT_MS = 5000;
     protected static final int UI_TIMEOUT_MS = 2000;
     protected static final int RECORDING_DURATION_MS = 5000;
     protected static final int PROCESSING_TIMEOUT = 10000;
     protected static final int UPLOAD_TIMEOUT = 10000;
+    protected static final int MS_PER_MIN = 60000;
 
     protected static final String OVERFLOW_DESCRIPTION = "More options";
     protected static final String KAMCORD_APP_PACKAGE = "com.kamcord.app";
@@ -44,8 +46,16 @@ public abstract class BaseTest {
     protected UiDevice mDevice;
 
     @Before
-    public void startAppFromHomeScreen(){
+    public void setUp(){
+        startKamcordApp();
+        doLogout();
+    }
 
+    @After
+    public void cleanUp(){
+        doLogout();
+    }
+    protected void startKamcordApp(){
         mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
 
         //closeAllApps();
@@ -69,9 +79,7 @@ public abstract class BaseTest {
         assertTrue("Application load timed out!", notTimedOut);
 
         mDevice.waitForIdle(APP_TIMEOUT_MS);
-        doLogout();
     }
-
     protected String getResByID(int resourceId) {
         Context currentContext = InstrumentationRegistry.getTargetContext();
         String prefix = currentContext.getPackageName();
@@ -104,29 +112,35 @@ public abstract class BaseTest {
 
     }
     protected boolean doLogin(){
-        boolean success = false;
         // only works from login screen.
         // need to build a state machine to make this work for all states.
         if(mDevice.hasObject(By.res(getResByID(R.id.fragment_welcome)))){
-            UiObject2 loginButton = mDevice.findObject(By.res(getResByID(R.id.loginButton)));
-            loginButton.click();
+            //we're on login screen, handle it
+            handleWelcomeLoginView();
 
-            mDevice.wait(Until.hasObject(By.res(getResByID(R.id.fragment_login))), APP_TIMEOUT_MS);
-            UiObject2 uname  = mDevice.findObject(By.res(getResByID(R.id.usernameEditText)));
-            uname.click();
-            uname.setText("bar1000");
-            UiObject2 pword = mDevice.findObject(By.res(getResByID(R.id.passwordEditText)));
-            pword.click();
-            pword.setText("hello123");
-            //hide the soft keyboard.
-            mDevice.pressBack();
-            loginButton = mDevice.findObject(By.res(getResByID(R.id.loginButton)));
-            loginButton.click();
-            //String s = getResByID(R.id.activity_mdrecord);
-            success = mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord))), UI_TIMEOUT_MS);
+            boolean notTimedOut =
+                    mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord))),
+                            UI_TIMEOUT_MS);
+            return notTimedOut;
         }
+        return false;
+    }
+    protected void handleWelcomeLoginView(){
+        mDevice.findObject(By.res(getResByID(R.id.loginButton))).click();
 
-        return success;
+        boolean notTimedOut =
+                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.fragment_login))),
+                        APP_TIMEOUT_MS);
+        assertTrue("Login screen timed out while loading!", notTimedOut);
+        UiObject2 uname  = mDevice.findObject(By.res(getResByID(R.id.usernameEditText)));
+        uname.click();
+        uname.setText("bar1000");
+        UiObject2 pword = mDevice.findObject(By.res(getResByID(R.id.passwordEditText)));
+        pword.click();
+        pword.setText("hello123");
+        //hide the soft keyboard.
+        mDevice.pressBack();
+        mDevice.findObject(By.res(getResByID(R.id.loginButton))).click();
     }
     protected boolean doLogout(){
         boolean success = false;

@@ -14,13 +14,18 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Mehmet on 5/27/15.
  */
-public class RecordAndPostTest extends BaseTest {
-    @Test
-    public void recordRippleTest(){
-        doLogin();
+public abstract class RecordAndPostTestBase extends TestBase {
 
+    public void recordRippleTestLoginLast(){
+        recordGame(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
+    }
+
+    protected void recordGame(String gameName, int durationInMs){
+        recordGame(gameName, durationInMs, true);
+    }
+    protected void recordGame(String gameName, int durationInMs, boolean failIfNotLoggedIn) {
         //find ripples app logo and click
-        mDevice.findObject(By.text(RIPPLE_TEST_APP_NAME)).click();
+        mDevice.findObject(By.text(gameName)).click();
 
         mDevice.findObject(By.res(getResByID(R.id.record_button))).click();
 
@@ -37,8 +42,8 @@ public class RecordAndPostTest extends BaseTest {
         assertTrue("Ripple test launch timed out!", notTimedOut);
 
         try {
-            Thread.sleep(RECORDING_DURATION_MS);
-        } catch (InterruptedException e){
+            Thread.sleep(durationInMs);
+        } catch (InterruptedException e) {
             e.printStackTrace();
             assertFalse("Test interrupted", true);
         }
@@ -52,10 +57,10 @@ public class RecordAndPostTest extends BaseTest {
         }
         //check if it's recording
         mDevice.openNotification();
-        notTimedOut =  mDevice
+        notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.toolbarTitle))), UI_TIMEOUT_MS);
         assertTrue("Notification failed to show!", notTimedOut);
-        notTimedOut =  mDevice
+        notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.paused))), UI_TIMEOUT_MS);
         assertTrue("Paused notification status not recording!", notTimedOut);
         //close notifications
@@ -94,20 +99,28 @@ public class RecordAndPostTest extends BaseTest {
 
         notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.kamcordRecordTab))),
-                    UPLOAD_TIMEOUT);
-        assertTrue("UI timed out!", notTimedOut);
+                        UPLOAD_TIMEOUT);
+        if(failIfNotLoggedIn){
+            assertTrue("UI timed out!", notTimedOut);
+        } else {
+            handleWelcomeLoginView();
+            notTimedOut = mDevice
+                    .wait(Until.hasObject(By.res(getResByID(R.id.shareButton))),
+                            UPLOAD_TIMEOUT);
+            assertTrue("Login before share failed!", notTimedOut);
+            mDevice.findObject(By.res(getResByID(R.id.shareButton))).click();
+        }
 
         //check if it's recording, we seem not to be fast enough to check this.
         mDevice.openNotification();
         //We're not fast enough to check both before the upload finishes. :(
-        notTimedOut =  mDevice
+        notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.app_name))), UI_TIMEOUT_MS);
-        assertTrue("Recording notification failed to show!", notTimedOut);
-        notTimedOut =  mDevice
+        assertTrue("Uploading notification failed to show!", notTimedOut);
+        notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.uploading))), UI_TIMEOUT_MS);
         assertTrue("Uploading notification failed to show recording!", notTimedOut);
         //close notifications
         mDevice.pressBack();
-
     }
 }
