@@ -125,7 +125,7 @@ public class RecordActivity extends ActionBarActivity implements
 
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
-        mToolbar.setLogo(R.drawable.toolbar_icon);
+        mToolbar.setLogo(R.drawable.kamcord_tabbar_icon);
 
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
@@ -189,14 +189,14 @@ public class RecordActivity extends ActionBarActivity implements
     public void floatingActionButtonClicked() {
         if (!RecordingService.isRunning()) {
             if (mSelectedGame != null) {
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
                 obtainMediaProjection();
 
             } else {
                 Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
             }
         } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
             stopService(new Intent(this, RecordingService.class));
 
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
@@ -255,9 +255,9 @@ public class RecordActivity extends ActionBarActivity implements
 
     private void handleServiceRunning() {
         if (RecordingService.isRunning()) {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
         } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
         }
     }
 
