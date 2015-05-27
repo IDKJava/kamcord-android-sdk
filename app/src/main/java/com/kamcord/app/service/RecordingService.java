@@ -50,7 +50,7 @@ public class RecordingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Notification Setting
-        NotificationUtils.initializeWith(this);
+        NotificationUtils.initializeWith(this.getApplicationContext());
         startForeground(NOTIFICATION_ID, NotificationUtils.getNotification());
         return START_STICKY;
     }
