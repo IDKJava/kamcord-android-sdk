@@ -367,7 +367,7 @@ public class RecordActivity extends ActionBarActivity implements
         getMenuInflater().inflate(R.menu.menu_record, menu);
         optionsMenu = menu;
         if (!AccountManager.isLoggedIn()) {
-            MenuItem signoutItem = optionsMenu.getItem(1);
+            MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
             signoutItem.setVisible(false);
         }
         return true;

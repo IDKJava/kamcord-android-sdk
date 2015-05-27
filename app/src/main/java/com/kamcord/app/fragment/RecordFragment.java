@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kamcord.app.BuildConfig;
@@ -22,8 +23,8 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
-import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.utils.GameListUtils;
+import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.SpaceItemDecoration;
 
 import java.util.ArrayList;
@@ -31,27 +32,30 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class RecordFragment extends Fragment implements GameRecordListAdapter.OnItemClickListener {
-    private static final String TAG = RecordFragment.class.getSimpleName();
 
-    private DynamicRecyclerView mRecyclerView;
+    @InjectView(R.id.refreshRecordTab) TextView refreshRecordTab;
+    @InjectView(R.id.recordfragment_refreshlayout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @InjectView(R.id.record_recyclerview) DynamicRecyclerView mRecyclerView;
+
+    private static final String TAG = RecordFragment.class.getSimpleName();
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
     private GridLayoutManager gridLayoutManager;
-    private int spanCount = 3;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
-
-    private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.record_tab, container, false);
+        ButterKnife.inject(this, v);
         initKamcordRecordFragment(v);
         return v;
     }
@@ -82,23 +86,22 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         }
         sortGameList(mSupportedGameList);
 
-        mRecyclerView = (DynamicRecyclerView) v.findViewById(R.id.record_recyclerview);
         mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList);
         mRecyclerAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.recordfragment_refreshlayout);
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
         if( mSupportedGameList.size() == 0 ) {
+            refreshRecordTab.setVisibility(View.VISIBLE);
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
                     mSwipeRefreshLayout.setRefreshing(true);
+                    AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
                 }
             });
-            AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
         }
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -226,6 +229,9 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                         mSupportedGameList.add(game);
                     }
                 }
+                if(refreshRecordTab.getVisibility() == View.VISIBLE) {
+                    refreshRecordTab.setVisibility(View.INVISIBLE);
+                }
                 sortGameList(mSupportedGameList);
                 GameListUtils.saveGameList(mSupportedGameList);
                 mRecyclerAdapter.notifyDataSetChanged();
@@ -237,7 +243,14 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
         public void failure(RetrofitError retrofitError) {
             Log.e(TAG, "Unable to get list of KCP games.");
             Log.e(TAG, "  " + retrofitError.toString());
+            mSwipeRefreshLayout.setRefreshing(false);
             // TODO: show the user something about this.
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ButterKnife.reset(getActivity());
     }
 }

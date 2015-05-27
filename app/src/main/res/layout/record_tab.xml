@@ -3,26 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
-    android:clipChildren="false" >
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/recordfragment_refreshlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:clipChildren="false" >
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <com.kamcord.app.view.DynamicRecyclerView
             android:id="@+id/record_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="@dimen/tabsHeight"
-            android:clipToPadding="false"
             android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/tabsHeight"
             android:scrollbars="vertical"
             app:minGridItemWidth="@dimen/griditem_width" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/refreshRecordTab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:maxWidth="250dp"
+        android:text="@string/swipeToRefreshRecord"
+        android:visibility="invisible"/>
 
 </RelativeLayout>

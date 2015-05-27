@@ -66,6 +66,7 @@
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
     <string name="signInProfilePrompt">You must sign in to Kamcord to view your profile page.</string>
     <string name="signIn">Sign In</string>
+    <string name="swipeToRefreshRecord">Oops! Swipe down to refresh your game list when your network is ready.</string>
 
     <string name="uploading">Uploading&#8230;</string>
     <string name="yourVideoIsUploading">Your video \"%s\" is uploading!</string>
