@@ -3,7 +3,6 @@ package com.kamcord.app.thread;
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -21,9 +20,11 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.FileSystemManager;
+import com.kamcord.app.utils.NotificationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,6 @@ import java.util.concurrent.CyclicBarrier;
 
 public class RecordHandlerThread extends HandlerThread implements Handler.Callback {
     private static final String TAG = RecordHandlerThread.class.getSimpleName();
-    private static int NOTIFICATION_ID = 3141592;
 
     private MediaProjection mMediaProjection;
     private Context mContext;
@@ -86,7 +86,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     }
     private Dimensions codecDimensions = null;
 
-    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier, Notification.Builder notificationBuilder) {
+    public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier) {
         super("KamcordRecordingThread");
         this.mMediaProjection = mediaProjection;
         this.mContext = context;
@@ -94,7 +94,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         this.mRecordingSession = recordingSession;
         this.clipStartBarrier = clipStartBarrier;
-        this.notificationBuilder = notificationBuilder;
     }
 
     @Override
@@ -111,8 +110,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
                 mHandler.sendEmptyMessage(Message.POLL);
-                this.notificationBuilder.setContentText("Paused");
-                ((NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+                NotificationUtils.updateNotification(mContext.getResources().getString(R.string.paused));
                 break;
 
             case Message.POLL:
@@ -122,8 +120,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 } else {
                     mHandler.removeMessages(Message.RECORD_CLIP);
                     mHandler.sendEmptyMessage(Message.RECORD_CLIP);
-                    this.notificationBuilder.setContentText("Recording");
-                    ((NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+                    NotificationUtils.updateNotification(mContext.getResources().getString(R.string.recording));
                 }
                 break;
 

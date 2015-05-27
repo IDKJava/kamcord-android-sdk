@@ -1,7 +1,6 @@
 package com.kamcord.app.activity;
 
 import android.animation.ObjectAnimator;
-import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -82,7 +81,6 @@ public class RecordActivity extends AppCompatActivity implements
     private boolean controlsVisible = true;
     private int recyclerViewScrolledDistance = 0;
     private int webViewScrolledDistance = 0;
-    private static int NOTIFICATION_ID = 3141592;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +198,6 @@ public class RecordActivity extends AppCompatActivity implements
         } else {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
             stopService(new Intent(this, RecordingService.class));
-            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
             if (recordingSession != null) {
                 FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));

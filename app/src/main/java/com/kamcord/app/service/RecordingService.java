@@ -1,8 +1,6 @@
 package com.kamcord.app.service;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +8,13 @@ import android.media.projection.MediaProjection;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.kamcord.app.R;
-import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.AudioRecordThread;
 import com.kamcord.app.thread.RecordHandlerThread;
+import com.kamcord.app.utils.NotificationUtils;
 
 import java.util.concurrent.CyclicBarrier;
 
@@ -53,14 +50,8 @@ public class RecordingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Notification Setting
-        Notification.Builder notificationBuilder = new Notification.Builder(this);
-        Notification notification = notificationBuilder
-                .setContentTitle(getResources().getString(R.string.toolbarTitle))
-                .setContentText(getResources().getString(R.string.idle))
-                .setSmallIcon(R.drawable.kamcord_app_icon)
-                .build();
-        startForeground(NOTIFICATION_ID, notification);
-
+        NotificationUtils.initializeWith(this);
+        startForeground(NOTIFICATION_ID, NotificationUtils.getNotification());
         return START_STICKY;
     }
 
@@ -70,7 +61,6 @@ public class RecordingService extends Service {
         // If we're getting destroyed, we should probably just stop the current recording session.
         stopRecording();
         mIsRunning = false;
-
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         stopSelf();
     }
@@ -84,28 +74,17 @@ public class RecordingService extends Service {
     public synchronized void startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
         if (mRecordHandlerThread == null || !mRecordHandlerThread.isAlive()) {
 
-            Notification.Builder notificationBuilder = new Notification.Builder(this)
-                    .setContentTitle(getResources().getString(R.string.toolbarTitle))
-                    .setContentText(getResources().getString(R.string.recording))
-                    .setSmallIcon(R.drawable.kamcord_app_icon);
-            Intent backToAppIntent = new Intent(this, RecordActivity.class);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(RecordActivity.class);
-            stackBuilder.addNextIntent(backToAppIntent);
-            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-            notificationBuilder.setContentIntent(pendingIntent);
-            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+            NotificationUtils.updateNotification(getResources().getString(R.string.recording));
 
             this.recordingSession = recordingSession;
 
             CyclicBarrier clipStartBarrier = new CyclicBarrier(2);
 
-            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession, clipStartBarrier, notificationBuilder);
+            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession, clipStartBarrier);
             mRecordHandlerThread.start();
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
             mRecordHandlerThread.setHandler(mHandler);
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.POLL);
-
 
             mAudioRecordThread = new AudioRecordThread(getApplicationContext(), recordingSession, clipStartBarrier);
             mAudioRecordThread.start();
