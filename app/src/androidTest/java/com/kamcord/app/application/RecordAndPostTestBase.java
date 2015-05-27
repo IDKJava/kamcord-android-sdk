@@ -17,13 +17,13 @@ import static org.junit.Assert.assertTrue;
 public abstract class RecordAndPostTestBase extends TestBase {
 
     public void recordRippleTestLoginLast(){
-        recordGame(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
+        recordAndPostGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
     }
 
-    protected void recordGame(String gameName, int durationInMs){
-        recordGame(gameName, durationInMs, true);
+    protected void recordAndPostGameVideo(String gameName, int durationInMs){
+        recordAndPostGameVideo(gameName, durationInMs, true);
     }
-    protected void recordGame(String gameName, int durationInMs, boolean failIfNotLoggedIn) {
+    protected void recordAndPostGameVideo(String gameName, int durationInMs, boolean failIfNotLoggedIn) {
         //find ripples app logo and click
         mDevice.findObject(By.text(gameName)).click();
 
@@ -63,15 +63,17 @@ public abstract class RecordAndPostTestBase extends TestBase {
         notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.paused))), UI_TIMEOUT_MS);
         assertTrue("Paused notification status not recording!", notTimedOut);
+        //click on notification to resume app.
+        mDevice.findObject(By.text(getStrByID(R.string.toolbarTitle))).click();
         //close notifications
-        mDevice.pressBack();
+        //click on notification to go back to the app
 
         //stop recording.
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.text(getStrByID(R.string.toolbarTitle))), APP_TIMEOUT_MS);
-        assertTrue("Kamcord app not found in recent apps!", notTimedOut);
+        //notTimedOut = mDevice
+        //        .wait(Until.hasObject(By.text(getStrByID(R.string.toolbarTitle))), APP_TIMEOUT_MS);
+        //assertTrue("Kamcord app not found in recent apps!", notTimedOut);
         //Bring up Kamcord
-        mDevice.findObject(By.text(getStrByID(R.string.toolbarTitle))).click();
+        //mDevice.findObject(By.text(getStrByID(R.string.toolbarTitle))).click();
 
         //find stop recording button.
         notTimedOut = mDevice
@@ -88,13 +90,14 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 .setText("my awesome ripple test video");
         //close soft keyboard
         mDevice.pressBack();
-
+        /*
+        Description removed.
         mDevice.findObject(By.res(getResByID(R.id.descriptionEditText))).click();
         mDevice.findObject(By.res(getResByID(R.id.descriptionEditText)))
                 .setText("The quick brown fox jumps over the lazy dog.");
         //close soft keyboard
         mDevice.pressBack();
-
+        */
         mDevice.findObject(By.res(getResByID(R.id.shareButton))).click();
 
         notTimedOut = mDevice

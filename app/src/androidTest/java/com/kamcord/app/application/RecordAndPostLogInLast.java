@@ -34,7 +34,7 @@ public class RecordAndPostLogInLast extends RecordAndPostTestBase {
         notTimedOut = mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord))),
                 UI_TIMEOUT_MS);
         assertTrue("Record view did not load!", notTimedOut);
-        recordGame(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS, false);
+        recordAndPostGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS, false);
 
     }
 }

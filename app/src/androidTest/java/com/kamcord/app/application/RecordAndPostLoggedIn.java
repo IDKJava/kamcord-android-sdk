@@ -9,7 +9,7 @@ public class RecordAndPostLoggedIn extends RecordAndPostTestBase {
     @Test
     public void recordRippleTestLoginFirst(){
         doLogin();
-        recordGame(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
+        recordAndPostGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
 
     }
 }

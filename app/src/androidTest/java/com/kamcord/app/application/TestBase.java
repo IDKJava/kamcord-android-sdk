@@ -126,9 +126,13 @@ public abstract class TestBase {
         return false;
     }
     protected void handleWelcomeLoginView(){
+        boolean notTimedOut =
+                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.loginButton))),
+                        APP_TIMEOUT_MS);
+        assertTrue("Login button not found on welcome screen!", notTimedOut);
         mDevice.findObject(By.res(getResByID(R.id.loginButton))).click();
 
-        boolean notTimedOut =
+        notTimedOut =
                 mDevice.wait(Until.hasObject(By.res(getResByID(R.id.fragment_login))),
                         APP_TIMEOUT_MS);
         assertTrue("Login screen timed out while loading!", notTimedOut);
