@@ -24,10 +24,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class VideoPreviewActivity extends Activity {
     public static final String ARG_VIDEO_PATH = "video_path";
 
-    @InjectView(R.id.videoview_preview)
-    VideoView mVideoView;
-    @InjectView(R.id.replayButton)
-    ImageButton replayImageBtn;
+    @InjectView(R.id.videoview_preview) VideoView mVideoView;
+    @InjectView(R.id.replayButton) ImageButton replayImageBtn;
     private MediaController mediaController;
     private int videoHeight;
     private int videoWidth;
@@ -52,13 +50,17 @@ public class VideoPreviewActivity extends Activity {
         // Determine videoview orientation
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         if (videoPath != null) {
-            mediaMetadataRetriever.setDataSource(videoPath);
-            videoHeight = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
-            videoWidth = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
-            if (videoHeight <= videoWidth) {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            } else {
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            try{
+                mediaMetadataRetriever.setDataSource(videoPath);
+                videoHeight = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                videoWidth = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                if (videoHeight <= videoWidth) {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                } else {
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                }
+            } catch(Exception e) {
+                e.printStackTrace();
             }
         }
         mediaMetadataRetriever.release();
@@ -72,9 +74,11 @@ public class VideoPreviewActivity extends Activity {
             }
         }
 
-        mVideoView.setVideoPath(videoPath);
-        mVideoView.start();
-        mVideoView.requestFocus();
+        if(videoPath != null) {
+            mVideoView.setVideoPath(videoPath);
+            mVideoView.start();
+            mVideoView.requestFocus();
+        }
 
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override

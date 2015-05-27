@@ -40,7 +40,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final ViewHolder viewHolder, int position) {
         Game game = getItem(position);
         viewHolder.itemPackageName.setText(game.name);
         Picasso.with(mContext)
