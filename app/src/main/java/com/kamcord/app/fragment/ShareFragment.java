@@ -179,6 +179,7 @@ public class ShareFragment extends Fragment {
         }
         String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
         if (videoDurationTextView != null && videoDurationStr != null) {
+            videoDurationTextView.setVisibility(View.VISIBLE);
             videoDurationTextView.setText(videoDurationStr);
         }
         if (processingProgressBarContainer != null) {
