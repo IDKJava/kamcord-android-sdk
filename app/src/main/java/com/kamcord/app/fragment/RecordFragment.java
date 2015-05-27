@@ -191,12 +191,16 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     @Override
     public void onResume() {
         super.onResume();
+        Game gameThatChanged = null;
         for (Game game : mSupportedGameList) {
             if (isAppInstalled(game.play_store_id) && !game.isInstalled) {
                 game.isInstalled = true;
-                sortGameList(mSupportedGameList);
-                gridLayoutManager.scrollToPosition(mSupportedGameList.indexOf(game));
+                gameThatChanged = game;
             }
+        }
+        if( gameThatChanged != null ) {
+            sortGameList(mSupportedGameList);
+            mRecyclerView.scrollToPosition(mSupportedGameList.indexOf(gameThatChanged));
             mRecyclerAdapter.notifyDataSetChanged();
         }
     }
