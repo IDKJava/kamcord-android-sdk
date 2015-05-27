@@ -89,6 +89,7 @@ public class ShareFragment extends Fragment {
         public void onMergeSuccess(RecordingSession recordingSession) {
             videoPrepared(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                     FileSystemManager.MERGED_VIDEO_FILENAME));
+            FileSystemManager.deleteUnmerged(recordingSession);
         }
 
         @Override
