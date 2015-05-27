@@ -39,6 +39,7 @@ public class LoginLogoutTest {
     private static final String RIPPLE_TEST_APP_NAME = "Ripple Test";
     private static final String RIPPLE_TEST_MAIN_RES = "com.kamcord.ripples:id/mainlayout";
     private static final String ANDROID_DISMISS_TASK = "com.android.systemui:id/dismiss_task";
+    private static final String ANDROID_SYSTEM_BUTTON1 = "android:id/button1";
 
     private UiDevice mDevice;
 
@@ -181,10 +182,10 @@ public class LoginLogoutTest {
 
         //Ack the screen recording warning.
         boolean notTimedOut = mDevice
-                .wait(Until.hasObject(By.res(getResByID(android.R.id.button1))), TIME_OUT_MS);
-        //assertTrue("Recording notification timed out!", notTimedOut);
-        String s = getResByID(android.R.id.button1);
-        mDevice.findObject(By.res(getResByID(android.R.id.button1))).click();
+                .wait(Until.hasObject(By.res(ANDROID_SYSTEM_BUTTON1)), TIME_OUT_MS);
+        assertTrue("Recording notification timed out!", notTimedOut);
+        //String s = getResByID(android.R.id.button1);
+        mDevice.findObject(By.res(ANDROID_SYSTEM_BUTTON1)).click();
         //wait for ripples to show up.
 
         notTimedOut = mDevice
