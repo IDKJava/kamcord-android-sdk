@@ -125,7 +125,7 @@ public class RecordActivity extends AppCompatActivity implements
 
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
-        mToolbar.setLogo(R.drawable.toolbar_icon);
+        mToolbar.setLogo(R.drawable.kamcord_tabbar_icon);
 
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
@@ -189,14 +189,16 @@ public class RecordActivity extends AppCompatActivity implements
     public void floatingActionButtonClicked() {
         if (!RecordingService.isRunning()) {
             if (mSelectedGame != null) {
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+                mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
                 obtainMediaProjection();
 
             } else {
                 Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
             }
         } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
             stopService(new Intent(this, RecordingService.class));
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
             if (recordingSession != null) {
@@ -254,9 +256,11 @@ public class RecordActivity extends AppCompatActivity implements
 
     private void handleServiceRunning() {
         if (RecordingService.isRunning()) {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
         } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
         }
     }
 
@@ -381,7 +385,6 @@ public class RecordActivity extends AppCompatActivity implements
             }
             case R.id.action_signout: {
                 if (AccountManager.isLoggedIn()) {
-                    AccountManager.clearStoredAccount();
                     AppServerClient.getInstance().logout(logoutCallback);
                     Intent loginIntent = new Intent(this, LoginActivity.class);
                     startActivity(loginIntent);
@@ -416,10 +419,12 @@ public class RecordActivity extends AppCompatActivity implements
     private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
+            AccountManager.clearStoredAccount();
         }
 
         @Override
         public void failure(RetrofitError error) {
+            AccountManager.clearStoredAccount();
         }
     };
 }

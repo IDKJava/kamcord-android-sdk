@@ -165,19 +165,21 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     ((RecordActivity) activity).showToolbar();
                 }
             }
-            return !hasThisDomain(uri);
+            return override;
         }
 
         @Override
         public void onPageFinished(WebView webView, String url)
         {
-            webViewRefreshLayout.setEnabled(true);
-            webViewRefreshLayout.setRefreshing(false);
-            int px = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
-            int dp = Math.round(pxToDp(px, getActivity()));
+            if( isResumed() ) {
+                webViewRefreshLayout.setEnabled(true);
+                webViewRefreshLayout.setRefreshing(false);
+                int px = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
+                int dp = Math.round(pxToDp(px, getActivity()));
 
-            String js = String.format("document.body.style.marginTop= \"%dpx\"", dp);
-            webView.evaluateJavascript(js, null);
+                String js = String.format("document.body.style.marginTop= \"%dpx\"", dp);
+                webView.evaluateJavascript(js, null);
+            }
         }
 
         private boolean hasThisDomain(Uri uri)

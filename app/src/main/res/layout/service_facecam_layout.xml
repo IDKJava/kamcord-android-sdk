@@ -15,7 +15,6 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/imageView2"
-        android:src="@drawable/pa_rabbit"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
