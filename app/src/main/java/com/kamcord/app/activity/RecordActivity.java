@@ -61,12 +61,18 @@ public class RecordActivity extends AppCompatActivity implements
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    @InjectView(R.id.main_fab) ImageButton mFloatingActionButton;
-    @InjectView(R.id.main_pager) ViewPager mViewPager;
-    @InjectView(R.id.tabs) SlidingTabLayout mTabs;
-    @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
-    @InjectView(R.id.toolbar) Toolbar mToolbar;
-    @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
+    @InjectView(R.id.main_fab)
+    ImageButton mFloatingActionButton;
+    @InjectView(R.id.main_pager)
+    ViewPager mViewPager;
+    @InjectView(R.id.tabs)
+    SlidingTabLayout mTabs;
+    @InjectView(R.id.toolbarContainer)
+    ViewGroup toolbarContainer;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
+    @InjectView(R.id.uploadProgressBar)
+    ProgressBar uploadProgress;
 
     private MainViewPagerAdapter mainViewPagerAdapter;
     private CharSequence tabTitles[];
@@ -109,12 +115,15 @@ public class RecordActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("Activity", "Resume");
         handleServiceRunning();
-        MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
-        if (AccountManager.isLoggedIn()) {
-            signoutItem.setVisible(true);
-        } else {
-            signoutItem.setVisible(false);
+        if (optionsMenu != null) {
+            MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
+            if (AccountManager.isLoggedIn()) {
+                signoutItem.setVisible(true);
+            } else {
+                signoutItem.setVisible(false);
+            }
         }
     }
 
