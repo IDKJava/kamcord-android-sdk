@@ -16,7 +16,6 @@ import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.utils.AccountManager;
-import com.kamcord.app.view.DynamicRecyclerView;
 
 import java.util.regex.Pattern;
 
@@ -33,20 +32,19 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private static final String KAMCORD_PROFILE_BASE_URL = "https://www." + KAMCORD_DOMAIN + "/profile/";
     private static final Pattern domainPattern = Pattern.compile(".*?([^.]+\\.[^.]+)$");
 
-    @InjectView(R.id.dynamicRecyclerView) DynamicRecyclerView dynamicRecyclerView;
     @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
     @InjectView(R.id.signInPromptButton) Button signInPromptButton;
-    @InjectView(R.id.swipeRefreshLayout) SwipeRefreshLayout webViewRefreshLayout;
+    @InjectView(R.id.swipeRefreshLayout) SwipeRefreshLayout viewRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_profile, container, false);
+        View root = inflater.inflate(R.layout.profile_tab, container, false);
 
         ButterKnife.inject(this, root);
 
-        webViewRefreshLayout.setEnabled(false);
-        webViewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
-        webViewRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+        viewRefreshLayout.setEnabled(false);
+        viewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        viewRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
 
         return root;
     }
@@ -66,18 +64,18 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         if(AccountManager.isLoggedIn()) {
             signInPromptContainer.setVisibility(View.GONE);
 
-            webViewRefreshLayout.setEnabled(false);
-            webViewRefreshLayout.setOnRefreshListener(this);
-            webViewRefreshLayout.post(new Runnable() {
+            viewRefreshLayout.setEnabled(false);
+            viewRefreshLayout.setOnRefreshListener(this);
+            viewRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    webViewRefreshLayout.setRefreshing(true);
+                    viewRefreshLayout.setRefreshing(true);
                 }
             });
         }
         else
         {
-            signInPromptContainer.setVisibility(View.VISIBLE);
+//            signInPromptContainer.setVisibility(View.VISIBLE);
         }
     }
 
@@ -91,7 +89,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onRefresh() {
-        webViewRefreshLayout.setEnabled(false);
+        viewRefreshLayout.setEnabled(false);
         if (AccountManager.isLoggedIn()) {
             Account account = AccountManager.getStoredAccount();
             Activity activity = getActivity();
@@ -99,10 +97,10 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
             {
                 ((RecordActivity) activity).showToolbar();
             }
-            webViewRefreshLayout.setRefreshing(true);
+            viewRefreshLayout.setRefreshing(true);
         }
         else {
-            webViewRefreshLayout.setRefreshing(false);
+            viewRefreshLayout.setRefreshing(false);
         }
     }
 

@@ -9,68 +9,58 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
-import com.kamcord.app.server.model.Game;
-import com.squareup.picasso.Picasso;
+import com.kamcord.app.server.model.ProfileItem;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.Optional;
 
-public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAdapter.ViewHolder> {
+/**
+ * Created by donliang1 on 5/28/15.
+ */
+public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<Game> mGames;
+    private List<ProfileItem> mProfileList;
     private static OnItemClickListener mItemClickListener;
 
-    public GameRecordListAdapter(Context context, List<Game> games) {
+    public ProfileAdapter(Context context, List<ProfileItem> mProfileList) {
         this.mContext = context;
-        this.mGames = games;
+        this.mProfileList = mProfileList;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ViewHolder viewHolder;
         View itemLayoutView;
-
-        itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.gridview_item, null);
+        itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_item, null);
         viewHolder = new ViewHolder(itemLayoutView);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-        Game game = getItem(position);
-        viewHolder.itemPackageName.setText(game.name);
-        if( game.icons != null && game.icons.regular != null )
-        {
-            Picasso.with(mContext)
-                    .load(game.icons.regular)
-                    .tag(game.play_store_id)
-                    .into(viewHolder.itemImage);
-        }
-        if (game.isInstalled) {
-            viewHolder.installGameTextView.setVisibility(View.GONE);
-        } else {
-            viewHolder.installGameTextView.setVisibility(View.VISIBLE);
-        }
+        ProfileItem profileItem = getItem(position);
+        viewHolder.profileItemTitle.setText("Kamcord Title");
+        viewHolder.profileItemAuthor.setText("Don@Kamcord");
+        // Picasso
     }
 
     @Override
     public int getItemCount() {
-        return mGames.size();
+        return mProfileList.size();
     }
 
-    public Game getItem(int position) {
-        return mGames.get(position);
+    public ProfileItem getItem(int position) {
+        return mProfileList.get(position);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        @Optional @InjectView(R.id.item_packagename) TextView itemPackageName;
-        @Optional @InjectView(R.id.item_image) ImageView itemImage;
-        @Optional @InjectView(R.id.installGameTextView) TextView installGameTextView;
+        @InjectView(R.id.profile_item_title) TextView profileItemTitle;
+        @InjectView(R.id.profile_item_author) TextView profileItemAuthor;
+        @InjectView(R.id.profile_item_thumbnail) ImageView profileItemThumbnail;
 
         public ViewHolder(final View itemLayoutView) {
             super(itemLayoutView);
