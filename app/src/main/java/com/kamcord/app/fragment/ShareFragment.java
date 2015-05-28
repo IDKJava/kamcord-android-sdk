@@ -143,6 +143,10 @@ public class ShareFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+        if( stitchClipsThread != null )
+        {
+            stitchClipsThread.cancelStitching();
+        }
     }
 
     @OnClick(R.id.thumbnailImageView)

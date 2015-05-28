@@ -40,6 +40,13 @@ public class StitchClipsThread extends Thread {
         this.listener = listener;
     }
 
+    private volatile boolean cancelled = false;
+    public void cancelStitching() {
+        cancelled = true;
+        listener = null;
+        mFFmpeg.killRunningProcesses();
+    }
+
     @Override
     public void run() {
         mFFmpeg = FFmpeg.getInstance(ffMpegContext);
@@ -58,6 +65,9 @@ public class StitchClipsThread extends Thread {
         File stitchedAudioFile = new File(recordingSessionCacheDirectory, FileSystemManager.STITCHED_AUDIO_FILENAME);
         File mergedFile = new File(recordingSessionCacheDirectory, FileSystemManager.MERGED_VIDEO_FILENAME);
 
+        if( cancelled ) {
+            return;
+        }
         stitchClips(videoClipListFile, stitchedVideoFile, new ExecuteBinaryResponseHandler() {
             @Override
             public void onSuccess(String message) {
@@ -74,6 +84,10 @@ public class StitchClipsThread extends Thread {
             }
         });
 
+        if( cancelled ) {
+            return;
+        }
+
         stitchClips(audioClipListFile, stitchedAudioFile, new ExecuteBinaryResponseHandler() {
             @Override
             public void onSuccess(String message) {
@@ -89,6 +103,10 @@ public class StitchClipsThread extends Thread {
                 }
             }
         });
+
+        if( cancelled ) {
+            return;
+        }
 
         mergeVideoAndAudio(stitchedVideoFile, stitchedAudioFile, mergedFile, new ExecuteBinaryResponseHandler() {
             @Override
