@@ -72,6 +72,7 @@ public class RecordActivity extends AppCompatActivity implements
     private MainViewPagerAdapter mainViewPagerAdapter;
     private CharSequence tabTitles[];
     private int numberOfTabs;
+    private Toast fabRecordingToast = null;
 
     private Menu optionsMenu;
 
@@ -196,7 +197,12 @@ public class RecordActivity extends AppCompatActivity implements
                 obtainMediaProjection();
 
             } else {
-                Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
+                if( fabRecordingToast != null )
+                {
+                    fabRecordingToast.cancel();
+                }
+                fabRecordingToast = Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT);
+                fabRecordingToast.show();
             }
         } else {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
