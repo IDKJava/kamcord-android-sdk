@@ -172,6 +172,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         public void onPageFinished(WebView webView, String url)
         {
             if( isResumed() ) {
+                ((RecordActivity) getActivity()).showToolbar();
                 webViewRefreshLayout.setEnabled(true);
                 webViewRefreshLayout.setRefreshing(false);
                 int px = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
