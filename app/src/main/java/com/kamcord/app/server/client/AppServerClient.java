@@ -16,6 +16,7 @@ import com.kamcord.app.server.model.UserErrorCode;
 import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.DeviceManager;
+import com.squareup.okhttp.Call;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -84,6 +85,9 @@ public class AppServerClient {
 
         @POST("/app/v3/kcp/video/uploaded")
         GenericResponse<?> videoUploaded(@Body VideoUploadedEntity body);
+
+        @GET("/app/v3/feeds/myfeed")
+        void getMyFeedPage(@Query("page") String page, Callback<GenericResponse<?>>);
     }
 
     private static AppServer instance;
