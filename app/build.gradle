@@ -30,15 +30,22 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     packagingOptions {
         exclude 'LICENSE.txt'
     }
     productFlavors {
+
     }
+
+    lintOptions {
+        warning 'InvalidPackage'
+    }
+
 }
 
 //repositories {

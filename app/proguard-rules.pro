@@ -15,3 +15,36 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# Butterknife
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewInjector { *; }
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <fields>;
+}
+
+-keepclasseswithmembernames class * {
+    @butterknife.* <methods>;
+}
+
+# Picasso
+-dontwarn com.squareup.okhttp.**
+
+# Retrofit
+-dontwarn retrofit.**
+-keep class retrofit.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+
+# OKHTTP
+-dontwarn okio.**
+# -keep class com.squareup.okhttp.** { *; }
+# -keep interface com.squareup.okhttp.** { *; }
+
+# Flurry
+-dontwarn com.flurry.sdk.**
+
+# Kamcord
+-keep class com.kamcord.app.server.model.** { *; }
