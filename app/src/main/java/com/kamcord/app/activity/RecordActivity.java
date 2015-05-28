@@ -61,12 +61,18 @@ public class RecordActivity extends AppCompatActivity implements
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    @InjectView(R.id.record_button) ImageButton mFloatingActionButton;
-    @InjectView(R.id.main_pager) ViewPager mViewPager;
-    @InjectView(R.id.tabs) SlidingTabLayout mTabs;
-    @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
-    @InjectView(R.id.toolbar) Toolbar mToolbar;
-    @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
+    @InjectView(R.id.record_button)
+    ImageButton mFloatingActionButton;
+    @InjectView(R.id.main_pager)
+    ViewPager mViewPager;
+    @InjectView(R.id.tabs)
+    SlidingTabLayout mTabs;
+    @InjectView(R.id.toolbarContainer)
+    ViewGroup toolbarContainer;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
+    @InjectView(R.id.uploadProgressBar)
+    ProgressBar uploadProgress;
 
     private MainViewPagerAdapter mainViewPagerAdapter;
     private CharSequence tabTitles[];
@@ -308,55 +314,61 @@ public class RecordActivity extends AppCompatActivity implements
 
     @Override
     public void onUploadStart(final RecordingSession recordingSession) {
-        uploadProgress.post(new Runnable() {
-            @Override
-            public void run() {
-                String toastText = recordingSession.getVideoTitle() != null
-                        ? String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoIsUploading), recordingSession.getVideoTitle())
-                        : getResources().getString(R.string.yourVideoIsUploadingNoTitle);
-                Toast.makeText(RecordActivity.this, toastText, Toast.LENGTH_SHORT).show();
-                uploadProgress.setVisibility(View.VISIBLE);
-                uploadProgress.setAlpha(1f);
-                uploadProgress.setProgress(0);
-            }
-        });
+        if (uploadProgress != null) {
+            uploadProgress.post(new Runnable() {
+                @Override
+                public void run() {
+                    String toastText = recordingSession.getVideoTitle() != null
+                            ? String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoIsUploading), recordingSession.getVideoTitle())
+                            : getResources().getString(R.string.yourVideoIsUploadingNoTitle);
+                    Toast.makeText(RecordActivity.this, toastText, Toast.LENGTH_SHORT).show();
+                    uploadProgress.setVisibility(View.VISIBLE);
+                    uploadProgress.setAlpha(1f);
+                    uploadProgress.setProgress(0);
+                }
+            });
+        }
     }
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, final float progress) {
-        uploadProgress.post(new Runnable() {
-            @Override
-            public void run() {
-                if (progressBarAnimator != null) {
-                    progressBarAnimator.cancel();
+        if (uploadProgress != null) {
+            uploadProgress.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (progressBarAnimator != null) {
+                        progressBarAnimator.cancel();
+                    }
+                    int oldProgress = uploadProgress.getProgress();
+                    int newProgress = (int) (progress * uploadProgress.getMax());
+                    progressBarAnimator = ObjectAnimator.ofInt(uploadProgress, "progress", oldProgress, newProgress)
+                            .setDuration(400);
+                    progressBarAnimator.start();
                 }
-                int oldProgress = uploadProgress.getProgress();
-                int newProgress = (int) (progress * uploadProgress.getMax());
-                progressBarAnimator = ObjectAnimator.ofInt(uploadProgress, "progress", oldProgress, newProgress)
-                        .setDuration(400);
-                progressBarAnimator.start();
-            }
-        });
+            });
+        }
     }
 
     @Override
     public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
-        uploadProgress.post(new Runnable() {
-            @Override
-            public void run() {
-                String toastText = recordingSession.getVideoTitle() != null
-                        ? String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoFinishedUploading), recordingSession.getVideoTitle())
-                        : getResources().getString(R.string.yourVideoFinishedUploadingNoTitle);
-                Toast.makeText(RecordActivity.this, toastText, Toast.LENGTH_SHORT).show();
-                uploadProgress.setIndeterminate(false);
-                uploadProgress.animate().setStartDelay(500).alpha(0f).withEndAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        uploadProgress.setVisibility(View.GONE);
-                    }
-                }).start();
-            }
-        });
+        if (uploadProgress != null) {
+            uploadProgress.post(new Runnable() {
+                @Override
+                public void run() {
+                    String toastText = recordingSession.getVideoTitle() != null
+                            ? String.format(Locale.ENGLISH, getResources().getString(R.string.yourVideoFinishedUploading), recordingSession.getVideoTitle())
+                            : getResources().getString(R.string.yourVideoFinishedUploadingNoTitle);
+                    Toast.makeText(RecordActivity.this, toastText, Toast.LENGTH_SHORT).show();
+                    uploadProgress.setIndeterminate(false);
+                    uploadProgress.animate().setStartDelay(500).alpha(0f).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            uploadProgress.setVisibility(View.GONE);
+                        }
+                    }).start();
+                }
+            });
+        }
     }
 
     @Override
