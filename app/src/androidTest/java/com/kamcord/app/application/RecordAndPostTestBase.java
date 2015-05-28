@@ -81,9 +81,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
         assertTrue("Stop recording button timed out!", notTimedOut);
         mDevice.findObject(By.res(getResByID(R.id.record_button))).click();
         //wait for video processing to finish
+        //TODO: Adjust the 15 divider to something reasonable as stitching perf. improves.
         notTimedOut = mDevice
                 .wait(Until.hasObject(By.res(getResByID(R.id.playImageView))),
-                        PROCESSING_TIMEOUT);
+                        durationInMs / 4);
         assertTrue("Video processing timed out!", notTimedOut);
         mDevice.findObject(By.res(getResByID(R.id.titleEditText))).click();
         mDevice.findObject(By.res(getResByID(R.id.titleEditText)))

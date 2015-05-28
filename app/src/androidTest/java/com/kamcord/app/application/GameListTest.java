@@ -31,6 +31,7 @@ public class GameListTest extends TestBase {
         ArrayList<String> gameTitles = new ArrayList<>();
         while(unique) {
             unique = false;
+            mDevice.waitForIdle();
             for (UiObject2 gameTitle : mDevice.findObjects(By.res(getResByID(R.id.item_packagename)))) {
                 String title = gameTitle.getText();
                 if(!gameTitles.contains(title)){
@@ -38,8 +39,9 @@ public class GameListTest extends TestBase {
                     unique = true;
                 }
             }
-            mDevice.swipe(new Point[]{new Point(380, 1760), new Point(450, 150)}, 40);
+            mDevice.swipe(new Point[]{new Point(380, 1760), new Point(380, 150)}, 40);
         }
+        mDevice.swipe(new Point[]{new Point(380, 400), new Point(380, 1150)}, 40);
         assertTrue("Has no games listed!", gameTitles.size() > 2);
     }
 

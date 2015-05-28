@@ -32,7 +32,6 @@ public abstract class TestBase {
     protected static final int APP_TIMEOUT_MS = 5000;
     protected static final int UI_TIMEOUT_MS = 2000;
     protected static final int RECORDING_DURATION_MS = 5000;
-    protected static final int PROCESSING_TIMEOUT = 10000;
     protected static final int UPLOAD_TIMEOUT = 10000;
     protected static final int MS_PER_MIN = 60000;
 
@@ -169,7 +168,21 @@ public abstract class TestBase {
             if (signOut != null) {
                 signOut.click();
                 success = mDevice.wait(Until.hasObject(
+                        By.res(getResByID(R.id.activity_mdrecord_layout))), APP_TIMEOUT_MS);
+                assertTrue("Logout redirect failed!", success);
+                //click on profile
+                mDevice.findObject(By.text(getStrByID(R.string.kamcordProfileTab))).click();
+                //find sign in
+                success = mDevice.wait(Until.hasObject(
+                        By.res(getResByID(R.id.signInPromptButton))), APP_TIMEOUT_MS);
+                assertTrue("Sign in button not found on profile! Already logged in?", success);
+                //click sign in.
+                mDevice.findObject(By.res(getResByID(R.id.signInPromptButton))).click();
+                //find welcome screen.
+                success = mDevice.wait(Until.hasObject(
                         By.res(getResByID(R.id.fragment_welcome_layout))), APP_TIMEOUT_MS);
+                assertTrue("Welcome screen did not load!", success);
+
             }
         }
         return success;
