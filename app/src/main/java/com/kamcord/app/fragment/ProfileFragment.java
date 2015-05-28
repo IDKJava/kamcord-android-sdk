@@ -36,7 +36,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @InjectView(R.id.dynamicRecyclerView) DynamicRecyclerView dynamicRecyclerView;
     @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
     @InjectView(R.id.signInPromptButton) Button signInPromptButton;
-    @InjectView(R.id.swipeRefreshLayout) SwipeRefreshLayout webViewRefreshLayout;
+    @InjectView(R.id.swipeRefreshLayout) SwipeRefreshLayout viewRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,9 +44,9 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         ButterKnife.inject(this, root);
 
-        webViewRefreshLayout.setEnabled(false);
-        webViewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
-        webViewRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+        viewRefreshLayout.setEnabled(false);
+        viewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        viewRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
 
         return root;
     }
@@ -66,18 +66,18 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         if(AccountManager.isLoggedIn()) {
             signInPromptContainer.setVisibility(View.GONE);
 
-            webViewRefreshLayout.setEnabled(false);
-            webViewRefreshLayout.setOnRefreshListener(this);
-            webViewRefreshLayout.post(new Runnable() {
+            viewRefreshLayout.setEnabled(false);
+            viewRefreshLayout.setOnRefreshListener(this);
+            viewRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    webViewRefreshLayout.setRefreshing(true);
+                    viewRefreshLayout.setRefreshing(true);
                 }
             });
         }
         else
         {
-            signInPromptContainer.setVisibility(View.VISIBLE);
+//            signInPromptContainer.setVisibility(View.VISIBLE);
         }
     }
 
@@ -91,7 +91,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onRefresh() {
-        webViewRefreshLayout.setEnabled(false);
+        viewRefreshLayout.setEnabled(false);
         if (AccountManager.isLoggedIn()) {
             Account account = AccountManager.getStoredAccount();
             Activity activity = getActivity();
@@ -99,10 +99,10 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
             {
                 ((RecordActivity) activity).showToolbar();
             }
-            webViewRefreshLayout.setRefreshing(true);
+            viewRefreshLayout.setRefreshing(true);
         }
         else {
-            webViewRefreshLayout.setRefreshing(false);
+            viewRefreshLayout.setRefreshing(false);
         }
     }
 
