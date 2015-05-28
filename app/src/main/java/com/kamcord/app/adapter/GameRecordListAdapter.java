@@ -43,10 +43,13 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<GameRecordListAd
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
         Game game = getItem(position);
         viewHolder.itemPackageName.setText(game.name);
-        Picasso.with(mContext)
-                .load(game.icons.regular)
-                .tag(game.play_store_id)
-                .into(viewHolder.itemImage);
+        if( game.icons != null && game.icons.regular != null )
+        {
+            Picasso.with(mContext)
+                    .load(game.icons.regular)
+                    .tag(game.play_store_id)
+                    .into(viewHolder.itemImage);
+        }
         if (game.isInstalled) {
             viewHolder.installGameTextView.setVisibility(View.GONE);
         } else {
