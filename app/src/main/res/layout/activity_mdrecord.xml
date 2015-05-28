@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_activity_layout"
+    android:id="@+id/activity_mdrecord_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.kamcord.app.activity.RecordActivity">
@@ -48,14 +48,13 @@
 
 
     <FrameLayout
-        android:id="@+id/md_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true">
 
         <ImageButton
-            android:id="@+id/main_fab"
+            android:id="@+id/record_button"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_gravity="end|bottom"

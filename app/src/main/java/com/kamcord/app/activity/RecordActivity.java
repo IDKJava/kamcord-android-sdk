@@ -61,7 +61,8 @@ public class RecordActivity extends AppCompatActivity implements
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    @InjectView(R.id.main_fab) ImageButton mFloatingActionButton;
+
+    @InjectView(R.id.record_button) ImageButton mFloatingActionButton;
     @InjectView(R.id.main_pager) ViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
     @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
@@ -71,6 +72,7 @@ public class RecordActivity extends AppCompatActivity implements
     private MainViewPagerAdapter mainViewPagerAdapter;
     private CharSequence tabTitles[];
     private int numberOfTabs;
+    private Toast fabRecordingToast = null;
 
     private Menu optionsMenu;
 
@@ -109,6 +111,7 @@ public class RecordActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
+        this.invalidateOptionsMenu();
         handleServiceRunning();
     }
 
@@ -165,7 +168,7 @@ public class RecordActivity extends AppCompatActivity implements
                 }
             }
         });
-        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview);
+        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview_layout);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
@@ -185,7 +188,7 @@ public class RecordActivity extends AppCompatActivity implements
         controlsVisible = true;
     }
 
-    @OnClick(R.id.main_fab)
+    @OnClick(R.id.record_button)
     public void floatingActionButtonClicked() {
         if (!RecordingService.isRunning()) {
             if (mSelectedGame != null) {
@@ -194,7 +197,12 @@ public class RecordActivity extends AppCompatActivity implements
                 obtainMediaProjection();
 
             } else {
-                Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
+                if( fabRecordingToast != null )
+                {
+                    fabRecordingToast.cancel();
+                }
+                fabRecordingToast = Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT);
+                fabRecordingToast.show();
             }
         } else {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
@@ -209,7 +217,7 @@ public class RecordActivity extends AppCompatActivity implements
                 recordShareFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                        .add(R.id.main_activity_layout, recordShareFragment)
+                        .add(R.id.activity_mdrecord_layout, recordShareFragment)
                         .addToBackStack("ShareFragment").commit();
             } else {
                 // TODO: show the user something about being unable to get the recording session.
@@ -308,6 +316,7 @@ public class RecordActivity extends AppCompatActivity implements
 
     @Override
     public void onUploadStart(final RecordingSession recordingSession) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -321,9 +330,11 @@ public class RecordActivity extends AppCompatActivity implements
             }
         });
     }
+    }
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, final float progress) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -338,9 +349,11 @@ public class RecordActivity extends AppCompatActivity implements
             }
         });
     }
+    }
 
     @Override
     public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -358,6 +371,7 @@ public class RecordActivity extends AppCompatActivity implements
             }
         });
     }
+    }
 
     @Override
     public void onDestroy() {
@@ -368,10 +382,17 @@ public class RecordActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_record, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
         optionsMenu = menu;
+        MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
         if (!AccountManager.isLoggedIn()) {
-            MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
             signoutItem.setVisible(false);
+        } else {
+            signoutItem.setVisible(true);
         }
         return true;
     }
