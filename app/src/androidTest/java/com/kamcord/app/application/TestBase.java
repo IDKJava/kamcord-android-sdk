@@ -167,6 +167,7 @@ public abstract class TestBase {
             UiObject2 signOut = mDevice.findObject(By.text(getStrByID(R.string.action_signout)));
             if (signOut != null) {
                 signOut.click();
+                /* Logout behaviour changed again!!!!!!
                 success = mDevice.wait(Until.hasObject(
                         By.res(getResByID(R.id.activity_mdrecord_layout))), APP_TIMEOUT_MS);
                 assertTrue("Logout redirect failed!", success);
@@ -179,6 +180,7 @@ public abstract class TestBase {
                 //click sign in.
                 mDevice.findObject(By.res(getResByID(R.id.signInPromptButton))).click();
                 //find welcome screen.
+                */
                 success = mDevice.wait(Until.hasObject(
                         By.res(getResByID(R.id.fragment_welcome_layout))), APP_TIMEOUT_MS);
                 assertTrue("Welcome screen did not load!", success);
