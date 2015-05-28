@@ -36,6 +36,7 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private static final String KAMCORD_DOMAIN = "kamcord.com";
     private static final String KAMCORD_PROFILE_BASE_URL = "https://www." + KAMCORD_DOMAIN + "/profile/";
+    private static final String WEBVIEWSTATE = "webViewState";
     private static final Pattern domainPattern = Pattern.compile(".*?([^.]+\\.[^.]+)$");
     private Bundle webViewBundle;
 
@@ -49,6 +50,10 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         View root = inflater.inflate(R.layout.profile_tab, container, false);
 
         ButterKnife.inject(this, root);
+
+        if(savedInstanceState != null) {
+            webViewBundle = savedInstanceState.getBundle(WEBVIEWSTATE);
+        }
 
         webViewRefreshLayout.setEnabled(false);
         webViewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
@@ -71,10 +76,10 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     @Override
-    public void onPause(){
-        super.onPause();
+    public void onSaveInstanceState(Bundle savedInstanceState) {
         webViewBundle = new Bundle();
         webView.saveState(webViewBundle);
+        savedInstanceState.putBundle(WEBVIEWSTATE, webViewBundle);
     }
 
     @Override
