@@ -76,9 +76,9 @@
     <string name="yourVideoIsUploadingNoTitle">Your video is uploading!</string>
     <string name="yourVideoFinishedUploadingNoTitle">Your video finished uploading!</string>
 
-    <string name="communityEmail">community@kamcord.com</string>
+    <string name="communityEmail">community@kamcord.com</string>t
     <string name="canIRecord">Can I record this game?</string>
-    <string name="iWantToRecord">I want to record this game: [[[PUT THE NAME OF YOUR GAME HERE!]]]</string>
+    <string name="iWantToRecord">I want to record this game: &lt; game name &gt;</string>
     <string name="sincerely">Sincerely, %s</string>
 
 </resources>
