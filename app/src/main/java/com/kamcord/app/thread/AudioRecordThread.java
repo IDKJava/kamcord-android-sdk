@@ -251,6 +251,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             mMediaMuxer.release();
             mMediaMuxer = null;
             mMuxerStart = false;
+            mMuxerWrite = false;
         }
     }
 
