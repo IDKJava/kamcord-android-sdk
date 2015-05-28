@@ -34,7 +34,7 @@ public abstract class TestBase {
     protected static final int RECORDING_DURATION_MS = 5000;
     protected static final int UPLOAD_TIMEOUT = 10000;
     protected static final int MS_PER_MIN = 60000;
-
+    protected static final int VIDEO_PROCESSING_TIMEOUT = 10000;
     protected static final String OVERFLOW_DESCRIPTION = "More options";
     protected static final String KAMCORD_APP_PACKAGE = "com.kamcord.app";
     protected static final String RIPPLE_TEST_APP_NAME = "Ripple Test";
