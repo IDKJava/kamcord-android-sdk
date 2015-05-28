@@ -25,6 +25,8 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "0.1"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -33,9 +35,17 @@ android {
         }
     }
 
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+    productFlavors {
+
+    }
+
     lintOptions {
         warning 'InvalidPackage'
     }
+
 }
 
 //repositories {
@@ -46,7 +56,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:recyclerview-v7:+'
     compile 'com.android.support:cardview-v7:22.0.0'
     compile 'com.github.hiteshsondhi88.libffmpeg:FFmpegAndroid:0.2.5'
@@ -61,4 +71,11 @@ dependencies {
         transitive = true;
     }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    
+    // Testing-only dependencies
+    androidTestCompile 'com.android.support.test:runner:0.2'
+    // UiAutomator Testing
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.0'
+    androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
+
 }
