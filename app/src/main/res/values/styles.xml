@@ -1,0 +1,26 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="colorPrimary">@color/ColorPrimary</item>
+        <item name="colorPrimaryDark">@color/ColorPrimaryDark</item>
+        <!-- Customize your theme here. -->
+    </style>
+    
+    <style name="TextAppearance_KamcordHighlighted">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/kamcordGreen</item>
+    </style>
+
+    <!-- ToolBar -->
+    <style name="ToolBarStyle" parent="Theme.AppCompat">
+        <item name="android:textColorPrimary">@color/ColorPrimaryDark</item>
+    </style>
+
+    <style name="KamcordButton">
+        <item name="android:background">@drawable/login_btnstyle</item>
+        <item name="android:textColor">@color/ButtonTextColor</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+</resources>

@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kamcord.app.activity.RecordActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/main_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/tabsHeight"
+        android:clipToPadding="false"
+        android:clipChildren="false" />
+
+    <RelativeLayout
+        android:id="@+id/toolbarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tabsHeight"
+            android:layout_alignParentTop="true"
+            android:background="@color/ColorPrimary"
+            style="@style/ToolBarStyle"/>
+
+        <com.kamcord.app.view.SlidingTabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:background="@color/ColorPrimary"
+            android:elevation="2dp" />
+
+        <ProgressBar
+            android:id="@+id/uploadProgressBar"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/uploadProgressSize"
+            android:layout_alignBottom="@id/toolbar"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:progressDrawable="@drawable/upload_progressbar"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+    <FrameLayout
+        android:id="@+id/md_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true">
+
+        <ImageButton
+            android:id="@+id/main_fab"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="15dp"
+            android:background="@drawable/fab_circle"
+            android:elevation="4dp"
+            android:src="@drawable/ic_videocam_white_48dp" />
+
+    </FrameLayout>
+
+</RelativeLayout>

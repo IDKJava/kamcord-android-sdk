@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="ColorPrimary">#ffffff</color>
+    <color name="ColorPrimaryDark">#999999</color>
+
+    <color name="tabsScrollColor">#47d894</color>
+    <color name="tabTitleColor">#353e44</color>
+    <color name="refreshColor">#47d894</color>
+    <color name="gridTextColor">#353e44</color>
+
+    <color name="kamcordGreen">#47d894</color>
+    <color name="stopRecordingRed">#b34</color>
+
+    <color name="ButtonTextColor">#40d18b</color>
+    <color name="ButtonOutlineColor">#40d18b</color>
+    <color name="EditTextBackgroundColor">#e2e2e2</color>
+    <color name="TermsHighLighted">#353e44</color>
+
+    <color name="transparentWhite">#9fff</color>
+
+</resources>
