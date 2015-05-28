@@ -23,6 +23,10 @@ public class FileSystemManager {
     {
         File cacheDirectory = new File(Environment.getExternalStorageDirectory(), "Kamcord_Android");
         cacheDirectory.mkdirs(); // Make sure we create our cache directory when we ask for it.
+
+        // We also need to make sure that no other apps index our media files.
+        makeNoMedia(cacheDirectory);
+
         return cacheDirectory;
     }
 
@@ -40,6 +44,10 @@ public class FileSystemManager {
     {
         File cacheDirectory = new File(getCacheDirectory(), recordingSession.getGamePackageName());
         cacheDirectory.mkdirs();
+
+        // We also need to make sure that no other apps index our media files.
+        makeNoMedia(cacheDirectory);
+
         return cacheDirectory;
     }
 
@@ -47,6 +55,10 @@ public class FileSystemManager {
     {
         File cacheDirectory = new File(getGameCacheDirectory(recordingSession), recordingSession.getUUID());
         cacheDirectory.mkdirs();
+
+        // We also need to make sure that no other apps index our media files.
+        makeNoMedia(cacheDirectory);
+
         return cacheDirectory;
     }
 
@@ -85,4 +97,15 @@ public class FileSystemManager {
         new File(sessionCache, STITCHED_AUDIO_FILENAME).delete();
     }
 
+    private static void makeNoMedia(File directory)
+    {
+        if( directory.isDirectory() ) {
+        try {
+                File noMedia = new File(directory, ".nomedia");
+                noMedia.createNewFile();
+            } catch( Exception e ) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
