@@ -1,4 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.kamcord.app.activity.WelcomeActivity">
+    tools:context="com.kamcord.app.activity.WelcomeActivity"
+    android:id="@+id/menu_share">
 </menu>

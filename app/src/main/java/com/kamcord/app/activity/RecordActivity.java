@@ -61,7 +61,7 @@ public class RecordActivity extends AppCompatActivity implements
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
-    @InjectView(R.id.main_fab) ImageButton mFloatingActionButton;
+    @InjectView(R.id.record_button) ImageButton mFloatingActionButton;
     @InjectView(R.id.main_pager) ViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
     @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
@@ -165,7 +165,7 @@ public class RecordActivity extends AppCompatActivity implements
                 }
             }
         });
-        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview);
+        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview_layout);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
@@ -185,7 +185,7 @@ public class RecordActivity extends AppCompatActivity implements
         controlsVisible = true;
     }
 
-    @OnClick(R.id.main_fab)
+    @OnClick(R.id.record_button)
     public void floatingActionButtonClicked() {
         if (!RecordingService.isRunning()) {
             if (mSelectedGame != null) {
@@ -209,7 +209,7 @@ public class RecordActivity extends AppCompatActivity implements
                 recordShareFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                        .add(R.id.main_activity_layout, recordShareFragment)
+                        .add(R.id.activity_mdrecord_layout, recordShareFragment)
                         .addToBackStack("ShareFragment").commit();
             } else {
                 // TODO: show the user something about being unable to get the recording session.
