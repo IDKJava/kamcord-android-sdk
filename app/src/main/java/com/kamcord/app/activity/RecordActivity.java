@@ -316,6 +316,7 @@ public class RecordActivity extends AppCompatActivity implements
 
     @Override
     public void onUploadStart(final RecordingSession recordingSession) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -329,9 +330,11 @@ public class RecordActivity extends AppCompatActivity implements
             }
         });
     }
+    }
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, final float progress) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -346,9 +349,11 @@ public class RecordActivity extends AppCompatActivity implements
             }
         });
     }
+    }
 
     @Override
     public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -365,6 +370,7 @@ public class RecordActivity extends AppCompatActivity implements
                 }).start();
             }
         });
+    }
     }
 
     @Override

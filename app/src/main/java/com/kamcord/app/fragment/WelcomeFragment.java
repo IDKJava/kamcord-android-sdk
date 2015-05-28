@@ -39,10 +39,12 @@ public class WelcomeFragment extends Fragment {
     {
         @Override
         public void run() {
-            Intent intent = new Intent(getActivity(), RecordActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            getActivity().finish();
+            if( isResumed() ) {
+                Intent intent = new Intent(getActivity(), RecordActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                getActivity().finish();
+            }
         }
     };
 
