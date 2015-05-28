@@ -96,6 +96,7 @@ public class ShareFragment extends Fragment {
             // TODO: show the user something about failing to process the video.
         }
     };
+    private StitchClipsThread stitchClipsThread;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -122,7 +123,7 @@ public class ShareFragment extends Fragment {
         } else {
             processingProgressBarContainer.setVisibility(View.VISIBLE);
             playImageView.setVisibility(View.GONE);
-            StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
+            stitchClipsThread = new StitchClipsThread(recordingSession,
                     getActivity().getApplicationContext(),
                     stitchSuccessListener);
             stitchClipsThread.start();
@@ -141,6 +142,10 @@ public class ShareFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+        if( stitchClipsThread != null )
+        {
+            stitchClipsThread.cancelStitching();
+        }
     }
 
     @OnClick(R.id.thumbnailImageView)

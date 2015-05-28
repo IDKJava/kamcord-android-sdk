@@ -101,27 +101,28 @@ public class LoginFragment extends Fragment {
         @Override
         public void success(GenericResponse<Account> accountWrapper, Response response)
         {
-            if( accountWrapper != null
-                    && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
-                    && accountWrapper.response != null )
-            {
-                FlurryAgent.logEvent(getResources().getString(R.string.flurryLogin));
-                AccountManager.setStoredAccount(accountWrapper.response);
-                Intent intent = new Intent(getActivity(), RecordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                getActivity().finish();
-            }
-            else
-            {
-                handleLoginFailure(accountWrapper);
+            if( isResumed() ) {
+                if (accountWrapper != null
+                        && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
+                        && accountWrapper.response != null) {
+                    FlurryAgent.logEvent(getResources().getString(R.string.flurryLogin));
+                    AccountManager.setStoredAccount(accountWrapper.response);
+                    Intent intent = new Intent(getActivity(), RecordActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    getActivity().finish();
+                } else {
+                    handleLoginFailure(accountWrapper);
+                }
             }
         }
 
         @Override
         public void failure(RetrofitError error)
         {
-            handleLoginFailure(null);
+            if( isResumed() ) {
+                handleLoginFailure(null);
+            }
         }
     };
 }
