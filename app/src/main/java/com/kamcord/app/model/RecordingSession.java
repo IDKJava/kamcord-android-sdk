@@ -18,6 +18,7 @@ public class RecordingSession implements Parcelable {
     private String gameServerID;
     private String gameServerName;
     private String gamePackageName;
+    private boolean recordedFrames = false;
 
     public RecordingSession()
     {
@@ -62,6 +63,15 @@ public class RecordingSession implements Parcelable {
         this.videoDescription = videoDescription;
     }
 
+    public void setRecordedFrames(boolean recordedFrames)
+    {
+        this.recordedFrames = recordedFrames;
+    }
+    public boolean hasRecordedFrames()
+    {
+        return recordedFrames;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -75,6 +85,7 @@ public class RecordingSession implements Parcelable {
         parcel.writeString(gameServerID);
         parcel.writeString(gameServerName);
         parcel.writeString(gamePackageName);
+        parcel.writeBooleanArray(new boolean[]{recordedFrames});
     }
 
     public static final Parcelable.Creator<RecordingSession> CREATOR
@@ -95,6 +106,10 @@ public class RecordingSession implements Parcelable {
         gameServerID = in.readString();
         gameServerName = in.readString();
         gamePackageName = in.readString();
+
+        boolean[] booleanArray = new boolean[1];
+        in.readBooleanArray(booleanArray);
+        recordedFrames = booleanArray[0];
     }
 
     @Override
