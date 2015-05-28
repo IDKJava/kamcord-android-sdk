@@ -216,7 +216,7 @@ public class RecordActivity extends AppCompatActivity implements
             mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
             stopService(new Intent(this, RecordingService.class));
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
-            if (recordingSession != null) {
+            if (recordingSession != null && recordingSession.hasRecordedFrames()) {
                 FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
                 ShareFragment recordShareFragment = new ShareFragment();
                 Bundle bundle = new Bundle();
@@ -401,9 +401,6 @@ public class RecordActivity extends AppCompatActivity implements
             case R.id.action_signout: {
                 if (AccountManager.isLoggedIn()) {
                     AppServerClient.getInstance().logout(logoutCallback);
-                    Intent loginIntent = new Intent(this, LoginActivity.class);
-                    startActivity(loginIntent);
-                    finish();
                 }
                 break;
             }
@@ -435,11 +432,17 @@ public class RecordActivity extends AppCompatActivity implements
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
             AccountManager.clearStoredAccount();
+            Intent loginIntent = new Intent(RecordActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
         }
 
         @Override
         public void failure(RetrofitError error) {
             AccountManager.clearStoredAccount();
+            Intent loginIntent = new Intent(RecordActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
         }
     };
 }
