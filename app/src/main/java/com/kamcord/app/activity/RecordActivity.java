@@ -115,16 +115,8 @@ public class RecordActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("Activity", "Resume");
+        this.invalidateOptionsMenu();
         handleServiceRunning();
-        if (optionsMenu != null) {
-            MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
-            if (AccountManager.isLoggedIn()) {
-                signoutItem.setVisible(true);
-            } else {
-                signoutItem.setVisible(false);
-            }
-        }
     }
 
     @Override
@@ -384,9 +376,11 @@ public class RecordActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_record, menu);
         optionsMenu = menu;
+        MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
         if (!AccountManager.isLoggedIn()) {
-            MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
-            signoutItem.setVisible(false);
+            signoutItem.setEnabled(false);
+        } else {
+            signoutItem.setEnabled(true);
         }
         return true;
     }
