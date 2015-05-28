@@ -4,16 +4,19 @@
     tools:context="com.kamcord.app.activity.RecordActivity"
     android:id="@+id/menu_record">
 
-    <item android:id="@+id/action_request_game"
+    <item
+        android:id="@+id/action_request_game"
         android:orderInCategory="1"
         android:title="@string/action_request_game"
         app:showAsAction="never" />
-    <item android:id="@+id/action_cleancache"
+    <item
+        android:id="@+id/action_cleancache"
         android:orderInCategory="2"
         android:title="@string/action_cleancache"
         app:showAsAction="never" />
 
-    <item android:id="@+id/action_signout"
+    <item
+        android:id="@+id/action_signout"
         android:orderInCategory="3"
         android:title="@string/action_signout"
         app:showAsAction="never" />

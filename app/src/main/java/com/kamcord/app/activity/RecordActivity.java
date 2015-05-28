@@ -61,6 +61,7 @@ public class RecordActivity extends AppCompatActivity implements
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
+
     @InjectView(R.id.record_button) ImageButton mFloatingActionButton;
     @InjectView(R.id.main_pager) ViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
@@ -71,6 +72,7 @@ public class RecordActivity extends AppCompatActivity implements
     private MainViewPagerAdapter mainViewPagerAdapter;
     private CharSequence tabTitles[];
     private int numberOfTabs;
+    private Toast fabRecordingToast = null;
 
     private Menu optionsMenu;
 
@@ -109,6 +111,7 @@ public class RecordActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
+        this.invalidateOptionsMenu();
         handleServiceRunning();
     }
 
@@ -194,7 +197,12 @@ public class RecordActivity extends AppCompatActivity implements
                 obtainMediaProjection();
 
             } else {
-                Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
+                if( fabRecordingToast != null )
+                {
+                    fabRecordingToast.cancel();
+                }
+                fabRecordingToast = Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT);
+                fabRecordingToast.show();
             }
         } else {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
@@ -368,10 +376,17 @@ public class RecordActivity extends AppCompatActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_record, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
         optionsMenu = menu;
+        MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
         if (!AccountManager.isLoggedIn()) {
-            MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
             signoutItem.setVisible(false);
+        } else {
+            signoutItem.setVisible(true);
         }
         return true;
     }
