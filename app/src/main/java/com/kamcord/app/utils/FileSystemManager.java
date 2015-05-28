@@ -62,6 +62,13 @@ public class FileSystemManager {
         return cacheDirectory;
     }
 
+    public static void cleanRecordingSessionCacheDirectory(RecordingSession recordingSession)
+    {
+        File recordingSessionCacheDirectory = getRecordingSessionCacheDirectory(recordingSession);
+        clearCacheRecursive(recordingSessionCacheDirectory);
+    }
+
+
     public static void cleanCache() {
         try {
             clearCacheRecursive(getCacheDirectory());
