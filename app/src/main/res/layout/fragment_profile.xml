@@ -6,17 +6,16 @@
     android:clipChildren="false" >
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/webViewRefreshLayout"
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:clipChildren="false" >
-        <com.kamcord.app.view.ObservableWebView
-            android:id="@+id/webView"
+
+        <com.kamcord.app.view.DynamicRecyclerView
+            android:id="@+id/dynamicRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:clipChildren="false" />
+            android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
