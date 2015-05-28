@@ -317,6 +317,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                         presentationStartUs = mVideoBufferInfo.presentationTimeUs;
                     }
                     mMuxerWrite = true;
+                    mRecordingSession.setRecordedFrames(true);
                 }
 
                 mVideoEncoder.releaseOutputBuffer(encoderStatus, false);
