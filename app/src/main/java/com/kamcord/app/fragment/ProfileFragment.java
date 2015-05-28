@@ -16,7 +16,6 @@ import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.utils.AccountManager;
-import com.kamcord.app.view.DynamicRecyclerView;
 
 import java.util.regex.Pattern;
 
@@ -33,7 +32,6 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private static final String KAMCORD_PROFILE_BASE_URL = "https://www." + KAMCORD_DOMAIN + "/profile/";
     private static final Pattern domainPattern = Pattern.compile(".*?([^.]+\\.[^.]+)$");
 
-    @InjectView(R.id.dynamicRecyclerView) DynamicRecyclerView dynamicRecyclerView;
     @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
     @InjectView(R.id.signInPromptButton) Button signInPromptButton;
     @InjectView(R.id.swipeRefreshLayout) SwipeRefreshLayout viewRefreshLayout;

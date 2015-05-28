@@ -341,6 +341,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mMuxer.release();
             mMuxer = null;
             mMuxerStart = false;
+            mMuxerWrite = false;
         }
         if (mVideoEncoder != null) {
             mVideoEncoder.stop();

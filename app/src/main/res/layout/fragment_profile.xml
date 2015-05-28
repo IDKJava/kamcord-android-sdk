@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/profile_tab_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
@@ -12,10 +13,6 @@
         android:clipToPadding="false"
         android:clipChildren="false" >
 
-        <com.kamcord.app.view.RecyclerView
-            android:id="@+id/dynamicRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
