@@ -4,19 +4,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Point;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.Until;
+import android.view.Surface;
 
 import com.kamcord.app.R;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -34,7 +41,7 @@ public abstract class TestBase {
     protected static final int RECORDING_DURATION_MS = 5000;
     protected static final int UPLOAD_TIMEOUT = 10000;
     protected static final int MS_PER_MIN = 60000;
-    protected static final int VIDEO_PROCESSING_TIMEOUT = 10000;
+    protected static final int DEFAULT_VIDEO_PROCESSING_TIMEOUT = 10000;
     protected static final String OVERFLOW_DESCRIPTION = "More options";
     protected static final String KAMCORD_APP_PACKAGE = "com.kamcord.app";
     protected static final String RIPPLE_TEST_APP_NAME = "Ripple Test";
@@ -189,6 +196,18 @@ public abstract class TestBase {
         }
         return success;
     }
+
+    protected void skipLogin(){
+        //skip login
+        //should see an active record tab.
+        boolean notTimedOut = mDevice.wait(Until.hasObject(By.res(getResByID(R.id.skipButton))),
+                UI_TIMEOUT_MS);
+        assertTrue("No skip button found! Are we logged in?", notTimedOut);
+        mDevice.findObject(By.res(getResByID(R.id.skipButton))).click();
+        notTimedOut = mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord_layout))),
+                UI_TIMEOUT_MS);
+        assertTrue("Record view did not load!", notTimedOut);
+    }
     /**
      * Uses package manager to find the package name of the device launcher. Usually this package
      * is "com.android.launcher" but can be different at times. This is a generic solution which
@@ -203,6 +222,94 @@ public abstract class TestBase {
         PackageManager pm = InstrumentationRegistry.getContext().getPackageManager();
         ResolveInfo resolveInfo = pm.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
         return resolveInfo.activityInfo.packageName;
+    }
+    protected Point[] validateSwipe(Point[] swipePoints){
+        //TODO: works for vertical only.
+        int bottomBar = 200;
+        int topBar = 100;
+        int height = mDevice.getDisplayHeight();
+        int width = mDevice.getDisplayWidth();
+        int orientation = mDevice.getDisplayRotation();
+        switch(orientation){
+            case Surface.ROTATION_90:
+                //TODO: handle swipe by processing swapping coordinates and proportionallly
+                for(Point p: swipePoints){
+                    int y = (int)(((float)p.x/width) * height);
+                    int x = (int)(((float)p.y/height) * width);
+                    x = Math.min(Math.max(topBar,x), width - bottomBar);
+                    p.set(x,y);
+                }
+                break;
+            case Surface.ROTATION_270:
+                //TODO: handle swipe by processing swapping coordinates and proportionallly
+                for(Point p: swipePoints){
+                    int y = (int)(((float)p.x/width) * height);
+                    int x = (int)(((float)p.y/height) * width);
+                    x = Math.min(Math.max(topBar,x), width - bottomBar);
+                    //upside down!!!
+                    x = width - x;
+                    p.set(x,y);
+                }
+                break;
+
+            case Surface.ROTATION_180:
+            case Surface.ROTATION_0:
+            default:
+                break;
+        }
+
+
+
+        return swipePoints;
+    }
+
+    protected void sleep(int timeInMS){
+        try{
+            Thread.sleep(timeInMS);
+        } catch (InterruptedException e){
+            e.printStackTrace();
+            assertTrue("Test interrupted!", false);
+        }
+    }
+
+    protected String executeShellCommand(String cmd) {
+
+        try {
+
+            Process p = Runtime.getRuntime().exec(cmd);
+            BufferedReader br;
+            if (p.waitFor() == 0) {
+                br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            } else {
+                br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            }
+            StringBuilder output = new StringBuilder();
+            String line;
+            while ((line = br.readLine()) != null) {
+                output.append(line);
+                output.append("\r\n");
+            }
+            return output.toString();
+        } catch (InterruptedException | IOException  e) {
+            e.printStackTrace();
+            return e.getStackTrace().toString();
+        }
+
+    }
+    protected void clearCache() {
+        boolean notTimedOut =
+                mDevice.wait(Until.hasObject(By.desc(OVERFLOW_DESCRIPTION)), UI_TIMEOUT_MS);
+        assertTrue("Overflow menu not found!", notTimedOut);
+        mDevice.findObject(By.desc(OVERFLOW_DESCRIPTION)).click();
+        notTimedOut =
+                mDevice.wait(Until.hasObject(By.text(getStrByID(R.string.action_cleancache))),
+                        UI_TIMEOUT_MS);
+        assertTrue("Clean cache option not found!", notTimedOut);
+        mDevice.findObject(By.text(getStrByID(R.string.action_cleancache))).click();
+        notTimedOut =
+                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord_layout))),
+                        APP_TIMEOUT_MS);
+        assertTrue("We're on the wrong screen!", notTimedOut);
     }
 
      /*

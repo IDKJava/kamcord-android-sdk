@@ -6,8 +6,6 @@ import android.support.test.uiautomator.Until;
 
 import com.kamcord.app.R;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -16,21 +14,17 @@ import static org.junit.Assert.assertTrue;
  */
 public abstract class RecordAndPostTestBase extends TestBase {
 
-    public void recordRippleTestLoginLast(){
-        recordAndPostGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
-    }
-
-    protected void recordAndPostGameVideo(String gameName, int durationInMs){
-        recordAndPostGameVideo(gameName, durationInMs, true);
-    }
-    protected void recordAndPostGameVideo(String gameName, int durationInMs, boolean failIfNotLoggedIn) {
+    protected void recordGameVideo(String gameName, int durationInMs) {
         //find ripples app logo and click
+        boolean notTimedOut = mDevice
+                .wait(Until.hasObject(By.text(gameName)), UI_TIMEOUT_MS);
+        assertTrue(String.format("%s not found!", gameName), notTimedOut);
         mDevice.findObject(By.text(gameName)).click();
 
         mDevice.findObject(By.res(getResByID(R.id.record_button))).click();
 
         //Ack the screen recording warning.
-        boolean notTimedOut = mDevice
+        notTimedOut = mDevice
                 .wait(Until.hasObject(By.res(ANDROID_SYSTEM_BUTTON1)), UI_TIMEOUT_MS);
         assertTrue("Recording notification timed out!", notTimedOut);
         //String s = getResByID(android.R.id.button1);
@@ -62,29 +56,27 @@ public abstract class RecordAndPostTestBase extends TestBase {
         assertTrue("Notification failed to show!", notTimedOut);
         notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.paused))), UI_TIMEOUT_MS);
-        assertTrue("Paused notification status not recording!", notTimedOut);
+        assertTrue("Paused notification status not showing!", notTimedOut);
         //click on notification to resume app.
         mDevice.findObject(By.text(getStrByID(R.string.toolbarTitle))).click();
-        //close notifications
-        //click on notification to go back to the app
-
-        //stop recording.
-        //notTimedOut = mDevice
-        //        .wait(Until.hasObject(By.text(getStrByID(R.string.toolbarTitle))), APP_TIMEOUT_MS);
-        //assertTrue("Kamcord app not found in recent apps!", notTimedOut);
-        //Bring up Kamcord
-        //mDevice.findObject(By.text(getStrByID(R.string.toolbarTitle))).click();
 
         //find stop recording button.
         notTimedOut = mDevice
                 .wait(Until.hasObject(By.res(getResByID(R.id.record_button))), APP_TIMEOUT_MS);
         assertTrue("Stop recording button timed out!", notTimedOut);
         mDevice.findObject(By.res(getResByID(R.id.record_button))).click();
+    }
+
+    protected void handleShareView(int durationInMs){
+        handleShareView(durationInMs, true);
+    }
+    protected void handleShareView(int durationInMs, boolean failIfNotLoggedIn ){
         //wait for video processing to finish
         //TODO: Adjust the 4 divider to something reasonable as stitching perf. improves.
-        int processingTimeout = Math.max((durationInMs / 4), VIDEO_PROCESSING_TIMEOUT);
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.res(getResByID(R.id.playImageView))), processingTimeout);
+        int processingTimeout = Math.max((durationInMs / 4), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
+        boolean notTimedOut =
+                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.playImageView))),
+                        processingTimeout);
         assertTrue("Video processing timed out!", notTimedOut);
         mDevice.findObject(By.res(getResByID(R.id.titleEditText))).click();
         mDevice.findObject(By.res(getResByID(R.id.titleEditText)))
