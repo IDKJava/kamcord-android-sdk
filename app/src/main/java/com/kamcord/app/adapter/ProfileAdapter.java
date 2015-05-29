@@ -45,7 +45,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
         Video profileItem = getItem(position);
         viewHolder.profileItemTitle.setText(StringUtils.getFirstLetterUpperCase(profileItem.title));
-        viewHolder.profileItemAuthor.setText(mContext.getResources().getString(R.string.videoFeedAuthorHelper) + profileItem.username);
+        viewHolder.profileItemAuthor.setText(mContext.getResources().getString(R.string.byAuthor) + profileItem.username);
         viewHolder.videoLikes.setText(Integer.toString(profileItem.likes));
         viewHolder.videoComments.setText("Comments: " + Integer.toString(profileItem.comments));
         viewHolder.videoViews.setText("Views: " + Integer.toString(profileItem.views));

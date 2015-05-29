@@ -23,6 +23,7 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.utils.GameListUtils;
+import com.kamcord.app.utils.RecyclerViewScrollListener;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.SpaceItemDecoration;
 
@@ -179,11 +180,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
 
     public interface SelectedGameListener {
         void selectedGame(com.kamcord.app.server.model.Game selectedG0ameModel);
-    }
-
-    public interface RecyclerViewScrollListener {
-        void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
-        void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy);
     }
 
     @Override

@@ -15,7 +15,7 @@ import butterknife.InjectView;
 
 public class ProfileVideoViewActivity extends AppCompatActivity implements MediaPlayer.OnPreparedListener {
 
-    public static final String M3U8_VIDEO_PATH = "profilevideo";
+    public static final String ARG_VIDEO_PATH = "video_path";
 
     @InjectView(R.id.profile_videoview) VideoView myVideoView;
     private String url;
@@ -27,7 +27,7 @@ public class ProfileVideoViewActivity extends AppCompatActivity implements Media
         setContentView(R.layout.activity_profile_video_view);
         ButterKnife.inject(this);
 
-        url = getIntent().getExtras().getString(M3U8_VIDEO_PATH);
+        url = getIntent().getExtras().getString(ARG_VIDEO_PATH);
         if(mediaController == null) {
             mediaController = new MediaController(this);
             try {

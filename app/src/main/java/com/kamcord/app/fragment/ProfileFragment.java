@@ -23,6 +23,7 @@ import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.RecyclerViewScrollListener;
 import com.kamcord.app.view.SpaceItemDecoration;
 
 import java.util.ArrayList;
@@ -45,11 +46,11 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     @InjectView(R.id.profilefragment_refreshlayout) SwipeRefreshLayout videoFeedRefreshLayout;
     @InjectView(R.id.profile_recyclerview) RecyclerView profileRecyclerView;
 
-    public static final String M3U8_VIDEO_PATH = "profilevideo";
+    public static final String ARG_VIDEO_PATH = "video_path";
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<Video> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
-    private RecordFragment.RecyclerViewScrollListener onRecyclerViewScrollListener;
+    private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,9 +65,9 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        if( activity instanceof RecordFragment.RecyclerViewScrollListener)
+        if( activity instanceof RecyclerViewScrollListener)
         {
-            onRecyclerViewScrollListener = (RecordFragment.RecyclerViewScrollListener) activity;
+            onRecyclerViewScrollListener = (RecyclerViewScrollListener) activity;
         }
     }
 
@@ -104,10 +105,10 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (profileRecyclerView.getChildAt(0) != null) {
-                    int gridMargin = getResources().getDimensionPixelSize(R.dimen.grid_margin);
-                    int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
+                if (profileRecyclerView.getChildAt(0) == null) {
+                    videoFeedRefreshLayout.setEnabled(true);
                 } else {
+
                 }
 
                 if (onRecyclerViewScrollListener != null) {
@@ -134,7 +135,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         if(mProfileList.size() != 0) {
             Video videoGetClicked = mProfileList.get(position);
             Intent intent = new Intent(getActivity(), ProfileVideoViewActivity.class);
-            intent.putExtra(M3U8_VIDEO_PATH, videoGetClicked.video_url);
+            intent.putExtra(ARG_VIDEO_PATH, videoGetClicked.video_url);
             startActivity(intent);
         }
     }

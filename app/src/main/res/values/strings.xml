@@ -81,9 +81,6 @@
     <string name="iWantToRecord">I want to record this game: &lt; game name &gt;</string>
     <string name="sincerely">Sincerely, %s</string>
 
-    <string name="videoFeedAuthorHelper">By&#160;</string>
-    <string name="title_activity_profile_video_view">ProfileVideoViewActivity</string>
-
-    <string name="hello_world">Hello world!</string>
+    <string name="byAuthor">By&#160;</string>
 
 </resources>

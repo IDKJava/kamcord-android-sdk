@@ -39,7 +39,7 @@ import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
-import com.kamcord.app.view.ObservableWebView;
+import com.kamcord.app.utils.RecyclerViewScrollListener;
 import com.kamcord.app.view.SlidingTabLayout;
 
 import java.util.Locale;
@@ -55,8 +55,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class RecordActivity extends AppCompatActivity implements
         RecordFragment.SelectedGameListener,
-        RecordFragment.RecyclerViewScrollListener,
-        ObservableWebView.ObservableWebViewScrollListener,
+        RecyclerViewScrollListener,
         Uploader.UploadStatusListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
@@ -82,7 +81,6 @@ public class RecordActivity extends AppCompatActivity implements
     private static final int HIDE_THRESHOLD = 20;
     private boolean controlsVisible = true;
     private int recyclerViewScrolledDistance = 0;
-    private int webViewScrolledDistance = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,24 +289,6 @@ public class RecordActivity extends AppCompatActivity implements
 
         if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
             recyclerViewScrolledDistance += dy;
-        }
-    }
-
-    @Override
-    public void onObservableWebViewScrolled(ObservableWebView webView, int dx, int dy) {
-        if (webViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
-                && webView.getScrollY() >= getResources().getDimensionPixelSize(R.dimen.tabsHeight)) {
-            hideToolbar();
-            controlsVisible = false;
-            webViewScrolledDistance = 0;
-        } else if (webViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-            showToolbar();
-            controlsVisible = true;
-            webViewScrolledDistance = 0;
-        }
-
-        if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
-            webViewScrolledDistance += dy;
         }
     }
 
