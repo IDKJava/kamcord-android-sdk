@@ -82,4 +82,10 @@ public class StringUtils {
         return (first == null && second == null)
                 || (first != null && second != null && first.equals(second));
     }
+
+    public static String getFirstLetterUpperCase(String string) {
+        String upperCaseString = string;
+        upperCaseString = Character.toUpperCase(upperCaseString.charAt(0)) + upperCaseString.substring(1);
+        return upperCaseString;
+    }
 }

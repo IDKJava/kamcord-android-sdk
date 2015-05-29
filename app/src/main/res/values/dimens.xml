@@ -3,9 +3,14 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="grid_margin">3dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+    <dimen name="cardCornerRadius">2dp</dimen>
     <dimen name="tabsHeight">56dp</dimen>
     <dimen name="refreshEnd">100dp</dimen>
     <dimen name="uploadProgressSize">3dp</dimen>
     <dimen name="griditem_width">150dp</dimen>
     <dimen name="suggest_item_margin">5dp</dimen>
+
+    <dimen name="cardview_standardmargin">16dp</dimen>
+    <dimen name="cardview_lightermargin">8dp</dimen>
 </resources>

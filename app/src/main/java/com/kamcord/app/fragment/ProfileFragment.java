@@ -1,12 +1,13 @@
 package com.kamcord.app.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,58 +15,143 @@ import android.widget.Button;
 
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
-import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.adapter.ProfileAdapter;
+import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
-import com.kamcord.app.server.model.ProfileItem;
+import com.kamcord.app.server.model.GenericResponse;
+import com.kamcord.app.server.model.PaginatedVideoList;
+import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.view.SpaceItemDecoration;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by donliang1 on 5/6/15.
  */
-public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
-
-    private static final String KAMCORD_DOMAIN = "kamcord.com";
-    private static final String KAMCORD_PROFILE_BASE_URL = "https://www." + KAMCORD_DOMAIN + "/profile/";
-    private static final Pattern domainPattern = Pattern.compile(".*?([^.]+\\.[^.]+)$");
+public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemClickListener {
 
     @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
     @InjectView(R.id.signInPromptButton) Button signInPromptButton;
-    @InjectView(R.id.swipeRefreshLayout) SwipeRefreshLayout viewRefreshLayout;
+    @InjectView(R.id.profilefragment_refreshlayout) SwipeRefreshLayout videoFeedRefreshLayout;
 
     @InjectView(R.id.profile_recyclerview) RecyclerView profileRecyclerView;
-    private List<ProfileItem> mProfileList;
+    private List<Video> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
+    private RecordFragment.RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.profile_tab, container, false);
-
         ButterKnife.inject(this, root);
-
-        viewRefreshLayout.setEnabled(false);
-        viewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
-        viewRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-
-
-        mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
-        mProfileAdapter.setOnItemClickListener(this);
-        profileRecyclerView.setAdapter(mProfileAdapter);
+        initKamcordProfileFragment(root);
 
         return root;
     }
 
     @Override
-    public void onItemClick(View view, int position) {
+    public void onAttach(Activity activity)
+    {
+        super.onAttach(activity);
+        if( activity instanceof RecordFragment.RecyclerViewScrollListener)
+        {
+            onRecyclerViewScrollListener = (RecordFragment.RecyclerViewScrollListener) activity;
+        }
+    }
 
+    public void initKamcordProfileFragment(View view) {
+        profileRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin)));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
+        mProfileAdapter.setOnItemClickListener(this);
+        profileRecyclerView.setLayoutManager(layoutManager);
+        profileRecyclerView.setAdapter(mProfileAdapter);
+
+        if( AccountManager.isLoggedIn() )
+        {
+            Account myAccount = AccountManager.getStoredAccount();
+            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+        }
+
+        videoFeedRefreshLayout.setEnabled(false);
+        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+
+        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                videoFeedRefreshLayout.setRefreshing(true);
+                Log.d("dsdsds", "refreshing");
+                if (AccountManager.isLoggedIn()) {
+                    Account myAccount = AccountManager.getStoredAccount();
+                    if(myAccount != null && myAccount.id != null) {
+                        AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+                    }
+                }
+            }
+        });
+
+        profileRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int state) {
+                if (onRecyclerViewScrollListener != null) {
+                    onRecyclerViewScrollListener.onRecyclerViewScrollStateChanged(recyclerView, state);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (profileRecyclerView.getChildAt(0) != null) {
+                    int gridMargin = getResources().getDimensionPixelSize(R.dimen.grid_margin);
+                    int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
+                    videoFeedRefreshLayout.setEnabled(profileRecyclerView.getChildAdapterPosition(profileRecyclerView.getChildAt(0)) == 0
+                            && profileRecyclerView.getChildAt(0).getTop() == gridMargin + tabsHeight);
+                } else {
+                    videoFeedRefreshLayout.setEnabled(true);
+                }
+
+                if (onRecyclerViewScrollListener != null) {
+                    onRecyclerViewScrollListener.onRecyclerViewScrolled(recyclerView, dy, dy);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        if(mProfileList.size() != 0) {
+            Video videoGetClicked = mProfileList.get(position);
+        }
+    }
+
+    private class GetUserVideoFeedCallBack implements Callback<GenericResponse<PaginatedVideoList>> {
+        @Override
+        public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
+            if (paginatedVideoListGenericResponse != null
+                    && paginatedVideoListGenericResponse.response != null
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                mProfileList.clear();
+                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                    mProfileList.add(video);
+                }
+                mProfileAdapter.notifyDataSetChanged();
+                videoFeedRefreshLayout.setEnabled(false);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+        }
     }
 
     @Override
@@ -79,23 +165,22 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     public void onResume()
     {
         super.onResume();
-
-        if(AccountManager.isLoggedIn()) {
-            signInPromptContainer.setVisibility(View.GONE);
-
-            viewRefreshLayout.setEnabled(false);
-            viewRefreshLayout.setOnRefreshListener(this);
-            viewRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    viewRefreshLayout.setRefreshing(true);
-                }
-            });
-        }
-        else
-        {
+//        if(AccountManager.isLoggedIn()) {
+//            signInPromptContainer.setVisibility(View.GONE);
+//
+//            viewRefreshLayout.setEnabled(false);
+//            viewRefreshLayout.setOnRefreshListener(this);
+//            viewRefreshLayout.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    viewRefreshLayout.setRefreshing(true);
+//                }
+//            });
+//        }
+//        else
+//        {
 //            signInPromptContainer.setVisibility(View.VISIBLE);
-        }
+//        }
     }
 
     @OnClick(R.id.signInPromptButton)
@@ -106,27 +191,21 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         getActivity().finish();
     }
 
-    @Override
-    public void onRefresh() {
-        viewRefreshLayout.setEnabled(false);
-        if (AccountManager.isLoggedIn()) {
-            Account account = AccountManager.getStoredAccount();
-            Activity activity = getActivity();
-            if( activity instanceof RecordActivity )
-            {
-                ((RecordActivity) activity).showToolbar();
-            }
-            viewRefreshLayout.setRefreshing(true);
-        }
-        else {
-            viewRefreshLayout.setRefreshing(false);
-        }
-    }
+//    @Override
+//    public void onRefresh() {
+//        videoFeedRefreshLayout.setEnabled(false);
+//        if (AccountManager.isLoggedIn()) {
+//            Account account = AccountManager.getStoredAccount();
+//            Activity activity = getActivity();
+//            if( activity instanceof RecordActivity )
+//            {
+//                ((RecordActivity) activity).showToolbar();
+//            }
+//            videoFeedRefreshLayout.setRefreshing(true);
+//        }
+//        else {
+//            videoFeedRefreshLayout.setRefreshing(false);
+//        }
+//    }
 
-    private static float pxToDp(float px, Context context) {
-        if( context != null ) {
-            return px / context.getResources().getDisplayMetrics().density;
-        }
-        return px;
-    }
 }

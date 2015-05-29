@@ -18,5 +18,6 @@
     <color name="TermsHighLighted">#353e44</color>
 
     <color name="transparentWhite">#9fff</color>
+    <color name="TextViewBackgroundColor">#a4a4a4</color>
 
 </resources>

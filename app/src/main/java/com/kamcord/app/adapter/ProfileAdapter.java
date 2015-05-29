@@ -9,7 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
-import com.kamcord.app.server.model.ProfileItem;
+import com.kamcord.app.server.model.Video;
+import com.kamcord.app.utils.StringUtils;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -22,10 +24,10 @@ import butterknife.InjectView;
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<ProfileItem> mProfileList;
+    private List<Video> mProfileList;
     private static OnItemClickListener mItemClickListener;
 
-    public ProfileAdapter(Context context, List<ProfileItem> mProfileList) {
+    public ProfileAdapter(Context context, List<Video> mProfileList) {
         this.mContext = context;
         this.mProfileList = mProfileList;
     }
@@ -41,10 +43,16 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-        ProfileItem profileItem = getItem(position);
-        viewHolder.profileItemTitle.setText("Kamcord Title");
-        viewHolder.profileItemAuthor.setText("Don@Kamcord");
+        Video profileItem = getItem(position);
+        viewHolder.profileItemTitle.setText(StringUtils.getFirstLetterUpperCase(profileItem.title));
+        viewHolder.profileItemAuthor.setText(mContext.getResources().getString(R.string.videoFeedAuthorHelper) + profileItem.username);
+        viewHolder.videoLikes.setText("Likes: " + Integer.toString(profileItem.likes));
+        viewHolder.videoComments.setText("Comments: " + Integer.toString(profileItem.comments));
+        viewHolder.videoViews.setText("Views: " + Integer.toString(profileItem.views));
         // Picasso
+        Picasso.with(mContext)
+                .load(profileItem.thumbnails.regular)
+                .into(viewHolder.profileItemThumbnail);
     }
 
     @Override
@@ -52,7 +60,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         return mProfileList.size();
     }
 
-    public ProfileItem getItem(int position) {
+    public Video getItem(int position) {
         return mProfileList.get(position);
     }
 
@@ -61,6 +69,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         @InjectView(R.id.profile_item_title) TextView profileItemTitle;
         @InjectView(R.id.profile_item_author) TextView profileItemAuthor;
         @InjectView(R.id.profile_item_thumbnail) ImageView profileItemThumbnail;
+        @InjectView(R.id.video_likes) TextView videoLikes;
+        @InjectView(R.id.video_comments) TextView videoComments;
+        @InjectView(R.id.video_views) TextView videoViews;
 
         public ViewHolder(final View itemLayoutView) {
             super(itemLayoutView);

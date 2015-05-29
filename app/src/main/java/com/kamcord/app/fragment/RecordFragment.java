@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,7 +47,6 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
     private static final String TAG = RecordFragment.class.getSimpleName();
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
-    private GridLayoutManager gridLayoutManager;
 
     private List<Game> mSupportedGameList = new ArrayList<>();
     private RecyclerViewScrollListener onRecyclerViewScrollListener;

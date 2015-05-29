@@ -7,7 +7,7 @@
     android:clipToPadding="false">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+        android:id="@+id/profilefragment_refreshlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
@@ -21,6 +21,7 @@
             android:clipToPadding="false"
             android:paddingTop="@dimen/tabsHeight"
             android:scrollbars="vertical" />
+
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
@@ -31,7 +32,8 @@
         android:clipToPadding="false"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:visibility="invisible">
 
         <TextView
             android:layout_width="wrap_content"
