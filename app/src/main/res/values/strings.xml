@@ -82,5 +82,8 @@
     <string name="sincerely">Sincerely, %s</string>
 
     <string name="videoFeedAuthorHelper">By&#160;</string>
+    <string name="title_activity_profile_video_view">ProfileVideoViewActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

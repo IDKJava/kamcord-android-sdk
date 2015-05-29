@@ -15,6 +15,7 @@ import android.widget.Button;
 
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
+import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.ProfileAdapter;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
@@ -44,6 +45,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     @InjectView(R.id.profilefragment_refreshlayout) SwipeRefreshLayout videoFeedRefreshLayout;
     @InjectView(R.id.profile_recyclerview) RecyclerView profileRecyclerView;
 
+    public static final String M3U8_VIDEO_PATH = "profilevideo";
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<Video> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
@@ -131,6 +133,9 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     public void onItemClick(View view, int position) {
         if(mProfileList.size() != 0) {
             Video videoGetClicked = mProfileList.get(position);
+            Intent intent = new Intent(getActivity(), ProfileVideoViewActivity.class);
+            intent.putExtra(M3U8_VIDEO_PATH, videoGetClicked.video_url);
+            startActivity(intent);
         }
     }
 

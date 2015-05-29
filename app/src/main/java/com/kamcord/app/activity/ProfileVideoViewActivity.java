@@ -1,0 +1,46 @@
+package com.kamcord.app.activity;
+
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.MediaController;
+import android.widget.VideoView;
+
+import com.kamcord.app.R;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+public class ProfileVideoViewActivity extends AppCompatActivity {
+
+    public static final String M3U8_VIDEO_PATH = "profilevideo";
+
+    @InjectView(R.id.profile_videoview) VideoView myVideoView;
+    private String url;
+    private MediaController mediaController;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile_video_view);
+        ButterKnife.inject(this);
+
+        url = getIntent().getExtras().getString(M3U8_VIDEO_PATH);
+        if(mediaController == null) {
+            mediaController = new MediaController(this);
+            try {
+                myVideoView.setMediaController(mediaController);
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        if(url != null) {
+            myVideoView.setVideoURI(Uri.parse(url));
+            myVideoView.start();
+            myVideoView.requestFocus();
+        }
+
+    }
+}
