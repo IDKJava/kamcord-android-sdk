@@ -31,6 +31,7 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
+import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.VideoUtils;
 
 import java.io.File;
@@ -53,8 +54,6 @@ public class ShareFragment extends Fragment {
     Button shareButton;
     @InjectView(R.id.titleEditText)
     EditText titleEditText;
-    @InjectView(R.id.descriptionEditText)
-    EditText descriptionEditText;
     @InjectView(R.id.videoDurationTextView)
     TextView videoDurationTextView;
     @InjectView(R.id.processingProgressBarContainer)
@@ -89,6 +88,7 @@ public class ShareFragment extends Fragment {
         public void onMergeSuccess(RecordingSession recordingSession) {
             videoPrepared(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                     FileSystemManager.MERGED_VIDEO_FILENAME));
+            FileSystemManager.deleteUnmerged(recordingSession);
         }
 
         @Override
@@ -96,6 +96,7 @@ public class ShareFragment extends Fragment {
             // TODO: show the user something about failing to process the video.
         }
     };
+    private StitchClipsThread stitchClipsThread;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -122,7 +123,7 @@ public class ShareFragment extends Fragment {
         } else {
             processingProgressBarContainer.setVisibility(View.VISIBLE);
             playImageView.setVisibility(View.GONE);
-            StitchClipsThread stitchClipsThread = new StitchClipsThread(recordingSession,
+            stitchClipsThread = new StitchClipsThread(recordingSession,
                     getActivity().getApplicationContext(),
                     stitchSuccessListener);
             stitchClipsThread.start();
@@ -130,9 +131,10 @@ public class ShareFragment extends Fragment {
         return root;
     }
 
-    @OnTouch({R.id.titleEditText, R.id.descriptionEditText})
+    @OnTouch(R.id.titleEditText)
     public boolean scrollToBottom() {
         scrollView.smoothScrollTo(0, scrollView.getBottom());
+        KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
         return false;
     }
 
@@ -140,6 +142,10 @@ public class ShareFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+        if( stitchClipsThread != null )
+        {
+            stitchClipsThread.cancelStitching();
+        }
     }
 
     @OnClick(R.id.thumbnailImageView)
@@ -158,7 +164,6 @@ public class ShareFragment extends Fragment {
 
         if (AccountManager.isLoggedIn()) {
             recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
-            recordingSession.setVideoDescription(descriptionEditText.getEditableText().toString());
 
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
@@ -179,6 +184,7 @@ public class ShareFragment extends Fragment {
         }
         String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
         if (videoDurationTextView != null && videoDurationStr != null) {
+            videoDurationTextView.setVisibility(View.VISIBLE);
             videoDurationTextView.setText(videoDurationStr);
         }
         if (processingProgressBarContainer != null) {
@@ -211,6 +217,7 @@ public class ShareFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
                 getActivity().onBackPressed();
                 return true;
         }

@@ -79,11 +79,11 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                     .load(game.icons.regular)
                     .tag(game.play_store_id)
                     .into(notInstalledViewHolder.itemImage);
-            if (game.isInstalled) {
+        if (game.isInstalled) {
                 notInstalledViewHolder.installGameTextView.setVisibility(View.GONE);
-            } else {
+        } else {
                 notInstalledViewHolder.installGameTextView.setVisibility(View.VISIBLE);
-            }
+        }
 
         } else if( viewHolder instanceof InstalledViewHolder) {
             InstalledViewHolder firstInstalledViewHolder = (InstalledViewHolder) viewHolder;
@@ -102,7 +102,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                     if( mOnRecordButtonClickListener != null )
                     {
                         mOnRecordButtonClickListener.onRecordButtonClick(game);
-                    }
+    }
                 }
             });
         }
@@ -127,11 +127,11 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
             } else {
                 viewType = VIEW_TYPE_INSTALLED;
-            }
-        }
+                    }
+                }
 
         return viewType;
-    }
+        }
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);

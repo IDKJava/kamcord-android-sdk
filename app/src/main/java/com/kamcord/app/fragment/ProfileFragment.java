@@ -36,7 +36,9 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     private static final String KAMCORD_DOMAIN = "kamcord.com";
     private static final String KAMCORD_PROFILE_BASE_URL = "https://www." + KAMCORD_DOMAIN + "/profile/";
+    private static final String WEBVIEWSTATE = "webViewState";
     private static final Pattern domainPattern = Pattern.compile(".*?([^.]+\\.[^.]+)$");
+    private Bundle webViewBundle;
 
     @InjectView(R.id.webView) ObservableWebView webView;
     @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
@@ -48,6 +50,10 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         View root = inflater.inflate(R.layout.profile_tab, container, false);
 
         ButterKnife.inject(this, root);
+
+        if(savedInstanceState != null) {
+            webViewBundle = savedInstanceState.getBundle(WEBVIEWSTATE);
+        }
 
         webViewRefreshLayout.setEnabled(false);
         webViewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
@@ -70,6 +76,13 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        webViewBundle = new Bundle();
+        webView.saveState(webViewBundle);
+        savedInstanceState.putBundle(WEBVIEWSTATE, webViewBundle);
+    }
+
+    @Override
     public void onResume()
     {
         super.onResume();
@@ -77,38 +90,41 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         if(AccountManager.isLoggedIn()) {
             signInPromptContainer.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
-
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.setWebViewClient(new SameDomainWebViewClient(KAMCORD_DOMAIN));
-            webView.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                    WebView wv = (WebView) view;
-                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                            && keyCode == KeyEvent.KEYCODE_BACK
-                            && wv.canGoBack()) {
-                        Activity activity = getActivity();
-                        if( activity instanceof RecordActivity )
-                        {
-                            ((RecordActivity) activity).showToolbar();
+            if(webViewBundle != null) {
+                webView.restoreState(webViewBundle);
+            } else {
+                webView.getSettings().setJavaScriptEnabled(true);
+                webView.setWebViewClient(new SameDomainWebViewClient(KAMCORD_DOMAIN));
+                webView.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                        WebView wv = (WebView) view;
+                        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
+                                && keyCode == KeyEvent.KEYCODE_BACK
+                                && wv.canGoBack()) {
+                            Activity activity = getActivity();
+                            if( activity instanceof RecordActivity )
+                            {
+                                ((RecordActivity) activity).showToolbar();
+                            }
+                            wv.goBack();
+                            return true;
                         }
-                        wv.goBack();
-                        return true;
+                        return false;
                     }
-                    return false;
-                }
-            });
+                });
 
-            webViewRefreshLayout.setEnabled(false);
-            webViewRefreshLayout.setOnRefreshListener(this);
-            webViewRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    webViewRefreshLayout.setRefreshing(true);
-                }
-            });
+                webViewRefreshLayout.setEnabled(false);
+                webViewRefreshLayout.setOnRefreshListener(this);
+                webViewRefreshLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        webViewRefreshLayout.setRefreshing(true);
+                    }
+                });
 
-            webView.loadUrl(KAMCORD_PROFILE_BASE_URL + AccountManager.getStoredAccount().username);
+                webView.loadUrl(KAMCORD_PROFILE_BASE_URL + AccountManager.getStoredAccount().username);
+            }
         }
         else
         {
@@ -165,19 +181,22 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
                     ((RecordActivity) activity).showToolbar();
                 }
             }
-            return !hasThisDomain(uri);
+            return override;
         }
 
         @Override
         public void onPageFinished(WebView webView, String url)
         {
-            webViewRefreshLayout.setEnabled(true);
-            webViewRefreshLayout.setRefreshing(false);
-            int px = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
-            int dp = Math.round(pxToDp(px, getActivity()));
+            if( isResumed() ) {
+                ((RecordActivity) getActivity()).showToolbar();
+                webViewRefreshLayout.setEnabled(true);
+                webViewRefreshLayout.setRefreshing(false);
+                int px = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
+                int dp = Math.round(pxToDp(px, getActivity()));
 
-            String js = String.format("document.body.style.marginTop= \"%dpx\"", dp);
-            webView.evaluateJavascript(js, null);
+                String js = String.format("document.body.style.marginTop= \"%dpx\"", dp);
+                webView.evaluateJavascript(js, null);
+            }
         }
 
         private boolean hasThisDomain(Uri uri)

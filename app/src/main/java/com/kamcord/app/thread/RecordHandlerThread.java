@@ -2,6 +2,7 @@ package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
 import android.app.KeyguardManager;
+import android.app.Notification;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -19,9 +20,11 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.FileSystemManager;
+import com.kamcord.app.utils.NotificationUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +40,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private Context mContext;
     private Handler mHandler;
     private Surface mSurface;
+    private Notification.Builder notificationBuilder;
 
     private MediaMuxer mMuxer;
     private MediaCodec mVideoEncoder;
@@ -106,6 +110,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
                 mHandler.sendEmptyMessage(Message.POLL);
+                NotificationUtils.updateNotification(mContext.getResources().getString(R.string.paused));
                 break;
 
             case Message.POLL:
@@ -115,6 +120,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 } else {
                     mHandler.removeMessages(Message.RECORD_CLIP);
                     mHandler.sendEmptyMessage(Message.RECORD_CLIP);
+                    NotificationUtils.updateNotification(mContext.getResources().getString(R.string.recording));
                 }
                 break;
 
@@ -311,6 +317,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                         presentationStartUs = mVideoBufferInfo.presentationTimeUs;
                     }
                     mMuxerWrite = true;
+                    mRecordingSession.setRecordedFrames(true);
                 }
 
                 mVideoEncoder.releaseOutputBuffer(encoderStatus, false);
@@ -334,6 +341,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mMuxer.release();
             mMuxer = null;
             mMuxerStart = false;
+            mMuxerWrite = false;
         }
         if (mVideoEncoder != null) {
             mVideoEncoder.stop();

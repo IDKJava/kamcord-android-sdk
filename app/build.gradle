@@ -23,15 +23,29 @@ android {
         applicationId "com.kamcord.app"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 1
-        versionName "0.1"
+        versionCode 2
+        versionName "0.1.1"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+    productFlavors {
+
+    }
+
+    lintOptions {
+        warning 'InvalidPackage'
+    }
+
 }
 
 //repositories {
@@ -42,7 +56,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:recyclerview-v7:+'
     compile 'com.android.support:cardview-v7:22.0.0'
     compile 'com.github.hiteshsondhi88.libffmpeg:FFmpegAndroid:0.2.5'
@@ -53,8 +67,15 @@ dependencies {
     compile 'com.jakewharton:butterknife:6.1.0'
     // compile 'com.kamcord:app-server-models:1.0.1'
     compile files('libs/FlurryAnalytics-5.5.0.jar')
-    compile('com.crashlytics.sdk.android:crashlytics:2.2.4@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.3.0@aar') {
         transitive = true;
     }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+    
+    // Testing-only dependencies
+    androidTestCompile 'com.android.support.test:runner:0.2'
+    // UiAutomator Testing
+    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.0'
+    androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
+
 }

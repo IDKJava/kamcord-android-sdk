@@ -40,6 +40,33 @@ public class StitchClipsThread extends Thread {
         this.listener = listener;
     }
 
+    private Runnable executionSteps[] = new Runnable[]{
+            new Runnable() {
+                @Override
+                public void run() {
+                    writeClipFiles();
+                }
+            },
+            new Runnable() {
+                @Override
+                public void run() {
+                    stitchAudioClips();
+                }
+            },
+            new Runnable() {
+                @Override
+                public void run() {
+                    stitchVideoClips();
+                }
+            },
+            new Runnable() {
+                @Override
+                public void run() {
+                    mergeAudioAndVideoClips();
+                }
+            }
+    };
+
     @Override
     public void run() {
         mFFmpeg = FFmpeg.getInstance(ffMpegContext);
@@ -49,15 +76,18 @@ public class StitchClipsThread extends Thread {
             e.printStackTrace();
         }
 
-        writeClipFiles();
+        for (int i = 0; i < executionSteps.length && !cancelled; i++) {
+            executionSteps[i].run();
+        }
 
+        handleCancelled();
+    }
+
+    private void stitchVideoClips()
+    {
         File recordingSessionCacheDirectory = FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession);
         File videoClipListFile = new File(recordingSessionCacheDirectory, FileSystemManager.VIDEO_CLIPLIST_FILENAME);
-        File audioClipListFile = new File(recordingSessionCacheDirectory, FileSystemManager.AUDIO_CLIPLIST_FILENAME);
         File stitchedVideoFile = new File(recordingSessionCacheDirectory, FileSystemManager.STITCHED_VIDEO_FILENAME);
-        File stitchedAudioFile = new File(recordingSessionCacheDirectory, FileSystemManager.STITCHED_AUDIO_FILENAME);
-        File mergedFile = new File(recordingSessionCacheDirectory, FileSystemManager.MERGED_VIDEO_FILENAME);
-
         stitchClips(videoClipListFile, stitchedVideoFile, new ExecuteBinaryResponseHandler() {
             @Override
             public void onSuccess(String message) {
@@ -73,7 +103,13 @@ public class StitchClipsThread extends Thread {
                 }
             }
         });
+    }
 
+    private void stitchAudioClips()
+    {
+        File recordingSessionCacheDirectory = FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession);
+        File audioClipListFile = new File(recordingSessionCacheDirectory, FileSystemManager.AUDIO_CLIPLIST_FILENAME);
+        File stitchedAudioFile = new File(recordingSessionCacheDirectory, FileSystemManager.STITCHED_AUDIO_FILENAME);
         stitchClips(audioClipListFile, stitchedAudioFile, new ExecuteBinaryResponseHandler() {
             @Override
             public void onSuccess(String message) {
@@ -89,7 +125,14 @@ public class StitchClipsThread extends Thread {
                 }
             }
         });
+    }
 
+    private void mergeAudioAndVideoClips()
+    {
+        File recordingSessionCacheDirectory = FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession);
+        File stitchedVideoFile = new File(recordingSessionCacheDirectory, FileSystemManager.STITCHED_VIDEO_FILENAME);
+        File stitchedAudioFile = new File(recordingSessionCacheDirectory, FileSystemManager.STITCHED_AUDIO_FILENAME);
+        File mergedFile = new File(recordingSessionCacheDirectory, FileSystemManager.MERGED_VIDEO_FILENAME);
         mergeVideoAndAudio(stitchedVideoFile, stitchedAudioFile, mergedFile, new ExecuteBinaryResponseHandler() {
             @Override
             public void onSuccess(String message) {
@@ -136,8 +179,8 @@ public class StitchClipsThread extends Thread {
                     FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
                     FileSystemManager.AUDIO_CLIPLIST_FILENAME);
 
-            writeFileNamesWithExtensionToFile(videoClipListFile, recordingSessionCacheDirectory, "video[0-9][0-9][0-9].mp4");
-            writeFileNamesWithExtensionToFile(audioClipListFile, recordingSessionCacheDirectory, "audio[0-9][0-9][0-9].mp4");
+            writeFileNamesWithExtensionToFile(videoClipListFile, recordingSessionCacheDirectory, FileSystemManager.VIDEO_CLIP_REGEX);
+            writeFileNamesWithExtensionToFile(audioClipListFile, recordingSessionCacheDirectory, FileSystemManager.AUDIO_CLIP_REGEX);
         } catch (IOException iox) {
             iox.printStackTrace();
         }
@@ -151,5 +194,21 @@ public class StitchClipsThread extends Thread {
             }
         }
         fileWriter.close();
+    }
+
+    private volatile boolean cancelled = false;
+    public void cancelStitching() {
+        cancelled = true;
+        listener = null;
+        mFFmpeg.killRunningProcesses();
+    }
+
+    private void handleCancelled()
+    {
+        if( cancelled )
+        {
+            // If we were cancelled in the middle of execution, let's just nuke the recording session.
+            FileSystemManager.cleanRecordingSessionCacheDirectory(mRecordingSession);
+        }
     }
 }

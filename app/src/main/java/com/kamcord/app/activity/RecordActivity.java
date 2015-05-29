@@ -9,7 +9,7 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -53,7 +53,7 @@ import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
-public class RecordActivity extends ActionBarActivity implements
+public class RecordActivity extends AppCompatActivity implements
         RecordFragment.SelectedGameListener,
         RecordFragment.RecyclerViewScrollListener,
         ObservableWebView.ObservableWebViewScrollListener,
@@ -108,6 +108,7 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     public void onResume() {
         super.onResume();
+        this.invalidateOptionsMenu();
         handleServiceRunning();
     }
 
@@ -124,7 +125,7 @@ public class RecordActivity extends ActionBarActivity implements
 
         setSupportActionBar(mToolbar);
         mToolbar.setTitle(getString(R.string.app_name));
-        mToolbar.setLogo(R.drawable.toolbar_icon);
+        mToolbar.setLogo(R.drawable.kamcord_tabbar_icon);
 
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
@@ -148,7 +149,7 @@ public class RecordActivity extends ActionBarActivity implements
 
             @Override
             public void onPageSelected(int position) {
-            }
+                }
 
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -157,7 +158,7 @@ public class RecordActivity extends ActionBarActivity implements
                 }
             }
         });
-        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview);
+        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview_layout);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
@@ -177,21 +178,28 @@ public class RecordActivity extends ActionBarActivity implements
         controlsVisible = true;
     }
 
-    @OnClick(R.id.main_fab)
+    @OnClick(R.id.record_button)
     public void floatingActionButtonClicked() {
         if (!RecordingService.isRunning()) {
             if (mSelectedGame != null) {
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+                mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
+                obtainMediaProjection();
 
             } else {
-                Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT).show();
+                if( fabRecordingToast != null )
+                {
+                    fabRecordingToast.cancel();
+                }
+                fabRecordingToast = Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT);
+                fabRecordingToast.show();
             }
         } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
             stopService(new Intent(this, RecordingService.class));
-
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
-            if (recordingSession != null) {
+            if (recordingSession != null && recordingSession.hasRecordedFrames()) {
                 FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
                 ShareFragment recordShareFragment = new ShareFragment();
                 Bundle bundle = new Bundle();
@@ -199,7 +207,7 @@ public class RecordActivity extends ActionBarActivity implements
                 recordShareFragment.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                        .add(R.id.main_activity_layout, recordShareFragment)
+                        .add(R.id.activity_mdrecord_layout, recordShareFragment)
                         .addToBackStack("ShareFragment").commit();
             } else {
                 // TODO: show the user something about being unable to get the recording session.
@@ -247,9 +255,11 @@ public class RecordActivity extends ActionBarActivity implements
 
     private void handleServiceRunning() {
         if (RecordingService.isRunning()) {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
         } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_36dp);
+            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
         }
     }
 
@@ -297,6 +307,7 @@ public class RecordActivity extends ActionBarActivity implements
 
     @Override
     public void onUploadStart(final RecordingSession recordingSession) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -310,9 +321,11 @@ public class RecordActivity extends ActionBarActivity implements
             }
         });
     }
+    }
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, final float progress) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -327,9 +340,11 @@ public class RecordActivity extends ActionBarActivity implements
             }
         });
     }
+    }
 
     @Override
     public void onUploadFinish(final RecordingSession recordingSession, final boolean success) {
+        if (uploadProgress != null) {
         uploadProgress.post(new Runnable() {
             @Override
             public void run() {
@@ -347,6 +362,7 @@ public class RecordActivity extends ActionBarActivity implements
             }
         });
     }
+    }
 
     @Override
     public void onDestroy() {
@@ -357,10 +373,17 @@ public class RecordActivity extends ActionBarActivity implements
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_record, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
         optionsMenu = menu;
+        MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
         if (!AccountManager.isLoggedIn()) {
-            MenuItem signoutItem = optionsMenu.getItem(1);
             signoutItem.setVisible(false);
+        } else {
+            signoutItem.setVisible(true);
         }
         return true;
     }
@@ -374,11 +397,7 @@ public class RecordActivity extends ActionBarActivity implements
             }
             case R.id.action_signout: {
                 if (AccountManager.isLoggedIn()) {
-                    AccountManager.clearStoredAccount();
                     AppServerClient.getInstance().logout(logoutCallback);
-                    Intent loginIntent = new Intent(this, LoginActivity.class);
-                    startActivity(loginIntent);
-                    finish();
                 }
                 break;
             }
@@ -409,10 +428,18 @@ public class RecordActivity extends ActionBarActivity implements
     private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
+            AccountManager.clearStoredAccount();
+            Intent loginIntent = new Intent(RecordActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
         }
 
         @Override
         public void failure(RetrofitError error) {
+            AccountManager.clearStoredAccount();
+            Intent loginIntent = new Intent(RecordActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish();
         }
     };
 }

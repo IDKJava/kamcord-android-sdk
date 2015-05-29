@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:id="@+id/service_facecam_layout">
 
     <!--<SurfaceView-->
         <!--android:id="@+id/surfaceview"-->
@@ -15,7 +16,6 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/imageView2"
-        android:src="@drawable/pa_rabbit"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 

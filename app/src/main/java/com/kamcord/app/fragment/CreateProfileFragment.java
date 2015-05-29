@@ -164,69 +164,75 @@ public class CreateProfileFragment extends Fragment {
     {
         @Override
         public void success(GenericResponse<Account> accountWrapper, Response response) {
-            if( accountWrapper != null
-                    && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
-                    && accountWrapper.response != null
-                    && isResumed())
-            {
-                FlurryAgent.logEvent(getResources().getString(R.string.flurryCreateProfile));
-                AccountManager.setStoredAccount(accountWrapper.response);
-                Intent intent = new Intent(getActivity(), RecordActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                getActivity().finish();
-            }
-            else
-            {
-                handleLoginFailure(accountWrapper);
+            if( isResumed() ) {
+                if( accountWrapper != null
+                        && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
+                        && accountWrapper.response != null
+                        && isResumed())
+                {
+                    FlurryAgent.logEvent(getResources().getString(R.string.flurryCreateProfile));
+                    AccountManager.setStoredAccount(accountWrapper.response);
+                    Intent intent = new Intent(getActivity(), RecordActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+                else
+                {
+                    handleLoginFailure(accountWrapper);
+                }
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
-            handleLoginFailure(null);
+            if( isResumed() ) {
+                handleLoginFailure(null);
+            }
         }
     };
 
     Callback<GenericResponse<UserErrorCode>> validateUsernameCallback = new Callback<GenericResponse<UserErrorCode>>() {
         @Override
         public void success(GenericResponse<UserErrorCode> responseWrapper, Response response) {
-            if( responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
-                    && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
-                    && isResumed())
-            {
-                usernameEditText.setError(null);
-            }
-            else
-            {
-                handleInvalidUsername(responseWrapper);
+            if( isResumed() ) {
+                if (responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
+                        && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
+                        && isResumed()) {
+                    usernameEditText.setError(null);
+                } else {
+                    handleInvalidUsername(responseWrapper);
+                }
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
-            usernameEditText.setError(null);
+            if( isResumed() ) {
+                usernameEditText.setError(null);
+            }
         }
     };
 
     Callback<GenericResponse<UserErrorCode>> validateEmailCallback = new Callback<GenericResponse<UserErrorCode>>() {
         @Override
         public void success(GenericResponse<UserErrorCode> responseWrapper, Response response) {
-            if( responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
-                    && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
-                    && isResumed())
-            {
-                emailEditText.setError(null);
-            }
-            else
-            {
-                handleInvalidEmail(responseWrapper);
+            if( isResumed() ) {
+                if (responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
+                        && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
+                        && isResumed()) {
+                    emailEditText.setError(null);
+                } else {
+                    handleInvalidEmail(responseWrapper);
+                }
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
-            emailEditText.setError(null);
+            if( isResumed() ) {
+                emailEditText.setError(null);
+            }
         }
     };
 }
