@@ -1,18 +1,14 @@
 package com.kamcord.app.activity;
 
 import android.animation.ObjectAnimator;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.media.projection.MediaProjection;
-import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,10 +25,7 @@ import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
-import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
-import com.kamcord.app.service.RecordingService;
-import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
@@ -50,12 +43,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class RecordActivity extends AppCompatActivity implements
-        RecordFragment.SelectedGameListener,
         RecordFragment.RecyclerViewScrollListener,
         ObservableWebView.ObservableWebViewScrollListener,
         Uploader.UploadStatusListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
-    private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
     @InjectView(R.id.main_pager) ViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
@@ -68,9 +59,6 @@ public class RecordActivity extends AppCompatActivity implements
     private int numberOfTabs;
 
     private Menu optionsMenu;
-
-    private Game mSelectedGame = null;
-    private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
 
     private static final int HIDE_THRESHOLD = 20;
     private boolean controlsVisible = true;
@@ -95,9 +83,6 @@ public class RecordActivity extends AppCompatActivity implements
     @Override
     protected void onStart() {
         super.onStart();
-        if (RecordingService.isRunning()) {
-            bindService(new Intent(this, RecordingService.class), mRecordingServiceConnection, 0);
-        }
         Uploader.setUploadStatusListener(this);
     }
 
@@ -105,15 +90,11 @@ public class RecordActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
         this.invalidateOptionsMenu();
-        handleServiceRunning();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (mRecordingServiceConnection.isConnected()) {
-            unbindService(mRecordingServiceConnection);
-        }
         Uploader.setUploadStatusListener(null);
     }
 
@@ -172,95 +153,6 @@ public class RecordActivity extends AppCompatActivity implements
                 .translationY(0)
                 .setInterpolator(new DecelerateInterpolator(2));
         controlsVisible = true;
-    }
-
-    /*
-    @OnClick(R.id.record_button)
-    public void floatingActionButtonClicked() {
-        if (!RecordingService.isRunning()) {
-            if (mSelectedGame != null) {
-                mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
-                mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
-                obtainMediaProjection();
-
-            } else {
-                if( fabRecordingToast != null )
-                {
-                    fabRecordingToast.cancel();
-                }
-                fabRecordingToast = Toast.makeText(getApplicationContext(), R.string.selectAGame, Toast.LENGTH_SHORT);
-                fabRecordingToast.show();
-            }
-        } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
-            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
-            stopService(new Intent(this, RecordingService.class));
-            RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
-            if (recordingSession != null && recordingSession.hasRecordedFrames()) {
-                FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
-                ShareFragment recordShareFragment = new ShareFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
-                recordShareFragment.setArguments(bundle);
-                getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                        .add(R.id.activity_mdrecord_layout, recordShareFragment)
-                        .addToBackStack("ShareFragment").commit();
-            } else {
-                // TODO: show the user something about being unable to get the recording session.
-            }
-        }
-    }
-    */
-
-    @Override
-    public void onGameSelected(Game gameModel) {
-        mSelectedGame = gameModel;
-        obtainMediaProjection();
-    }
-
-    public void obtainMediaProjection() {
-        startActivityForResult(((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
-                .createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == MEDIA_PROJECTION_MANAGER_PERMISSION_CODE) {
-            if (mSelectedGame != null) {
-                try {
-                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
-                    FlurryAgent.logEvent(getResources().getString(R.string.flurryRecordStarted));
-                    startActivity(launchIntent);
-
-                    MediaProjection projection = ((MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE))
-                            .getMediaProjection(resultCode, data);
-                    RecordingSession recordingSession = new RecordingSession(mSelectedGame);
-                    mRecordingServiceConnection.initializeForRecording(projection, recordingSession);
-
-                    startService(new Intent(this, RecordingService.class));
-                    bindService(new Intent(this, RecordingService.class), mRecordingServiceConnection, 0);
-                } catch (ActivityNotFoundException e) {
-                    // TODO: show the user something about not finding the game.
-                    Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);
-                }
-            } else {
-                // TODO: show the user something about selecting a game.
-                Log.w("Kamcord", "Unable to start recording because user has not selected a game to record!");
-            }
-        }
-    }
-
-    private void handleServiceRunning() {
-        /*
-        if (RecordingService.isRunning()) {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
-            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
-        } else {
-            mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
-            mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
-        }
-        */
     }
 
     @Override

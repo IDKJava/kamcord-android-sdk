@@ -6,6 +6,9 @@ import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageButton;
 
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.viewholder.InstalledViewHolder;
@@ -42,8 +45,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         View itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed, null);
         RecyclerView.ViewHolder viewHolder = new NotInstalledViewHolder(itemLayoutView, mItemClickListener);
 
-        switch( viewType )
-        {
+        switch (viewType) {
             case VIEW_TYPE_FIRST_INSTALLED:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_first_installed, null);
                 viewHolder = new InstalledViewHolder(itemLayoutView);
@@ -69,42 +71,64 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-        final Game game = mGames.get(position);
+        Game game = mGames.get(position);
 
-        if( viewHolder instanceof NotInstalledViewHolder )
-        {
-            NotInstalledViewHolder notInstalledViewHolder = (NotInstalledViewHolder) viewHolder;
-            notInstalledViewHolder.itemPackageName.setText(game.name);
+        if (viewHolder instanceof NotInstalledViewHolder) {
+            bindNotInstalledViewHolder((NotInstalledViewHolder) viewHolder, game);
+
+        } else if (viewHolder instanceof InstalledViewHolder) {
+            bindFirstInstalledViewHolder((InstalledViewHolder) viewHolder, game);
+
+        }
+    }
+
+    private void bindNotInstalledViewHolder(NotInstalledViewHolder viewHolder, Game game)
+    {
+        viewHolder.itemPackageName.setText(game.name);
+        if( game.icons != null && game.icons.regular != null ) {
             Picasso.with(mContext)
                     .load(game.icons.regular)
                     .tag(game.play_store_id)
-                    .into(notInstalledViewHolder.itemImage);
-        if (game.isInstalled) {
-                notInstalledViewHolder.installGameTextView.setVisibility(View.GONE);
-        } else {
-                notInstalledViewHolder.installGameTextView.setVisibility(View.VISIBLE);
+                    .into(viewHolder.itemImage);
+        }
+    }
+
+    private void bindFirstInstalledViewHolder(InstalledViewHolder viewHolder, final Game game)
+    {
+        if( game.icons != null && game.icons.regular != null ) {
+            Picasso.with(mContext)
+                    .load(game.icons.regular)
+                    .tag(game.play_store_id)
+                    .into(viewHolder.gameThumbnailImageView);
         }
 
-        } else if( viewHolder instanceof InstalledViewHolder) {
-            InstalledViewHolder firstInstalledViewHolder = (InstalledViewHolder) viewHolder;
-            Picasso.with(mContext)
-                    .load(game.icons.regular)
-                    .tag(game.play_store_id)
-                    .into(firstInstalledViewHolder.gameThumbnailImageView);
-            firstInstalledViewHolder.gameNameTextView.setText(game.name);
-            firstInstalledViewHolder.gameFollowerCountTextView.setText(
-                    String.format(Locale.ENGLISH,
-                            mContext.getResources().getString(R.string.followersWithCount),
-                            game.number_of_followers));
-            firstInstalledViewHolder.recordImageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if( mOnRecordButtonClickListener != null )
-                    {
-                        mOnRecordButtonClickListener.onRecordButtonClick(game);
-    }
+        viewHolder.gameNameTextView.setText(game.name);
+        viewHolder.gameFollowerCountTextView.setText(
+                String.format(Locale.ENGLISH,
+                        mContext.getResources().getString(R.string.followersWithCount),
+                        game.number_of_followers));
+
+        ImageButton recordImageButton = viewHolder.recordImageButton;
+        recordImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mOnRecordButtonClickListener != null) {
+                    mOnRecordButtonClickListener.onRecordButtonClick(game);
                 }
-            });
+            }
+        });
+        if( game.isRecording ) {
+            recordImageButton.setBackgroundResource(R.drawable.fab_circle_red);
+            recordImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+            Animation animation = new AlphaAnimation(1f, 0.5f);
+            animation.setDuration(500);
+            animation.setRepeatCount(Animation.INFINITE);
+            animation.setRepeatMode(Animation.REVERSE);
+            recordImageButton.startAnimation(animation);
+        } else {
+            recordImageButton.setBackgroundResource(R.drawable.fab_circle);
+            recordImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            recordImageButton.clearAnimation();
         }
     }
 
@@ -127,11 +151,11 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
             } else {
                 viewType = VIEW_TYPE_INSTALLED;
-                    }
-                }
+            }
+        }
 
         return viewType;
-        }
+    }
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
