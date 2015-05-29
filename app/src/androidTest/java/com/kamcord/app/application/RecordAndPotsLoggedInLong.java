@@ -11,6 +11,8 @@ public class RecordAndPotsLoggedInLong extends RecordAndPostTestBase{
     public void recordRippleTestLoginFirstLong(){
         doLogin();
         //TODO: What do we do with the really long tests?
-        recordAndPostGameVideo(RIPPLE_TEST_APP_NAME, 10 * MS_PER_MIN);
+        int recordingDuration = 10 * MS_PER_MIN;
+        recordGameVideo(RIPPLE_TEST_APP_NAME, recordingDuration);
+        handleShareView(recordingDuration);
     }
 }
