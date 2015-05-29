@@ -42,8 +42,9 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
     @InjectView(R.id.signInPromptButton) Button signInPromptButton;
     @InjectView(R.id.profilefragment_refreshlayout) SwipeRefreshLayout videoFeedRefreshLayout;
-
     @InjectView(R.id.profile_recyclerview) RecyclerView profileRecyclerView;
+
+    private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<Video> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
     private RecordFragment.RecyclerViewScrollListener onRecyclerViewScrollListener;
@@ -67,7 +68,15 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         }
     }
 
+    @Override
+    public void onDetach()
+    {
+        super.onDetach();
+        onRecyclerViewScrollListener = null;
+    }
+
     public void initKamcordProfileFragment(View view) {
+
         profileRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin)));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -81,24 +90,6 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
             Account myAccount = AccountManager.getStoredAccount();
             AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
         }
-
-        videoFeedRefreshLayout.setEnabled(false);
-        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
-        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-
-        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                videoFeedRefreshLayout.setRefreshing(true);
-                Log.d("dsdsds", "refreshing");
-                if (AccountManager.isLoggedIn()) {
-                    Account myAccount = AccountManager.getStoredAccount();
-                    if(myAccount != null && myAccount.id != null) {
-                        AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
-                    }
-                }
-            }
-        });
 
         profileRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -114,10 +105,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
                 if (profileRecyclerView.getChildAt(0) != null) {
                     int gridMargin = getResources().getDimensionPixelSize(R.dimen.grid_margin);
                     int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
-                    videoFeedRefreshLayout.setEnabled(profileRecyclerView.getChildAdapterPosition(profileRecyclerView.getChildAt(0)) == 0
-                            && profileRecyclerView.getChildAt(0).getTop() == gridMargin + tabsHeight);
                 } else {
-                    videoFeedRefreshLayout.setEnabled(true);
                 }
 
                 if (onRecyclerViewScrollListener != null) {
@@ -125,6 +113,18 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
                 }
             }
         });
+
+        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                videoFeedRefreshLayout.setRefreshing(true);
+                Account myAccount = AccountManager.getStoredAccount();
+                AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+            }
+        });
+
     }
 
     @Override
@@ -145,12 +145,13 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
                     mProfileList.add(video);
                 }
                 mProfileAdapter.notifyDataSetChanged();
-                videoFeedRefreshLayout.setEnabled(false);
+                videoFeedRefreshLayout.setRefreshing(false);
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
+            Log.e(TAG, "  " + error.toString());
         }
     }
 
@@ -165,22 +166,15 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     public void onResume()
     {
         super.onResume();
-//        if(AccountManager.isLoggedIn()) {
-//            signInPromptContainer.setVisibility(View.GONE);
-//
-//            viewRefreshLayout.setEnabled(false);
-//            viewRefreshLayout.setOnRefreshListener(this);
-//            viewRefreshLayout.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    viewRefreshLayout.setRefreshing(true);
-//                }
-//            });
-//        }
-//        else
-//        {
-//            signInPromptContainer.setVisibility(View.VISIBLE);
-//        }
+        if(AccountManager.isLoggedIn()) {
+            signInPromptContainer.setVisibility(View.GONE);
+            Account myAccount = AccountManager.getStoredAccount();
+            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+        }
+        else
+        {
+            signInPromptContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     @OnClick(R.id.signInPromptButton)
@@ -190,22 +184,5 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         startActivity(intent);
         getActivity().finish();
     }
-
-//    @Override
-//    public void onRefresh() {
-//        videoFeedRefreshLayout.setEnabled(false);
-//        if (AccountManager.isLoggedIn()) {
-//            Account account = AccountManager.getStoredAccount();
-//            Activity activity = getActivity();
-//            if( activity instanceof RecordActivity )
-//            {
-//                ((RecordActivity) activity).showToolbar();
-//            }
-//            videoFeedRefreshLayout.setRefreshing(true);
-//        }
-//        else {
-//            videoFeedRefreshLayout.setRefreshing(false);
-//        }
-//    }
 
 }
