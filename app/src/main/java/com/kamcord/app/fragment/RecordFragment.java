@@ -162,7 +162,7 @@ public class RecordFragment extends Fragment implements
         if (game.isInstalled) {
             mSelectedGame = game;
             SelectedGameListener listener = (SelectedGameListener) getActivity();
-            listener.selectedGame(mSelectedGame);
+            listener.onGameSelected(mSelectedGame);
             if( startRecordingToast != null )
             {
                 startRecordingToast.cancel();

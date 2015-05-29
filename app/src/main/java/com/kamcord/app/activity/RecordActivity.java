@@ -19,8 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -28,7 +26,6 @@ import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
-import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
@@ -46,7 +43,6 @@ import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -178,6 +174,7 @@ public class RecordActivity extends AppCompatActivity implements
         controlsVisible = true;
     }
 
+    /*
     @OnClick(R.id.record_button)
     public void floatingActionButtonClicked() {
         if (!RecordingService.isRunning()) {
@@ -214,6 +211,7 @@ public class RecordActivity extends AppCompatActivity implements
             }
         }
     }
+    */
 
     @Override
     public void onGameSelected(Game gameModel) {
@@ -254,6 +252,7 @@ public class RecordActivity extends AppCompatActivity implements
     }
 
     private void handleServiceRunning() {
+        /*
         if (RecordingService.isRunning()) {
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
             mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle_red);
@@ -261,6 +260,7 @@ public class RecordActivity extends AppCompatActivity implements
             mFloatingActionButton.setImageResource(R.drawable.ic_videocam_white_48dp);
             mFloatingActionButton.setBackgroundResource(R.drawable.fab_circle);
         }
+        */
     }
 
     @Override
