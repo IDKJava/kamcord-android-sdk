@@ -46,7 +46,6 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     @InjectView(R.id.profilefragment_refreshlayout) SwipeRefreshLayout videoFeedRefreshLayout;
     @InjectView(R.id.profile_recyclerview) RecyclerView profileRecyclerView;
 
-    public static final String ARG_VIDEO_PATH = "video_path";
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<Video> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
@@ -105,10 +104,13 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (profileRecyclerView.getChildAt(0) == null) {
-                    videoFeedRefreshLayout.setEnabled(true);
+                if (profileRecyclerView.getChildAt(0) != null) {
+                    int cardMargin = getResources().getDimensionPixelSize(R.dimen.card_margin);
+                    int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
+                    videoFeedRefreshLayout.setEnabled(profileRecyclerView.getChildAdapterPosition(profileRecyclerView.getChildAt(0)) == 0
+                            && profileRecyclerView.getChildAt(0).getTop() == cardMargin + tabsHeight);
                 } else {
-
+                    videoFeedRefreshLayout.setEnabled(true);
                 }
 
                 if (onRecyclerViewScrollListener != null) {
@@ -135,7 +137,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         if(mProfileList.size() != 0) {
             Video videoGetClicked = mProfileList.get(position);
             Intent intent = new Intent(getActivity(), ProfileVideoViewActivity.class);
-            intent.putExtra(ARG_VIDEO_PATH, videoGetClicked.video_url);
+            intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, videoGetClicked.video_url);
             startActivity(intent);
         }
     }
