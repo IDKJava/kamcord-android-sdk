@@ -13,4 +13,5 @@
 
     <dimen name="cardview_standardmargin">16dp</dimen>
     <dimen name="cardview_lightermargin">8dp</dimen>
+    <dimen name="cardview_actionsize">24dp</dimen>
 </resources>

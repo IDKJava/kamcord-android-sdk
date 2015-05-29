@@ -46,7 +46,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         Video profileItem = getItem(position);
         viewHolder.profileItemTitle.setText(StringUtils.getFirstLetterUpperCase(profileItem.title));
         viewHolder.profileItemAuthor.setText(mContext.getResources().getString(R.string.videoFeedAuthorHelper) + profileItem.username);
-        viewHolder.videoLikes.setText("Likes: " + Integer.toString(profileItem.likes));
+        viewHolder.videoLikes.setText(Integer.toString(profileItem.likes));
         viewHolder.videoComments.setText("Comments: " + Integer.toString(profileItem.comments));
         viewHolder.videoViews.setText("Views: " + Integer.toString(profileItem.views));
         // Picasso

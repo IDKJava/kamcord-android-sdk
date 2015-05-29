@@ -152,6 +152,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
+            videoFeedRefreshLayout.setRefreshing(false);
         }
     }
 
