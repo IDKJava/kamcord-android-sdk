@@ -14,7 +14,10 @@ import android.widget.Button;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
+import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
+import com.kamcord.app.server.model.GenericResponse;
+import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.utils.AccountManager;
 
 import java.util.regex.Pattern;
@@ -22,6 +25,9 @@ import java.util.regex.Pattern;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by donliang1 on 5/6/15.
@@ -45,6 +51,20 @@ public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRe
         viewRefreshLayout.setEnabled(false);
         viewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         viewRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+
+        if( AccountManager.isLoggedIn() )
+        {
+            Account myAccount = AccountManager.getStoredAccount();
+            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new Callback<GenericResponse<PaginatedVideoList>>() {
+                @Override
+                public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                }
+            });
+        }
 
         return root;
     }

@@ -10,13 +10,13 @@ import com.kamcord.app.BuildConfig;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
+import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
 import com.kamcord.app.server.model.UserErrorCode;
 import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.DeviceManager;
-import com.squareup.okhttp.Call;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -30,6 +30,7 @@ import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
@@ -86,8 +87,11 @@ public class AppServerClient {
         @POST("/app/v3/kcp/video/uploaded")
         GenericResponse<?> videoUploaded(@Body VideoUploadedEntity body);
 
-        @GET("/app/v3/feeds/myfeed")
-        void getMyFeedPage(@Query("page") String page, Callback<GenericResponse<?>>);
+        @GET("/app/v3/users/{userId}/videos/feed")
+        void getUserVideoFeed(@Path("userId") String userId, @Query("page") String page, Callback<GenericResponse<PaginatedVideoList>> cb);
+
+        @POST("/app/v3/videos/{videoId}/like")
+        void likeVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
     }
 
     private static AppServer instance;
