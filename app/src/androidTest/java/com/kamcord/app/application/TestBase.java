@@ -16,6 +16,7 @@ import android.support.test.uiautomator.Until;
 import android.view.Surface;
 
 import com.kamcord.app.R;
+import com.kamcord.app.view.SlidingTabLayout;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,16 +39,18 @@ public abstract class TestBase {
 
     protected static final int APP_TIMEOUT_MS = 5000;
     protected static final int UI_TIMEOUT_MS = 2000;
-    protected static final int RECORDING_DURATION_MS = 5000;
+    protected static final int RECORDING_DURATION_MS = 6000;
     protected static final int UPLOAD_TIMEOUT = 10000;
     protected static final int MS_PER_MIN = 60000;
     protected static final int DEFAULT_VIDEO_PROCESSING_TIMEOUT = 10000;
     protected static final String OVERFLOW_DESCRIPTION = "More options";
     protected static final String KAMCORD_APP_PACKAGE = "com.kamcord.app";
     protected static final String RIPPLE_TEST_APP_NAME = "Ripple Test";
+    protected static final String RIPPLE_TEST_APP_TITLE = "Ripple Demo";
     protected static final String RIPPLE_TEST_MAIN_RES = "com.kamcord.ripples:id/mainlayout";
     protected static final String ANDROID_DISMISS_TASK = "com.android.systemui:id/dismiss_task";
     protected static final String ANDROID_SYSTEM_BUTTON1 = "android:id/button1";
+    protected static final String ANDROID_NOTIFICATION_HEADER= "com.android.systemui:id/header";
 
     protected UiDevice mDevice;
 
@@ -312,28 +315,4 @@ public abstract class TestBase {
         assertTrue("We're on the wrong screen!", notTimedOut);
     }
 
-     /*
-    protected void closeAllApps(){
-
-        try {
-            mDevice.pressHome();
-
-            mDevice.pressRecentApps();
-            boolean notTimedOut = mDevice
-                    .wait(Until.hasObject(By.res(ANDROID_DISMISS_TASK)),
-                            2000);
-
-            UiObject2 recentItem = mDevice.findObject(By.res(ANDROID_DISMISS_TASK));
-            while (recentItem != null) {
-                recentItem.click();
-                recentItem = mDevice.findObject(By.res(ANDROID_DISMISS_TASK));
-            }
-            mDevice.pressHome();
-
-        } catch (RemoteException e){
-            e.printStackTrace();
-        }
-
-    }
-    */
 }
