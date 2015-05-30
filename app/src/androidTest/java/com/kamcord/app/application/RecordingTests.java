@@ -30,10 +30,10 @@ public class RecordingTests extends RecordAndPostTestBase{
         int recDuration = RECORDING_DURATION_MS * 3;
         for(int i=0; i < N-1; i++) {
             recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, recDuration);
-            handleShareView(RECORDING_DURATION_MS, true, false);
+            handleShareView(recDuration, true, false);
         }
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, recDuration);
-        handleShareView(RECORDING_DURATION_MS, true, true);
+        handleShareView(recDuration, true, true);
     }
 
     @Test
