@@ -40,7 +40,7 @@ public abstract class TestBase {
     protected static final int APP_TIMEOUT_MS = 5000;
     protected static final int UI_TIMEOUT_MS = 2000;
     protected static final int RECORDING_DURATION_MS = 6000;
-    protected static final int UPLOAD_TIMEOUT = 10000;
+    protected static final int DEFAULT_UPLOAD_TIMEOUT = 10000;
     protected static final int MS_PER_MIN = 60000;
     protected static final int DEFAULT_VIDEO_PROCESSING_TIMEOUT = 10000;
     protected static final String OVERFLOW_DESCRIPTION = "More options";

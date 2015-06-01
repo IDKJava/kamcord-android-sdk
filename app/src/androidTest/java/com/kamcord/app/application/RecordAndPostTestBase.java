@@ -142,6 +142,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //wait for video processing to finish
         //TODO: Adjust the 4 divider to something reasonable as stitching perf. improves.
         int processingTimeout = Math.max((durationInMs / 4), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
+        int uploadTimeout = Math.max((durationInMs / 4), DEFAULT_UPLOAD_TIMEOUT);
         boolean notTimedOut =
                 mDevice.wait(Until.hasObject(By.res(getResByID(R.id.playImageView))),
                         processingTimeout);
@@ -163,14 +164,14 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
         notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(getStrByID(R.string.kamcordRecordTab))),
-                        UPLOAD_TIMEOUT);
+                        DEFAULT_UPLOAD_TIMEOUT);
         if (failIfNotLoggedIn) {
             assertTrue("UI timed out!", notTimedOut);
         } else {
             handleWelcomeLoginView();
             notTimedOut = mDevice
                     .wait(Until.hasObject(By.res(getResByID(R.id.shareButton))),
-                            UPLOAD_TIMEOUT);
+                            DEFAULT_UPLOAD_TIMEOUT);
             assertTrue("Login before share failed!", notTimedOut);
             mDevice.findObject(By.res(getResByID(R.id.shareButton))).click();
         }
@@ -186,7 +187,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         assertTrue("Uploading notification failed to show!", notTimedOut);
         if(waitForUpload) {
             notTimedOut = mDevice
-                    .wait(Until.gone(By.text(getStrByID(R.string.uploading))), durationInMs);
+                    .wait(Until.gone(By.text(getStrByID(R.string.uploading))), uploadTimeout);
             assertTrue("Uploading notification failed to clear!", notTimedOut);
         }
         //close notifications
