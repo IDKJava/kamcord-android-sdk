@@ -1,8 +1,10 @@
 package com.kamcord.app.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.projection.MediaProjection;
@@ -40,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -336,18 +339,47 @@ public class RecordFragment extends Fragment implements
     }
 
     @Override
-    public void onRecordButtonClick(Game game) {
+    public void onRecordButtonClick(final Game game) {
         if (!RecordingService.isRunning()) {
             mSelectedGame = game;
             obtainMediaProjection();
         } else {
-            stopRecording();
+            RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
+            if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
+                stopRecording();
+                shareRecording();
+            } else {
+                String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.alreadyRecording)
+                        .setMessage(message)
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                stopRecording();
+                                mSelectedGame = game;
+                                obtainMediaProjection();
+                            }
+                        })
+                        .setNeutralButton(android.R.string.cancel, null)
+                        .show();
+            }
         }
     }
 
     private void stopRecording() {
         FragmentActivity activity = getActivity();
         activity.stopService(new Intent(activity, RecordingService.class));
+        for( Game game : mSupportedGameList )
+        {
+            game.isRecording = false;
+        }
+        mRecyclerAdapter.notifyDataSetChanged();
+    }
+
+    private void shareRecording()
+    {
+        FragmentActivity activity = getActivity();
         RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
         if (recordingSession != null && recordingSession.hasRecordedFrames()) {
             FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
@@ -362,10 +394,5 @@ public class RecordFragment extends Fragment implements
         } else {
             // TODO: show the user something about being unable to get the recording session.
         }
-        for( Game game : mSupportedGameList )
-        {
-            game.isRecording = false;
-        }
-        mRecyclerAdapter.notifyDataSetChanged();
     }
 }

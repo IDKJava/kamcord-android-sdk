@@ -85,4 +85,7 @@
     <string name="wantToRecordThese">Want to record these games?</string>
     <string name="followersWithCount">%d Followers</string>
 
+    <string name="alreadyRecording">Already Recording!</string>
+    <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>
+
 </resources>
