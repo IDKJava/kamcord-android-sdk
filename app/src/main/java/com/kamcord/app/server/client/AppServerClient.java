@@ -13,6 +13,7 @@ import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
+import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.UserErrorCode;
 import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.utils.AccountManager;
@@ -86,6 +87,9 @@ public class AppServerClient {
 
         @POST("/app/v3/kcp/video/uploaded")
         GenericResponse<?> videoUploaded(@Body VideoUploadedEntity body);
+
+        @GET("/app/v3/users/{userId}")
+        void getUserInfo(@Path("userId") String userId, Callback<GenericResponse<User>> cb);
 
         @GET("/app/v3/users/{userId}/videos/feed")
         void getUserVideoFeed(@Path("userId") String userId, @Query("page") String page, Callback<GenericResponse<PaginatedVideoList>> cb);

@@ -7,9 +7,9 @@ public class User {
     public String id;
     public String username;
     public String tagline;
-    public Integer videoCount;
-    public Integer followersCount;
-    public Integer followingCount;
+    public Integer video_count;
+    public Integer followers_count;
+    public Integer following_count;
     public Boolean isUserFollowing;
     public Boolean isFollowingRequestingUser;
     public Boolean isFollowForFollow;

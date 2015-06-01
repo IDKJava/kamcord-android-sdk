@@ -21,6 +21,7 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedVideoList;
+import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.RecyclerViewScrollListener;
@@ -41,10 +42,14 @@ import retrofit.client.Response;
  */
 public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemClickListener {
 
-    @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
-    @InjectView(R.id.signInPromptButton) Button signInPromptButton;
-    @InjectView(R.id.profilefragment_refreshlayout) SwipeRefreshLayout videoFeedRefreshLayout;
-    @InjectView(R.id.profile_recyclerview) RecyclerView profileRecyclerView;
+    @InjectView(R.id.signInPromptContainer)
+    ViewGroup signInPromptContainer;
+    @InjectView(R.id.signInPromptButton)
+    Button signInPromptButton;
+    @InjectView(R.id.profilefragment_refreshlayout)
+    SwipeRefreshLayout videoFeedRefreshLayout;
+    @InjectView(R.id.profile_recyclerview)
+    RecyclerView profileRecyclerView;
 
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<Video> mProfileList = new ArrayList<>();
@@ -61,18 +66,15 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     }
 
     @Override
-    public void onAttach(Activity activity)
-    {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if( activity instanceof RecyclerViewScrollListener)
-        {
+        if (activity instanceof RecyclerViewScrollListener) {
             onRecyclerViewScrollListener = (RecyclerViewScrollListener) activity;
         }
     }
 
     @Override
-    public void onDetach()
-    {
+    public void onDetach() {
         super.onDetach();
         onRecyclerViewScrollListener = null;
     }
@@ -87,9 +89,9 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         profileRecyclerView.setLayoutManager(layoutManager);
         profileRecyclerView.setAdapter(mProfileAdapter);
 
-        if( AccountManager.isLoggedIn() )
-        {
+        if (AccountManager.isLoggedIn()) {
             Account myAccount = AccountManager.getStoredAccount();
+            AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
             AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
         }
 
@@ -126,6 +128,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
             public void onRefresh() {
                 videoFeedRefreshLayout.setRefreshing(true);
                 Account myAccount = AccountManager.getStoredAccount();
+                AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
                 AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
             }
         });
@@ -134,11 +137,31 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
 
     @Override
     public void onItemClick(View view, int position) {
-        if(mProfileList.size() != 0) {
+        if (mProfileList.size() != 0) {
             Video videoGetClicked = mProfileList.get(position);
             Intent intent = new Intent(getActivity(), ProfileVideoViewActivity.class);
             intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, videoGetClicked.video_url);
             startActivity(intent);
+        }
+    }
+
+    private class GetUserInfoCallBack implements Callback<GenericResponse<User>> {
+        @Override
+        public void success(GenericResponse<User> userResponse, Response response) {
+            if (userResponse != null && userResponse.response != null) {
+                mProfileList.clear();
+                Video headerUser = new Video();
+                headerUser.user = userResponse.response;
+                mProfileList.add(headerUser);
+                mProfileAdapter.notifyDataSetChanged();
+                videoFeedRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e(TAG, "  " + error.toString());
+            videoFeedRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -147,11 +170,11 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
-                    && paginatedVideoListGenericResponse.response.video_list != null) {
-                mProfileList.clear();
+                    && paginatedVideoListGenericResponse.response.video_list != null && mProfileList.size() == 1) {
                 for (Video video : paginatedVideoListGenericResponse.response.video_list) {
                     mProfileList.add(video);
                 }
+                mProfileList.add(new Video());
                 mProfileAdapter.notifyDataSetChanged();
                 videoFeedRefreshLayout.setRefreshing(false);
             }
@@ -165,30 +188,25 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
-        if(AccountManager.isLoggedIn()) {
+        if (AccountManager.isLoggedIn()) {
             signInPromptContainer.setVisibility(View.GONE);
             Account myAccount = AccountManager.getStoredAccount();
             AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
-        }
-        else
-        {
+        } else {
             signInPromptContainer.setVisibility(View.VISIBLE);
         }
     }
 
     @OnClick(R.id.signInPromptButton)
-    public void showSignInPrompt()
-    {
+    public void showSignInPrompt() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
         getActivity().finish();
