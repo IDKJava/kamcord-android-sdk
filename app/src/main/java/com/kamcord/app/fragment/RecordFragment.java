@@ -252,10 +252,6 @@ public class RecordFragment extends Fragment implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(TAG, "onActivityResult()");
-        Log.v(TAG, "  isResumed(): " + isResumed());
-        Log.v(TAG, "  requestCode == Activity.RESULT_OK: " + (resultCode == Activity.RESULT_OK));
-        Log.v(TAG, "  resultCode == MEDIA_PROJECTION_MANAGER_PERMISSION_CODE: " + (requestCode == MEDIA_PROJECTION_MANAGER_PERMISSION_CODE));
         Activity activity = getActivity();
         if (activity != null
                 && resultCode == Activity.RESULT_OK
