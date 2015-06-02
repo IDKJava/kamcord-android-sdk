@@ -141,8 +141,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
                 if (AccountManager.isLoggedIn()) {
                     videoFeedRefreshLayout.setRefreshing(true);
                     Account myAccount = AccountManager.getStoredAccount();
-                    AppServerClient.getInstance().getUserInfo(myAccount.id, new SwipeToRefreshInfoCallBack());
-                    AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+                    AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
                 } else {
                     videoFeedRefreshLayout.setRefreshing(false);
                 }
@@ -173,12 +172,9 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         @Override
         public void success(GenericResponse<User> userResponse, Response response) {
             if (userResponse != null && userResponse.response != null) {
-                if (mProfileList.size() > 1) {
-                    mProfileList.subList(1, mProfileAdapter.getItemCount() - 1).clear();
-                }
                 userHeader.setUser(userResponse.response);
                 totalItems = userHeader.getUser().video_count;
-                mProfileAdapter.notifyDataSetChanged();
+                mProfileAdapter.notifyItemChanged(0);
                 videoFeedRefreshLayout.setRefreshing(false);
             }
         }
@@ -190,13 +186,21 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         }
     }
 
-    private class SwipeToRefreshInfoCallBack implements Callback<GenericResponse<User>> {
+    private class SwipeToRefreshVideoFeedCallBack implements Callback<GenericResponse<PaginatedVideoList>> {
         @Override
-        public void success(GenericResponse<User> userResponse, Response response) {
-            if (userResponse != null && userResponse.response != null) {
-                userHeader.setUser(userResponse.response);
-                totalItems = userHeader.getUser().video_count;
-                mProfileAdapter.notifyItemChanged(0);
+        public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
+            if (paginatedVideoListGenericResponse != null
+                    && paginatedVideoListGenericResponse.response != null
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                mProfileList.clear();
+                mProfileList.add(new ProfileViewModel(ProfileItemType.HEADER, null));
+                nextPage = paginatedVideoListGenericResponse.response.next_page;
+                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                    ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
+                    mProfileList.add(profileViewModel);
+                }
+                footerVisible = false;
+                mProfileAdapter.notifyDataSetChanged();
                 videoFeedRefreshLayout.setRefreshing(false);
             }
         }
