@@ -28,16 +28,15 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 .wait(Until.hasObject(By.res(getResByID(R.id.recordfragment_refreshlayout))),
                         UI_TIMEOUT_MS);
         assertTrue("Recording layout failed to load!", notTimedOut);
-        UiObject2 gameTiles
-                = mDevice.findObject(By.res(getResByID(R.id.recordfragment_refreshlayout)));
 
-        notTimedOut = waitForGameTileLoad(gameTiles, APP_TIMEOUT_MS);
-        assertTrue("Games list content failed to load!", notTimedOut);
         //find ripples app logo and click
+        findGameListed(gameName);
+
         notTimedOut = mDevice
                 .wait(Until.hasObject(By.text(gameName)), UI_TIMEOUT_MS);
         assertTrue(String.format("%s not found!", gameName), notTimedOut);
         mDevice.findObject(By.text(gameName)).click();
+
 
         mDevice.findObject(By.res(getResByID(R.id.record_button))).click();
 
@@ -213,23 +212,5 @@ public abstract class RecordAndPostTestBase extends TestBase {
         return false;
     }
 
-    protected boolean waitForGameTileLoad(UiObject2 gameTiles, int timeOut){
 
-        boolean gone = false;
-        int step = 100;
-        int maxRetries = Math.max(1,timeOut / step);
-        int retries = 0;
-        while(!gone && retries < maxRetries){
-            gone = true;
-            mDevice.waitForIdle();
-            for (UiObject2 child : gameTiles.getChildren()) {
-                if (child.getClassName().equals(android.widget.ImageView.class.getName())) {
-                    gone = !child.isFocused();
-                }
-            }
-            retries++;
-            sleep(step);
-        }
-        return gone;
-    }
 }

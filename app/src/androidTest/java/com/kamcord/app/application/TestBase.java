@@ -9,9 +9,13 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.Direction;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject;
 import android.support.test.uiautomator.UiObject2;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiScrollable;
+import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
 import android.view.Surface;
 
@@ -25,6 +29,7 @@ import org.junit.runner.RunWith;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -313,6 +318,90 @@ public abstract class TestBase {
                 mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord_layout))),
                         APP_TIMEOUT_MS);
         assertTrue("We're on the wrong screen!", notTimedOut);
+    }
+    public void findGameListed(String gameName) {
+        try {
+            boolean notTimedOut = mDevice.wait(
+                    Until.hasObject(By.text(getStrByID(R.string.kamcordRecordTab))), APP_TIMEOUT_MS);
+            assertTrue("Record tab failed to load!", notTimedOut);
+            mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
+
+            notTimedOut = mDevice.wait(
+                    Until.hasObject(By.res(getResByID(R.id.recordfragment_refreshlayout))),
+                    UI_TIMEOUT_MS);
+            assertTrue("Games list failed to load!", notTimedOut);
+
+            ArrayList<String> gameTitles = new ArrayList<>();
+            //main container for games tiles
+            UiObject2 gameTilesParent = mDevice.findObject(
+                    By.res(getResByID(R.id.recordfragment_refreshlayout)));
+            waitForGameTileLoad(gameTilesParent, APP_TIMEOUT_MS);
+
+
+            //scrollable child.
+            UiScrollable gameTiles
+                    = new UiScrollable(new UiSelector()
+                    .resourceId(getResByID(R.id.record_recyclerview)));
+            assertTrue("Not scrollable!", gameTiles.isScrollable());
+
+            //larger number for max swipes.
+            gameTiles.flingToBeginning(100);
+
+            gameTilesParent = mDevice.findObject(
+                    By.res(getResByID(R.id.recordfragment_refreshlayout)));
+            waitForGameTileLoad(gameTilesParent, APP_TIMEOUT_MS);
+
+            boolean unique = true;
+            boolean found = false;
+            while (unique && !found) {
+                unique = false;
+                mDevice.waitForIdle();
+                for (UiObject2 gameTitle : mDevice.findObjects(By.res(getResByID(R.id.item_packagename)))) {
+                    String title = gameTitle.getText();
+                    if (!gameTitles.contains(title)) {
+                        gameTitles.add(title);
+                        unique = true;
+                    }
+                    if (title.equals(gameName)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found) {
+                    gameTiles.flingForward();
+                }
+            }
+            if (!unique && !found) {
+                //if we have reached the end and the toolbar should not be showing!
+                // a short scroll up will make it appear.
+                //mDevice.swipe(validateSwipe(new Point[]{new Point(380, 400), new Point(380, 425)}), 40);
+                gameTiles.scrollBackward(1);
+            }
+            assertTrue("Game not found!", found);
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+            assertTrue("Object not found!", false);
+        }
+    }
+
+    protected void waitForGameTileLoad(UiObject2 gameTiles, int timeOut){
+
+        boolean gone = false;
+        int step = 1000;
+        int maxRetries = Math.max(1,timeOut / step);
+        int retries = 0;
+        while(!gone && retries < maxRetries){
+            gone = true;
+            mDevice.waitForIdle();
+            for (UiObject2 child : gameTiles.getChildren()) {
+                if (child.getClassName().equals(android.widget.ImageView.class.getName())) {
+                    gone = false;
+                }
+            }
+            retries++;
+            sleep(step);
+        }
+        assertTrue("Games list content failed to load!", gone);
     }
 
 }
