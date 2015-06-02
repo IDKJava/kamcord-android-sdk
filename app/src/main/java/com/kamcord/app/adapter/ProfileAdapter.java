@@ -41,15 +41,15 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayoutView;
         switch (viewType) {
-            case 0: {
+            case TYPE_HEADER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_header, parent, false);
                 return new HeaderViewHolder(itemLayoutView);
             }
-            case 1: {
+            case TYPE_VIDEO_ITEM: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_item, parent, false);
                 return new ItemViewHolder(itemLayoutView, mItemClickListener);
             }
-            case 2: {
+            case TYPE_FOOTER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
                 return new FooterViewHolder(itemLayoutView);
             }
@@ -69,7 +69,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (headerItem != null) {
                 if (user != null && user.username != null) {
                     if (user.username != null) {
-                        ((HeaderViewHolder) viewHolder).getProfileUserName().setText("User Name: " + StringUtils.getFirstLetterUpperCase(user.username));
+                        ((HeaderViewHolder) viewHolder).getProfileUserName().setText(StringUtils.getFirstLetterUpperCase(user.username));
 
                     }
                     if (user.video_count != null) {

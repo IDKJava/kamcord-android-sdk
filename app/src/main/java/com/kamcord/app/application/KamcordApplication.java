@@ -32,7 +32,7 @@ public class KamcordApplication extends Application {
                 .setFontAttrId(R.attr.fontPath)
                 .build());
 
-        if( !BuildConfig.DEBUG ) {
+        if( BuildConfig.DEBUG ) {
             FlurryAgent.setLogEnabled(true);
             FlurryAgent.setLogLevel(Log.VERBOSE);
             FlurryAgent.init(this, FLURRY_API_KEY);
