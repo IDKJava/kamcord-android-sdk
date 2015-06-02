@@ -172,12 +172,9 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         @Override
         public void success(GenericResponse<User> userResponse, Response response) {
             if (userResponse != null && userResponse.response != null) {
-                if (mProfileList.size() > 1) {
-                    mProfileList.subList(1, mProfileAdapter.getItemCount() - 1).clear();
-                }
                 userHeader.setUser(userResponse.response);
                 totalItems = userHeader.getUser().video_count;
-                mProfileAdapter.notifyDataSetChanged();
+                mProfileAdapter.notifyItemChanged(0);
                 videoFeedRefreshLayout.setRefreshing(false);
             }
         }
