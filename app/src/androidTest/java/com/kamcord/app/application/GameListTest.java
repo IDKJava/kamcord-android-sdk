@@ -14,7 +14,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertFalse;
+import static com.kamcord.app.testutils.UiUtilities.*;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -26,17 +26,14 @@ public class GameListTest extends RecordAndPostTestBase {
     public void checkIfGamesListed() throws UiObjectNotFoundException{
         //TODO: Check for content not just count.
         doLogin();
-        boolean notTimedOut = mDevice.wait(
-                Until.hasObject(By.text(getStrByID(R.string.kamcordRecordTab))), APP_TIMEOUT_MS);
-        assertTrue("Record tab failed to load!", notTimedOut);
         mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
-        notTimedOut = mDevice.wait(
-                Until.hasObject(By.res(getResByID(R.id.recordfragment_refreshlayout))),
-                UI_TIMEOUT_MS);
-        assertTrue("Games list failed to load!", notTimedOut);
+
+        findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS)
+                .click();
+
         ArrayList<String> gameTitles = new ArrayList<>();
         UiObject2 gameTiles
-                = mDevice.findObject(By.res(getResByID(R.id.recordfragment_refreshlayout)));
+                = findUiObj(R.id.recordfragment_refreshlayout, UiObjIdType.Res, UiObjSelType.Res);
         waitForGameTileLoad(gameTiles, APP_TIMEOUT_MS);
 
         boolean unique = true;
@@ -63,20 +60,13 @@ public class GameListTest extends RecordAndPostTestBase {
         //TODO: Check for content not just count.
         doLogin();
         try {
-            boolean notTimedOut = mDevice.wait(
-                    Until.hasObject(By.text(getStrByID(R.string.kamcordRecordTab))), APP_TIMEOUT_MS);
-            assertTrue("Record tab failed to load!", notTimedOut);
             mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
 
-            notTimedOut = mDevice.wait(
-                    Until.hasObject(By.res(getResByID(R.id.recordfragment_refreshlayout))),
-                    UI_TIMEOUT_MS);
-            assertTrue("Games list failed to load!", notTimedOut);
-
-            ArrayList<String> gameTitles = new ArrayList<>();
             //main container for games tiles
-            UiObject2 gameTilesParent = mDevice.findObject(
-                    By.res(getResByID(R.id.recordfragment_refreshlayout)));
+            UiObject2 gameTilesParent
+                    = findUiObj(R.id.recordfragment_refreshlayout,
+                    UiObjIdType.Res,
+                    UiObjSelType.Res);
             waitForGameTileLoad(gameTilesParent, APP_TIMEOUT_MS);
 
 
@@ -89,8 +79,10 @@ public class GameListTest extends RecordAndPostTestBase {
             //larger number for max swipes.
             gameTiles.flingToBeginning(100);
 
-            gameTilesParent = mDevice.findObject(
-                    By.res(getResByID(R.id.recordfragment_refreshlayout)));
+            gameTilesParent
+                    = findUiObj(R.id.recordfragment_refreshlayout,
+                    UiObjIdType.Res,
+                    UiObjSelType.Res);
             waitForGameTileLoad(gameTilesParent, APP_TIMEOUT_MS);
 
             //if we have reached the end and the toolbar should not be showing!

@@ -10,6 +10,7 @@ import com.kamcord.app.R;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static com.kamcord.app.testutils.UiUtilities.*;
 
 /**
  * Created by Mehmet on 5/27/15.
@@ -24,34 +25,21 @@ public abstract class RecordAndPostTestBase extends TestBase {
     }
     protected void recordGameVideo(String gameName, String gameTitle, int durationInMs, boolean pauseAfterGesture) {
         mDevice.waitForIdle();
-        boolean notTimedOut =  mDevice
-                .wait(Until.hasObject(By.res(getResByID(R.id.recordfragment_refreshlayout))),
-                        UI_TIMEOUT_MS);
-        assertTrue("Recording layout failed to load!", notTimedOut);
-
+        findUiObj(R.id.recordfragment_refreshlayout, UiObjIdType.Res, UiObjSelType.Res);
         //find ripples app logo and click
         findGameListed(gameName);
 
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.text(gameName)), UI_TIMEOUT_MS);
-        assertTrue(String.format("%s not found!", gameName), notTimedOut);
-        mDevice.findObject(By.text(gameName)).click();
+        findUiObj(gameName, UiObjSelType.Txt).click();
 
-
-        mDevice.findObject(By.res(getResByID(R.id.record_button))).click();
+        findUiObj(R.id.record_button, UiObjIdType.Res, UiObjSelType.Res).click();
 
         //Ack the screen recording warning.
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.res(ANDROID_SYSTEM_BUTTON1)), UI_TIMEOUT_MS);
-        assertTrue("Recording notification timed out!", notTimedOut);
-        //String s = getResByID(android.R.id.button1);
-        mDevice.findObject(By.res(ANDROID_SYSTEM_BUTTON1)).click();
-        //wait for ripples to show up.
 
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.res(RIPPLE_TEST_MAIN_RES)), APP_TIMEOUT_MS);
-        assertTrue("Ripple test launch timed out!", notTimedOut);
+        //Ack the message
+        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res).click();
 
+        //test app loads?
+        findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, APP_TIMEOUT_MS);
 
         //pattern exec time hardcoded for now.
         int miniSleepInMs = 2000;
@@ -73,23 +61,17 @@ public abstract class RecordAndPostTestBase extends TestBase {
                     }
                     //check if it's recording
                     mDevice.openNotification();
-                    notTimedOut = mDevice
-                            .wait(Until.hasObject(By.res(ANDROID_NOTIFICATION_HEADER)),
-                                    APP_TIMEOUT_MS);
-                    assertTrue("Android notification header not showing!", notTimedOut);
-                    notTimedOut = mDevice
-                            .wait(Until.hasObject(By.text(getStrByID(R.string.paused))),
-                                    APP_TIMEOUT_MS);
-                    assertTrue("Paused notification status not showing!", notTimedOut);
+
+                    findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
+
+                    findUiObj(R.string.paused, UiObjIdType.Str,  UiObjSelType.Txt, APP_TIMEOUT_MS);
+
                     mDevice.pressBack();
-                    notTimedOut = mDevice
-                            .wait(Until.hasObject(By.text(gameTitle)), APP_TIMEOUT_MS);
-                    assertTrue("Game name failed to show!", notTimedOut);
-                    //click on notification to resume app.
-                    mDevice.findObject(By.text(gameTitle)).click();
-                    notTimedOut = mDevice
-                            .wait(Until.hasObject(By.res(RIPPLE_TEST_MAIN_RES)), APP_TIMEOUT_MS);
-                    assertTrue("Ripple test return timed out!", notTimedOut);
+
+                    findUiObj(gameTitle, UiObjSelType.Txt, APP_TIMEOUT_MS).click();
+
+                    findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, APP_TIMEOUT_MS);
+
                 } else {
                     sleep(miniSleepInMs);
                 }
@@ -109,24 +91,16 @@ public abstract class RecordAndPostTestBase extends TestBase {
         }
         //check if it's recording
         mDevice.openNotification();
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.res(ANDROID_NOTIFICATION_HEADER)),
-                        APP_TIMEOUT_MS);
-        assertTrue("Paused notification header not showing!", notTimedOut);
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.text(getStrByID(R.string.toolbarTitle))), UI_TIMEOUT_MS);
-        assertTrue("Notification failed to show!", notTimedOut);
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.text(getStrByID(R.string.paused))), UI_TIMEOUT_MS);
-        assertTrue("Paused notification status not showing!", notTimedOut);
+        findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
+
+        findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt);
+
         //click on notification to resume app.
-        mDevice.findObject(By.text(getStrByID(R.string.toolbarTitle))).click();
+        findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
 
         //find stop recording button.
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.res(getResByID(R.id.record_button))), APP_TIMEOUT_MS);
-        assertTrue("Stop recording button timed out!", notTimedOut);
-        mDevice.findObject(By.res(getResByID(R.id.record_button))).click();
+        findUiObj(R.id.record_button, UiObjIdType.Res, UiObjSelType.Res).click();
+
     }
 
     protected void handleShareView(int durationInMs) {
@@ -139,55 +113,38 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
     protected void handleShareView(int durationInMs, boolean failIfNotLoggedIn, boolean waitForUpload) {
         //wait for video processing to finish
-        //TODO: Adjust the 4 divider to something reasonable as stitching perf. improves.
-        int processingTimeout = Math.max((durationInMs / 4), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
-        int uploadTimeout = Math.max((durationInMs / 4), DEFAULT_UPLOAD_TIMEOUT);
-        boolean notTimedOut =
-                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.playImageView))),
-                        processingTimeout);
-        assertTrue("Video processing timed out!", notTimedOut);
-        mDevice.findObject(By.res(getResByID(R.id.titleEditText))).click();
-        mDevice.findObject(By.res(getResByID(R.id.titleEditText)))
-                .setText("my awesome ripple test video");
-        //close soft keyboard
-        mDevice.pressBack();
-        /*
-        Description removed.
-        mDevice.findObject(By.res(getResByID(R.id.descriptionEditText))).click();
-        mDevice.findObject(By.res(getResByID(R.id.descriptionEditText)))
-                .setText("The quick brown fox jumps over the lazy dog.");
-        //close soft keyboard
-        mDevice.pressBack();
-        */
-        mDevice.findObject(By.res(getResByID(R.id.shareButton))).click();
+        //TODO: Adjust the "1" divider to something reasonable as stitching perf. improves.
+        int processingTimeout = Math.max((durationInMs / 1), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
+        int uploadTimeout = Math.max((durationInMs / 1), DEFAULT_UPLOAD_TIMEOUT);
 
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.text(getStrByID(R.string.kamcordRecordTab))),
-                        DEFAULT_UPLOAD_TIMEOUT);
+        findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, processingTimeout);
+
+        UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);
+        title.click();
+        title.setText("my awesome ripple test video");
+
+        //close soft keyboard
+        mDevice.pressBack();
+
+        findUiObj(R.id.shareButton, UiObjIdType.Res, UiObjSelType.Res).click();
+
+
+
         if (failIfNotLoggedIn) {
-            assertTrue("UI timed out!", notTimedOut);
+            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt);
         } else {
             handleWelcomeLoginView();
-            notTimedOut = mDevice
-                    .wait(Until.hasObject(By.res(getResByID(R.id.shareButton))),
-                            DEFAULT_UPLOAD_TIMEOUT);
-            assertTrue("Login before share failed!", notTimedOut);
-            mDevice.findObject(By.res(getResByID(R.id.shareButton))).click();
+            findUiObj(R.id.shareButton, UiObjIdType.Res, UiObjSelType.Res).click();
         }
 
         //check if it's recording, we seem not to be fast enough to check this.
         mDevice.openNotification();
         //We're not fast enough to check both before the upload finishes. :(
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.text(getStrByID(R.string.app_name))), UI_TIMEOUT_MS);
-        assertTrue("Uploading notification failed to show!", notTimedOut);
-        notTimedOut = mDevice
-                .wait(Until.hasObject(By.text(getStrByID(R.string.uploading))), UI_TIMEOUT_MS);
-        assertTrue("Uploading notification failed to show!", notTimedOut);
+        findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
+        findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
+
         if(waitForUpload) {
-            notTimedOut = mDevice
-                    .wait(Until.gone(By.text(getStrByID(R.string.uploading))), uploadTimeout);
-            assertTrue("Uploading notification failed to clear!", notTimedOut);
+            loseUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt, uploadTimeout);
         }
         //close notifications
         mDevice.pressBack();
@@ -196,10 +153,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
     protected void executeTouchPatterns() {
         Point[] pattern = new Point[]{new Point(500, 300),
                 new Point(500, 1600),
-                new Point(1200, 1600),
-                new Point(1200, 300),
+                new Point(1000, 1600),
+                new Point(1000, 300),
                 new Point(500, 300)};
-        mDevice.swipe(pattern,25);
+        mDevice.swipe(validateSwipe(pattern),25);
     }
 
     protected boolean checkIfGameTilesUpdating(UiObject2 gameTiles){

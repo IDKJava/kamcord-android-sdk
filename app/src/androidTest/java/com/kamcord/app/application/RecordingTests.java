@@ -8,6 +8,7 @@ import com.kamcord.app.R;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
+import static com.kamcord.app.testutils.UiUtilities.*;
 
 /**
  * Created by Mehmet on 5/29/15.

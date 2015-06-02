@@ -3,6 +3,8 @@ package com.kamcord.app.application;
 import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static com.kamcord.app.testutils.UiUtilities.*;
+import static com.kamcord.app.testutils.SystemUtilities.*;
 
 /**
  * Created by Mehmet on 5/28/15.
@@ -10,9 +12,7 @@ import static org.junit.Assert.assertTrue;
 // Will work in Junit 4.11
 // @FixMethodOrder
 public class CacheTest extends RecordAndPostTestBase {
-    protected static final String KAMCORD_CACHE_FOLDER = "Kamcord_Android";
-    protected static final String NOMEDIA_TAG = ".nomedia";
-    protected static final String SDCARD_ROOT = "/storage/sdcard0/";
+
 
     public void clearCacheTest(){
         //enable line below when we update the test and detach from checkCacheNoMediaTest
