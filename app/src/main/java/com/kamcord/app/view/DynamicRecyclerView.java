@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 import com.kamcord.app.R;
+import com.kamcord.app.adapter.GameRecordListAdapter;
 import com.kamcord.app.utils.ViewUtils;
 
 /**
@@ -40,6 +41,27 @@ public class DynamicRecyclerView extends RecyclerView {
             array.recycle();
         }
         gridLayoutManager = new GridLayoutManager(getContext(), columnNumber);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                int spanSize = 1;
+                int viewType = getAdapter().getItemViewType(position);
+
+                switch( viewType )
+                {
+                    case GameRecordListAdapter.VIEW_TYPE_FIRST_INSTALLED:
+                    case GameRecordListAdapter.VIEW_TYPE_INSTALLED:
+                    case GameRecordListAdapter.VIEW_TYPE_LAST_INSTALLED:
+                        spanSize = gridLayoutManager.getSpanCount();
+                        break;
+
+                    default:
+                        spanSize = 1;
+                        break;
+                }
+                return spanSize;
+            }
+        });
         setLayoutManager(gridLayoutManager);
     }
 
