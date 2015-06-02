@@ -191,9 +191,9 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
-                    && paginatedVideoListGenericResponse.response.video_list != null
-                    && mProfileList.size() > 1) {
-                mProfileList.subList(1, mProfileAdapter.getItemCount()).clear();
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                mProfileList.clear();
+                mProfileList.add(new ProfileViewModel(ProfileItemType.HEADER, null));
                 nextPage = paginatedVideoListGenericResponse.response.next_page;
                 for (Video video : paginatedVideoListGenericResponse.response.video_list) {
                     ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
