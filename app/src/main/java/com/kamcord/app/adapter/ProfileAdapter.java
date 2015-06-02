@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.model.ProfileViewModel;
+import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
@@ -24,13 +26,13 @@ import butterknife.InjectView;
 public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<Video> mProfileList;
+    private List<ProfileViewModel> mProfileList;
     private static OnItemClickListener mItemClickListener;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_VIDEO_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
 
-    public ProfileAdapter(Context context, List<Video> mProfileList) {
+    public ProfileAdapter(Context context, List<ProfileViewModel> mProfileList) {
         this.mContext = context;
         this.mProfileList = mProfileList;
     }
@@ -61,29 +63,31 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof HeaderViewHolder) {
-            Video headerItem = getItem(position);
+            ProfileViewModel headerItem = getItem(position);
+            User user = headerItem.getUser();
             if (headerItem != null) {
-                ((HeaderViewHolder) viewHolder).profileUserName.setText("User Name: " + StringUtils.getFirstLetterUpperCase(headerItem.user.username));
-                ((HeaderViewHolder) viewHolder).profileUserVideos.setText(StringUtils.getFirstLetterUpperCase(Integer.toString(headerItem.user.video_count)));
-                ((HeaderViewHolder) viewHolder).profileUserFollowers.setText(StringUtils.getFirstLetterUpperCase(Integer.toString(headerItem.user.followers_count)));
-                ((HeaderViewHolder) viewHolder).profileUserFollowing.setText(StringUtils.getFirstLetterUpperCase(Integer.toString(headerItem.user.following_count)));
+                ((HeaderViewHolder) viewHolder).profileUserName.setText("User Name: " + StringUtils.getFirstLetterUpperCase(user.username));
+                ((HeaderViewHolder) viewHolder).profileUserVideos.setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.video_count)));
+                ((HeaderViewHolder) viewHolder).profileUserFollowers.setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.followers_count)));
+                ((HeaderViewHolder) viewHolder).profileUserFollowing.setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.following_count)));
             }
         } else if (viewHolder instanceof FooterViewHolder) {
 
         } else if (viewHolder instanceof ItemViewHolder) {
-            Video profileItem = getItem(position);
-            if (profileItem.title != null) {
-                ((ItemViewHolder) viewHolder).profileItemTitle.setText(StringUtils.getFirstLetterUpperCase(profileItem.title));
+            ProfileViewModel profileItem = getItem(position);
+            Video videoItem = profileItem.getVideo();
+            if (videoItem.title != null) {
+                ((ItemViewHolder) viewHolder).profileItemTitle.setText(StringUtils.getFirstLetterUpperCase(videoItem.title));
             }
-            if (profileItem.thumbnails.regular != null) {
+            if (videoItem.thumbnails != null && videoItem.thumbnails.regular != null) {
                 Picasso.with(mContext)
-                        .load(profileItem.thumbnails.regular)
+                        .load(videoItem.thumbnails.regular)
                         .into(((ItemViewHolder) viewHolder).profileItemThumbnail);
             }
-            ((ItemViewHolder) viewHolder).profileItemAuthor.setText(mContext.getResources().getString(R.string.byAuthor) + profileItem.username);
-            ((ItemViewHolder) viewHolder).videoLikes.setText(Integer.toString(profileItem.likes));
-            ((ItemViewHolder) viewHolder).videoComments.setText("Comments: " + Integer.toString(profileItem.comments));
-            ((ItemViewHolder) viewHolder).videoViews.setText("Views: " + Integer.toString(profileItem.views));
+            ((ItemViewHolder) viewHolder).profileItemAuthor.setText(mContext.getResources().getString(R.string.byAuthor) + videoItem.username);
+            ((ItemViewHolder) viewHolder).videoLikes.setText(Integer.toString(videoItem.likes));
+            ((ItemViewHolder) viewHolder).videoComments.setText("Comments: " + Integer.toString(videoItem.comments));
+            ((ItemViewHolder) viewHolder).videoViews.setText("Views: " + Integer.toString(videoItem.views));
 
         }
 
@@ -91,9 +95,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
+        ProfileViewModel viewModel = mProfileList.get(position);
+        if (viewModel.getType() == TYPE_HEADER) {
             return TYPE_HEADER;
-        } else if (position == mProfileList.size() - 1) {
+        } else if (viewModel.getType() == TYPE_FOOTER) {
             return TYPE_FOOTER;
         } else {
             return TYPE_VIDEO_ITEM;
@@ -105,7 +110,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return mProfileList.size();
     }
 
-    public Video getItem(int position) {
+    public ProfileViewModel getItem(int position) {
         return mProfileList.get(position);
     }
 

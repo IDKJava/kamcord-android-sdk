@@ -40,8 +40,7 @@ import retrofit.http.Query;
 public class AppServerClient {
     private static final String BASE_URL = "https://app.kamcord.com";
 
-    public interface AppServer
-    {
+    public interface AppServer {
         @GET("/app/v3/kcp/games")
         void getGamesList(
                 @Query("isAndroidOnly") boolean isAndroidOnly,
@@ -105,22 +104,19 @@ public class AppServerClient {
             request.addHeader("user-agent", "android_app_" + BuildConfig.VERSION_NAME);
 
             Account account = AccountManager.getStoredAccount();
-            if( account != null )
-            {
+            if (account != null) {
                 request.addHeader("user-token", account.token);
             }
 
             String deviceToken = DeviceManager.getDeviceToken();
-            if( deviceToken != null && !deviceToken.isEmpty() ) {
+            if (deviceToken != null && !deviceToken.isEmpty()) {
                 request.addHeader("device-token", DeviceManager.getDeviceToken());
             }
         }
     };
 
-    public static synchronized AppServer getInstance()
-    {
-        if( instance == null )
-        {
+    public static synchronized AppServer getInstance() {
+        if (instance == null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
                         @Override
