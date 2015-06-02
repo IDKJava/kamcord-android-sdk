@@ -93,8 +93,10 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         profileRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin)));
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
-        mProfileList.add(userHeader);
+        if(AccountManager.isLoggedIn()) {
+            userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
+            mProfileList.add(userHeader);
+        }
         mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList, this);
         mProfileAdapter.setOnItemClickListener(this);
         profileRecyclerView.setLayoutManager(layoutManager);

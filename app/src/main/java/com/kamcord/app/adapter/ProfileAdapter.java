@@ -117,8 +117,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 public void onClick(View v) {
                     itemClickedPosition = position;
                     if(videoItem.is_user_liking) {
+                        videoLikesButton.setText(Integer.toString(videoItem.likes--));
                         AppServerClient.getInstance().unLikeVideo(videoItem.video_id, new unLikeVideosCallback());
                     } else {
+                        videoLikesButton.setText(Integer.toString(videoItem.likes++));
                         AppServerClient.getInstance().likeVideo(videoItem.video_id, new likeVideosCallback());
                     }
 
@@ -161,7 +163,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private class likeVideosCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
-            notifyItemChanged(itemClickedPosition);
         }
 
         @Override
@@ -173,7 +174,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private class unLikeVideosCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
-            notifyItemChanged(itemClickedPosition);
         }
 
         @Override
