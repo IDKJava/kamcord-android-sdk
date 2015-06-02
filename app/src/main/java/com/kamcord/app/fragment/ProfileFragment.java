@@ -17,6 +17,7 @@ import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.ProfileAdapter;
+import com.kamcord.app.model.ProfileItemType;
 import com.kamcord.app.model.ProfileViewModel;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
@@ -43,9 +44,6 @@ import retrofit.client.Response;
  */
 public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemClickListener {
 
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_VIDEO_ITEM = 1;
-    private static final int TYPE_FOOTER = 2;
     private static final int HEADER_EXISTS = 1;
 
     @InjectView(R.id.signInPromptContainer)
@@ -94,7 +92,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         profileRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin)));
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
+        mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList, this);
         mProfileAdapter.setOnItemClickListener(this);
         profileRecyclerView.setLayoutManager(layoutManager);
         profileRecyclerView.setAdapter(mProfileAdapter);
@@ -152,7 +150,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
 
     public void loadMoreItems() {
         footerVisible = true;
-        mProfileList.add(new ProfileViewModel(TYPE_FOOTER, null));
+        mProfileList.add(new ProfileViewModel(ProfileItemType.FOOTER, null));
         mProfileAdapter.notifyItemInserted(mProfileAdapter.getItemCount());
         Account myAccount = AccountManager.getStoredAccount();
         AppServerClient.getInstance().getUserVideoFeed(myAccount.id, nextPage, new GetUserVideoFeedCallBack());
@@ -173,7 +171,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         public void success(GenericResponse<User> userResponse, Response response) {
             if (userResponse != null && userResponse.response != null) {
                 mProfileList.clear();
-                ProfileViewModel userHeader = new ProfileViewModel(TYPE_HEADER, null);
+                ProfileViewModel userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
                 userHeader.setUser(userResponse.response);
                 totalItems = userHeader.getUser().video_count;
                 mProfileList.add(userHeader);
@@ -200,7 +198,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
                     mProfileList.remove(mProfileAdapter.getItemCount() - 1);
                 }
                 for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                    ProfileViewModel profileViewModel = new ProfileViewModel(TYPE_VIDEO_ITEM, video);
+                    ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
                     mProfileList.add(profileViewModel);
                 }
                 footerVisible = false;

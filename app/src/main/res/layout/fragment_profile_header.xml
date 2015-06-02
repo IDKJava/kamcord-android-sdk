@@ -55,7 +55,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="0"
+                    android:text="@string/defaultNumber"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -63,7 +63,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
-                    android:text="Videos"
+                    android:text="@string/headerVideos"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 
@@ -79,7 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="0"
+                    android:text="@string/defaultNumber"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -87,7 +87,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
-                    android:text="Followers"
+                    android:text="@string/headerFollowers"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 
@@ -103,7 +103,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="0"
+                    android:text="@string/defaultNumber"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -111,7 +111,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
-                    android:text="Following"
+                    android:text="@string/headerFollowing"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 

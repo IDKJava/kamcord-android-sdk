@@ -10,14 +10,14 @@ public class User {
     public Integer video_count;
     public Integer followers_count;
     public Integer following_count;
-    public Boolean isUserFollowing;
-    public Boolean isFollowingRequestingUser;
+    public Boolean is_user_following;
+    public Boolean is_following_requesting_user;
     public Boolean isFollowForFollow;
-    public String profileColor;
-    public Integer viewCount;
-    public Integer likeCount;
-    public Integer reshareCount;
-    public Integer viewsReceived;
-    public Integer likesReceived;
-    public Integer resharesReceived;
+    public String profile_color;
+    public Integer view_count;
+    public Integer like_count;
+    public Integer reshare_count;
+    public Integer views_received;
+    public Integer likes_received;
+    public Integer reshares_received;
 }

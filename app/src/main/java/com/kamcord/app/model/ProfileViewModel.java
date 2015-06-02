@@ -8,16 +8,16 @@ import com.kamcord.app.server.model.Video;
  */
 public class ProfileViewModel {
 
-    private int type;
+    private ProfileItemType type;
     private Video video;
     private User user;
 
-    public ProfileViewModel(int viewtype, Video video) {
+    public ProfileViewModel(ProfileItemType viewtype, Video video) {
         this.type = viewtype;
         this.video = video;
     }
 
-    public int getType() {
+    public ProfileItemType getType() {
         return type;
     }
 
