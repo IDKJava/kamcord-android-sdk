@@ -11,7 +11,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/DefaultBackgroundColor">
 
         <RelativeLayout
             android:id="@+id/userProfileInfo"
@@ -25,6 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="User Name"
+                android:textColor="@color/ColorPrimary"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true" />
@@ -56,6 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/defaultNumber"
+                    android:textColor="@color/ColorPrimary"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -64,6 +67,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
                     android:text="@string/headerVideos"
+                    android:textColor="@color/ColorPrimary"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 
@@ -80,6 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/defaultNumber"
+                    android:textColor="@color/ColorPrimary"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -88,6 +93,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
                     android:text="@string/headerFollowers"
+                    android:textColor="@color/ColorPrimary"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 
@@ -104,6 +110,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/defaultNumber"
+                    android:textColor="@color/ColorPrimary"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
@@ -112,6 +119,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
                     android:text="@string/headerFollowing"
+                    android:textColor="@color/ColorPrimary"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 

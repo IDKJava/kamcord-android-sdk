@@ -20,4 +20,6 @@
     <color name="transparentWhite">#9fff</color>
     <color name="TextViewBackgroundColor">#a4a4a4</color>
 
+    <color name="DefaultBackgroundColor">#F1C40F</color>
+
 </resources>

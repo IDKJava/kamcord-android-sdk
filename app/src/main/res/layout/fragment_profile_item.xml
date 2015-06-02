@@ -53,7 +53,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:text="@string/videoLikes"
-                style="@style/KamcordButton" />
+                android:textColor="@color/kamcordGreen"
+                android:background="@drawable/button_selector" />
 
 
             <TextView

@@ -55,7 +55,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         return this.profileItemThumbnail;
     }
 
-    public TextView getVideoLikes() {
+    public Button getVideoLikesButton() {
         return this.videoLikes;
     }
 

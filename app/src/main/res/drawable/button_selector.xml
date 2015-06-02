@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/button_clicked" android:state_pressed="true" android:textColor="@color/ColorPrimary" />
+    <item android:drawable="@drawable/button_clicked" android:state_focused="true" android:textColor="@color/ColorPrimary" />
+    <item android:drawable="@drawable/login_btnstyle" />
+</selector>

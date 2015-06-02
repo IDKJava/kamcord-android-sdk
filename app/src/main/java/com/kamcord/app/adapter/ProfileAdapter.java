@@ -2,9 +2,11 @@ package com.kamcord.app.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
@@ -12,12 +14,18 @@ import com.kamcord.app.adapter.viewholder.HeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ItemViewHolder;
 import com.kamcord.app.model.ProfileItemType;
 import com.kamcord.app.model.ProfileViewModel;
+import com.kamcord.app.server.client.AppServerClient;
+import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by donliang1 on 5/28/15.
@@ -30,6 +38,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_VIDEO_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
+    private int itemClickedPosition;
 
     public ProfileAdapter(Context context, List<ProfileViewModel> mProfileList, OnItemClickListener itemClickListener) {
         this.mContext = context;
@@ -62,7 +71,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (viewHolder instanceof HeaderViewHolder) {
             ProfileViewModel headerItem = getItem(position);
             User user = headerItem.getUser();
@@ -88,7 +97,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         } else if (viewHolder instanceof ItemViewHolder) {
             ProfileViewModel profileItem = getItem(position);
-            Video videoItem = profileItem.getVideo();
+            final Video videoItem = profileItem.getVideo();
             if (videoItem.title != null) {
                 ((ItemViewHolder) viewHolder).getProfileItemTitle().setText(StringUtils.getFirstLetterUpperCase(videoItem.title));
             }
@@ -98,10 +107,23 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         .into(((ItemViewHolder) viewHolder).getProfileItemThumbnail());
             }
             ((ItemViewHolder) viewHolder).getProfileItemAuthor().setText(mContext.getResources().getString(R.string.byAuthor) + videoItem.username);
-            ((ItemViewHolder) viewHolder).getVideoLikes().setText(Integer.toString(videoItem.likes));
             ((ItemViewHolder) viewHolder).getVideoComments().setText("Comments: " + Integer.toString(videoItem.comments));
             ((ItemViewHolder) viewHolder).getVideoViews().setText("Views: " + Integer.toString(videoItem.views));
 
+            final Button videoLikesButton = ((ItemViewHolder) viewHolder).getVideoLikesButton();
+            videoLikesButton.setText(Integer.toString(videoItem.likes));
+            videoLikesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickedPosition = position;
+                    if(videoItem.is_user_liking) {
+                        AppServerClient.getInstance().unLikeVideo(videoItem.video_id, new unLikeVideosCallback());
+                    } else {
+                        AppServerClient.getInstance().likeVideo(videoItem.video_id, new likeVideosCallback());
+                    }
+
+                }
+            });
         }
 
     }
@@ -136,4 +158,27 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.mItemClickListener = mItemClickListener;
     }
 
+    private class likeVideosCallback implements Callback<GenericResponse<?>> {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+            notifyItemChanged(itemClickedPosition);
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Failure", "  " + error.toString());
+        }
+    }
+
+    private class unLikeVideosCallback implements Callback<GenericResponse<?>> {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+            notifyItemChanged(itemClickedPosition);
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Unlike Failure", "  " + error.toString());
+        }
+    };
 }

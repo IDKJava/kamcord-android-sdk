@@ -239,17 +239,6 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         }
     }
 
-    private final Callback<GenericResponse<?>> likeVideosCallback = new Callback<GenericResponse<?>>() {
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e(TAG, "  " + error.toString());
-        }
-    };
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -263,7 +252,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
             signInPromptContainer.setVisibility(View.GONE);
             Account myAccount = AccountManager.getStoredAccount();
             AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
         } else {
             signInPromptContainer.setVisibility(View.VISIBLE);
         }
