@@ -235,6 +235,17 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         }
     }
 
+    private final Callback<GenericResponse<?>> likeVideosCallback = new Callback<GenericResponse<?>>() {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e(TAG, "  " + error.toString());
+        }
+    };
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
