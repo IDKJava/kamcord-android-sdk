@@ -17,11 +17,16 @@ public class CacheTest extends RecordAndPostTestBase {
     public void clearCacheTest(){
         //enable line below when we update the test and detach from checkCacheNoMediaTest
         //skipLogin();
-        clearCache();
-        //TODO: Ask for some feedback as to weather the clean cache op has completed.
-        sleep(APP_TIMEOUT_MS);
-        String files = executeShellCommand(String.format("ls -al %s", SDCARD_ROOT));
-        assertFalse("Kamcord_Android folder is present!", files.contains(KAMCORD_CACHE_FOLDER));
+        boolean notDeleted = true;
+        for (int trials = 0; trials < 2 && notDeleted; trials++) {
+            clearCache();
+            //TODO: Ask for some feedback as to weather the clean cache op has completed.
+            sleep(APP_TIMEOUT_MS);
+            String files = executeShellCommand(String.format("ls -al %s", SDCARD_ROOT));
+            notDeleted = files.contains(KAMCORD_CACHE_FOLDER);
+        }
+
+        assertFalse("Kamcord_Android folder is present!", notDeleted);
     }
     @Test
     public void checkCacheNoMediaTest(){
