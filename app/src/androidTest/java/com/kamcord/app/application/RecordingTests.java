@@ -43,8 +43,8 @@ public class RecordingTests extends RecordAndPostTestBase{
         handleShareView(RECORDING_DURATION_MS, false);
 
     }
-
-    @Test
+    //TODO: Enable when test conditions are clear!
+    //@Test
     public void recordAndPostLoggedInWithPause(){
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, 2 * RECORDING_DURATION_MS, true);
