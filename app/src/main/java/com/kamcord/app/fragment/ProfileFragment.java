@@ -60,6 +60,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     private ProfileAdapter mProfileAdapter;
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
     private LinearLayoutManager layoutManager = null;
+    private ProfileViewModel userHeader;
     private String nextPage;
     private int totalItems = 0;
     private boolean footerVisible = false;
@@ -92,6 +93,8 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         profileRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin)));
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
+        mProfileList.add(userHeader);
         mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList, this);
         mProfileAdapter.setOnItemClickListener(this);
         profileRecyclerView.setLayoutManager(layoutManager);
@@ -138,7 +141,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
                 if (AccountManager.isLoggedIn()) {
                     videoFeedRefreshLayout.setRefreshing(true);
                     Account myAccount = AccountManager.getStoredAccount();
-                    AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+                    AppServerClient.getInstance().getUserInfo(myAccount.id, new SwipeToRefreshInfoCallBack());
                     AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
                 } else {
                     videoFeedRefreshLayout.setRefreshing(false);
@@ -170,12 +173,30 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
         @Override
         public void success(GenericResponse<User> userResponse, Response response) {
             if (userResponse != null && userResponse.response != null) {
-                mProfileList.clear();
-                ProfileViewModel userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
+                if (mProfileList.size() > 1) {
+                    mProfileList.subList(1, mProfileAdapter.getItemCount() - 1).clear();
+                }
                 userHeader.setUser(userResponse.response);
                 totalItems = userHeader.getUser().video_count;
-                mProfileList.add(userHeader);
                 mProfileAdapter.notifyDataSetChanged();
+                videoFeedRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e(TAG, "  " + error.toString());
+            videoFeedRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private class SwipeToRefreshInfoCallBack implements Callback<GenericResponse<User>> {
+        @Override
+        public void success(GenericResponse<User> userResponse, Response response) {
+            if (userResponse != null && userResponse.response != null) {
+                userHeader.setUser(userResponse.response);
+                totalItems = userHeader.getUser().video_count;
+                mProfileAdapter.notifyItemChanged(0);
                 videoFeedRefreshLayout.setRefreshing(false);
             }
         }
@@ -194,7 +215,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
                     && paginatedVideoListGenericResponse.response != null
                     && paginatedVideoListGenericResponse.response.video_list != null) {
                 nextPage = paginatedVideoListGenericResponse.response.next_page;
-                if (mProfileList.size() != HEADER_EXISTS) {
+                if (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == ProfileItemType.FOOTER) {
                     mProfileList.remove(mProfileAdapter.getItemCount() - 1);
                 }
                 for (Video video : paginatedVideoListGenericResponse.response.video_list) {

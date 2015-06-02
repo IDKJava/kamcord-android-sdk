@@ -67,10 +67,22 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ProfileViewModel headerItem = getItem(position);
             User user = headerItem.getUser();
             if (headerItem != null) {
-                ((HeaderViewHolder) viewHolder).getProfileUserName().setText("User Name: " + StringUtils.getFirstLetterUpperCase(user.username));
-                ((HeaderViewHolder) viewHolder).getProfileUserVideos().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.video_count)));
-                ((HeaderViewHolder) viewHolder).getProfileUserFollowers().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.followers_count)));
-                ((HeaderViewHolder) viewHolder).getProfileUserFollowing().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.following_count)));
+                if (user != null && user.username != null) {
+                    if (user.username != null) {
+                        ((HeaderViewHolder) viewHolder).getProfileUserName().setText("User Name: " + StringUtils.getFirstLetterUpperCase(user.username));
+
+                    }
+                    if (user.video_count != null) {
+                        ((HeaderViewHolder) viewHolder).getProfileUserVideos().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.video_count)));
+                    }
+                    if (user.followers_count != null) {
+                        ((HeaderViewHolder) viewHolder).getProfileUserFollowers().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.followers_count)));
+
+                    }
+                    if (user.following_count != null) {
+                        ((HeaderViewHolder) viewHolder).getProfileUserFollowing().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.following_count)));
+                    }
+                }
             }
         } else if (viewHolder instanceof FooterViewHolder) {
 
