@@ -95,8 +95,6 @@ public class ProfileFragment extends Fragment {
         if(AccountManager.isLoggedIn()) {
             userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
             mProfileList.add(userHeader);
-        }
-        if (AccountManager.isLoggedIn()) {
             signInPromptContainer.setVisibility(View.GONE);
             Account myAccount = AccountManager.getStoredAccount();
             AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
@@ -167,16 +165,6 @@ public class ProfileFragment extends Fragment {
         Account myAccount = AccountManager.getStoredAccount();
         AppServerClient.getInstance().getUserVideoFeed(myAccount.id, nextPage, new GetUserVideoFeedCallBack());
     }
-
-//    @Override
-//    public void onItemClick(View view, int position) {
-//        if (mProfileList.size() != 0) {
-//            ProfileViewModel videoGetClicked = mProfileList.get(position);
-//            Intent intent = new Intent(getActivity(), ProfileVideoViewActivity.class);
-//            intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, videoGetClicked.getVideo().video_url);
-//            startActivity(intent);
-//        }
-//    }
 
     private class GetUserInfoCallBack implements Callback<GenericResponse<User>> {
         @Override
