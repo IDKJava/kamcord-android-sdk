@@ -13,7 +13,6 @@ public class ViewUtils {
                 new int[]{R.attr.actionBarSize});
         int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
         styledAttributes.recycle();
-
         return toolbarHeight;
     }
 
@@ -24,4 +23,5 @@ public class ViewUtils {
     public static int dpToPx(Context context, int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
+
 }

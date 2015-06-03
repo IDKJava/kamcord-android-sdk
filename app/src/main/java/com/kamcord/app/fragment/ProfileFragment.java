@@ -1,221 +1,260 @@
 package com.kamcord.app.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.KeyEvent;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
-import com.kamcord.app.activity.RecordActivity;
+import com.kamcord.app.adapter.ProfileAdapter;
+import com.kamcord.app.model.ProfileItemType;
+import com.kamcord.app.model.ProfileViewModel;
+import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
+import com.kamcord.app.server.model.GenericResponse;
+import com.kamcord.app.server.model.PaginatedVideoList;
+import com.kamcord.app.server.model.User;
+import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
-import com.kamcord.app.view.ObservableWebView;
+import com.kamcord.app.utils.RecyclerViewScrollListener;
+import com.kamcord.app.view.SpaceItemDecoration;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by donliang1 on 5/6/15.
  */
-public class ProfileFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ProfileFragment extends Fragment {
 
-    private static final String KAMCORD_DOMAIN = "kamcord.com";
-    private static final String KAMCORD_PROFILE_BASE_URL = "https://www." + KAMCORD_DOMAIN + "/profile/";
-    private static final String WEBVIEWSTATE = "webViewState";
-    private static final Pattern domainPattern = Pattern.compile(".*?([^.]+\\.[^.]+)$");
-    private Bundle webViewBundle;
+    private static final int HEADER_EXISTS = 1;
 
-    @InjectView(R.id.webView) ObservableWebView webView;
-    @InjectView(R.id.signInPromptContainer) ViewGroup signInPromptContainer;
-    @InjectView(R.id.signInPromptButton) Button signInPromptButton;
-    @InjectView(R.id.webViewRefreshLayout) SwipeRefreshLayout webViewRefreshLayout;
+    @InjectView(R.id.signInPromptContainer)
+    ViewGroup signInPromptContainer;
+    @InjectView(R.id.signInPromptButton)
+    Button signInPromptButton;
+    @InjectView(R.id.profilefragment_refreshlayout)
+    SwipeRefreshLayout videoFeedRefreshLayout;
+    @InjectView(R.id.profile_recyclerview)
+    RecyclerView profileRecyclerView;
+
+    private static final String TAG = ProfileFragment.class.getSimpleName();
+    private List<ProfileViewModel> mProfileList = new ArrayList<>();
+    private ProfileAdapter mProfileAdapter;
+    private RecyclerViewScrollListener onRecyclerViewScrollListener;
+    private LinearLayoutManager layoutManager = null;
+    private ProfileViewModel userHeader;
+    private String nextPage;
+    private int totalItems = 0;
+    private boolean footerVisible = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.profile_tab, container, false);
-
         ButterKnife.inject(this, root);
-
-        if(savedInstanceState != null) {
-            webViewBundle = savedInstanceState.getBundle(WEBVIEWSTATE);
-        }
-
-        webViewRefreshLayout.setEnabled(false);
-        webViewRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
-        webViewRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-
-        Activity activity = getActivity();
-        if( activity != null && activity instanceof ObservableWebView.ObservableWebViewScrollListener)
-        {
-            webView.setObservableWebViewScrollListener((ObservableWebView.ObservableWebViewScrollListener) activity);
-        }
+        initKamcordProfileFragment(root);
 
         return root;
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof RecyclerViewScrollListener) {
+            onRecyclerViewScrollListener = (RecyclerViewScrollListener) activity;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        onRecyclerViewScrollListener = null;
+    }
+
+    public void initKamcordProfileFragment(View view) {
+
+        profileRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin)));
+        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        if(AccountManager.isLoggedIn()) {
+            userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
+            mProfileList.add(userHeader);
+            signInPromptContainer.setVisibility(View.GONE);
+            Account myAccount = AccountManager.getStoredAccount();
+            AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+        } else {
+            signInPromptContainer.setVisibility(View.VISIBLE);
+        }
+
+        mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
+        profileRecyclerView.setLayoutManager(layoutManager);
+        profileRecyclerView.setAdapter(mProfileAdapter);
+
+        profileRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int state) {
+                if (onRecyclerViewScrollListener != null) {
+                    onRecyclerViewScrollListener.onRecyclerViewScrollStateChanged(recyclerView, state);
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (profileRecyclerView.getChildAt(0) != null) {
+                    int cardMargin = getResources().getDimensionPixelSize(R.dimen.card_margin);
+                    int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
+                    videoFeedRefreshLayout.setEnabled(profileRecyclerView.getChildAdapterPosition(profileRecyclerView.getChildAt(0)) == 0
+                            && profileRecyclerView.getChildAt(0).getTop() == cardMargin + tabsHeight);
+                } else {
+                    videoFeedRefreshLayout.setEnabled(true);
+                }
+
+                if (onRecyclerViewScrollListener != null) {
+                    onRecyclerViewScrollListener.onRecyclerViewScrolled(recyclerView, dy, dy);
+                }
+
+                if ((mProfileList.size() - 1) < totalItems
+                        && nextPage != null
+                        && layoutManager.findLastCompletelyVisibleItemPosition() == (mProfileList.size() - 1)
+                        && footerVisible == false) {
+                    loadMoreItems();
+                }
+            }
+        });
+
+        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (AccountManager.isLoggedIn()) {
+                    videoFeedRefreshLayout.setRefreshing(true);
+                    Account myAccount = AccountManager.getStoredAccount();
+                    AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+                    AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
+                } else {
+                    videoFeedRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
+
+    }
+
+    public void loadMoreItems() {
+        footerVisible = true;
+        mProfileList.add(new ProfileViewModel(ProfileItemType.FOOTER, null));
+        mProfileAdapter.notifyItemInserted(mProfileAdapter.getItemCount());
+        Account myAccount = AccountManager.getStoredAccount();
+        AppServerClient.getInstance().getUserVideoFeed(myAccount.id, nextPage, new GetUserVideoFeedCallBack());
+    }
+
+    private class GetUserInfoCallBack implements Callback<GenericResponse<User>> {
+        @Override
+        public void success(GenericResponse<User> userResponse, Response response) {
+            if (userResponse != null && userResponse.response != null) {
+                userHeader.setUser(userResponse.response);
+                totalItems = userHeader.getUser().video_count;
+                mProfileAdapter.notifyItemChanged(0);
+                videoFeedRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e(TAG, "  " + error.toString());
+            videoFeedRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private class SwipeToRefreshVideoFeedCallBack implements Callback<GenericResponse<PaginatedVideoList>> {
+        @Override
+        public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
+            if (paginatedVideoListGenericResponse != null
+                    && paginatedVideoListGenericResponse.response != null
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                if(mProfileList.size() > 1) {
+                    mProfileList.subList(1, mProfileList.size()).clear();
+                    nextPage = paginatedVideoListGenericResponse.response.next_page;
+                    for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                        ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
+                        mProfileList.add(profileViewModel);
+                    }
+                }
+                footerVisible = false;
+                mProfileAdapter.notifyDataSetChanged();
+                videoFeedRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e(TAG, "  " + error.toString());
+            videoFeedRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private class GetUserVideoFeedCallBack implements Callback<GenericResponse<PaginatedVideoList>> {
+        @Override
+        public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
+            if (paginatedVideoListGenericResponse != null
+                    && paginatedVideoListGenericResponse.response != null
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                nextPage = paginatedVideoListGenericResponse.response.next_page;
+                if (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == ProfileItemType.FOOTER) {
+                    mProfileList.remove(mProfileAdapter.getItemCount() - 1);
+                }
+                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                    ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
+                    mProfileList.add(profileViewModel);
+                }
+                footerVisible = false;
+                mProfileAdapter.notifyDataSetChanged();
+                videoFeedRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e(TAG, "  " + error.toString());
+            videoFeedRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        webViewBundle = new Bundle();
-        webView.saveState(webViewBundle);
-        savedInstanceState.putBundle(WEBVIEWSTATE, webViewBundle);
-    }
-
-    @Override
-    public void onResume()
-    {
+    public void onResume() {
         super.onResume();
 
-        if(AccountManager.isLoggedIn()) {
-            signInPromptContainer.setVisibility(View.GONE);
-            webView.setVisibility(View.VISIBLE);
-            if(webViewBundle != null) {
-                webView.restoreState(webViewBundle);
-            } else {
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.setWebViewClient(new SameDomainWebViewClient(KAMCORD_DOMAIN));
-                webView.setOnKeyListener(new View.OnKeyListener() {
-                    @Override
-                    public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                        WebView wv = (WebView) view;
-                        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN
-                                && keyCode == KeyEvent.KEYCODE_BACK
-                                && wv.canGoBack()) {
-                            Activity activity = getActivity();
-                            if( activity instanceof RecordActivity )
-                            {
-                                ((RecordActivity) activity).showToolbar();
-                            }
-                            wv.goBack();
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
-                webViewRefreshLayout.setEnabled(false);
-                webViewRefreshLayout.setOnRefreshListener(this);
-                webViewRefreshLayout.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        webViewRefreshLayout.setRefreshing(true);
-                    }
-                });
-
-                webView.loadUrl(KAMCORD_PROFILE_BASE_URL + AccountManager.getStoredAccount().username);
-            }
-        }
-        else
-        {
-            signInPromptContainer.setVisibility(View.VISIBLE);
-            webView.setVisibility(View.GONE);
-        }
     }
 
     @OnClick(R.id.signInPromptButton)
-    public void showSignInPrompt()
-    {
+    public void showSignInPrompt() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
         getActivity().finish();
     }
 
-    @Override
-    public void onRefresh() {
-        webViewRefreshLayout.setEnabled(false);
-        if (AccountManager.isLoggedIn()) {
-            Account account = AccountManager.getStoredAccount();
-            Activity activity = getActivity();
-            if( activity instanceof RecordActivity )
-            {
-                ((RecordActivity) activity).showToolbar();
-            }
-            webViewRefreshLayout.setRefreshing(true);
-            webView.loadUrl(KAMCORD_PROFILE_BASE_URL + account.username);
-        }
-        else {
-            webViewRefreshLayout.setRefreshing(false);
-        }
-    }
-
-    public class SameDomainWebViewClient extends WebViewClient
-    {
-        private String domain = null;
-
-        SameDomainWebViewClient(String domain)
-        {
-            this.domain = domain;
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView webView, String url)
-        {
-            Uri uri = Uri.parse(url);
-            boolean override = !hasThisDomain(uri);
-            if( !override )
-            {
-                Activity activity = getActivity();
-                if( activity instanceof RecordActivity )
-                {
-                    ((RecordActivity) activity).showToolbar();
-                }
-            }
-            return override;
-        }
-
-        @Override
-        public void onPageFinished(WebView webView, String url)
-        {
-            if( isResumed() ) {
-                ((RecordActivity) getActivity()).showToolbar();
-                webViewRefreshLayout.setEnabled(true);
-                webViewRefreshLayout.setRefreshing(false);
-                int px = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
-                int dp = Math.round(pxToDp(px, getActivity()));
-
-                String js = String.format("document.body.style.marginTop= \"%dpx\"", dp);
-                webView.evaluateJavascript(js, null);
-            }
-        }
-
-        private boolean hasThisDomain(Uri uri)
-        {
-            String uriDomain = "";
-            Matcher m = domainPattern.matcher(uri.getHost());
-            if( m.matches() )
-            {
-                uriDomain = m.group(1);
-            }
-
-            return uriDomain.equals(domain);
-        }
-    }
-
-    private static float pxToDp(float px, Context context) {
-        if( context != null ) {
-            return px / context.getResources().getDisplayMetrics().density;
-        }
-        return px;
-    }
 }

@@ -81,6 +81,14 @@
     <string name="iWantToRecord">I want to record this game: &lt; game name &gt;</string>
     <string name="sincerely">Sincerely, %s</string>
 
+
+    <string name="defaultNumber">0</string>
+    <string name="headeUserName">User Name</string>
+    <string name="headerVideos">Videos</string>
+    <string name="headerFollowers">Followers</string>
+    <string name="headerFollowing">Following</string>
+    <string name="videoLikes">Likes</string>
+    <string name="byAuthor">By&#160;</string>
     <string name="recordTheseGames">Record These Games!</string>
     <string name="wantToRecordThese">Want to record these games?</string>
     <string name="followersWithCount">%d Followers</string>

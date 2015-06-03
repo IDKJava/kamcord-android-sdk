@@ -64,12 +64,13 @@ public class RecordFragment extends Fragment implements
     DynamicRecyclerView mRecyclerView;
 
     private GameRecordListAdapter mRecyclerAdapter;
+    private Game mSelectedGame = null;
     private GridLayoutManager gridLayoutManager;
+
 
     private List<Game> mSupportedGameList = new ArrayList<>();
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
-    private Game mSelectedGame = null;
     private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
 
     @Override
@@ -130,7 +131,7 @@ public class RecordFragment extends Fragment implements
                 @Override
                 public void run() {
                     mSwipeRefreshLayout.setRefreshing(true);
-                    AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
+                    AppServerClient.getInstance().getGamesList(true, false, new GetGamesListCallback());
                 }
             });
         }
@@ -138,7 +139,7 @@ public class RecordFragment extends Fragment implements
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
+                AppServerClient.getInstance().getGamesList(true, false, new GetGamesListCallback());
             }
         });
 
