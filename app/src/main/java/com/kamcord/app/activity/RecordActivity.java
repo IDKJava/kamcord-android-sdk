@@ -2,19 +2,13 @@ package com.kamcord.app.activity;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -23,21 +17,13 @@ import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.model.RecordingSession;
-import com.kamcord.app.server.client.AppServerClient;
-import com.kamcord.app.server.model.Account;
-import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.thread.Uploader;
-import com.kamcord.app.utils.AccountManager;
-import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.view.SlidingTabLayout;
 
 import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
@@ -49,7 +35,6 @@ public class RecordActivity extends AppCompatActivity implements
     @InjectView(R.id.main_pager) ViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
     @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
-    @InjectView(R.id.toolbar) Toolbar mToolbar;
     @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
 
     private MainViewPagerAdapter mainViewPagerAdapter;
@@ -97,10 +82,6 @@ public class RecordActivity extends AppCompatActivity implements
 
     public void initMainActivity() {
 
-        setSupportActionBar(mToolbar);
-        mToolbar.setTitle(getString(R.string.app_name));
-        mToolbar.setLogo(R.drawable.kamcord_tabbar_icon);
-
         tabTitles = new String[2];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
         tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
@@ -113,43 +94,10 @@ public class RecordActivity extends AppCompatActivity implements
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-        mTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (!controlsVisible) {
-                    showToolbar();
-                }
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                if (state == ViewPager.SCROLL_STATE_DRAGGING && !controlsVisible) {
-                    showToolbar();
-                }
-            }
-        });
         mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview_layout);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
-    }
-
-    public void hideToolbar() {
-        toolbarContainer.animate()
-                .translationY(-mToolbar.getHeight())
-                .setInterpolator(new AccelerateInterpolator(2));
-        controlsVisible = false;
-    }
-
-    public void showToolbar() {
-        toolbarContainer.animate()
-                .translationY(0)
-                .setInterpolator(new DecelerateInterpolator(2));
-        controlsVisible = true;
     }
 
     @Override
@@ -162,10 +110,8 @@ public class RecordActivity extends AppCompatActivity implements
                 && !(recyclerView.getChildCount() > 0
                 && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) == 0
                 && recyclerView.getChildAt(0).getTop() > 0)) {
-            hideToolbar();
             recyclerViewScrolledDistance = 0;
         } else if (recyclerViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-            showToolbar();
             recyclerViewScrolledDistance = 0;
         }
 
@@ -240,77 +186,4 @@ public class RecordActivity extends AppCompatActivity implements
         super.onDestroy();
         FlurryAgent.onEndSession(this);
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_record, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        optionsMenu = menu;
-        MenuItem signoutItem = optionsMenu.findItem(R.id.action_signout);
-        if (!AccountManager.isLoggedIn()) {
-            signoutItem.setVisible(false);
-        } else {
-            signoutItem.setVisible(true);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_cleancache: {
-                FileSystemManager.cleanCache();
-                break;
-            }
-            case R.id.action_signout: {
-                if (AccountManager.isLoggedIn()) {
-                    AppServerClient.getInstance().logout(logoutCallback);
-                }
-                break;
-            }
-            case R.id.action_request_game: {
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getResources().getString(R.string.communityEmail),});
-                intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.canIRecord));
-                String body = getResources().getString(R.string.iWantToRecord) + " \n"
-                        + "\n";
-                if (AccountManager.isLoggedIn()) {
-                    Account account = AccountManager.getStoredAccount();
-                    body += String.format(Locale.ENGLISH, getResources().getString(R.string.sincerely), account.username);
-                }
-                intent.putExtra(Intent.EXTRA_TEXT, body);
-                intent.setType("*/*");
-                intent.setData(Uri.parse("mailto:"));
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    // TODO: show the user there's no app to handle emails.
-                }
-                break;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-            AccountManager.clearStoredAccount();
-            Intent loginIntent = new Intent(RecordActivity.this, LoginActivity.class);
-            startActivity(loginIntent);
-            finish();
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            AccountManager.clearStoredAccount();
-            Intent loginIntent = new Intent(RecordActivity.this, LoginActivity.class);
-            startActivity(loginIntent);
-            finish();
-        }
-    };
 }

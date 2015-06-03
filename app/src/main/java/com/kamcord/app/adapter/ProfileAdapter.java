@@ -1,17 +1,22 @@
 package com.kamcord.app.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 
 import com.kamcord.app.R;
+import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.HeaderViewHolder;
@@ -19,13 +24,17 @@ import com.kamcord.app.adapter.viewholder.ItemViewHolder;
 import com.kamcord.app.model.ProfileItemType;
 import com.kamcord.app.model.ProfileViewModel;
 import com.kamcord.app.server.client.AppServerClient;
+import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -99,7 +108,54 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                     ((HeaderViewHolder) viewHolder).getProfileHeaderLayout().setBackgroundColor(Color.parseColor(user.profile_color));
                 }
+                ((HeaderViewHolder) viewHolder).getActionMenuView().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PopupMenu popupMenu = new PopupMenu(mContext, v);
+                        popupMenu.getMenuInflater().inflate(R.menu.menu_record, popupMenu.getMenu());
+                        popupMenu.show();
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.action_cleancache: {
+                                        FileSystemManager.cleanCache();
+                                        break;
+                                    }
+                                    case R.id.action_signout: {
+                                        if (AccountManager.isLoggedIn()) {
+                                            AppServerClient.getInstance().logout(logoutCallback);
+                                        }
+                                        break;
+                                    }
+                                    case R.id.action_request_game: {
+                                        Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{mContext.getResources().getString(R.string.communityEmail),});
+                                        intent.putExtra(Intent.EXTRA_SUBJECT, mContext.getResources().getString(R.string.canIRecord));
+                                        String body = mContext.getResources().getString(R.string.iWantToRecord) + " \n"
+                                                + "\n";
+                                        if (AccountManager.isLoggedIn()) {
+                                            Account account = AccountManager.getStoredAccount();
+                                            body += String.format(Locale.ENGLISH, mContext.getResources().getString(R.string.sincerely), account.username);
+                                        }
+                                        intent.putExtra(Intent.EXTRA_TEXT, body);
+                                        intent.setType("*/*");
+                                        intent.setData(Uri.parse("mailto:"));
+                                        if (intent.resolveActivity(mContext.getPackageManager()) != null) {
+                                            mContext.startActivity(intent);
+                                        } else {
+                                            // TODO: show the user there's no app to handle emails.
+                                        }
+                                        break;
+                                    }
+                                }
+                                return false;
+                            }
+                        });
+                    }
+                });
             }
+
         } else if (viewHolder instanceof FooterViewHolder) {
 
         } else if (viewHolder instanceof ItemViewHolder) {
@@ -202,5 +258,21 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    ;
+    private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+            AccountManager.clearStoredAccount();
+            Intent loginIntent = new Intent(mContext, LoginActivity.class);
+            mContext.startActivity(loginIntent);
+            ((Activity) mContext).finish();
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            AccountManager.clearStoredAccount();
+            Intent loginIntent = new Intent(mContext, LoginActivity.class);
+            mContext.startActivity(loginIntent);
+            ((Activity) mContext).finish();
+        }
+    };
 }

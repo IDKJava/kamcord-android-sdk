@@ -2,6 +2,7 @@ package com.kamcord.app.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,6 +16,8 @@ import butterknife.InjectView;
  */
 public class HeaderViewHolder extends RecyclerView.ViewHolder {
 
+    @InjectView(R.id.profile_action_menu)
+    ImageView actionMenuView;
     @InjectView(R.id.profileLetter)
     TextView profileLetter;
     @InjectView(R.id.profile_user_name)
@@ -33,6 +36,10 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
     public HeaderViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
+    }
+
+    public ImageView getActionMenuView() {
+        return this.actionMenuView;
     }
 
     public TextView getProfileLetter() {
