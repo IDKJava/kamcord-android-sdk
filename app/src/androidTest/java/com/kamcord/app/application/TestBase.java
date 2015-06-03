@@ -132,7 +132,16 @@ public abstract class TestBase {
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
-    public void findGameListed(String gameName) {
+    public void findGame(String gameName) {
+        findGame(gameName, true);
+    }
+    public void findGame(String gameName, boolean installed) {
+        int idToFind;
+        if(installed){
+            idToFind = R.id.gameNameTextView;
+        } else {
+            idToFind = R.id.item_packagename;
+        }
         try {
             ArrayList<String> gameTitles = new ArrayList<>();
 
@@ -165,7 +174,7 @@ public abstract class TestBase {
                 unique = false;
                 mDevice.waitForIdle();
                 for (UiObject2 gameTitle :
-                        mDevice.findObjects(By.res(getResByID(R.id.item_packagename)))) {
+                        mDevice.findObjects(By.res(getResByID(idToFind)))) {
                     String title = gameTitle.getText();
                     if (!gameTitles.contains(title)) {
                         gameTitles.add(title);

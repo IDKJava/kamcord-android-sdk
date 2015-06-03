@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class GameListTest extends RecordAndPostTestBase {
 
     @Test
-    public void checkIfGamesListed() throws UiObjectNotFoundException{
+    public void checkGamesToInstallList() throws UiObjectNotFoundException{
         //TODO: Check for content not just count.
         doLogin();
         mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
@@ -53,6 +53,39 @@ public class GameListTest extends RecordAndPostTestBase {
         mDevice.swipe(validateSwipe(new Point[]{new Point(380, 400), new Point(380, 1150)}), 40);
         assertTrue("Has no games listed!", gameTitles.size() > 2);
     }
+
+    @Test
+    public void checkGamesInstalledList() throws UiObjectNotFoundException{
+        //TODO: Check for content not just count.
+        doLogin();
+        mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
+
+        findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS)
+                .click();
+
+        ArrayList<String> gameTitles = new ArrayList<>();
+
+        waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+
+        boolean unique = true;
+        while(unique) {
+            unique = false;
+            mDevice.waitForIdle();
+            for (UiObject2 gameTitle : mDevice.findObjects(By.res(getResByID(R.id.gameNameTextView)))) {
+                String title = gameTitle.getText();
+                if(!gameTitles.contains(title)){
+                    gameTitles.add(title);
+                    unique = true;
+                }
+            }
+
+            mDevice.swipe(validateSwipe(new Point[]{new Point(380, 1760), new Point(380, 150)}), 40);
+        }
+
+        mDevice.swipe(validateSwipe(new Point[]{new Point(380, 400), new Point(380, 1150)}), 40);
+        assertTrue("Has no games listed!", gameTitles.size() >= 1);
+    }
+
 
     @Test
     public void checkIfGamesUpdate() {

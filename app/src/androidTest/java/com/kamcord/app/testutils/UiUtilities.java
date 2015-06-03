@@ -50,6 +50,7 @@ public class UiUtilities {
         Des
     }
 
+
     public static void sleep(int timeInMS) {
         try {
             Thread.sleep(timeInMS);
@@ -95,6 +96,41 @@ public class UiUtilities {
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
         assertTrue("UI Object failed to load!", notTimedOut);
         return mDevice.findObject(objSelector);
+    }
+    public static UiObject2 findUiObjInObj(UiObject2 parentObj,
+                                           int id,
+                                           UiObjIdType idType,
+                                           UiObjSelType selType,
+                                           int timeOut) {
+        //TODO: Refactor this into the findUiObj
+        String idString;
+        switch (idType) {
+            case Res:
+                idString = getResByID(id);
+                break;
+            case Str:
+                idString = getStrByID(id);
+                break;
+            default:
+                throw new UnsupportedOperationException("Object Id type not supported!");
+        }
+
+        BySelector objSelector;
+        switch (selType) {
+            case Res:
+                objSelector = By.res(idString);
+                break;
+            case Txt:
+                //TODO: Change to 'starts with' or 'contains'?? We may need to less restrictive with text!
+                objSelector = By.text(idString);
+                break;
+            default:
+                throw new UnsupportedOperationException("UI Selector type not supported!");
+        }
+
+        boolean notTimedOut = parentObj.wait(Until.hasObject(objSelector), timeOut);
+        assertTrue("UI Object failed to load!", notTimedOut);
+        return parentObj.findObject(objSelector);
     }
     public static void loseUiObj(int id,
                                  UiObjIdType idType,

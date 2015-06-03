@@ -119,6 +119,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         });
         if( game.isRecording ) {
             recordImageButton.setBackgroundResource(R.drawable.fab_circle_red);
+            recordImageButton
+                    .setContentDescription(mContext.getResources().getString(R.string.recording));
             recordImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
             Animation animation = new AlphaAnimation(1f, 0.5f);
             animation.setDuration(500);
@@ -127,6 +129,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
             recordImageButton.startAnimation(animation);
         } else {
             recordImageButton.setBackgroundResource(R.drawable.fab_circle);
+            recordImageButton
+                    .setContentDescription(mContext.getResources().getString(R.string.idle));
             recordImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
             recordImageButton.clearAnimation();
         }

@@ -74,4 +74,16 @@ public class RecordingTests extends RecordAndPostTestBase{
 
     }
 
+    @Test
+    public void recordRippleTestLoginFirstPrematurePlay(){
+        doLogin();
+        int recordingDuration = 10000;
+        recordGameVideo(RIPPLE_TEST_APP_NAME, recordingDuration);
+        //TODO: Click on processing tag and see what will happen.
+        findUiObj(R.id.thumbnailImageView, UiObjIdType.Res, UiObjSelType.Res).click();
+        findUiObj(R.id.fragment_share_layout, UiObjIdType.Res, UiObjSelType.Res);
+
+
+    }
+
 }

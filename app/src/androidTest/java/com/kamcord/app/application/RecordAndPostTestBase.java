@@ -28,12 +28,16 @@ public abstract class RecordAndPostTestBase extends TestBase {
         waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
         //find ripples app logo and click
         //wait for load!!!!
-        findGameListed(gameName);
+        findGame(gameName);
 
+        getRecordButtonForGame(gameName, true).click();
+
+
+        /*
         findUiObj(gameName, UiObjSelType.Txt).click();
 
-        findUiObj(R.id.record_button, UiObjIdType.Res, UiObjSelType.Res).click();
-
+        findUiObj(R.id.recordImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
+        */
         //Ack the screen recording warning.
 
         //Ack the message
@@ -101,9 +105,9 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
         //click on notification to resume app.
         findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
-
+        sleep(5000);
         //find stop recording button.
-        findUiObj(R.id.record_button, UiObjIdType.Res, UiObjSelType.Res).click();
+        getRecordButtonForGame(gameName, false).click();
 
     }
 
@@ -125,7 +129,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
         UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);
         title.click();
-        title.setText("my awesome ripple test video");
+        title.setText("my awesome test video");
 
         //close soft keyboard
         mDevice.pressBack();
@@ -171,6 +175,25 @@ public abstract class RecordAndPostTestBase extends TestBase {
             }
         }
         return false;
+    }
+    protected UiObject2 getRecordButtonForGame(String gameName, boolean start){
+
+        UiObject2 gameLabel = findUiObj(R.id.gameNameTextView, UiObjIdType.Res, UiObjSelType.Res);
+
+        UiObject2 completeGameItem = gameLabel.getParent().getParent();
+
+        UiObject2 button = findUiObjInObj(completeGameItem, R.id.recordImageButton,
+                UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
+        String buttonDescExpected;
+        if(start) {
+            buttonDescExpected = getStrByID(R.string.idle);
+        } else {
+            buttonDescExpected = getStrByID(R.string.recording);
+        }
+
+        assertTrue("Wrong button showing!",
+                button.getContentDescription().equals(buttonDescExpected));
+        return button;
     }
 
 
