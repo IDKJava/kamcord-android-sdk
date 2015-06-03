@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
@@ -164,6 +165,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (videoItem.title != null) {
                 ((ItemViewHolder) viewHolder).getProfileItemTitle().setText(StringUtils.getFirstLetterUpperCase(videoItem.title));
             }
+            final TextView videoViewsTextView = ((ItemViewHolder) viewHolder).getVideoViews();
+            videoViewsTextView.setText("Views: " + Integer.toString(videoItem.views));
             final ImageView videoImageView = ((ItemViewHolder) viewHolder).getProfileItemThumbnail();
             if (videoItem.thumbnails != null && videoItem.thumbnails.regular != null) {
                 Picasso.with(mContext)
@@ -173,6 +176,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             videoImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    AppServerClient.getInstance().updateVideoViews(videoItem.video_id, new UpdateVideoViewsCallback());
+                    videoViewsTextView.setText("Views: " + Integer.toString(videoItem.views + 1));
                     Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
                     intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, profileItem.getVideo().video_url);
                     mContext.startActivity(intent);
@@ -181,7 +186,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             ((ItemViewHolder) viewHolder).getProfileItemAuthor().setText(mContext.getResources().getString(R.string.byAuthor) + videoItem.username);
             ((ItemViewHolder) viewHolder).getVideoComments().setText("Comments: " + Integer.toString(videoItem.comments));
-            ((ItemViewHolder) viewHolder).getVideoViews().setText("Views: " + Integer.toString(videoItem.views));
+
 
             final Button videoLikesButton = ((ItemViewHolder) viewHolder).getVideoLikesButton();
             videoLikesButton.setText(Integer.toString(videoItem.likes));
@@ -248,6 +253,17 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private class UnLikeVideosCallback implements Callback<GenericResponse<?>> {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Unlike Failure", "  " + error.toString());
+        }
+    }
+
+    private class UpdateVideoViewsCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
         }

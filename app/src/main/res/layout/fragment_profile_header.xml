@@ -55,7 +55,8 @@
                 android:layout_below="@+id/profileLetter"
                 android:layout_centerHorizontal="true"
                 android:text="@string/headeUserName"
-                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_marginTop="16dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/ColorPrimary" />
 
             <TextView
