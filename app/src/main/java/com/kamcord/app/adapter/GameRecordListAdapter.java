@@ -14,9 +14,8 @@ import android.widget.ImageButton;
 
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.viewholder.FirstInstalledViewHolder;
-import com.kamcord.app.adapter.viewholder.InstalledViewHolder;
+import com.kamcord.app.adapter.viewholder.GameItemViewHolder;
 import com.kamcord.app.adapter.viewholder.LastInstalledViewHolder;
-import com.kamcord.app.adapter.viewholder.NotInstalledViewHolder;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.utils.AccountManager;
@@ -36,22 +35,20 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     private Context mContext;
     private List<Game> mGames;
-    private OnItemClickListener mItemClickListener;
-    private OnRecordButtonClickListener mOnRecordButtonClickListener;
+    private OnGameActionButtonClickListener mOnGameActionButtonClickListener;
 
-    public GameRecordListAdapter(Context context, List<Game> games, OnItemClickListener itemClickListener, OnRecordButtonClickListener recordButtonClickListener) {
+    public GameRecordListAdapter(Context context, List<Game> games, OnGameActionButtonClickListener recordButtonClickListener) {
         this.mContext = context;
         this.mGames = games;
-        this.mItemClickListener = itemClickListener;
-        this.mOnRecordButtonClickListener = recordButtonClickListener;
+        this.mOnGameActionButtonClickListener = recordButtonClickListener;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        View itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed, null);
-        RecyclerView.ViewHolder viewHolder = new NotInstalledViewHolder(itemLayoutView, mItemClickListener);
+        View itemLayoutView = inflater.inflate(R.layout.view_game_item, null);
+        RecyclerView.ViewHolder viewHolder = new GameItemViewHolder(itemLayoutView);
 
         switch (viewType) {
             case VIEW_TYPE_FIRST_INSTALLED:
@@ -60,8 +57,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                 break;
 
             case VIEW_TYPE_INSTALLED:
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView);
+                itemLayoutView = inflater.inflate(R.layout.view_game_item, null);
+                viewHolder = new GameItemViewHolder(itemLayoutView);
                 break;
 
             case VIEW_TYPE_LAST_INSTALLED:
@@ -81,29 +78,15 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
         Game game = mGames.get(position);
 
-        if (viewHolder instanceof NotInstalledViewHolder) {
-            bindNotInstalledViewHolder((NotInstalledViewHolder) viewHolder, game);
-
-        } else if (viewHolder instanceof FirstInstalledViewHolder) {
+        if (viewHolder instanceof FirstInstalledViewHolder) {
             bindFirstInstalledViewHolder((FirstInstalledViewHolder) viewHolder, game);
 
         } else if (viewHolder instanceof LastInstalledViewHolder) {
             bindLastInstalledViewHolder((LastInstalledViewHolder) viewHolder, game);
 
-        } else if (viewHolder instanceof InstalledViewHolder) {
-            bindInstalledViewHolder((InstalledViewHolder) viewHolder, game);
+        } else if (viewHolder instanceof GameItemViewHolder) {
+            bindInstalledViewHolder((GameItemViewHolder) viewHolder, game);
 
-        }
-    }
-
-    private void bindNotInstalledViewHolder(NotInstalledViewHolder viewHolder, Game game)
-    {
-        viewHolder.itemPackageName.setText(game.name);
-        if( game.icons != null && game.icons.regular != null ) {
-            Picasso.with(mContext)
-                    .load(game.icons.regular)
-                    .tag(game.play_store_id)
-                    .into(viewHolder.itemImage);
         }
     }
 
@@ -141,7 +124,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         });
     }
 
-    private void bindInstalledViewHolder(InstalledViewHolder viewHolder, final Game game)
+    private void bindInstalledViewHolder(GameItemViewHolder viewHolder, final Game game)
     {
         if( game.icons != null && game.icons.regular != null ) {
             Picasso.with(mContext)
@@ -156,27 +139,27 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                         mContext.getResources().getString(R.string.followersWithCount),
                         game.number_of_followers));
 
-        ImageButton recordImageButton = viewHolder.recordImageButton;
-        recordImageButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton gameActionImageButton = viewHolder.gameActionImageButton;
+        gameActionImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mOnRecordButtonClickListener != null) {
-                    mOnRecordButtonClickListener.onRecordButtonClick(game);
+                if (mOnGameActionButtonClickListener != null) {
+                    mOnGameActionButtonClickListener.onGameActionButtonClick(game);
                 }
             }
         });
-        if( game.isRecording ) {
-            recordImageButton.setBackgroundResource(R.drawable.fab_circle_red);
-            recordImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+        if (game.isRecording) {
+            gameActionImageButton.setBackgroundResource(R.drawable.fab_circle_red);
+            gameActionImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
             Animation animation = new AlphaAnimation(1f, 0.5f);
             animation.setDuration(500);
             animation.setRepeatCount(Animation.INFINITE);
             animation.setRepeatMode(Animation.REVERSE);
-            recordImageButton.startAnimation(animation);
+            gameActionImageButton.startAnimation(animation);
         } else {
-            recordImageButton.setBackgroundResource(R.drawable.fab_circle);
-            recordImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
-            recordImageButton.clearAnimation();
+            gameActionImageButton.setBackgroundResource(R.drawable.fab_circle);
+            gameActionImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+            gameActionImageButton.clearAnimation();
         }
     }
 
@@ -207,11 +190,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         return viewType;
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    public interface OnRecordButtonClickListener {
-        void onRecordButtonClick(Game game);
+    public interface OnGameActionButtonClickListener {
+        void onGameActionButtonClick(Game game);
     }
 }

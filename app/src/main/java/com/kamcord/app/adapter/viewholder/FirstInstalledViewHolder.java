@@ -11,7 +11,7 @@ import butterknife.InjectView;
 /**
  * Created by pplunkett on 6/3/15.
  */
-public class FirstInstalledViewHolder extends InstalledViewHolder {
+public class FirstInstalledViewHolder extends GameItemViewHolder {
     @InjectView(R.id.recordAndShareTextView)
     public TextView recordAndShareTextView;
 

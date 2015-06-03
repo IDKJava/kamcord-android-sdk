@@ -52,7 +52,7 @@
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/recordImageButton"
+            android:id="@+id/gameActionImageButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="16dp"

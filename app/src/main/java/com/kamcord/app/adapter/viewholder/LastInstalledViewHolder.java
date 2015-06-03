@@ -12,7 +12,7 @@ import butterknife.InjectView;
 /**
  * Created by pplunkett on 6/3/15.
  */
-public class LastInstalledViewHolder extends InstalledViewHolder {
+public class LastInstalledViewHolder extends GameItemViewHolder {
     @InjectView(R.id.requestGameImageButton)
     public ImageButton requestGameImageButton;
     @InjectView(R.id.alsoRecordTheseTextView)

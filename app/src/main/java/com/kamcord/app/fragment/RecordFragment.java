@@ -50,8 +50,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class RecordFragment extends Fragment implements
-        GameRecordListAdapter.OnItemClickListener,
-        GameRecordListAdapter.OnRecordButtonClickListener {
+        GameRecordListAdapter.OnGameActionButtonClickListener {
     private static final String TAG = RecordFragment.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
@@ -118,7 +117,7 @@ public class RecordFragment extends Fragment implements
         sortGameList(mSupportedGameList);
 
         mRecyclerView.addItemDecoration(new RecordItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, this, this);
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
@@ -207,19 +206,6 @@ public class RecordFragment extends Fragment implements
     }
 
     private Toast startRecordingToast = null;
-
-    @Override
-    public void onItemClick(View view, int position) {
-        Game game = mSupportedGameList.get(position);
-        if (!game.isInstalled) {
-            mSelectedGame = null;
-            Intent intent = new Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=" + game.play_store_id));
-            getActivity().startActivity(intent);
-        }
-    }
-
     public interface RecyclerViewScrollListener {
         void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
 
@@ -334,31 +320,42 @@ public class RecordFragment extends Fragment implements
     }
 
     @Override
-    public void onRecordButtonClick(final Game game) {
-        if (!RecordingService.isRunning()) {
-            mSelectedGame = game;
-            obtainMediaProjection();
-        } else {
-            RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
-            if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
-                stopRecording();
-                shareRecording();
+    public void onGameActionButtonClick(final Game game) {
+
+        if( game.isInstalled ) {
+
+            if (!RecordingService.isRunning()) {
+                mSelectedGame = game;
+                obtainMediaProjection();
             } else {
-                String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.alreadyRecording)
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                stopRecording();
-                                mSelectedGame = game;
-                                obtainMediaProjection();
-                            }
-                        })
-                        .setNeutralButton(android.R.string.cancel, null)
-                        .show();
+                RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
+                if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
+                    stopRecording();
+                    shareRecording();
+                } else {
+                    String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.alreadyRecording)
+                            .setMessage(message)
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    stopRecording();
+                                    mSelectedGame = game;
+                                    obtainMediaProjection();
+                                }
+                            })
+                            .setNeutralButton(android.R.string.cancel, null)
+                            .show();
+                }
             }
+
+        } else {
+            mSelectedGame = null;
+            Intent intent = new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + game.play_store_id));
+            getActivity().startActivity(intent);
         }
     }
 
