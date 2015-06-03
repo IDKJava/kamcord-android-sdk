@@ -90,7 +90,8 @@
     <string name="headerFollowing">Following</string>
     <string name="videoLikes">Likes</string>
     <string name="byAuthor">By&#160;</string>
-    <string name="recordTheseGames">Record These Games!</string>
+    <string name="recordAndShare">Record &amp; Share</string>
+    <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
     <string name="theMostPopularGames">The most popular games on Kamcord</string>
     <string name="followersWithCount">%d Followers</string>

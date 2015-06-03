@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.widget.ImageButton;
 
 import com.kamcord.app.R;
+import com.kamcord.app.adapter.viewholder.FirstInstalledViewHolder;
 import com.kamcord.app.adapter.viewholder.InstalledViewHolder;
 import com.kamcord.app.adapter.viewholder.LastInstalledViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledViewHolder;
@@ -55,7 +56,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         switch (viewType) {
             case VIEW_TYPE_FIRST_INSTALLED:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_first_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView);
+                viewHolder = new FirstInstalledViewHolder(itemLayoutView);
                 break;
 
             case VIEW_TYPE_INSTALLED:
@@ -83,6 +84,9 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         if (viewHolder instanceof NotInstalledViewHolder) {
             bindNotInstalledViewHolder((NotInstalledViewHolder) viewHolder, game);
 
+        } else if (viewHolder instanceof FirstInstalledViewHolder) {
+            bindFirstInstalledViewHolder((FirstInstalledViewHolder) viewHolder, game);
+
         } else if (viewHolder instanceof LastInstalledViewHolder) {
             bindLastInstalledViewHolder((LastInstalledViewHolder) viewHolder, game);
 
@@ -101,6 +105,12 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                     .tag(game.play_store_id)
                     .into(viewHolder.itemImage);
         }
+    }
+
+    private void bindFirstInstalledViewHolder(FirstInstalledViewHolder viewHolder, Game game)
+    {
+        bindInstalledViewHolder(viewHolder, game);
+        CalligraphyUtils.applyFontToTextView(mContext, viewHolder.recordAndShareTextView, "fonts/proximanova_semibold.otf");
     }
 
     private void bindLastInstalledViewHolder(LastInstalledViewHolder viewHolder, Game game)
