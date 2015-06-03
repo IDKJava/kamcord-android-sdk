@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +35,7 @@ import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
-import com.kamcord.app.view.SpaceItemDecoration;
+import com.kamcord.app.view.RecordItemDecoration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +64,6 @@ public class RecordFragment extends Fragment implements
 
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
-    private GridLayoutManager gridLayoutManager;
 
 
     private List<Game> mSupportedGameList = new ArrayList<>();
@@ -119,7 +117,7 @@ public class RecordFragment extends Fragment implements
         }
         sortGameList(mSupportedGameList);
 
-        mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
+        mRecyclerView.addItemDecoration(new RecordItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, this, this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
