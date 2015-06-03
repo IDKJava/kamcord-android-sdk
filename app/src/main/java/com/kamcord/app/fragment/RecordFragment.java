@@ -99,7 +99,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
                 @Override
                 public void run() {
                     mSwipeRefreshLayout.setRefreshing(true);
-                    AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
+                    AppServerClient.getInstance().getGamesList(true, false, new GetGamesListCallback());
                 }
             });
         }
@@ -107,7 +107,7 @@ public class RecordFragment extends Fragment implements GameRecordListAdapter.On
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
-                AppServerClient.getInstance().getGamesList(false, false, new GetGamesListCallback());
+                AppServerClient.getInstance().getGamesList(true, false, new GetGamesListCallback());
             }
         });
 

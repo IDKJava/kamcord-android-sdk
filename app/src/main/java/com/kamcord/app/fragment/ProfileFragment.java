@@ -97,6 +97,15 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
             userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
             mProfileList.add(userHeader);
         }
+        if (AccountManager.isLoggedIn()) {
+            signInPromptContainer.setVisibility(View.GONE);
+            Account myAccount = AccountManager.getStoredAccount();
+            AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+        } else {
+            signInPromptContainer.setVisibility(View.VISIBLE);
+        }
+
         mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList, this);
         mProfileAdapter.setOnItemClickListener(this);
         profileRecyclerView.setLayoutManager(layoutManager);
@@ -252,14 +261,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
     @Override
     public void onResume() {
         super.onResume();
-        if (AccountManager.isLoggedIn()) {
-            signInPromptContainer.setVisibility(View.GONE);
-            Account myAccount = AccountManager.getStoredAccount();
-            AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
-        } else {
-            signInPromptContainer.setVisibility(View.VISIBLE);
-        }
+
     }
 
     @OnClick(R.id.signInPromptButton)

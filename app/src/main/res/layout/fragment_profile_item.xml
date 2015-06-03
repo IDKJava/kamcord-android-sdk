@@ -56,7 +56,6 @@
                 android:textColor="@color/kamcordGreen"
                 android:background="@drawable/button_selector" />
 
-
             <TextView
                 android:id="@+id/video_comments"
                 android:layout_width="wrap_content"

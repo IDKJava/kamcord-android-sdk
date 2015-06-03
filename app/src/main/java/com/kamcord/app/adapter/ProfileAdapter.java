@@ -39,6 +39,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_VIDEO_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
+    private static int likePosition;
 
     public ProfileAdapter(Context context, List<ProfileViewModel> mProfileList, OnItemClickListener itemClickListener) {
         this.mContext = context;
@@ -120,11 +121,16 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             videoLikesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    likePosition = position;
                     if (videoItem.is_user_liking) {
-                        videoLikesButton.setText(Integer.toString(videoItem.likes - 1));
+                        videoItem.is_user_liking = false;
+                        videoItem.likes = videoItem.likes - 1;
+                        videoLikesButton.setText(Integer.toString(videoItem.likes));
                         AppServerClient.getInstance().unLikeVideo(videoItem.video_id, new UnLikeVideosCallback());
                     } else {
-                        videoLikesButton.setText(Integer.toString(videoItem.likes + 1));
+                        videoItem.is_user_liking = true;
+                        videoItem.likes = videoItem.likes + 1;
+                        videoLikesButton.setText(Integer.toString(videoItem.likes));
                         AppServerClient.getInstance().likeVideo(videoItem.video_id, new LikeVideosCallback());
                     }
 
