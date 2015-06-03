@@ -1,6 +1,8 @@
 package com.kamcord.app.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -12,12 +14,17 @@ import android.widget.ImageButton;
 
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.viewholder.InstalledViewHolder;
+import com.kamcord.app.adapter.viewholder.LastInstalledViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledViewHolder;
+import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.Game;
+import com.kamcord.app.utils.AccountManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Locale;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
@@ -58,7 +65,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
             case VIEW_TYPE_LAST_INSTALLED:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_last_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView);
+                viewHolder = new LastInstalledViewHolder(itemLayoutView);
                 break;
 
             default:
@@ -76,8 +83,11 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         if (viewHolder instanceof NotInstalledViewHolder) {
             bindNotInstalledViewHolder((NotInstalledViewHolder) viewHolder, game);
 
+        } else if (viewHolder instanceof LastInstalledViewHolder) {
+            bindLastInstalledViewHolder((LastInstalledViewHolder) viewHolder, game);
+
         } else if (viewHolder instanceof InstalledViewHolder) {
-            bindFirstInstalledViewHolder((InstalledViewHolder) viewHolder, game);
+            bindInstalledViewHolder((InstalledViewHolder) viewHolder, game);
 
         }
     }
@@ -93,7 +103,35 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
     }
 
-    private void bindFirstInstalledViewHolder(InstalledViewHolder viewHolder, final Game game)
+    private void bindLastInstalledViewHolder(LastInstalledViewHolder viewHolder, Game game)
+    {
+        bindInstalledViewHolder(viewHolder, game);
+        CalligraphyUtils.applyFontToTextView(mContext, viewHolder.alsoRecordTheseTextView, "fonts/proximanova_semibold.otf");
+        viewHolder.requestGameImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{mContext.getResources().getString(R.string.communityEmail),});
+                intent.putExtra(Intent.EXTRA_SUBJECT, mContext.getResources().getString(R.string.canIRecord));
+                String body = mContext.getResources().getString(R.string.iWantToRecord) + " \n"
+                        + "\n";
+                if (AccountManager.isLoggedIn()) {
+                    Account account = AccountManager.getStoredAccount();
+                    body += String.format(Locale.ENGLISH, mContext.getResources().getString(R.string.sincerely), account.username);
+                }
+                intent.putExtra(Intent.EXTRA_TEXT, body);
+                intent.setType("*/*");
+                intent.setData(Uri.parse("mailto:"));
+                if (intent.resolveActivity(mContext.getPackageManager()) != null) {
+                    mContext.startActivity(intent);
+                } else {
+                    // TODO: show the user there's no app to handle emails.
+                }
+            }
+        });
+    }
+
+    private void bindInstalledViewHolder(InstalledViewHolder viewHolder, final Game game)
     {
         if( game.icons != null && game.icons.regular != null ) {
             Picasso.with(mContext)
@@ -131,6 +169,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
             recordImageButton.clearAnimation();
         }
     }
+
+
 
     @Override
     public int getItemCount() {
