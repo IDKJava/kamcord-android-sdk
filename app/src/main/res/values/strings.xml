@@ -58,7 +58,7 @@
     <string name="kamcordProfileTab">Profile</string>
     <string name="kamcordVideoTab">Top Videos</string>
     <string name="stitchingVideos">Stitching the clips&#8230;</string>
-    <string name="installThisGame">Install this game!</string>
+    <string name="install">Install</string>
     <string name="shareThisVideo">Share This Video</string>
 
     <string name="writeATitle">Write a title&#8230;</string>
@@ -80,5 +80,12 @@
     <string name="canIRecord">Can I record this game?</string>
     <string name="iWantToRecord">I want to record this game: &lt; game name &gt;</string>
     <string name="sincerely">Sincerely, %s</string>
+
+    <string name="recordTheseGames">Record These Games!</string>
+    <string name="wantToRecordThese">Want to record these games?</string>
+    <string name="followersWithCount">%d Followers</string>
+
+    <string name="alreadyRecording">Already Recording!</string>
+    <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>
 
 </resources>
