@@ -95,6 +95,9 @@ public class AppServerClient {
 
         @POST("/app/v3/videos/{videoId}/like")
         void likeVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
+
+        @POST("/app/v3/videos/{videoId}/unlike")
+        void unLikeVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
     }
 
     private static AppServer instance;

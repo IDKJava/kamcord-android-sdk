@@ -58,6 +58,12 @@ public class ProfileVideoViewActivity extends AppCompatActivity implements Media
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        myVideoView.suspend();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
     }
