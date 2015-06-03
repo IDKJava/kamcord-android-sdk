@@ -143,6 +143,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
                 if (AccountManager.isLoggedIn()) {
                     videoFeedRefreshLayout.setRefreshing(true);
                     Account myAccount = AccountManager.getStoredAccount();
+                    AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
                     AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
                 } else {
                     videoFeedRefreshLayout.setRefreshing(false);
@@ -194,12 +195,13 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
                     && paginatedVideoListGenericResponse.response.video_list != null) {
-                mProfileList.clear();
-                mProfileList.add(new ProfileViewModel(ProfileItemType.HEADER, null));
-                nextPage = paginatedVideoListGenericResponse.response.next_page;
-                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                    ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
-                    mProfileList.add(profileViewModel);
+                if(mProfileList.size() > 1) {
+                    mProfileList.subList(1, mProfileList.size()).clear();
+                    nextPage = paginatedVideoListGenericResponse.response.next_page;
+                    for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                        ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
+                        mProfileList.add(profileViewModel);
+                    }
                 }
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
@@ -254,7 +256,7 @@ public class ProfileFragment extends Fragment implements ProfileAdapter.OnItemCl
             signInPromptContainer.setVisibility(View.GONE);
             Account myAccount = AccountManager.getStoredAccount();
             AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
+            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
         } else {
             signInPromptContainer.setVisibility(View.VISIBLE);
         }

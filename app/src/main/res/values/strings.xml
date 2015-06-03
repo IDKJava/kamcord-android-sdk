@@ -82,6 +82,7 @@
     <string name="sincerely">Sincerely, %s</string>
 
     <string name="defaultNumber">0</string>
+    <string name="headeUserName">User Name</string>
     <string name="headerVideos">Videos</string>
     <string name="headerFollowers">Followers</string>
     <string name="headerFollowing">Following</string>

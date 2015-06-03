@@ -9,27 +9,50 @@
     card_view:cardCornerRadius="@dimen/cardCornerRadius">
 
     <LinearLayout
+        android:id="@+id/profile_headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/DefaultBackgroundColor">
+        android:background="@color/DefaultBackgroundColor"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:id="@+id/userProfileInfo"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="150dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true">
+
+            <TextView
+                android:id="@+id/profileLetter"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="24dp"
+                android:background="@drawable/kamcord_profile_letter_background"
+                android:gravity="center"
+                android:text="D"
+                android:textColor="@color/DefaultBackgroundColor"
+                android:textSize="28sp" />
 
             <TextView
                 android:id="@+id/profile_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="User Name"
-                android:textColor="@color/ColorPrimary"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_below="@+id/profileLetter"
+                android:layout_centerHorizontal="true"
+                android:text="@string/headeUserName"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/ColorPrimary" />
+
+            <TextView
+                android:id="@+id/profile_user_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_user_name"
+                android:layout_centerHorizontal="true"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/ColorPrimary" />
 
         </RelativeLayout>
 
@@ -58,8 +81,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/defaultNumber"
-                    android:textColor="@color/ColorPrimary"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/ColorPrimary" />
 
                 <TextView
                     android:id="@+id/videosText"
@@ -67,8 +90,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
                     android:text="@string/headerVideos"
-                    android:textColor="@color/ColorPrimary"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/ColorPrimary" />
             </LinearLayout>
 
             <LinearLayout
@@ -84,8 +107,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/defaultNumber"
-                    android:textColor="@color/ColorPrimary"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/ColorPrimary" />
 
                 <TextView
                     android:id="@+id/followersText"
@@ -93,8 +116,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
                     android:text="@string/headerFollowers"
-                    android:textColor="@color/ColorPrimary"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/ColorPrimary" />
             </LinearLayout>
 
             <LinearLayout
@@ -110,8 +133,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/defaultNumber"
-                    android:textColor="@color/ColorPrimary"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/ColorPrimary" />
 
                 <TextView
                     android:id="@+id/followingText"
@@ -119,8 +142,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
                     android:text="@string/headerFollowing"
-                    android:textColor="@color/ColorPrimary"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/ColorPrimary" />
             </LinearLayout>
 
         </LinearLayout>

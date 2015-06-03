@@ -1,6 +1,7 @@
 package com.kamcord.app.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,7 +39,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_VIDEO_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
-    private int itemClickedPosition;
 
     public ProfileAdapter(Context context, List<ProfileViewModel> mProfileList, OnItemClickListener itemClickListener) {
         this.mContext = context;
@@ -79,7 +79,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 if (user != null && user.username != null) {
                     if (user.username != null) {
                         ((HeaderViewHolder) viewHolder).getProfileUserName().setText(StringUtils.getFirstLetterUpperCase(user.username));
-
+                        ((HeaderViewHolder) viewHolder).getProfileLetter().setText(StringUtils.getFirstLetterUpperCase(user.username).substring(0, 1));
+                        ((HeaderViewHolder) viewHolder).getProfileLetter().setTextColor(Color.parseColor(user.profile_color));
+                    }
+                    if(user.tagline != null) {
+                        ((HeaderViewHolder) viewHolder).getProfileUserTag().setText(StringUtils.getFirstLetterUpperCase(user.tagline));
                     }
                     if (user.video_count != null) {
                         ((HeaderViewHolder) viewHolder).getProfileUserVideos().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.video_count)));
@@ -91,6 +95,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (user.following_count != null) {
                         ((HeaderViewHolder) viewHolder).getProfileUserFollowing().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.following_count)));
                     }
+                    ((HeaderViewHolder) viewHolder).getProfileHeaderLayout().setBackgroundColor(Color.parseColor(user.profile_color));
                 }
             }
         } else if (viewHolder instanceof FooterViewHolder) {
@@ -115,13 +120,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             videoLikesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    itemClickedPosition = position;
-                    if(videoItem.is_user_liking) {
-                        videoLikesButton.setText(Integer.toString(videoItem.likes--));
-                        AppServerClient.getInstance().unLikeVideo(videoItem.video_id, new unLikeVideosCallback());
+                    if (videoItem.is_user_liking) {
+                        videoLikesButton.setText(Integer.toString(videoItem.likes - 1));
+                        AppServerClient.getInstance().unLikeVideo(videoItem.video_id, new UnLikeVideosCallback());
                     } else {
-                        videoLikesButton.setText(Integer.toString(videoItem.likes++));
-                        AppServerClient.getInstance().likeVideo(videoItem.video_id, new likeVideosCallback());
+                        videoLikesButton.setText(Integer.toString(videoItem.likes + 1));
+                        AppServerClient.getInstance().likeVideo(videoItem.video_id, new LikeVideosCallback());
                     }
 
                 }
@@ -160,7 +164,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.mItemClickListener = mItemClickListener;
     }
 
-    private class likeVideosCallback implements Callback<GenericResponse<?>> {
+    private class LikeVideosCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
         }
@@ -171,7 +175,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    private class unLikeVideosCallback implements Callback<GenericResponse<?>> {
+    private class UnLikeVideosCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
         }
@@ -180,5 +184,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void failure(RetrofitError error) {
             Log.e("Retrofit Unlike Failure", "  " + error.toString());
         }
-    };
+    }
+
+    ;
 }
