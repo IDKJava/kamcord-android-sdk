@@ -86,7 +86,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         } else if (viewHolder instanceof GameItemViewHolder) {
             bindInstalledViewHolder((GameItemViewHolder) viewHolder, game);
-
         }
     }
 
