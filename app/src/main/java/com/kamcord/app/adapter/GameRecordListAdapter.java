@@ -147,18 +147,21 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                 }
             }
         });
-        if (game.isRecording) {
-            gameActionImageButton.setBackgroundResource(R.drawable.fab_circle_red);
-            gameActionImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
-            Animation animation = new AlphaAnimation(1f, 0.5f);
-            animation.setDuration(500);
-            animation.setRepeatCount(Animation.INFINITE);
-            animation.setRepeatMode(Animation.REVERSE);
-            gameActionImageButton.startAnimation(animation);
-        } else {
-            gameActionImageButton.setBackgroundResource(R.drawable.fab_circle);
-            gameActionImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
-            gameActionImageButton.clearAnimation();
+
+        if( game.isInstalled ) {
+            if (game.isRecording) {
+                gameActionImageButton.setBackgroundResource(R.drawable.fab_circle_red);
+                gameActionImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+                Animation animation = new AlphaAnimation(1f, 0.5f);
+                animation.setDuration(500);
+                animation.setRepeatCount(Animation.INFINITE);
+                animation.setRepeatMode(Animation.REVERSE);
+                gameActionImageButton.startAnimation(animation);
+            } else {
+                gameActionImageButton.setBackgroundResource(R.drawable.fab_circle);
+                gameActionImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+                gameActionImageButton.clearAnimation();
+            }
         }
     }
 

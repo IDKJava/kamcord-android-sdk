@@ -57,10 +57,9 @@
             android:layout_height="48dp"
             android:layout_margin="16dp"
             android:adjustViewBounds="false"
-            android:background="@drawable/fab_circle"
+            android:background="@drawable/hollow_circle_background"
             android:padding="10dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_videocam_white_48dp" />
+            android:scaleType="fitCenter" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

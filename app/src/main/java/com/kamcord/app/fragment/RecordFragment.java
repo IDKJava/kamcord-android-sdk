@@ -351,6 +351,7 @@ public class RecordFragment extends Fragment implements
             }
 
         } else {
+
             mSelectedGame = null;
             Intent intent = new Intent(
                     Intent.ACTION_VIEW,
