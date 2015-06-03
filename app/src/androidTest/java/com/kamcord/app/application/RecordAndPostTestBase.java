@@ -25,8 +25,9 @@ public abstract class RecordAndPostTestBase extends TestBase {
     }
     protected void recordGameVideo(String gameName, String gameTitle, int durationInMs, boolean pauseAfterGesture) {
         mDevice.waitForIdle();
-        findUiObj(R.id.recordfragment_refreshlayout, UiObjIdType.Res, UiObjSelType.Res);
+        waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
         //find ripples app logo and click
+        //wait for load!!!!
         findGameListed(gameName);
 
         findUiObj(gameName, UiObjSelType.Txt).click();
@@ -62,7 +63,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                     //check if it's recording
                     mDevice.openNotification();
 
-                    findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
+                    //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
                     findUiObj(R.string.paused, UiObjIdType.Str,  UiObjSelType.Txt, APP_TIMEOUT_MS);
 
@@ -73,7 +74,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
                     findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, APP_TIMEOUT_MS);
 
                 } else {
+                    long time = System.currentTimeMillis();
                     sleep(miniSleepInMs);
+                    time = System.currentTimeMillis() - time;
+                    time = Math.abs(time);
                 }
             }
 
@@ -91,9 +95,9 @@ public abstract class RecordAndPostTestBase extends TestBase {
         }
         //check if it's recording
         mDevice.openNotification();
-        findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
+        //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
-        findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt);
+        findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt,APP_TIMEOUT_MS);
 
         //click on notification to resume app.
         findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
@@ -116,7 +120,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //TODO: Adjust the "1" divider to something reasonable as stitching perf. improves.
         int processingTimeout = Math.max((durationInMs / 1), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
         int uploadTimeout = Math.max((durationInMs / 1), DEFAULT_UPLOAD_TIMEOUT);
-
+        mDevice.waitForIdle();
         findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, processingTimeout);
 
         UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);

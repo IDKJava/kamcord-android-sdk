@@ -139,10 +139,7 @@ public abstract class TestBase {
             findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS)
                     .click();
 
-            UiObject2 gameTilesParent =
-                    findUiObj(R.id.recordfragment_refreshlayout, UiObjIdType.Res, UiObjSelType.Res);
-
-            waitForGameTileLoad(gameTilesParent, APP_TIMEOUT_MS);
+            waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
             //scrollable child.
             UiScrollable gameTiles
@@ -153,6 +150,7 @@ public abstract class TestBase {
 
             //larger number for max swipes.
             gameTiles.flingToBeginning(100);
+            waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
             //Longer timeout due to reload
             findUiObj(R.id.recordfragment_refreshlayout,
@@ -195,7 +193,7 @@ public abstract class TestBase {
         }
     }
 
-    protected void waitForGameTileLoad(UiObject2 gameTiles, int timeOut){
+    protected void waitForGameTileLoad(int gameTileParentId, int timeOut){
 
         boolean gone = false;
         int step = 1000;
@@ -204,6 +202,7 @@ public abstract class TestBase {
         while(!gone && retries < maxRetries){
             gone = true;
             mDevice.waitForIdle();
+            UiObject2 gameTiles = findUiObj(gameTileParentId, UiObjIdType.Res, UiObjSelType.Res);
             for (UiObject2 child : gameTiles.getChildren()) {
                 if (child.getClassName().equals(android.widget.ImageView.class.getName())) {
                     gone = false;

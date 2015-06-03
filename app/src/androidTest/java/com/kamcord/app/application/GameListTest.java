@@ -32,9 +32,8 @@ public class GameListTest extends RecordAndPostTestBase {
                 .click();
 
         ArrayList<String> gameTitles = new ArrayList<>();
-        UiObject2 gameTiles
-                = findUiObj(R.id.recordfragment_refreshlayout, UiObjIdType.Res, UiObjSelType.Res);
-        waitForGameTileLoad(gameTiles, APP_TIMEOUT_MS);
+
+        waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
         boolean unique = true;
         while(unique) {
@@ -63,11 +62,7 @@ public class GameListTest extends RecordAndPostTestBase {
             mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
 
             //main container for games tiles
-            UiObject2 gameTilesParent
-                    = findUiObj(R.id.recordfragment_refreshlayout,
-                    UiObjIdType.Res,
-                    UiObjSelType.Res);
-            waitForGameTileLoad(gameTilesParent, APP_TIMEOUT_MS);
+            waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
 
             //scrollable child.
@@ -79,11 +74,7 @@ public class GameListTest extends RecordAndPostTestBase {
             //larger number for max swipes.
             gameTiles.flingToBeginning(100);
 
-            gameTilesParent
-                    = findUiObj(R.id.recordfragment_refreshlayout,
-                    UiObjIdType.Res,
-                    UiObjSelType.Res);
-            waitForGameTileLoad(gameTilesParent, APP_TIMEOUT_MS);
+            waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
             //if we have reached the end and the toolbar should not be showing!
             // a short scroll up will make it appear.

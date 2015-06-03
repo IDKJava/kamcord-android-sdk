@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 public class UiUtilities {
 
     public static final int APP_TIMEOUT_MS = 5000;
-    public static final int UI_TIMEOUT_MS = 2000;
+    public static final int UI_TIMEOUT_MS = 3000;
     public static final int RECORDING_DURATION_MS = 6000;
     public static final int DEFAULT_UPLOAD_TIMEOUT = 10000;
     public static final int MS_PER_MIN = 60000;

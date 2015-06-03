@@ -56,22 +56,14 @@ public class RecordingTests extends RecordAndPostTestBase{
     public void recordRippleTestLoginFirstShort(){
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, 1000);
-        boolean notTimedOut =
-                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord_layout))),
-                        UI_TIMEOUT_MS);
-        assertTrue("Record view did not show up! The short video should not trigger share",
-                notTimedOut);
+        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
     @Test
     public void recordRippleTestSkipLoginShort(){
         skipLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, 1000);
-        boolean notTimedOut =
-                mDevice.wait(Until.hasObject(By.res(getResByID(R.id.activity_mdrecord_layout))),
-                        UI_TIMEOUT_MS);
-        assertTrue("Record view did not show up! The short video should not trigger share",
-                notTimedOut);
+        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
     @Test
