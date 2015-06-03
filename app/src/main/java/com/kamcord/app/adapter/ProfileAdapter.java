@@ -1,6 +1,7 @@
 package com.kamcord.app.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.HeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ItemViewHolder;
@@ -39,12 +42,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_VIDEO_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
-    private static int likePosition;
 
-    public ProfileAdapter(Context context, List<ProfileViewModel> mProfileList, OnItemClickListener itemClickListener) {
+    public ProfileAdapter(Context context, List<ProfileViewModel> mProfileList) {
         this.mContext = context;
         this.mProfileList = mProfileList;
-        this.mItemClickListener = itemClickListener;
     }
 
     @Override
@@ -83,7 +84,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         ((HeaderViewHolder) viewHolder).getProfileLetter().setText(StringUtils.getFirstLetterUpperCase(user.username).substring(0, 1));
                         ((HeaderViewHolder) viewHolder).getProfileLetter().setTextColor(Color.parseColor(user.profile_color));
                     }
-                    if(user.tagline != null) {
+                    if (user.tagline != null) {
                         ((HeaderViewHolder) viewHolder).getProfileUserTag().setText(StringUtils.getFirstLetterUpperCase(user.tagline));
                     }
                     if (user.video_count != null) {
@@ -102,16 +103,26 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof FooterViewHolder) {
 
         } else if (viewHolder instanceof ItemViewHolder) {
-            ProfileViewModel profileItem = getItem(position);
+            final ProfileViewModel profileItem = getItem(position);
             final Video videoItem = profileItem.getVideo();
             if (videoItem.title != null) {
                 ((ItemViewHolder) viewHolder).getProfileItemTitle().setText(StringUtils.getFirstLetterUpperCase(videoItem.title));
             }
+            final ImageView videoImageView = ((ItemViewHolder) viewHolder).getProfileItemThumbnail();
             if (videoItem.thumbnails != null && videoItem.thumbnails.regular != null) {
                 Picasso.with(mContext)
                         .load(videoItem.thumbnails.regular)
-                        .into(((ItemViewHolder) viewHolder).getProfileItemThumbnail());
+                        .into(videoImageView);
             }
+            videoImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
+                    intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, profileItem.getVideo().video_url);
+                    mContext.startActivity(intent);
+                }
+            });
+
             ((ItemViewHolder) viewHolder).getProfileItemAuthor().setText(mContext.getResources().getString(R.string.byAuthor) + videoItem.username);
             ((ItemViewHolder) viewHolder).getVideoComments().setText("Comments: " + Integer.toString(videoItem.comments));
             ((ItemViewHolder) viewHolder).getVideoViews().setText("Views: " + Integer.toString(videoItem.views));
@@ -121,7 +132,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             videoLikesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    likePosition = position;
                     if (videoItem.is_user_liking) {
                         videoItem.is_user_liking = false;
                         videoItem.likes = videoItem.likes - 1;
