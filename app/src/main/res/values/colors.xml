@@ -10,6 +10,8 @@
     <color name="gridTextColor">#353e44</color>
 
     <color name="kamcordGreen">#47d894</color>
+    <color name="kamcordDarkText">#353e44</color>
+    <color name="kamcordLightText">#aab</color>
     <color name="stopRecordingRed">#b34</color>
 
     <color name="ButtonTextColor">#40d18b</color>
@@ -19,5 +21,7 @@
 
     <color name="transparentWhite">#9fff</color>
     <color name="TextViewBackgroundColor">#a4a4a4</color>
+
+    <color name="DefaultBackgroundColor">#F1C40F</color>
 
 </resources>

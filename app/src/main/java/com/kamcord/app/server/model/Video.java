@@ -13,21 +13,21 @@ public class Video {
 
     public Thumbnails thumbnails;
     public String title;
-    public String videoId;
+    public String video_id;
     public double duration;
     public int views;
     public int likes;
     public int comments;
     public int reshares;
-    public boolean isUserLiking;
-    public boolean isUserResharing;
-    public String gamePrimaryId;
-    public Date uploadTime;
-    public String userId;
+    public boolean is_user_liking;
+    public boolean is_user_resharing;
+    public String game_primary_id;
+    public Date upload_time;
+    public String user_id;
     public String video_url;
     public String video_site_watch_page;
     public String username;
-    public String gameName;
+    public String game_name;
     public boolean featured;
 
     public Game game;

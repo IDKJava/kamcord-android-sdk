@@ -50,15 +50,23 @@
             android:textColor="@color/gridTextColor"
             android:textSize="14sp" />
 
+        <Space
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/installGameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:background="#455"
+            android:gravity="center"
+            android:text="@string/install"
+            android:textColor="@android:color/white" />
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/installGameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparentWhite"
-        android:gravity="center"
-        android:text="@string/installThisGame" />
 
 </android.support.v7.widget.CardView>
 

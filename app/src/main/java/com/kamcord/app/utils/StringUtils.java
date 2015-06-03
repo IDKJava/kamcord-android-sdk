@@ -26,7 +26,6 @@ public class StringUtils {
             @Override
             public void onClick(View v)
             {
-                Log.v("FindMe", "huh?");
                 try
                 {
                     v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));

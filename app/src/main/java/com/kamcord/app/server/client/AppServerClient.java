@@ -13,6 +13,7 @@ import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
+import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.UserErrorCode;
 import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.utils.AccountManager;
@@ -39,8 +40,7 @@ import retrofit.http.Query;
 public class AppServerClient {
     private static final String BASE_URL = "https://app.kamcord.com";
 
-    public interface AppServer
-    {
+    public interface AppServer {
         @GET("/app/v3/kcp/games")
         void getGamesList(
                 @Query("isAndroidOnly") boolean isAndroidOnly,
@@ -87,11 +87,17 @@ public class AppServerClient {
         @POST("/app/v3/kcp/video/uploaded")
         GenericResponse<?> videoUploaded(@Body VideoUploadedEntity body);
 
+        @GET("/app/v3/users/{userId}")
+        void getUserInfo(@Path("userId") String userId, Callback<GenericResponse<User>> cb);
+
         @GET("/app/v3/users/{userId}/videos/feed")
         void getUserVideoFeed(@Path("userId") String userId, @Query("page") String page, Callback<GenericResponse<PaginatedVideoList>> cb);
 
         @POST("/app/v3/videos/{videoId}/like")
         void likeVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
+
+        @POST("/app/v3/videos/{videoId}/unlike")
+        void unLikeVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
     }
 
     private static AppServer instance;
@@ -101,22 +107,19 @@ public class AppServerClient {
             request.addHeader("user-agent", "android_app_" + BuildConfig.VERSION_NAME);
 
             Account account = AccountManager.getStoredAccount();
-            if( account != null )
-            {
+            if (account != null) {
                 request.addHeader("user-token", account.token);
             }
 
             String deviceToken = DeviceManager.getDeviceToken();
-            if( deviceToken != null && !deviceToken.isEmpty() ) {
+            if (deviceToken != null && !deviceToken.isEmpty()) {
                 request.addHeader("device-token", DeviceManager.getDeviceToken());
             }
         }
     };
 
-    public static synchronized AppServer getInstance()
-    {
-        if( instance == null )
-        {
+    public static synchronized AppServer getInstance() {
+        if (instance == null) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
                         @Override
