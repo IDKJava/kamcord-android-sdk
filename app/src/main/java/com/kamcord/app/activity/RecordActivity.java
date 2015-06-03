@@ -94,8 +94,8 @@ public class RecordActivity extends AppCompatActivity implements
                 return getResources().getColor(R.color.tabsScrollColor);
             }
         });
-        mTabs.setCustomTabView(R.layout.tab_textview, R.id.tab_textview_layout);
-        mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
+        mTabs.setCustomTabView(R.layout.tab_icon_title, 0);
+        mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs, getApplicationContext());
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
     }
