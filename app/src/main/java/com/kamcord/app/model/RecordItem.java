@@ -15,6 +15,14 @@ public class RecordItem {
         this.game = game;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
     public enum Type {
         GAME,
         INSTALLED_HEADER,

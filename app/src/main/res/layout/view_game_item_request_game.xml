@@ -1,58 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/grid_margin">
 
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/grid_margin">
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            card_view:cardCornerRadius="16dp"
+            card_view:cardElevation="0dp">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                card_view:cardCornerRadius="16dp"
-                card_view:cardElevation="0dp">
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/email_icon" />
 
-                <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/email_icon"/>
+        </android.support.v7.widget.CardView>
 
-            </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/gameNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/oneOfYourGamesNotListed"
+            android:textColor="@color/kamcordDarkText"
+            android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/gameNameTextView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/oneOfYourGamesNotListed"
-                android:textColor="@color/kamcordDarkText"
-                android:textSize="18sp" />
+        <ImageButton
+            android:id="@+id/requestGameImageButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="16dp"
+            android:adjustViewBounds="false"
+            android:background="@drawable/hollow_circle_background"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/add_icon"
+            android:tint="@color/kamcordGreen"
+            android:tintMode="multiply" />
 
-            <ImageButton
-                android:id="@+id/requestGameImageButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_margin="16dp"
-                android:adjustViewBounds="false"
-                android:background="@drawable/hollow_circle_background"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/add_icon"
-                android:tint="@color/kamcordGreen"
-                android:tintMode="multiply" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>
 
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-
-</LinearLayout>

@@ -1,8 +1,8 @@
 package com.kamcord.app.adapter.viewholder;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.kamcord.app.R;
 
@@ -12,15 +12,12 @@ import butterknife.InjectView;
 /**
  * Created by pplunkett on 6/3/15.
  */
-public class LastInstalledViewHolder extends GameItemViewHolder {
+public class RequestGameViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.requestGameImageButton)
     public ImageButton requestGameImageButton;
-    @InjectView(R.id.alsoRecordTheseTextView)
-    public TextView alsoRecordTheseTextView;
 
-    public LastInstalledViewHolder(View itemLayoutView) {
+    public RequestGameViewHolder(View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
     }
-
 }

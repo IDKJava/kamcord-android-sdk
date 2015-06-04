@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -28,6 +29,12 @@ public class RecordItemDecoration extends RecyclerView.ItemDecoration {
         int row = getRow(position, totalSpan, parent);
         int col = getCol(position, totalSpan, parent);
         int childSpan = getChildSpan(position, parent);
+
+        Log.v("FindMe", "position: " + position);
+        Log.v("FindMe", "  totalSpan: " + totalSpan);
+        Log.v("FindMe", "  row: " + row);
+        Log.v("FindMe", "  col: " + col);
+        Log.v("FindMe", "  childSpan: " + childSpan);
 
         /* INVALID SPAN */
         if (totalSpan < 1) return;

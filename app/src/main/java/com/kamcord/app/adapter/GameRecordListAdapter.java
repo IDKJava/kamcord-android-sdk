@@ -14,9 +14,11 @@ import android.view.animation.Animation;
 import android.widget.ImageButton;
 
 import com.kamcord.app.R;
-import com.kamcord.app.adapter.viewholder.FirstInstalledViewHolder;
 import com.kamcord.app.adapter.viewholder.GameItemViewHolder;
-import com.kamcord.app.adapter.viewholder.LastInstalledViewHolder;
+import com.kamcord.app.adapter.viewholder.InstalledHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.RequestGameViewHolder;
+import com.kamcord.app.model.RecordItem;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.utils.AccountManager;
@@ -35,12 +37,12 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     public static final int VIEW_TYPE_NOT_INSTALLED = 3;
 
     private Context mContext;
-    private List<Game> mGames;
+    private List<RecordItem> mRecordItems;
     private OnGameActionButtonClickListener mOnGameActionButtonClickListener;
 
-    public GameRecordListAdapter(Context context, List<Game> games, OnGameActionButtonClickListener recordButtonClickListener) {
+    public GameRecordListAdapter(Context context, List<RecordItem> recordItems, OnGameActionButtonClickListener recordButtonClickListener) {
         this.mContext = context;
-        this.mGames = games;
+        this.mRecordItems = recordItems;
         this.mOnGameActionButtonClickListener = recordButtonClickListener;
     }
 
@@ -51,20 +53,26 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         View itemLayoutView = inflater.inflate(R.layout.view_game_item, null);
         RecyclerView.ViewHolder viewHolder = new GameItemViewHolder(itemLayoutView);
 
-        switch (viewType) {
-            case VIEW_TYPE_FIRST_INSTALLED:
+        RecordItem.Type type = RecordItem.Type.values()[viewType];
+        switch (type) {
+            case INSTALLED_HEADER:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_installed_header, null);
-                viewHolder = new FirstInstalledViewHolder(itemLayoutView);
+                viewHolder = new InstalledHeaderViewHolder(itemLayoutView);
                 break;
 
-            case VIEW_TYPE_INSTALLED:
+            case GAME:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item, null);
                 viewHolder = new GameItemViewHolder(itemLayoutView);
                 break;
 
-            case VIEW_TYPE_LAST_INSTALLED:
+            case REQUEST_GAME:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_request_game, null);
-                viewHolder = new LastInstalledViewHolder(itemLayoutView);
+                viewHolder = new RequestGameViewHolder(itemLayoutView);
+                break;
+
+            case NOT_INSTALLED_HEADER:
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed_header, null);
+                viewHolder = new NotInstalledHeaderViewHolder(itemLayoutView);
                 break;
 
             default:
@@ -77,29 +85,35 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-        Game game = mGames.get(position);
+        RecordItem item = mRecordItems.get(position);
 
-        if (viewHolder instanceof FirstInstalledViewHolder) {
-            bindFirstInstalledViewHolder((FirstInstalledViewHolder) viewHolder, game);
+        if (viewHolder instanceof InstalledHeaderViewHolder) {
+            bindInstalledHeaderViewHolder((InstalledHeaderViewHolder) viewHolder);
 
-        } else if (viewHolder instanceof LastInstalledViewHolder) {
-            bindLastInstalledViewHolder((LastInstalledViewHolder) viewHolder, game);
+        } else if (viewHolder instanceof RequestGameViewHolder) {
+            bindRequestGameViewHolder((RequestGameViewHolder) viewHolder);
 
         } else if (viewHolder instanceof GameItemViewHolder) {
-            bindInstalledViewHolder((GameItemViewHolder) viewHolder, game);
+            Game game = item.getGame();
+            bindGameItemViewHolder((GameItemViewHolder) viewHolder, game);
+
+        } else if (viewHolder instanceof NotInstalledHeaderViewHolder) {
+            bindNotInstalledHeaderViewHolder((NotInstalledHeaderViewHolder) viewHolder);
         }
     }
 
-    private void bindFirstInstalledViewHolder(FirstInstalledViewHolder viewHolder, Game game)
+    private void bindInstalledHeaderViewHolder(InstalledHeaderViewHolder viewHolder)
     {
-        bindInstalledViewHolder(viewHolder, game);
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.recordAndShareTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindLastInstalledViewHolder(LastInstalledViewHolder viewHolder, Game game)
+    private void bindNotInstalledHeaderViewHolder(NotInstalledHeaderViewHolder viewHolder)
     {
-        bindInstalledViewHolder(viewHolder, game);
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.alsoRecordTheseTextView, "fonts/proximanova_semibold.otf");
+    }
+
+    private void bindRequestGameViewHolder(RequestGameViewHolder viewHolder)
+    {
         viewHolder.requestGameImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +138,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         });
     }
 
-    private void bindInstalledViewHolder(GameItemViewHolder viewHolder, final Game game)
+    private void bindGameItemViewHolder(GameItemViewHolder viewHolder, final Game game)
     {
         if( game.icons != null && game.icons.regular != null ) {
             Picasso.with(mContext)
@@ -180,27 +194,13 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mGames.size();
+        return mRecordItems.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        int viewType = VIEW_TYPE_NOT_INSTALLED;
-
-        Game game = mGames.get(position);
-        if (game.isInstalled) {
-            if (position == 0) {
-                viewType = VIEW_TYPE_FIRST_INSTALLED;
-
-            } else if (position + 1 > mGames.size() || !mGames.get(position + 1).isInstalled) {
-                viewType = VIEW_TYPE_LAST_INSTALLED;
-
-            } else {
-                viewType = VIEW_TYPE_INSTALLED;
-            }
-        }
-
-        return viewType;
+        RecordItem item = mRecordItems.get(position);
+        return item.getType().ordinal();
     }
 
     public interface OnGameActionButtonClickListener {

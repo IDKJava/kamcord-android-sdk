@@ -39,8 +39,11 @@ public class DynamicRecyclerView extends RecyclerView {
             array.recycle();
         }
         gridLayoutManager = new GridLayoutManager(getContext(), 1);
-//        gridLayoutManager.setSpanSizeLookup(new RecordLayoutSpanSizeLookup(this));
         setLayoutManager(gridLayoutManager);
+    }
+
+    public void setSpanSizeLookup(GridLayoutManager.SpanSizeLookup spanSizeLookup) {
+        gridLayoutManager.setSpanSizeLookup(spanSizeLookup);
     }
 
     @Override
