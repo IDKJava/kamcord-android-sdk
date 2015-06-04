@@ -176,7 +176,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onClick(View v) {
                     AppServerClient.getInstance().updateVideoViews(videoItem.video_id, new UpdateVideoViewsCallback());
-                    videoViewsTextView.setText("Views: " + Integer.toString(videoItem.views + 1));
+                    videoItem.views = videoItem.views + 1;
+                    videoViewsTextView.setText("Views: " + Integer.toString(videoItem.views));
                     Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
                     intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, profileItem.getVideo().video_url);
                     mContext.startActivity(intent);
