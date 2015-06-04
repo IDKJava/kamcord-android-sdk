@@ -24,5 +24,6 @@
 
     <color name="DefaultBackgroundColor">#F1C40F</color>
     <color name="kamcordBlue">#00a8c0</color>
+    <color name="kamcordGray">#999999</color>
 
 </resources>
