@@ -22,7 +22,7 @@
             android:clipToPadding="false"
             android:paddingTop="@dimen/tabsHeight"
             android:scrollbars="vertical"
-            app:minGridItemWidth="320dp" />
+            app:minGridItemWidth="@dimen/griditem_width" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
