@@ -10,8 +10,13 @@ import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.BySelector;
 import android.support.test.uiautomator.UiDevice;
 import android.support.test.uiautomator.UiObject2;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiScrollable;
+import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
 import android.view.Surface;
+
+import com.kamcord.app.R;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -276,6 +281,22 @@ public class UiUtilities {
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(By.pkg(KAMCORD_APP_PACKAGE).depth(0)), APP_TIMEOUT_MS);
         assertTrue("Application load timed out!", notTimedOut);
+    }
+
+    public static void scrollToBeginning(int id){
+        try {
+            UiScrollable scrollableObject
+                    = new UiScrollable(new UiSelector()
+                    .resourceId(getResByID(id)));
+
+            assertTrue("Not scrollable!", scrollableObject.isScrollable());
+
+            //larger number for max swipes.
+            scrollableObject.flingToBeginning(100);
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+            assertTrue("Object not found!", false);
+        }
     }
 }
 

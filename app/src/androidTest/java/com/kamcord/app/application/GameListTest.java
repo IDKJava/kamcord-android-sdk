@@ -6,7 +6,6 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
-import android.support.test.uiautomator.Until;
 
 import com.kamcord.app.R;
 
@@ -33,7 +32,7 @@ public class GameListTest extends RecordAndPostTestBase {
 
         ArrayList<String> gameTitles = new ArrayList<>();
 
-        waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+        waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
         boolean unique = true;
         while(unique) {
@@ -65,7 +64,7 @@ public class GameListTest extends RecordAndPostTestBase {
 
         ArrayList<String> gameTitles = new ArrayList<>();
 
-        waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+        waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
         boolean unique = true;
         while(unique) {
@@ -91,14 +90,15 @@ public class GameListTest extends RecordAndPostTestBase {
     public void checkIfGamesUpdate() {
         //TODO: Check for content not just count.
         doLogin();
-        try {
-            mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
+
+            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt).click();
 
             //main container for games tiles
-            waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+            waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
 
             //scrollable child.
+        try {
             UiScrollable gameTiles
                     = new UiScrollable(new UiSelector()
                     .resourceId(getResByID(R.id.record_recyclerview)));
@@ -107,7 +107,7 @@ public class GameListTest extends RecordAndPostTestBase {
             //larger number for max swipes.
             gameTiles.flingToBeginning(100);
 
-            waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+            waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
             //if we have reached the end and the toolbar should not be showing!
             // a short scroll up will make it appear.
@@ -119,6 +119,5 @@ public class GameListTest extends RecordAndPostTestBase {
         }
 
     }
-
 
 }

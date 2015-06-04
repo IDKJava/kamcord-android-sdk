@@ -1,11 +1,5 @@
 package com.kamcord.app.application;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.graphics.Point;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.SdkSuppress;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.By;
@@ -14,7 +8,6 @@ import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
-import android.view.Surface;
 
 import com.kamcord.app.R;
 
@@ -22,9 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import static com.kamcord.app.testutils.UiUtilities.*;
@@ -143,12 +133,13 @@ public abstract class TestBase {
             idToFind = R.id.item_packagename;
         }
         try {
+            //TODO: Refactor to move the try catch block to utilities.
             ArrayList<String> gameTitles = new ArrayList<>();
 
             findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS)
                     .click();
 
-            waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+            waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
             //scrollable child.
             UiScrollable gameTiles
@@ -159,7 +150,7 @@ public abstract class TestBase {
 
             //larger number for max swipes.
             gameTiles.flingToBeginning(100);
-            waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+            waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
             //Longer timeout due to reload
             findUiObj(R.id.recordfragment_refreshlayout,
@@ -202,7 +193,7 @@ public abstract class TestBase {
         }
     }
 
-    protected void waitForGameTileLoad(int gameTileParentId, int timeOut){
+    protected void waitForTileLoad(int gameTileParentId, int timeOut){
 
         boolean gone = false;
         int step = 1000;

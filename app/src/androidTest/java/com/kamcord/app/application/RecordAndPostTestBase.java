@@ -2,9 +2,7 @@ package com.kamcord.app.application;
 
 import android.graphics.Point;
 import android.os.RemoteException;
-import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.UiObject2;
-import android.support.test.uiautomator.Until;
 
 import com.kamcord.app.R;
 
@@ -25,20 +23,12 @@ public abstract class RecordAndPostTestBase extends TestBase {
     }
     protected void recordGameVideo(String gameName, String gameTitle, int durationInMs, boolean pauseAfterGesture) {
         mDevice.waitForIdle();
-        waitForGameTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+        waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
         //find ripples app logo and click
         //wait for load!!!!
         findGame(gameName);
 
         getRecordButtonForGame(gameName, true).click();
-
-
-        /*
-        findUiObj(gameName, UiObjSelType.Txt).click();
-
-        findUiObj(R.id.recordImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
-        */
-        //Ack the screen recording warning.
 
         //Ack the message
         findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res).click();
@@ -78,16 +68,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
                     findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, APP_TIMEOUT_MS);
 
                 } else {
-                    long time = System.currentTimeMillis();
                     sleep(miniSleepInMs);
-                    time = System.currentTimeMillis() - time;
-                    time = Math.abs(time);
                 }
             }
 
-            //time = System.currentTimeMillis() - time;
-            //time = Math.abs(time);
-            //time = time;
         }
 
         //get running task list
@@ -101,11 +85,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
         mDevice.openNotification();
         //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
-        findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt,APP_TIMEOUT_MS);
+        findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
 
         //click on notification to resume app.
         findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
-        sleep(5000);
         //find stop recording button.
         getRecordButtonForGame(gameName, false).click();
 
@@ -167,15 +150,6 @@ public abstract class RecordAndPostTestBase extends TestBase {
         mDevice.swipe(validateSwipe(pattern),25);
     }
 
-    protected boolean checkIfGameTilesUpdating(UiObject2 gameTiles){
-        mDevice.waitForIdle();
-        for (UiObject2 child : gameTiles.getChildren()) {
-            if (child.getClassName().equals(android.widget.ImageView.class.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
     protected UiObject2 getRecordButtonForGame(String gameName, boolean start){
 
         UiObject2 gameLabel = findUiObj(R.id.gameNameTextView, UiObjIdType.Res, UiObjSelType.Res);
