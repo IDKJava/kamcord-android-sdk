@@ -26,7 +26,6 @@ import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.RecyclerViewScrollListener;
-import com.kamcord.app.view.SpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +88,6 @@ public class ProfileFragment extends Fragment {
 
     public void initKamcordProfileFragment(View view) {
 
-        profileRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin)));
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         if(AccountManager.isLoggedIn()) {
