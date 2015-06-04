@@ -21,9 +21,8 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private Context mContext;
 
     private int[] imageResId = {
-            R.drawable.video_green_inactive,
-            R.drawable.account_circle_green_inactive
-    };
+            R.drawable.tabicon_record_selector,
+            R.drawable.tabicon_profile_selector};
 
     public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs, Context context) {
         super(fm);
@@ -56,7 +55,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         return numberOfTabs;
     }
 
-    public int getDrawableId(int position){
+    public int getDrawableId(int position) {
         return imageResId[position];
     }
 
