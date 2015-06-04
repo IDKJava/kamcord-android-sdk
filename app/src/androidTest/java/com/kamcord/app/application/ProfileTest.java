@@ -100,7 +100,7 @@ public class ProfileTest extends TestBase {
             e.printStackTrace();
             numViewsAfter = Integer.MAX_VALUE;
         }
-        assertTrue("Like didn't work!", Math.abs(numViews - numViewsAfter) == 1);
+        assertTrue("View counter update did not work!", Math.abs(numViews - numViewsAfter) == 1);
 
 
     }
