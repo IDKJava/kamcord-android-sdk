@@ -18,7 +18,7 @@
         <RelativeLayout
             android:id="@+id/userProfileInfo"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="170dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true">
 
@@ -65,6 +65,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_user_name"
                 android:layout_centerHorizontal="true"
+                android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/ColorPrimary" />
 

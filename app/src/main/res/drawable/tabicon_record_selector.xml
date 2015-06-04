@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/video_green_active"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:state_selected="true"/>
-    <item android:drawable="@drawable/video_green_active"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:state_pressed="true"/>
-    <item android:drawable="@drawable/video_green_inactive"
-        android:layout_width="24dp"
-        android:layout_height="24dp"/>
+    <item android:state_selected="true">
+        <bitmap
+            android:src="@drawable/ic_videocam_white_48dp"
+            android:tint="@color/kamcordGreen"
+            android:tintMode="multiply"/>
+    </item>
+    <item android:state_pressed="true">
+        <bitmap
+            android:src="@drawable/ic_videocam_white_48dp"
+            android:tint="@color/kamcordGreen"
+            android:tintMode="multiply"/>
+    </item>
+    <item>
+        <bitmap
+            android:src="@drawable/ic_videocam_white_48dp"
+            android:tint="@color/ColorPrimaryDark"
+            android:tintMode="multiply"/>
+    </item>
 </selector>
