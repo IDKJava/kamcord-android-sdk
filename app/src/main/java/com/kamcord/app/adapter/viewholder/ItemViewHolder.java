@@ -7,7 +7,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
-import com.kamcord.app.adapter.ProfileAdapter;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -30,17 +29,9 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.video_views)
     TextView videoViews;
 
-    public ItemViewHolder(final View itemLayoutView, final ProfileAdapter.OnItemClickListener mItemClickListener) {
+    public ItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
-        itemLayoutView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mItemClickListener != null) {
-                    mItemClickListener.onItemClick(itemLayoutView, getAdapterPosition());
-                }
-            }
-        });
     }
 
     public TextView getProfileItemTitle() {

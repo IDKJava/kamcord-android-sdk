@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/cardview_standardmargin"
+            android:layout_marginRight="@dimen/cardview_standardmargin"
             android:layout_marginTop="@dimen/cardview_lightermargin"
             android:text="Video Title"
             android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -35,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/cardview_standardmargin"
+            android:layout_marginRight="@dimen/cardview_standardmargin"
             android:text="Video Author"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 

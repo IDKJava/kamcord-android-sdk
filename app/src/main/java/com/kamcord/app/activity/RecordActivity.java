@@ -95,7 +95,7 @@ public class RecordActivity extends AppCompatActivity implements
             }
         });
         mTabs.setCustomTabView(R.layout.tab_icon_title, 0);
-        mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs, getApplicationContext());
+        mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
     }

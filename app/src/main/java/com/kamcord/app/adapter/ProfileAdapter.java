@@ -48,7 +48,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private Context mContext;
     private List<ProfileViewModel> mProfileList;
-    private static OnItemClickListener mItemClickListener;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_VIDEO_ITEM = 1;
     private static final int TYPE_FOOTER = 2;
@@ -68,7 +67,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             case TYPE_VIDEO_ITEM: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_item, parent, false);
-                return new ItemViewHolder(itemLayoutView, mItemClickListener);
+                return new ItemViewHolder(itemLayoutView);
             }
             case TYPE_FOOTER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
@@ -196,11 +195,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (videoItem.is_user_liking) {
                         videoItem.is_user_liking = false;
                         videoItem.likes = videoItem.likes - 1;
+                        videoLikesButton.setPressed(false);
                         videoLikesButton.setText(Integer.toString(videoItem.likes));
                         AppServerClient.getInstance().unLikeVideo(videoItem.video_id, new UnLikeVideosCallback());
                     } else {
                         videoItem.is_user_liking = true;
                         videoItem.likes = videoItem.likes + 1;
+                        videoLikesButton.setPressed(true);
                         videoLikesButton.setText(Integer.toString(videoItem.likes));
                         AppServerClient.getInstance().likeVideo(videoItem.video_id, new LikeVideosCallback());
                     }
@@ -230,15 +231,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public ProfileViewModel getItem(int position) {
         return mProfileList.get(position);
-    }
-
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener mItemClickListener) {
-        this.mItemClickListener = mItemClickListener;
     }
 
     private class LikeVideosCallback implements Callback<GenericResponse<?>> {
