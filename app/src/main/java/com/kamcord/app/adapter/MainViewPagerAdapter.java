@@ -21,8 +21,8 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private Context mContext;
 
     private int[] imageResId = {
-            R.drawable.ic_videocam_grey600_18dp,
-            R.drawable.ic_person_grey600_18dp
+            R.drawable.video_green_inactive,
+            R.drawable.account_circle_green_inactive
     };
 
     public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs, Context context) {
@@ -35,7 +35,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;
-        switch(position) {
+        switch (position) {
             case 0:
                 fragment = new RecordFragment();
                 break;
@@ -54,6 +54,10 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return numberOfTabs;
+    }
+
+    public int getDrawableId(int position){
+        return imageResId[position];
     }
 
     @Override

@@ -18,7 +18,6 @@ package com.kamcord.app.view;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -28,10 +27,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.kamcord.app.R;
+import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.utils.ViewUtils;
 
 /**
@@ -186,12 +186,13 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     private void populateTabStrip() {
-        final PagerAdapter adapter = mViewPager.getAdapter();
+        final MainViewPagerAdapter adapter = (MainViewPagerAdapter)mViewPager.getAdapter();
         final View.OnClickListener tabClickListener = new TabClickListener();
 
         for (int i = 0; i < adapter.getCount(); i++) {
             View tabView = null;
             TextView tabTitleView = null;
+            ImageView tabIconView = null;
 
             if (mTabViewLayoutId != 0) {
                 // If there is a custom tab view layout id set, try and inflate it
@@ -204,8 +205,17 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabView = createDefaultTabView(getContext());
             }
 
-            if (tabTitleView == null && TextView.class.isInstance(tabView)) {
-                tabTitleView = (TextView) tabView;
+//            if (tabTitleView == null && TextView.class.isInstance(tabView)) {
+//                tabTitleView = (TextView) tabView;
+//            }
+
+            if (tabIconView == null && ImageView.class.isInstance(tabView)) {
+                tabIconView = (ImageView) tabView;
+            }
+
+            tabIconView.setImageDrawable(getResources().getDrawable(adapter.getDrawableId(i), null));
+            if (mViewPager.getCurrentItem() == i) {
+                tabIconView.setSelected(true);
             }
 
             if (mDistributeEvenly) {
@@ -214,9 +224,9 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 lp.weight = 1;
             }
 
-            tabTitleView.setText(adapter.getPageTitle(i));
-            tabTitleView.setTextColor(getResources().getColorStateList(R.color.tab_title_selector));
-            tabTitleView.setTextSize(14);
+//            tabTitleView.setText(adapter.getPageTitle(i));
+//            tabTitleView.setTextColor(getResources().getColorStateList(R.color.tab_title_selector));
+//            tabTitleView.setTextSize(14);
             tabView.setOnClickListener(tabClickListener);
             String desc = mContentDescriptions.get(i, null);
             if (desc != null) {
