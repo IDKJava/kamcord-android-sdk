@@ -110,7 +110,7 @@ public class ProfileTest extends TestBase {
         String expectedUserName = "bar1000";
         //verify video tile load
         //scrollable child.
-        scrollToBeginning(R.id.record_recyclerview);
+        scrollToBeginning(R.id.profile_recyclerview);
 
         waitForTileLoad(R.id.profile_recyclerview, APP_TIMEOUT_MS);
         //check username

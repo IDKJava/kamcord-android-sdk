@@ -15,6 +15,7 @@ public class SystemUtilities {
     public static String executeShellCommand(String cmd) {
         try {
 
+
             Process p = Runtime.getRuntime().exec(cmd);
             BufferedReader br;
             if (p.waitFor() == 0) {
@@ -33,5 +34,9 @@ public class SystemUtilities {
             e.printStackTrace();
             return e.getStackTrace().toString();
         }
+    }
+
+    public static void forceStopApp(String appPackageName){
+        executeShellCommand(String.format("am force-stop %s", appPackageName));
     }
 }

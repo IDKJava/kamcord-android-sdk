@@ -73,6 +73,17 @@ public class RecordingTests extends RecordAndPostTestBase{
         handleShareView(RECORDING_DURATION_MS);
 
     }
+    @Test
+    public void recordRippleTestLoginFirstSwitchWithRecentApps(){
+        doLogin();
+        recordGameVideo(RIPPLE_TEST_APP_NAME,
+                RIPPLE_TEST_APP_NAME,
+                RECORDING_DURATION_MS,
+                false,
+                true);
+        handleShareView(RECORDING_DURATION_MS);
+
+    }
 
     @Test
     public void recordRippleTestLoginFirstPrematurePlay(){

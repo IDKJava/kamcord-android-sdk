@@ -13,6 +13,7 @@ import com.kamcord.app.R;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 21)
 public abstract class TestBase {
+    @Rule
+    public TestFailureRule mTestFailureRule = new TestFailureRule();
 
     @Before
     public void setUp(){

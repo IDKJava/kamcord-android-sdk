@@ -21,7 +21,18 @@ public abstract class RecordAndPostTestBase extends TestBase {
     protected void recordGameVideo(String gameName, String gameTitle, int durationInMs){
         recordGameVideo(gameName, gameTitle, durationInMs, false);
     }
-    protected void recordGameVideo(String gameName, String gameTitle, int durationInMs, boolean pauseAfterGesture) {
+    protected void recordGameVideo(String gameName,
+                                   String gameTitle,
+                                   int durationInMs,
+                                   boolean pauseAfterGesture) {
+        recordGameVideo(gameName, gameTitle, durationInMs, pauseAfterGesture, false);
+    }
+
+        protected void recordGameVideo(String gameName,
+                                   String gameTitle,
+                                   int durationInMs,
+                                   boolean pauseAfterGesture,
+                                   boolean useRecentAppsToSwitchToKamcord) {
         mDevice.waitForIdle();
         waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
         //find ripples app logo and click
@@ -86,7 +97,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
         findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
-
+        if(useRecentAppsToSwitchToKamcord){
+            //closes notifications so we can pick from recent apps.
+            mDevice.pressBack();
+        }
         //click on notification to resume app.
         findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
         //find stop recording button.

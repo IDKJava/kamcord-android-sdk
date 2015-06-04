@@ -35,6 +35,7 @@ public class UiUtilities {
     public static final int DEFAULT_VIDEO_PROCESSING_TIMEOUT = 10000;
     public static final String OVERFLOW_DESCRIPTION = "More options";
     public static final String KAMCORD_APP_PACKAGE = "com.kamcord.app";
+    public static final String RIPPLE_TEST_APP_PACKAGE = "com.kamcord.ripples";
     public static final String RIPPLE_TEST_APP_NAME = "Ripple Test";
     public static final String RIPPLE_TEST_APP_TITLE = "Ripple Demo";
     public static final String RIPPLE_TEST_MAIN_RES = "com.kamcord.ripples:id/mainlayout";
