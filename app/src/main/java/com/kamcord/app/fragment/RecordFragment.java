@@ -112,7 +112,7 @@ public class RecordFragment extends Fragment implements
 
     public void initKamcordRecordFragment(View v) {
 
-        List<Game> mGameList = GameListUtils.getCachedGameList();
+        mGameList = GameListUtils.getCachedGameList();
         if (mGameList == null) {
             mGameList = new ArrayList<>();
         }
@@ -220,15 +220,21 @@ public class RecordFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         handleServiceRunning();
-        Game gameThatChanged = null;
+        boolean gameListChanged = false;
         for (RecordItem item : mRecordItemList) {
             Game game = item.getGame();
-            if (game != null && isAppInstalled(game.play_store_id) && !game.isInstalled) {
-                game.isInstalled = true;
-                gameThatChanged = game;
+            if (game != null ) {
+                boolean isNowInstalled = isAppInstalled(game.play_store_id);
+                if (isNowInstalled && !game.isInstalled) {
+                    game.isInstalled = true;
+                    gameListChanged = true;
+                } else if (!isNowInstalled && game.isInstalled) {
+                    game.isInstalled = false;
+                    gameListChanged = true;
+                }
             }
         }
-        if (gameThatChanged != null) {
+        if (gameListChanged) {
             updateRecordItemList();
             mRecyclerAdapter.notifyDataSetChanged();
         }
@@ -296,7 +302,7 @@ public class RecordFragment extends Fragment implements
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
-                mRecordItemList.clear();
+                mGameList.clear();
                 if (BuildConfig.DEBUG) {
                     Game ripples = new Game();
                     ripples.name = "Ripple Test";
