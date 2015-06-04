@@ -51,7 +51,10 @@
                 android:adjustViewBounds="false"
                 android:background="@drawable/hollow_circle_background"
                 android:padding="10dp"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/add_icon"
+                android:tint="@color/kamcordGreen"
+                android:tintMode="multiply" />
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
