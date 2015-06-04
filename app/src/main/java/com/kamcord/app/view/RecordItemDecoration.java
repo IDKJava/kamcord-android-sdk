@@ -32,8 +32,8 @@ public class RecordItemDecoration extends RecyclerView.ItemDecoration {
         /* INVALID SPAN */
         if (totalSpan < 1) return;
 
-        outRect.top = halfSpacing;
-        outRect.bottom = halfSpacing;
+        outRect.top = 0;
+        outRect.bottom = spacing;
         outRect.left = halfSpacing;
         outRect.right = halfSpacing;
 
@@ -49,9 +49,6 @@ public class RecordItemDecoration extends RecyclerView.ItemDecoration {
             outRect.right = spacing;
         }
 
-//        if (isBottomEdge(spanIndex, childCount, spanCount)) {
-//            outRect.bottom = spacing;
-//        }
     }
 
     protected int getTotalSpan(RecyclerView parent) {
@@ -108,9 +105,5 @@ public class RecordItemDecoration extends RecyclerView.ItemDecoration {
 
     protected boolean isRightEdge(int col, int childSpan, int totalSpan) {
         return col == totalSpan - childSpan;
-    }
-
-    protected boolean isBottomEdge(int row, int totalItems) {
-        return row == totalItems - 1;
     }
 }

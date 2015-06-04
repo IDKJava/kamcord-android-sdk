@@ -26,6 +26,7 @@ import com.flurry.android.FlurryAgent;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.GameRecordListAdapter;
+import com.kamcord.app.model.RecordItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
@@ -64,8 +65,7 @@ public class RecordFragment extends Fragment implements
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
 
-
-    private List<Game> mSupportedGameList = new ArrayList<>();
+    private List<RecordItem> mRecordItemList = new ArrayList<>();
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
@@ -110,19 +110,19 @@ public class RecordFragment extends Fragment implements
 
     public void initKamcordRecordFragment(View v) {
 
-        mSupportedGameList = GameListUtils.getCachedGameList();
-        if (mSupportedGameList == null) {
-            mSupportedGameList = new ArrayList<>();
+        mRecordItemList = GameListUtils.getCachedGameList();
+        if (mRecordItemList == null) {
+            mRecordItemList = new ArrayList<>();
         }
-        sortGameList(mSupportedGameList);
+        sortGameList(mRecordItemList);
 
         mRecyclerView.addItemDecoration(new RecordItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, this);
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mRecordItemList, this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
 
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        if (mSupportedGameList.size() == 0) {
+        if (mRecordItemList.size() == 0) {
             refreshRecordTab.setVisibility(View.VISIBLE);
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
@@ -171,7 +171,7 @@ public class RecordFragment extends Fragment implements
         if (RecordingService.isRunning()) {
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
             if (recordingSession != null) {
-                for (Game game : mSupportedGameList) {
+                for (Game game : mRecordItemList) {
                     if (game.play_store_id.equals(recordingSession.getGamePackageName())) {
                         game.isRecording = true;
                     } else {
@@ -183,7 +183,7 @@ public class RecordFragment extends Fragment implements
                 Log.v(TAG, "Unable to get the recording session!");
             }
         } else {
-            for (Game game : mSupportedGameList) {
+            for (Game game : mRecordItemList) {
                 game.isRecording = false;
             }
         }
@@ -217,15 +217,15 @@ public class RecordFragment extends Fragment implements
         super.onResume();
         handleServiceRunning();
         Game gameThatChanged = null;
-        for (Game game : mSupportedGameList) {
+        for (Game game : mRecordItemList) {
             if (isAppInstalled(game.play_store_id) && !game.isInstalled) {
                 game.isInstalled = true;
                 gameThatChanged = game;
             }
         }
         if (gameThatChanged != null) {
-            sortGameList(mSupportedGameList);
-            mRecyclerView.scrollToPosition(mSupportedGameList.indexOf(gameThatChanged));
+            sortGameList(mRecordItemList);
+            mRecyclerView.scrollToPosition(mRecordItemList.indexOf(gameThatChanged));
             mRecyclerAdapter.notifyDataSetChanged();
         }
     }
@@ -279,7 +279,7 @@ public class RecordFragment extends Fragment implements
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
-                mSupportedGameList.clear();
+                mRecordItemList.clear();
                 if (BuildConfig.DEBUG) {
                     Game ripples = new Game();
                     ripples.name = "Ripple Test";
@@ -290,21 +290,21 @@ public class RecordFragment extends Fragment implements
                     if (isAppInstalled(ripples.play_store_id)) {
                         ripples.isInstalled = true;
                     }
-                    mSupportedGameList.add(ripples);
+                    mRecordItemList.add(ripples);
                 }
                 for (Game game : gamesListWrapper.response.game_list) {
                     if (game.play_store_id != null) {
                         if (isAppInstalled(game.play_store_id)) {
                             game.isInstalled = true;
                         }
-                        mSupportedGameList.add(game);
+                        mRecordItemList.add(game);
                     }
                 }
                 if (refreshRecordTab.getVisibility() == View.VISIBLE) {
                     refreshRecordTab.setVisibility(View.INVISIBLE);
                 }
-                sortGameList(mSupportedGameList);
-                GameListUtils.saveGameList(mSupportedGameList);
+                sortGameList(mRecordItemList);
+                GameListUtils.saveGameList(mRecordItemList);
                 mRecyclerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -363,7 +363,7 @@ public class RecordFragment extends Fragment implements
     private void stopRecording() {
         FragmentActivity activity = getActivity();
         activity.stopService(new Intent(activity, RecordingService.class));
-        for( Game game : mSupportedGameList )
+        for( Game game : mRecordItemList)
         {
             game.isRecording = false;
         }

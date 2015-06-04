@@ -53,7 +53,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         switch (viewType) {
             case VIEW_TYPE_FIRST_INSTALLED:
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_first_installed, null);
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_installed_header, null);
                 viewHolder = new FirstInstalledViewHolder(itemLayoutView);
                 break;
 
@@ -63,7 +63,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                 break;
 
             case VIEW_TYPE_LAST_INSTALLED:
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_last_installed, null);
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_request_game, null);
                 viewHolder = new LastInstalledViewHolder(itemLayoutView);
                 break;
 
