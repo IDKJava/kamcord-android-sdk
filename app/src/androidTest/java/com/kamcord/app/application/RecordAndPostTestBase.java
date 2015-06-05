@@ -39,7 +39,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //wait for load!!!!
         findGame(gameName);
 
-        getRecordButtonForGame(gameName, true).click();
+        getRecordButtonForGame(gameName, true).longClick();
 
         //Ack the message
         findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res).click();
@@ -54,7 +54,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         for (int i = 0; i < sleepStep; i++) {
             //long time = System.currentTimeMillis();
             if ((i % 2) == 0){
-                executeTouchPatterns();
+                executeRectPattern();
                 sleep(400);
             } else {
                 if (pauseAfterGesture){
@@ -153,15 +153,21 @@ public abstract class RecordAndPostTestBase extends TestBase {
         }
         //close notifications
         mDevice.pressBack();
+        //check if profile page works.
+
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Txt).click();
+        //is it there?
+        findUiObj(R.id.userProfileInfo, UiObjIdType.Res, UiObjSelType.Res);
     }
 
-    protected void executeTouchPatterns() {
+    protected void executeRectPattern() {
         Point[] pattern = new Point[]{new Point(500, 300),
                 new Point(500, 1600),
                 new Point(1000, 1600),
                 new Point(1000, 300),
                 new Point(500, 300)};
-        mDevice.swipe(validateSwipe(pattern),25);
+        //25 steps to ensure ~1600ms execution
+        executeTouchPattern(pattern, 25);
     }
 
     protected UiObject2 getRecordButtonForGame(String gameName, boolean start){

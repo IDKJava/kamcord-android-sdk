@@ -42,6 +42,7 @@ public class UiUtilities {
     public static final String ANDROID_DISMISS_TASK = "com.android.systemui:id/dismiss_task";
     public static final String ANDROID_SYSTEM_BUTTON1 = "android:id/button1";
     public static final String ANDROID_NOTIFICATION_HEADER = "com.android.systemui:id/header";
+    public static final int UI_INTERACTION_DELAY_MS = 1000;
 
     public static final UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
 
@@ -174,8 +175,11 @@ public class UiUtilities {
     public static UiObject2 findUiObj(String text, UiObjSelType selType) {
         return findUiObj(text, selType, UI_TIMEOUT_MS);
     }
-
-    public static UiObject2 findUiObj(String text, UiObjSelType selType, int timeOut) {
+    public static UiObject2 findUiObj(String text, UiObjSelType selType, int timeOut)
+    {
+        return findUiObj(text, selType, timeOut, true);
+    }
+    public static UiObject2 findUiObj(String text, UiObjSelType selType, int timeOut, boolean failIfNotFound ) {
         BySelector objSelector;
         switch (selType) {
             case Res:
@@ -193,7 +197,9 @@ public class UiUtilities {
         }
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut);
+        if (failIfNotFound) {
+            assertTrue("UI Object failed to load!", notTimedOut);
+        }
         return mDevice.findObject(objSelector);
     }
 
@@ -285,6 +291,10 @@ public class UiUtilities {
     }
 
     public static void scrollToBeginning(int id){
+        //safe delay? 25ms for now, may need more.
+        scrollToBeginning(id, UI_INTERACTION_DELAY_MS);
+    }
+    public static void scrollToBeginning(int id, int sleepAfterMs){
         try {
             UiScrollable scrollableObject
                     = new UiScrollable(new UiSelector()
@@ -298,6 +308,10 @@ public class UiUtilities {
             e.printStackTrace();
             assertTrue("Object not found!", false);
         }
+        sleep(sleepAfterMs);
+    }
+    public static void executeTouchPattern(Point[] pattern, int steps) {
+        mDevice.swipe(validateSwipe(pattern),steps);
     }
 }
 

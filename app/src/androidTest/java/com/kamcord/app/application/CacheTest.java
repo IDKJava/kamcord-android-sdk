@@ -13,12 +13,13 @@ import static com.kamcord.app.testutils.SystemUtilities.*;
 // @FixMethodOrder
 public class CacheTest extends RecordAndPostTestBase {
 
+    protected static int CACHE_CLEAR_TRIALS = 2;
 
     public void clearCacheTest(){
         //enable line below when we update the test and detach from checkCacheNoMediaTest
         //skipLogin();
         boolean notDeleted = true;
-        for (int trials = 0; trials < 2 && notDeleted; trials++) {
+        for (int trials = 0; trials < CACHE_CLEAR_TRIALS && notDeleted; trials++) {
             clearCache();
             //TODO: Ask for some feedback as to weather the clean cache op has completed.
             sleep(APP_TIMEOUT_MS);
