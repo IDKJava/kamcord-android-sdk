@@ -1,6 +1,9 @@
 package com.kamcord.app.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -11,13 +14,20 @@ import android.view.animation.Animation;
 import android.widget.ImageButton;
 
 import com.kamcord.app.R;
-import com.kamcord.app.adapter.viewholder.InstalledViewHolder;
-import com.kamcord.app.adapter.viewholder.NotInstalledViewHolder;
+import com.kamcord.app.adapter.viewholder.GameItemViewHolder;
+import com.kamcord.app.adapter.viewholder.InstalledHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.RequestGameViewHolder;
+import com.kamcord.app.model.RecordItem;
+import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.Game;
+import com.kamcord.app.utils.AccountManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Locale;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
@@ -27,38 +37,42 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     public static final int VIEW_TYPE_NOT_INSTALLED = 3;
 
     private Context mContext;
-    private List<Game> mGames;
-    private OnItemClickListener mItemClickListener;
-    private OnRecordButtonClickListener mOnRecordButtonClickListener;
+    private List<RecordItem> mRecordItems;
+    private OnGameActionButtonClickListener mOnGameActionButtonClickListener;
 
-    public GameRecordListAdapter(Context context, List<Game> games, OnItemClickListener itemClickListener, OnRecordButtonClickListener recordButtonClickListener) {
+    public GameRecordListAdapter(Context context, List<RecordItem> recordItems, OnGameActionButtonClickListener recordButtonClickListener) {
         this.mContext = context;
-        this.mGames = games;
-        this.mItemClickListener = itemClickListener;
-        this.mOnRecordButtonClickListener = recordButtonClickListener;
+        this.mRecordItems = recordItems;
+        this.mOnGameActionButtonClickListener = recordButtonClickListener;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        View itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed, null);
-        RecyclerView.ViewHolder viewHolder = new NotInstalledViewHolder(itemLayoutView, mItemClickListener);
+        View itemLayoutView = inflater.inflate(R.layout.view_game_item, null);
+        RecyclerView.ViewHolder viewHolder = new GameItemViewHolder(itemLayoutView);
 
-        switch (viewType) {
-            case VIEW_TYPE_FIRST_INSTALLED:
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_first_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView);
+        RecordItem.Type type = RecordItem.Type.values()[viewType];
+        switch (type) {
+            case INSTALLED_HEADER:
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_installed_header, null);
+                viewHolder = new InstalledHeaderViewHolder(itemLayoutView);
                 break;
 
-            case VIEW_TYPE_INSTALLED:
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView);
+            case GAME:
+                itemLayoutView = inflater.inflate(R.layout.view_game_item, null);
+                viewHolder = new GameItemViewHolder(itemLayoutView);
                 break;
 
-            case VIEW_TYPE_LAST_INSTALLED:
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_last_installed, null);
-                viewHolder = new InstalledViewHolder(itemLayoutView);
+            case REQUEST_GAME:
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_request_game, null);
+                viewHolder = new RequestGameViewHolder(itemLayoutView);
+                break;
+
+            case NOT_INSTALLED_HEADER:
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed_header, null);
+                viewHolder = new NotInstalledHeaderViewHolder(itemLayoutView);
                 break;
 
             default:
@@ -71,29 +85,60 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
-        Game game = mGames.get(position);
+        RecordItem item = mRecordItems.get(position);
 
-        if (viewHolder instanceof NotInstalledViewHolder) {
-            bindNotInstalledViewHolder((NotInstalledViewHolder) viewHolder, game);
+        if (viewHolder instanceof InstalledHeaderViewHolder) {
+            bindInstalledHeaderViewHolder((InstalledHeaderViewHolder) viewHolder);
 
-        } else if (viewHolder instanceof InstalledViewHolder) {
-            bindFirstInstalledViewHolder((InstalledViewHolder) viewHolder, game);
+        } else if (viewHolder instanceof RequestGameViewHolder) {
+            bindRequestGameViewHolder((RequestGameViewHolder) viewHolder);
 
+        } else if (viewHolder instanceof GameItemViewHolder) {
+            Game game = item.getGame();
+            bindGameItemViewHolder((GameItemViewHolder) viewHolder, game);
+
+        } else if (viewHolder instanceof NotInstalledHeaderViewHolder) {
+            bindNotInstalledHeaderViewHolder((NotInstalledHeaderViewHolder) viewHolder);
         }
     }
 
-    private void bindNotInstalledViewHolder(NotInstalledViewHolder viewHolder, Game game)
+    private void bindInstalledHeaderViewHolder(InstalledHeaderViewHolder viewHolder)
     {
-        viewHolder.itemPackageName.setText(game.name);
-        if( game.icons != null && game.icons.regular != null ) {
-            Picasso.with(mContext)
-                    .load(game.icons.regular)
-                    .tag(game.play_store_id)
-                    .into(viewHolder.itemImage);
-        }
+        CalligraphyUtils.applyFontToTextView(mContext, viewHolder.recordAndShareTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindFirstInstalledViewHolder(InstalledViewHolder viewHolder, final Game game)
+    private void bindNotInstalledHeaderViewHolder(NotInstalledHeaderViewHolder viewHolder)
+    {
+        CalligraphyUtils.applyFontToTextView(mContext, viewHolder.alsoRecordTheseTextView, "fonts/proximanova_semibold.otf");
+    }
+
+    private void bindRequestGameViewHolder(RequestGameViewHolder viewHolder)
+    {
+        viewHolder.requestGameImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{mContext.getResources().getString(R.string.communityEmail),});
+                intent.putExtra(Intent.EXTRA_SUBJECT, mContext.getResources().getString(R.string.canIRecord));
+                String body = mContext.getResources().getString(R.string.iWantToRecord) + " \n"
+                        + "\n";
+                if (AccountManager.isLoggedIn()) {
+                    Account account = AccountManager.getStoredAccount();
+                    body += String.format(Locale.ENGLISH, mContext.getResources().getString(R.string.sincerely), account.username);
+                }
+                intent.putExtra(Intent.EXTRA_TEXT, body);
+                intent.setType("*/*");
+                intent.setData(Uri.parse("mailto:"));
+                if (intent.resolveActivity(mContext.getPackageManager()) != null) {
+                    mContext.startActivity(intent);
+                } else {
+                    // TODO: show the user there's no app to handle emails.
+                }
+            }
+        });
+    }
+
+    private void bindGameItemViewHolder(GameItemViewHolder viewHolder, final Game game)
     {
         if( game.icons != null && game.icons.regular != null ) {
             Picasso.with(mContext)
@@ -108,60 +153,57 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                         mContext.getResources().getString(R.string.followersWithCount),
                         game.number_of_followers));
 
-        ImageButton recordImageButton = viewHolder.recordImageButton;
-        recordImageButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton gameActionImageButton = viewHolder.gameActionImageButton;
+        gameActionImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mOnRecordButtonClickListener != null) {
-                    mOnRecordButtonClickListener.onRecordButtonClick(game);
+                if (mOnGameActionButtonClickListener != null) {
+                    mOnGameActionButtonClickListener.onGameActionButtonClick(game);
                 }
             }
         });
-        if( game.isRecording ) {
-            recordImageButton.setBackgroundResource(R.drawable.fab_circle_red);
-            recordImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
-            Animation animation = new AlphaAnimation(1f, 0.5f);
-            animation.setDuration(500);
-            animation.setRepeatCount(Animation.INFINITE);
-            animation.setRepeatMode(Animation.REVERSE);
-            recordImageButton.startAnimation(animation);
+
+        if( game.isInstalled ) {
+            if (game.isRecording) {
+                gameActionImageButton.setBackgroundResource(R.drawable.hollow_red_circle_background);
+
+                gameActionImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
+                gameActionImageButton.setColorFilter(mContext.getResources().getColor(R.color.stopRecordingRed), PorterDuff.Mode.MULTIPLY);
+
+                Animation animation = new AlphaAnimation(1f, 0.5f);
+                animation.setDuration(500);
+                animation.setRepeatCount(Animation.INFINITE);
+                animation.setRepeatMode(Animation.REVERSE);
+                gameActionImageButton.startAnimation(animation);
+            } else {
+                gameActionImageButton.setBackgroundResource(R.drawable.hollow_circle_background);
+
+                gameActionImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
+                gameActionImageButton.setColorFilter(mContext.getResources().getColor(R.color.kamcordGreen), PorterDuff.Mode.MULTIPLY);
+
+                gameActionImageButton.clearAnimation();
+            }
         } else {
-            recordImageButton.setBackgroundResource(R.drawable.fab_circle);
-            recordImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
-            recordImageButton.clearAnimation();
+            gameActionImageButton.setBackgroundResource(R.drawable.hollow_blue_circle_background);
+            gameActionImageButton.setImageResource(R.drawable.install_icon);
+            gameActionImageButton.setColorFilter(mContext.getResources().getColor(R.color.kamcordBlue), PorterDuff.Mode.MULTIPLY);
         }
     }
 
+
+
     @Override
     public int getItemCount() {
-        return mGames.size();
+        return mRecordItems.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        int viewType = VIEW_TYPE_NOT_INSTALLED;
-
-        Game game = mGames.get(position);
-        if (game.isInstalled) {
-            if (position == 0) {
-                viewType = VIEW_TYPE_FIRST_INSTALLED;
-
-            } else if (position + 1 > mGames.size() || !mGames.get(position + 1).isInstalled) {
-                viewType = VIEW_TYPE_LAST_INSTALLED;
-
-            } else {
-                viewType = VIEW_TYPE_INSTALLED;
-            }
-        }
-
-        return viewType;
+        RecordItem item = mRecordItems.get(position);
+        return item.getType().ordinal();
     }
 
-    public interface OnItemClickListener {
-        void onItemClick(View view, int position);
-    }
-
-    public interface OnRecordButtonClickListener {
-        void onRecordButtonClick(Game game);
+    public interface OnGameActionButtonClickListener {
+        void onGameActionButtonClick(Game game);
     }
 }
