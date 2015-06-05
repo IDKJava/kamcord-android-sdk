@@ -201,13 +201,6 @@ public class ShareFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_cleancache);
-        item.setVisible(false);
-        super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_share, menu);
         super.onCreateOptionsMenu(menu, inflater);

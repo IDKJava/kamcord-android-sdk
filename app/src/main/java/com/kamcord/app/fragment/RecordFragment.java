@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +26,7 @@ import com.flurry.android.FlurryAgent;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.GameRecordListAdapter;
+import com.kamcord.app.model.RecordItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
@@ -36,7 +36,8 @@ import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
-import com.kamcord.app.view.SpaceItemDecoration;
+import com.kamcord.app.view.RecordItemDecoration;
+import com.kamcord.app.view.utils.RecordLayoutSpanSizeLookup;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,8 +52,7 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class RecordFragment extends Fragment implements
-        GameRecordListAdapter.OnItemClickListener,
-        GameRecordListAdapter.OnRecordButtonClickListener {
+        GameRecordListAdapter.OnGameActionButtonClickListener {
     private static final String TAG = RecordFragment.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
@@ -65,10 +65,9 @@ public class RecordFragment extends Fragment implements
 
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
-    private GridLayoutManager gridLayoutManager;
 
-
-    private List<Game> mSupportedGameList = new ArrayList<>();
+    private List<RecordItem> mRecordItemList = new ArrayList<>();
+    private List<Game> mGameList = new ArrayList();
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
@@ -113,19 +112,20 @@ public class RecordFragment extends Fragment implements
 
     public void initKamcordRecordFragment(View v) {
 
-        mSupportedGameList = GameListUtils.getCachedGameList();
-        if (mSupportedGameList == null) {
-            mSupportedGameList = new ArrayList<>();
+        mGameList = GameListUtils.getCachedGameList();
+        if (mGameList == null) {
+            mGameList = new ArrayList<>();
         }
-        sortGameList(mSupportedGameList);
+        updateRecordItemList();
 
-        mRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mSupportedGameList, this, this);
+        mRecyclerView.addItemDecoration(new RecordItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mRecordItemList, this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
+        mRecyclerView.setSpanSizeLookup(new RecordLayoutSpanSizeLookup(mRecyclerView));
 
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        if (mSupportedGameList.size() == 0) {
+        if (mRecordItemList.size() == 0) {
             refreshRecordTab.setVisibility(View.VISIBLE);
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
@@ -174,7 +174,7 @@ public class RecordFragment extends Fragment implements
         if (RecordingService.isRunning()) {
             RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
             if (recordingSession != null) {
-                for (Game game : mSupportedGameList) {
+                for (Game game : mGameList) {
                     if (game.play_store_id.equals(recordingSession.getGamePackageName())) {
                         game.isRecording = true;
                     } else {
@@ -186,10 +186,11 @@ public class RecordFragment extends Fragment implements
                 Log.v(TAG, "Unable to get the recording session!");
             }
         } else {
-            for (Game game : mSupportedGameList) {
+            for (Game game : mGameList) {
                 game.isRecording = false;
             }
         }
+        updateRecordItemList();
         mRecyclerAdapter.notifyDataSetChanged();
     }
 
@@ -209,19 +210,6 @@ public class RecordFragment extends Fragment implements
     }
 
     private Toast startRecordingToast = null;
-
-    @Override
-    public void onItemClick(View view, int position) {
-        Game game = mSupportedGameList.get(position);
-        if (!game.isInstalled) {
-            mSelectedGame = null;
-            Intent intent = new Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("market://details?id=" + game.play_store_id));
-            getActivity().startActivity(intent);
-        }
-    }
-
     public interface RecyclerViewScrollListener {
         void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
 
@@ -232,16 +220,22 @@ public class RecordFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         handleServiceRunning();
-        Game gameThatChanged = null;
-        for (Game game : mSupportedGameList) {
-            if (isAppInstalled(game.play_store_id) && !game.isInstalled) {
-                game.isInstalled = true;
-                gameThatChanged = game;
+        boolean gameListChanged = false;
+        for (RecordItem item : mRecordItemList) {
+            Game game = item.getGame();
+            if (game != null ) {
+                boolean isNowInstalled = isAppInstalled(game.play_store_id);
+                if (isNowInstalled && !game.isInstalled) {
+                    game.isInstalled = true;
+                    gameListChanged = true;
+                } else if (!isNowInstalled && game.isInstalled) {
+                    game.isInstalled = false;
+                    gameListChanged = true;
+                }
             }
         }
-        if (gameThatChanged != null) {
-            sortGameList(mSupportedGameList);
-            mRecyclerView.scrollToPosition(mSupportedGameList.indexOf(gameThatChanged));
+        if (gameListChanged) {
+            updateRecordItemList();
             mRecyclerAdapter.notifyDataSetChanged();
         }
     }
@@ -282,20 +276,33 @@ public class RecordFragment extends Fragment implements
     }
 
 
-    public void sortGameList(List<Game> supportedGameList) {
-        Collections.sort(supportedGameList, new Comparator<Game>() {
+    public void updateRecordItemList() {
+        Collections.sort(mGameList, new Comparator<Game>() {
             @Override
             public int compare(Game g1, Game g2) {
                 return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
             }
         });
+        mRecordItemList.clear();
+        boolean lastGameInstalled = false;
+        for( Game game : mGameList ) {
+            if( game.isInstalled && !lastGameInstalled ) {
+                mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
+
+            } else if( !game.isInstalled && lastGameInstalled ) {
+                mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
+                mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
+            }
+            mRecordItemList.add(new RecordItem(RecordItem.Type.GAME, game));
+            lastGameInstalled = game.isInstalled;
+        }
     }
 
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
-                mSupportedGameList.clear();
+                mGameList.clear();
                 if (BuildConfig.DEBUG) {
                     Game ripples = new Game();
                     ripples.name = "Ripple Test";
@@ -306,21 +313,21 @@ public class RecordFragment extends Fragment implements
                     if (isAppInstalled(ripples.play_store_id)) {
                         ripples.isInstalled = true;
                     }
-                    mSupportedGameList.add(ripples);
+                    mGameList.add(ripples);
                 }
                 for (Game game : gamesListWrapper.response.game_list) {
                     if (game.play_store_id != null) {
                         if (isAppInstalled(game.play_store_id)) {
                             game.isInstalled = true;
                         }
-                        mSupportedGameList.add(game);
+                        mGameList.add(game);
                     }
                 }
                 if (refreshRecordTab.getVisibility() == View.VISIBLE) {
                     refreshRecordTab.setVisibility(View.INVISIBLE);
                 }
-                sortGameList(mSupportedGameList);
-                GameListUtils.saveGameList(mSupportedGameList);
+                GameListUtils.saveGameList(mGameList);
+                updateRecordItemList();
                 mRecyclerAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -336,41 +343,54 @@ public class RecordFragment extends Fragment implements
     }
 
     @Override
-    public void onRecordButtonClick(final Game game) {
-        if (!RecordingService.isRunning()) {
-            mSelectedGame = game;
-            obtainMediaProjection();
-        } else {
-            RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
-            if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
-                stopRecording();
-                shareRecording();
+    public void onGameActionButtonClick(final Game game) {
+
+        if( game.isInstalled ) {
+
+            if (!RecordingService.isRunning()) {
+                mSelectedGame = game;
+                obtainMediaProjection();
             } else {
-                String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.alreadyRecording)
-                        .setMessage(message)
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                stopRecording();
-                                mSelectedGame = game;
-                                obtainMediaProjection();
-                            }
-                        })
-                        .setNeutralButton(android.R.string.cancel, null)
-                        .show();
+                RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
+                if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
+                    stopRecording();
+                    shareRecording();
+                } else {
+                    String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.alreadyRecording)
+                            .setMessage(message)
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    stopRecording();
+                                    mSelectedGame = game;
+                                    obtainMediaProjection();
+                                }
+                            })
+                            .setNeutralButton(android.R.string.cancel, null)
+                            .show();
+                }
             }
+
+        } else {
+
+            mSelectedGame = null;
+            Intent intent = new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("market://details?id=" + game.play_store_id));
+            getActivity().startActivity(intent);
         }
     }
 
     private void stopRecording() {
         FragmentActivity activity = getActivity();
         activity.stopService(new Intent(activity, RecordingService.class));
-        for( Game game : mSupportedGameList )
+        for( Game game : mGameList)
         {
             game.isRecording = false;
         }
+        updateRecordItemList();
         mRecyclerAdapter.notifyDataSetChanged();
     }
 

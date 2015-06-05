@@ -14,7 +14,7 @@ import butterknife.InjectView;
 /**
  * Created by pplunkett on 5/26/15.
  */
-public class InstalledViewHolder extends RecyclerView.ViewHolder {
+public class GameItemViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.gameThumbnailImageView)
     public ImageView gameThumbnailImageView;
@@ -22,10 +22,10 @@ public class InstalledViewHolder extends RecyclerView.ViewHolder {
     public TextView gameNameTextView;
     @InjectView(R.id.gameFollowerCountTextView)
     public TextView gameFollowerCountTextView;
-    @InjectView(R.id.recordImageButton)
-    public ImageButton recordImageButton;
+    @InjectView(R.id.gameActionImageButton)
+    public ImageButton gameActionImageButton;
 
-    public InstalledViewHolder(View itemLayoutView) {
+    public GameItemViewHolder(View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
     }

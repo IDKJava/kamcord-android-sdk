@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
 import com.kamcord.app.R;
-import com.kamcord.app.adapter.GameRecordListAdapter;
 import com.kamcord.app.utils.ViewUtils;
 
 /**
@@ -17,7 +16,6 @@ public class DynamicRecyclerView extends RecyclerView {
 
     private GridLayoutManager gridLayoutManager;
     private int columnWidth = 0;
-    private int columnNumber = 3;
 
     public DynamicRecyclerView(Context context) {
         super(context);
@@ -40,35 +38,18 @@ public class DynamicRecyclerView extends RecyclerView {
             columnWidth = array.getDimensionPixelSize(R.styleable.DynamicRecyclerView_minGridItemWidth, ViewUtils.dpToPx(getContext(), 150));
             array.recycle();
         }
-        gridLayoutManager = new GridLayoutManager(getContext(), columnNumber);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                int spanSize = 1;
-                int viewType = getAdapter().getItemViewType(position);
-
-                switch( viewType )
-                {
-                    case GameRecordListAdapter.VIEW_TYPE_FIRST_INSTALLED:
-                    case GameRecordListAdapter.VIEW_TYPE_INSTALLED:
-                    case GameRecordListAdapter.VIEW_TYPE_LAST_INSTALLED:
-                        spanSize = gridLayoutManager.getSpanCount();
-                        break;
-
-                    default:
-                        spanSize = 1;
-                        break;
-                }
-                return spanSize;
-            }
-        });
+        gridLayoutManager = new GridLayoutManager(getContext(), 1);
         setLayoutManager(gridLayoutManager);
+    }
+
+    public void setSpanSizeLookup(GridLayoutManager.SpanSizeLookup spanSizeLookup) {
+        gridLayoutManager.setSpanSizeLookup(spanSizeLookup);
     }
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
-        int spanCount = Math.max(columnNumber, getMeasuredWidth() / columnWidth);
+        int spanCount = Math.max(1, getMeasuredWidth() / columnWidth);
         gridLayoutManager.setSpanCount(spanCount);
     }
 
