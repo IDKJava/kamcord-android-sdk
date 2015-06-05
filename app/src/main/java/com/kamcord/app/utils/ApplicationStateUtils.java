@@ -33,10 +33,6 @@ public class ApplicationStateUtils {
         }
     }
 
-    public static synchronized void invalidateForeground() {
-        initialForegroundProcesses.clear();
-    }
-
     public static synchronized boolean isGameInForeground(String packageName) {
 
         if( !powerManager.isInteractive() )
@@ -62,7 +58,9 @@ public class ApplicationStateUtils {
                 }
             }
         }
-        return isInForeground && initialForegroundProcesses.equals(currentForegroundProcessNames);
-    }
 
+        return isInForeground
+                && (initialForegroundProcesses.isEmpty() ||
+                        (initialForegroundProcesses.containsAll(currentForegroundProcessNames) && currentForegroundProcessNames.containsAll(initialForegroundProcesses)));
+    }
 }

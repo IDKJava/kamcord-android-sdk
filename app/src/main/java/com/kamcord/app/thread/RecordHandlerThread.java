@@ -1,6 +1,5 @@
 package com.kamcord.app.thread;
 
-import android.app.ActivityManager;
 import android.app.Notification;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
@@ -52,7 +51,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private int mTrackIndex = -1;
     private static final String VIDEO_TYPE = "video/avc";
 
-    private ActivityManager mActivityManager;
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
     private long presentationStartUs = -1;
@@ -89,7 +87,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mMediaProjection = mediaProjection;
         this.mContext = context;
 
-        this.mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         this.mRecordingSession = recordingSession;
         this.clipStartBarrier = clipStartBarrier;
     }
@@ -106,7 +103,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 }
                 ApplicationStateUtils.initializeForeground();
                 recordUntilBackground();
-                ApplicationStateUtils.invalidateForeground();
                 mHandler.removeMessages(Message.POLL);
                 mHandler.sendEmptyMessage(Message.POLL);
                 NotificationUtils.updateNotification(mContext.getResources().getString(R.string.paused));
