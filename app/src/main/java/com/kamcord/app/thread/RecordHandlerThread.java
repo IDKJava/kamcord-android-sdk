@@ -1,7 +1,6 @@
 package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
@@ -14,7 +13,6 @@ import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Surface;
@@ -23,13 +21,13 @@ import android.view.WindowManager;
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.ApplicationStateUtils;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.NotificationUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CyclicBarrier;
 
@@ -113,7 +111,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.POLL:
-                if (!isGameInForeground()) {
+                if (!ApplicationStateUtils.isGameInForeground(mRecordingSession.getGamePackageName())) {
                     mHandler.removeMessages(Message.POLL);
                     mHandler.sendEmptyMessageDelayed(Message.POLL, 100);
                 } else {
@@ -134,30 +132,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mHandler = handler;
     }
 
-    private boolean isGameInForeground() {
-
-        if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
-        {
-            return false;
-        }
-
-        if( ((KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode() )
-        {
-            return false;
-        }
-
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = mActivityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
-            if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                for (String pkgName : runningAppProcessInfo.pkgList) {
-                    if (pkgName.equals(mRecordingSession.getGamePackageName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 
     private void recordUntilBackground() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -283,7 +257,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     }
 
     private boolean drainEncoder() {
-        while (isGameInForeground()) {
+        while (ApplicationStateUtils.isGameInForeground(mRecordingSession.getGamePackageName())) {
 
             int encoderStatus = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);
 
