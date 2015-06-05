@@ -101,7 +101,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         switch (msg.what) {
             case Message.RECORD_CLIP:
-                clipNumber++;
                 try {
                     Thread.sleep(RecordingService.DROP_FIRST_MS);
                 } catch (InterruptedException e) {
@@ -335,13 +334,19 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mVirtualDisplay.release();
         }
         if (mMuxer != null) {
-            if (mMuxerStart && mMuxerWrite) {
+            if (mMuxerStart) {
                 mMuxer.stop();
             }
+            mMuxerStart = false;
+
+            if( mMuxerWrite )
+            {
+                clipNumber++;
+            }
+            mMuxerWrite = false;
+
             mMuxer.release();
             mMuxer = null;
-            mMuxerStart = false;
-            mMuxerWrite = false;
         }
         if (mVideoEncoder != null) {
             mVideoEncoder.stop();

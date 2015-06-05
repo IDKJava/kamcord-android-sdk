@@ -65,7 +65,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
 
         switch (msg.what) {
             case Message.RECORD_CLIP:
-                audioNumber++;
                 try {
                     Thread.sleep(RecordingService.DROP_FIRST_MS);
                 } catch (InterruptedException e) {
@@ -248,10 +247,15 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             if (mMuxerStart) {
                 mMediaMuxer.stop();
             }
+            mMuxerStart = false;
+
+            if( mMuxerWrite ) {
+                audioNumber++;
+            }
+            mMuxerWrite = false;
+
             mMediaMuxer.release();
             mMediaMuxer = null;
-            mMuxerStart = false;
-            mMuxerWrite = false;
         }
     }
 
