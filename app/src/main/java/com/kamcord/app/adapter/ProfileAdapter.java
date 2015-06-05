@@ -173,13 +173,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     if (videoItem.is_user_liking) {
                         videoItem.is_user_liking = false;
                         videoItem.likes = videoItem.likes - 1;
-                        videoLikesButton.setPressed(false);
                         videoLikesButton.setText(Integer.toString(videoItem.likes));
                         AppServerClient.getInstance().unLikeVideo(videoItem.video_id, new UnLikeVideosCallback());
                     } else {
                         videoItem.is_user_liking = true;
                         videoItem.likes = videoItem.likes + 1;
-                        videoLikesButton.setPressed(true);
                         videoLikesButton.setText(Integer.toString(videoItem.likes));
                         AppServerClient.getInstance().likeVideo(videoItem.video_id, new LikeVideosCallback());
                     }
@@ -248,17 +246,20 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
             AccountManager.clearStoredAccount();
-            Intent loginIntent = new Intent(mContext, LoginActivity.class);
-            mContext.startActivity(loginIntent);
-            ((Activity) mContext).finish();
+            if (mContext != null) {
+                Intent loginIntent = new Intent(mContext, LoginActivity.class);
+                mContext.startActivity(loginIntent);
+                ((Activity) mContext).finish();
+            }
         }
 
         @Override
         public void failure(RetrofitError error) {
-            AccountManager.clearStoredAccount();
-            Intent loginIntent = new Intent(mContext, LoginActivity.class);
-            mContext.startActivity(loginIntent);
-            ((Activity) mContext).finish();
+            if (mContext != null) {
+                Intent loginIntent = new Intent(mContext, LoginActivity.class);
+                mContext.startActivity(loginIntent);
+                ((Activity) mContext).finish();
+            }
         }
     };
 }

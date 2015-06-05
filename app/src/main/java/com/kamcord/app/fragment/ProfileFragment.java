@@ -105,6 +105,22 @@ public class ProfileFragment extends Fragment {
         profileRecyclerView.setLayoutManager(layoutManager);
         profileRecyclerView.setAdapter(mProfileAdapter);
 
+        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (AccountManager.isLoggedIn()) {
+                    videoFeedRefreshLayout.setRefreshing(true);
+                    Account myAccount = AccountManager.getStoredAccount();
+                    AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+                    AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
+                } else {
+                    videoFeedRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
+        
         profileRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -136,23 +152,6 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-
-        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
-        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (AccountManager.isLoggedIn()) {
-                    videoFeedRefreshLayout.setRefreshing(true);
-                    Account myAccount = AccountManager.getStoredAccount();
-                    AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-                    AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
-                } else {
-                    videoFeedRefreshLayout.setRefreshing(false);
-                }
-            }
-        });
-
     }
 
     public void loadMoreItems() {
