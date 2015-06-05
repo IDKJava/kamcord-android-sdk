@@ -117,10 +117,9 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (profileRecyclerView.getChildAt(0) != null) {
-                    int cardMargin = getResources().getDimensionPixelSize(R.dimen.card_margin);
                     int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
                     videoFeedRefreshLayout.setEnabled(profileRecyclerView.getChildAdapterPosition(profileRecyclerView.getChildAt(0)) == 0
-                            && profileRecyclerView.getChildAt(0).getTop() == cardMargin + tabsHeight);
+                            && profileRecyclerView.getChildAt(0).getTop() == tabsHeight);
                 } else {
                     videoFeedRefreshLayout.setEnabled(true);
                 }

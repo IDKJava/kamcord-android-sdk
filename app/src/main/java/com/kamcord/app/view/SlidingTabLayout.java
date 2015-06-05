@@ -205,10 +205,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabView = createDefaultTabView(getContext());
             }
 
-//            if (tabTitleView == null && TextView.class.isInstance(tabView)) {
-//                tabTitleView = (TextView) tabView;
-//            }
-
             if (tabIconView == null && ImageView.class.isInstance(tabView)) {
                 tabIconView = (ImageView) tabView;
             }
@@ -224,9 +220,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 lp.weight = 1;
             }
 
-//            tabTitleView.setText(adapter.getPageTitle(i));
-//            tabTitleView.setTextColor(getResources().getColorStateList(R.color.tab_title_selector));
-//            tabTitleView.setTextSize(14);
             tabView.setOnClickListener(tabClickListener);
             String desc = mContentDescriptions.get(i, null);
             if (desc != null) {

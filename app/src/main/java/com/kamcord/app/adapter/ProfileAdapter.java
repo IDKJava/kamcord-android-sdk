@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,12 +19,11 @@ import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
-import com.kamcord.app.adapter.viewholder.HeaderViewHolder;
-import com.kamcord.app.adapter.viewholder.ItemViewHolder;
+import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
 import com.kamcord.app.model.ProfileItemType;
 import com.kamcord.app.model.ProfileViewModel;
 import com.kamcord.app.server.client.AppServerClient;
-import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
@@ -35,7 +33,6 @@ import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -63,11 +60,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch (viewType) {
             case TYPE_HEADER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_header, parent, false);
-                return new HeaderViewHolder(itemLayoutView);
+                return new ProfileHeaderViewHolder(itemLayoutView);
             }
             case TYPE_VIDEO_ITEM: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_item, parent, false);
-                return new ItemViewHolder(itemLayoutView);
+                return new ProfileVideoItemViewHolder(itemLayoutView);
             }
             case TYPE_FOOTER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
@@ -83,32 +80,32 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
-        if (viewHolder instanceof HeaderViewHolder) {
+        if (viewHolder instanceof ProfileHeaderViewHolder) {
             ProfileViewModel headerItem = getItem(position);
             User user = headerItem.getUser();
             if (headerItem != null) {
                 if (user != null && user.username != null) {
                     if (user.username != null) {
-                        ((HeaderViewHolder) viewHolder).getProfileUserName().setText(StringUtils.getFirstLetterUpperCase(user.username));
-                        ((HeaderViewHolder) viewHolder).getProfileLetter().setText(StringUtils.getFirstLetterUpperCase(user.username).substring(0, 1));
-                        ((HeaderViewHolder) viewHolder).getProfileLetter().setTextColor(Color.parseColor(user.profile_color));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserName().setText(StringUtils.getFirstLetterUpperCase(user.username));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileLetter().setText(StringUtils.getFirstLetterUpperCase(user.username).substring(0, 1));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileLetter().setTextColor(Color.parseColor(user.profile_color));
                     }
                     if (user.tagline != null) {
-                        ((HeaderViewHolder) viewHolder).getProfileUserTag().setText(StringUtils.getFirstLetterUpperCase(user.tagline));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserTag().setText(StringUtils.getFirstLetterUpperCase(user.tagline));
                     }
                     if (user.video_count != null) {
-                        ((HeaderViewHolder) viewHolder).getProfileUserVideos().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.video_count)));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserVideos().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.video_count)));
                     }
                     if (user.followers_count != null) {
-                        ((HeaderViewHolder) viewHolder).getProfileUserFollowers().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.followers_count)));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserFollowers().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.followers_count)));
 
                     }
                     if (user.following_count != null) {
-                        ((HeaderViewHolder) viewHolder).getProfileUserFollowing().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.following_count)));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserFollowing().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.following_count)));
                     }
-                    ((HeaderViewHolder) viewHolder).getProfileHeaderLayout().setBackgroundColor(Color.parseColor(user.profile_color));
+                    ((ProfileHeaderViewHolder) viewHolder).getProfileHeaderLayout().setBackgroundColor(Color.parseColor(user.profile_color));
                 }
-                ((HeaderViewHolder) viewHolder).getActionMenuView().setOnClickListener(new View.OnClickListener() {
+                ((ProfileHeaderViewHolder) viewHolder).getActionMenuView().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         PopupMenu popupMenu = new PopupMenu(mContext, v);
@@ -128,26 +125,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                         }
                                         break;
                                     }
-                                    case R.id.action_request_game: {
-                                        Intent intent = new Intent(Intent.ACTION_SENDTO);
-                                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{mContext.getResources().getString(R.string.communityEmail),});
-                                        intent.putExtra(Intent.EXTRA_SUBJECT, mContext.getResources().getString(R.string.canIRecord));
-                                        String body = mContext.getResources().getString(R.string.iWantToRecord) + " \n"
-                                                + "\n";
-                                        if (AccountManager.isLoggedIn()) {
-                                            Account account = AccountManager.getStoredAccount();
-                                            body += String.format(Locale.ENGLISH, mContext.getResources().getString(R.string.sincerely), account.username);
-                                        }
-                                        intent.putExtra(Intent.EXTRA_TEXT, body);
-                                        intent.setType("*/*");
-                                        intent.setData(Uri.parse("mailto:"));
-                                        if (intent.resolveActivity(mContext.getPackageManager()) != null) {
-                                            mContext.startActivity(intent);
-                                        } else {
-                                            // TODO: show the user there's no app to handle emails.
-                                        }
-                                        break;
-                                    }
                                 }
                                 return false;
                             }
@@ -158,15 +135,15 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         } else if (viewHolder instanceof FooterViewHolder) {
 
-        } else if (viewHolder instanceof ItemViewHolder) {
+        } else if (viewHolder instanceof ProfileVideoItemViewHolder) {
             final ProfileViewModel profileItem = getItem(position);
             final Video videoItem = profileItem.getVideo();
             if (videoItem.title != null) {
-                ((ItemViewHolder) viewHolder).getProfileItemTitle().setText(StringUtils.getFirstLetterUpperCase(videoItem.title));
+                ((ProfileVideoItemViewHolder) viewHolder).getProfileItemTitle().setText(StringUtils.getFirstLetterUpperCase(videoItem.title));
             }
-            final TextView videoViewsTextView = ((ItemViewHolder) viewHolder).getVideoViews();
+            final TextView videoViewsTextView = ((ProfileVideoItemViewHolder) viewHolder).getVideoViews();
             videoViewsTextView.setText("Views: " + Integer.toString(videoItem.views));
-            final ImageView videoImageView = ((ItemViewHolder) viewHolder).getProfileItemThumbnail();
+            final ImageView videoImageView = ((ProfileVideoItemViewHolder) viewHolder).getProfileItemThumbnail();
             if (videoItem.thumbnails != null && videoItem.thumbnails.regular != null) {
                 Picasso.with(mContext)
                         .load(videoItem.thumbnails.regular)
@@ -184,11 +161,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
 
-            ((ItemViewHolder) viewHolder).getProfileItemAuthor().setText(mContext.getResources().getString(R.string.byAuthor) + videoItem.username);
-            ((ItemViewHolder) viewHolder).getVideoComments().setText("Comments: " + Integer.toString(videoItem.comments));
+            ((ProfileVideoItemViewHolder) viewHolder).getProfileItemAuthor().setText(mContext.getResources().getString(R.string.byAuthor) + videoItem.username);
+            ((ProfileVideoItemViewHolder) viewHolder).getVideoComments().setText("Comments: " + Integer.toString(videoItem.comments));
 
 
-            final Button videoLikesButton = ((ItemViewHolder) viewHolder).getVideoLikesButton();
+            final Button videoLikesButton = ((ProfileVideoItemViewHolder) viewHolder).getVideoLikesButton();
             videoLikesButton.setText(Integer.toString(videoItem.likes));
             videoLikesButton.setOnClickListener(new View.OnClickListener() {
                 @Override

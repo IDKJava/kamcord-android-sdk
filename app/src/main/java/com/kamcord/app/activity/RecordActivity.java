@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -34,14 +32,11 @@ public class RecordActivity extends AppCompatActivity implements
 
     @InjectView(R.id.main_pager) ViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
-    @InjectView(R.id.toolbarContainer) ViewGroup toolbarContainer;
     @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
 
     private MainViewPagerAdapter mainViewPagerAdapter;
     private CharSequence tabTitles[];
     private int numberOfTabs;
-
-    private Menu optionsMenu;
 
     private static final int HIDE_THRESHOLD = 20;
     private boolean controlsVisible = true;

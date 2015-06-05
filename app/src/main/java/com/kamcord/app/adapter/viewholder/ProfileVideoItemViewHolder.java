@@ -14,7 +14,7 @@ import butterknife.InjectView;
 /**
  * Created by donliang1 on 6/1/15.
  */
-public class ItemViewHolder extends RecyclerView.ViewHolder {
+public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.profile_item_title)
     TextView profileItemTitle;
@@ -29,7 +29,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.video_views)
     TextView videoViews;
 
-    public ItemViewHolder(final View itemLayoutView) {
+    public ProfileVideoItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
     }
