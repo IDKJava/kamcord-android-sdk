@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.PowerManager;
-import android.util.Log;
 
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +22,22 @@ public class ApplicationStateUtils {
         activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
     }
 
-    public static boolean isGameInForeground(String packageName) {
+    private static HashSet<String> initialForegroundProcesses = new HashSet<>();
+    public static synchronized void initializeForeground() {
+        initialForegroundProcesses.clear();
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = activityManager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
+            if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                initialForegroundProcesses.add(runningAppProcessInfo.processName);
+            }
+        }
+    }
+
+    public static synchronized void invalidateForeground() {
+        initialForegroundProcesses.clear();
+    }
+
+    public static synchronized boolean isGameInForeground(String packageName) {
 
         if( !powerManager.isInteractive() )
         {
@@ -35,14 +49,12 @@ public class ApplicationStateUtils {
             return false;
         }
 
+        HashSet<String> currentForegroundProcessNames = new HashSet<>();
         boolean isInForeground = false;
-        HashSet<String> foregroundProcessNames = new HashSet<>();
         List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = activityManager.getRunningAppProcesses();
-        int foregroundCount = 0;
         for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
             if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                foregroundProcessNames.add(runningAppProcessInfo.processName);
-                foregroundCount++;
+                currentForegroundProcessNames.add(runningAppProcessInfo.processName);
                 for (String pkgName : runningAppProcessInfo.pkgList) {
                     if (pkgName.equals(packageName)) {
                         isInForeground = true;
@@ -50,9 +62,7 @@ public class ApplicationStateUtils {
                 }
             }
         }
-        Log.v("FindMe", "foregroundCount: " + foregroundCount);
-        Log.v("FindMe", "foregroundProcessNames: " + foregroundProcessNames);
-        return isInForeground;
+        return isInForeground && initialForegroundProcesses.equals(currentForegroundProcessNames);
     }
 
 }
