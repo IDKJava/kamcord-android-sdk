@@ -245,7 +245,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             mAudioRecord = null;
         }
         if (mMediaMuxer != null) {
-            if (mMuxerStart && mMuxerWrite) {
+            if (mMuxerStart) {
                 mMediaMuxer.stop();
             }
             mMediaMuxer.release();

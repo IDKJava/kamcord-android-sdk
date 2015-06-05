@@ -351,10 +351,29 @@ public class RecordFragment extends Fragment implements
                 mSelectedGame = game;
                 obtainMediaProjection();
             } else {
-                RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
+                final RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
                 if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
-                    stopRecording();
-                    shareRecording();
+                    if( !recordingSession.hasRecordedFrames() ) {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(R.string.nothingRecordedYet)
+                                .setMessage(String.format(getActivity().getResources().getString(R.string.kamcordHasntRecorded), recordingSession.getGameServerName()))
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        try {
+                                            Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
+                                            getActivity().startActivity(launchIntent);
+                                        } catch (Exception e) {
+                                            Log.e(TAG, "Unable to start " + recordingSession.getGameServerName(), e);
+                                        }
+                                    }
+                                })
+                                .setNeutralButton(android.R.string.cancel, null)
+                                .show();
+                    } else {
+                        stopRecording();
+                        shareRecording();
+                    }
                 } else {
                     String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
                     new AlertDialog.Builder(getActivity())
@@ -372,7 +391,6 @@ public class RecordFragment extends Fragment implements
                             .show();
                 }
             }
-
         } else {
 
             mSelectedGame = null;
@@ -398,7 +416,7 @@ public class RecordFragment extends Fragment implements
     {
         FragmentActivity activity = getActivity();
         RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
-        if (recordingSession != null && recordingSession.hasRecordedFrames()) {
+        if (recordingSession != null && recordingSession.hasRecordedFrames() ) {
             FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
             ShareFragment recordShareFragment = new ShareFragment();
             Bundle bundle = new Bundle();
