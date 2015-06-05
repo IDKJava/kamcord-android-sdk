@@ -26,7 +26,6 @@ import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.RecyclerViewScrollListener;
-import com.kamcord.app.view.SpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +88,6 @@ public class ProfileFragment extends Fragment {
 
     public void initKamcordProfileFragment(View view) {
 
-        profileRecyclerView.addItemDecoration(new SpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.card_margin)));
         layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         if(AccountManager.isLoggedIn()) {
@@ -107,6 +105,22 @@ public class ProfileFragment extends Fragment {
         profileRecyclerView.setLayoutManager(layoutManager);
         profileRecyclerView.setAdapter(mProfileAdapter);
 
+        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (AccountManager.isLoggedIn()) {
+                    videoFeedRefreshLayout.setRefreshing(true);
+                    Account myAccount = AccountManager.getStoredAccount();
+                    AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+                    AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
+                } else {
+                    videoFeedRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
+        
         profileRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
@@ -119,10 +133,9 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (profileRecyclerView.getChildAt(0) != null) {
-                    int cardMargin = getResources().getDimensionPixelSize(R.dimen.card_margin);
                     int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
                     videoFeedRefreshLayout.setEnabled(profileRecyclerView.getChildAdapterPosition(profileRecyclerView.getChildAt(0)) == 0
-                            && profileRecyclerView.getChildAt(0).getTop() == cardMargin + tabsHeight);
+                            && profileRecyclerView.getChildAt(0).getTop() == tabsHeight);
                 } else {
                     videoFeedRefreshLayout.setEnabled(true);
                 }
@@ -139,23 +152,6 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-
-        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
-        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (AccountManager.isLoggedIn()) {
-                    videoFeedRefreshLayout.setRefreshing(true);
-                    Account myAccount = AccountManager.getStoredAccount();
-                    AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-                    AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
-                } else {
-                    videoFeedRefreshLayout.setRefreshing(false);
-                }
-            }
-        });
-
     }
 
     public void loadMoreItems() {

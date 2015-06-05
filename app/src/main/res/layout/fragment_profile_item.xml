@@ -7,6 +7,9 @@
     android:background="@color/ColorPrimary"
     android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginTop="@dimen/card_margin"
+    android:layout_marginLeft="@dimen/card_margin"
+    android:layout_marginRight="@dimen/card_margin"
     card_view:cardCornerRadius="@dimen/cardCornerRadius">
 
     <LinearLayout
@@ -26,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/cardview_standardmargin"
+            android:layout_marginRight="@dimen/cardview_standardmargin"
             android:layout_marginTop="@dimen/cardview_lightermargin"
             android:text="Video Title"
             android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -35,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/cardview_standardmargin"
+            android:layout_marginRight="@dimen/cardview_standardmargin"
             android:text="Video Author"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
