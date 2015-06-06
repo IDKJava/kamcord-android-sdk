@@ -28,7 +28,6 @@ import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
-import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -83,22 +82,22 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (headerItem != null) {
                 if (user != null && user.username != null) {
                     if (user.username != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserName().setText(StringUtils.getFirstLetterUpperCase(user.username));
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileLetter().setText(StringUtils.getFirstLetterUpperCase(user.username).substring(0, 1));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserName().setText(user.username);
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileLetter().setText(user.username.substring(0, 1).toUpperCase());
                         ((ProfileHeaderViewHolder) viewHolder).getProfileLetter().setTextColor(Color.parseColor(user.profile_color));
                     }
                     if (user.tagline != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserTag().setText(StringUtils.getFirstLetterUpperCase(user.tagline));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserTag().setText(user.tagline);
                     }
                     if (user.video_count != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserVideos().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.video_count)));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserVideos().setText(Integer.toString(user.video_count));
                     }
                     if (user.followers_count != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserFollowers().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.followers_count)));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserFollowers().setText(Integer.toString(user.followers_count));
 
                     }
                     if (user.following_count != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserFollowing().setText(StringUtils.getFirstLetterUpperCase(Integer.toString(user.following_count)));
+                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserFollowing().setText(Integer.toString(user.following_count));
                     }
                     ((ProfileHeaderViewHolder) viewHolder).getProfileHeaderLayout().setBackgroundColor(Color.parseColor(user.profile_color));
                 }
@@ -136,7 +135,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             final ProfileItem profileItem = getItem(position);
             final Video videoItem = profileItem.getVideo();
             if (videoItem.title != null) {
-                ((ProfileVideoItemViewHolder) viewHolder).getProfileItemTitle().setText(StringUtils.getFirstLetterUpperCase(videoItem.title));
+                ((ProfileVideoItemViewHolder) viewHolder).getProfileItemTitle().setText(videoItem.title);
             }
             final TextView videoViewsTextView = ((ProfileVideoItemViewHolder) viewHolder).getVideoViews();
             videoViewsTextView.setText("Views: " + Integer.toString(videoItem.views));
