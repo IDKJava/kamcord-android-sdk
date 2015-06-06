@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardCornerRadius="@dimen/cardCornerRadius">
+    card_view:cardCornerRadius="0dp">
 
     <LinearLayout
         android:id="@+id/profile_headerLayout"

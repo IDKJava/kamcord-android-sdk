@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,8 +16,7 @@ import android.widget.Button;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.adapter.ProfileAdapter;
-import com.kamcord.app.model.ProfileItemType;
-import com.kamcord.app.model.ProfileViewModel;
+import com.kamcord.app.model.ProfileItem;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
@@ -26,6 +25,9 @@ import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.RecyclerViewScrollListener;
+import com.kamcord.app.view.DynamicRecyclerView;
+import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
+import com.kamcord.app.view.utils.ProfileViewItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,14 +53,13 @@ public class ProfileFragment extends Fragment {
     @InjectView(R.id.profilefragment_refreshlayout)
     SwipeRefreshLayout videoFeedRefreshLayout;
     @InjectView(R.id.profile_recyclerview)
-    RecyclerView profileRecyclerView;
+    DynamicRecyclerView profileRecyclerView;
 
     private static final String TAG = ProfileFragment.class.getSimpleName();
-    private List<ProfileViewModel> mProfileList = new ArrayList<>();
+    private List<ProfileItem> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
-    private LinearLayoutManager layoutManager = null;
-    private ProfileViewModel userHeader;
+    private ProfileItem userHeader;
     private String nextPage;
     private int totalItems = 0;
     private boolean footerVisible = false;
@@ -88,10 +89,8 @@ public class ProfileFragment extends Fragment {
 
     public void initKamcordProfileFragment(View view) {
 
-        layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         if(AccountManager.isLoggedIn()) {
-            userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
+            userHeader = new ProfileItem(ProfileItem.Type.HEADER, null);
             mProfileList.add(userHeader);
             signInPromptContainer.setVisibility(View.GONE);
             Account myAccount = AccountManager.getStoredAccount();
@@ -102,8 +101,9 @@ public class ProfileFragment extends Fragment {
         }
 
         mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
-        profileRecyclerView.setLayoutManager(layoutManager);
         profileRecyclerView.setAdapter(mProfileAdapter);
+        profileRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(profileRecyclerView));
+        profileRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
         videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
@@ -146,8 +146,8 @@ public class ProfileFragment extends Fragment {
 
                 if ((mProfileList.size() - 1) < totalItems
                         && nextPage != null
-                        && layoutManager.findLastCompletelyVisibleItemPosition() == (mProfileList.size() - 1)
-                        && footerVisible == false) {
+                        && ((GridLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition() == (mProfileList.size() - 1)
+                        && !footerVisible) {
                     loadMoreItems();
                 }
             }
@@ -156,7 +156,7 @@ public class ProfileFragment extends Fragment {
 
     public void loadMoreItems() {
         footerVisible = true;
-        mProfileList.add(new ProfileViewModel(ProfileItemType.FOOTER, null));
+        mProfileList.add(new ProfileItem(ProfileItem.Type.FOOTER, null));
         mProfileAdapter.notifyItemInserted(mProfileAdapter.getItemCount());
         Account myAccount = AccountManager.getStoredAccount();
         AppServerClient.getInstance().getUserVideoFeed(myAccount.id, nextPage, new GetUserVideoFeedCallBack());
@@ -190,7 +190,7 @@ public class ProfileFragment extends Fragment {
                     mProfileList.subList(1, mProfileList.size()).clear();
                     nextPage = paginatedVideoListGenericResponse.response.next_page;
                     for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                        ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
+                        ProfileItem profileViewModel = new ProfileItem(ProfileItem.Type.VIDEO, video);
                         mProfileList.add(profileViewModel);
                     }
                 }
@@ -214,11 +214,11 @@ public class ProfileFragment extends Fragment {
                     && paginatedVideoListGenericResponse.response != null
                     && paginatedVideoListGenericResponse.response.video_list != null) {
                 nextPage = paginatedVideoListGenericResponse.response.next_page;
-                if (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == ProfileItemType.FOOTER) {
+                if (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == ProfileItem.Type.FOOTER) {
                     mProfileList.remove(mProfileAdapter.getItemCount() - 1);
                 }
                 for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                    ProfileViewModel profileViewModel = new ProfileViewModel(ProfileItemType.VIDEO, video);
+                    ProfileItem profileViewModel = new ProfileItem(ProfileItem.Type.VIDEO, video);
                     mProfileList.add(profileViewModel);
                 }
                 footerVisible = false;

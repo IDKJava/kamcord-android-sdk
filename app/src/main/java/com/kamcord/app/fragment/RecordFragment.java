@@ -36,7 +36,7 @@ import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
-import com.kamcord.app.view.RecordItemDecoration;
+import com.kamcord.app.view.utils.GridViewItemDecoration;
 import com.kamcord.app.view.utils.RecordLayoutSpanSizeLookup;
 
 import java.util.ArrayList;
@@ -118,7 +118,7 @@ public class RecordFragment extends Fragment implements
         }
         updateRecordItemList();
 
-        mRecyclerView.addItemDecoration(new RecordItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
+        mRecyclerView.addItemDecoration(new GridViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
         mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mRecordItemList, this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
         mRecyclerView.setSpanSizeLookup(new RecordLayoutSpanSizeLookup(mRecyclerView));

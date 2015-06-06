@@ -21,8 +21,7 @@ import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
-import com.kamcord.app.model.ProfileItemType;
-import com.kamcord.app.model.ProfileViewModel;
+import com.kamcord.app.model.ProfileItem;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
@@ -44,12 +43,9 @@ import retrofit.client.Response;
 public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<ProfileViewModel> mProfileList;
-    private static final int TYPE_HEADER = 0;
-    private static final int TYPE_VIDEO_ITEM = 1;
-    private static final int TYPE_FOOTER = 2;
+    private List<ProfileItem> mProfileList;
 
-    public ProfileAdapter(Context context, List<ProfileViewModel> mProfileList) {
+    public ProfileAdapter(Context context, List<ProfileItem> mProfileList) {
         this.mContext = context;
         this.mProfileList = mProfileList;
     }
@@ -57,16 +53,17 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayoutView;
-        switch (viewType) {
-            case TYPE_HEADER: {
+        ProfileItem.Type type = ProfileItem.Type.values()[viewType];
+        switch (type) {
+            case HEADER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_header, parent, false);
                 return new ProfileHeaderViewHolder(itemLayoutView);
             }
-            case TYPE_VIDEO_ITEM: {
+            case VIDEO: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_item, parent, false);
                 return new ProfileVideoItemViewHolder(itemLayoutView);
             }
-            case TYPE_FOOTER: {
+            case FOOTER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
                 return new FooterViewHolder(itemLayoutView);
             }
@@ -81,7 +78,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (viewHolder instanceof ProfileHeaderViewHolder) {
-            ProfileViewModel headerItem = getItem(position);
+            ProfileItem headerItem = getItem(position);
             User user = headerItem.getUser();
             if (headerItem != null) {
                 if (user != null && user.username != null) {
@@ -136,7 +133,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof FooterViewHolder) {
 
         } else if (viewHolder instanceof ProfileVideoItemViewHolder) {
-            final ProfileViewModel profileItem = getItem(position);
+            final ProfileItem profileItem = getItem(position);
             final Video videoItem = profileItem.getVideo();
             if (videoItem.title != null) {
                 ((ProfileVideoItemViewHolder) viewHolder).getProfileItemTitle().setText(StringUtils.getFirstLetterUpperCase(videoItem.title));
@@ -190,14 +187,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        ProfileViewModel viewModel = mProfileList.get(position);
-        if (viewModel.getType() == ProfileItemType.HEADER) {
-            return TYPE_HEADER;
-        } else if (viewModel.getType() == ProfileItemType.FOOTER) {
-            return TYPE_FOOTER;
-        } else {
-            return TYPE_VIDEO_ITEM;
-        }
+        ProfileItem viewModel = mProfileList.get(position);
+        return viewModel.getType().ordinal();
     }
 
     @Override
@@ -205,7 +196,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return mProfileList.size();
     }
 
-    public ProfileViewModel getItem(int position) {
+    public ProfileItem getItem(int position) {
         return mProfileList.get(position);
     }
 
