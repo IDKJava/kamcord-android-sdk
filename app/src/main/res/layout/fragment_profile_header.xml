@@ -4,7 +4,6 @@
     android:id="@+id/userCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="0dp">
 
@@ -12,76 +11,51 @@
         android:id="@+id/profile_headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/DefaultBackgroundColor"
-        android:orientation="vertical">
+        android:background="@color/defaultProfileColor"
+        android:orientation="vertical"
+        android:gravity="center">
 
-        <RelativeLayout
-            android:id="@+id/userProfileInfo"
-            android:layout_width="match_parent"
-            android:layout_height="170dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true">
+        <TextView
+            android:id="@+id/profileLetter"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/kamcord_profile_letter_background"
+            android:gravity="center"
+            android:text="A"
+            android:textColor="@color/defaultProfileColor"
+            android:textSize="28sp" />
 
-            <ImageView
-                android:id="@+id/profile_action_menu"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="right"
-                android:clickable="true"
-                android:src="@drawable/ic_more_vert_white_24dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="24dp"
-                android:layout_marginRight="24dp">
-            </ImageView>
+        <TextView
+            android:id="@+id/profile_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:padding="0dp"
+            android:text="aaaaaaa"
+            android:textColor="@color/ColorPrimary"
+            android:textSize="16sp"/>
 
-            <TextView
-                android:id="@+id/profileLetter"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="24dp"
-                android:background="@drawable/kamcord_profile_letter_background"
-                android:gravity="center"
-                android:text="D"
-                android:textColor="@color/DefaultBackgroundColor"
-                android:textSize="28sp" />
-
-            <TextView
-                android:id="@+id/profile_user_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profileLetter"
-                android:layout_centerHorizontal="true"
-                android:text="@string/headeUserName"
-                android:layout_marginTop="16dp"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/ColorPrimary" />
-
-            <TextView
-                android:id="@+id/profile_user_tag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_user_name"
-                android:layout_centerHorizontal="true"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/ColorPrimary" />
-
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/profile_user_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            android:textColor="@color/ColorPrimary" />
 
         <LinearLayout
             android:id="@+id/countsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/userProfileInfo"
-            android:layout_marginTop="16dp"
             android:baselineAligned="false"
             android:orientation="horizontal"
+            android:paddingTop="16dp"
             android:paddingBottom="16dp">
 
             <LinearLayout
@@ -92,9 +66,9 @@
 
                 <TextView
                     android:id="@+id/profile_user_videos"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:text="@string/defaultNumber"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/ColorPrimary" />
@@ -103,6 +77,7 @@
                     android:id="@+id/videosText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:gravity="center|top"
                     android:text="@string/headerVideos"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -118,9 +93,9 @@
 
                 <TextView
                     android:id="@+id/profile_user_followers"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:text="@string/defaultNumber"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/ColorPrimary" />
@@ -129,6 +104,7 @@
                     android:id="@+id/followersText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:gravity="center|top"
                     android:text="@string/headerFollowers"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -144,9 +120,9 @@
 
                 <TextView
                     android:id="@+id/profile_user_following"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
+                    android:gravity="center"
                     android:text="@string/defaultNumber"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@color/ColorPrimary" />
@@ -155,6 +131,7 @@
                     android:id="@+id/followingText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:gravity="center|top"
                     android:text="@string/headerFollowing"
                     android:textAppearance="?android:attr/textAppearanceMedium"
@@ -164,4 +141,13 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/profile_action_menu"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="end|top"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:src="@drawable/ic_more_vert_white_24dp" />
 </android.support.v7.widget.CardView>
