@@ -84,7 +84,9 @@ public class StringUtils {
 
     public static String getFirstLetterUpperCase(String string) {
         String upperCaseString = string;
-        upperCaseString = Character.toUpperCase(upperCaseString.charAt(0)) + upperCaseString.substring(1);
+        if( upperCaseString != null && upperCaseString.length() > 0 ) {
+            upperCaseString = Character.toUpperCase(upperCaseString.charAt(0)) + upperCaseString.substring(1);
+        }
         return upperCaseString;
     }
 }
