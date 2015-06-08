@@ -8,6 +8,7 @@ import com.flurry.android.FlurryAgent;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.ApplicationStateUtils;
 import com.kamcord.app.utils.DeviceManager;
 import com.kamcord.app.utils.GameListUtils;
 
@@ -27,6 +28,7 @@ public class KamcordApplication extends Application {
         AccountManager.initializeWith(this);
         DeviceManager.initialize();
         GameListUtils.initializeWith(this);
+        ApplicationStateUtils.initializeWith(this);
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/proximanova_regular.otf")
                 .setFontAttrId(R.attr.fontPath)

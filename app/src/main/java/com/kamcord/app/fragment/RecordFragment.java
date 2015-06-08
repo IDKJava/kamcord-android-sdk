@@ -33,7 +33,6 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.service.RecordingService;
-import com.kamcord.app.service.connection.RecordingServiceConnection;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.RecordItemDecoration;
@@ -70,8 +69,6 @@ public class RecordFragment extends Fragment implements
     private List<Game> mGameList = new ArrayList();
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
-    private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.record_tab, container, false);
@@ -95,18 +92,26 @@ public class RecordFragment extends Fragment implements
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (RecordingService.isRunning()) {
-            getActivity().bindService(new Intent(getActivity(), RecordingService.class), mRecordingServiceConnection, 0);
+    public void onResume() {
+        super.onResume();
+        handleServiceRunning();
+        boolean gameListChanged = false;
+        for (RecordItem item : mRecordItemList) {
+            Game game = item.getGame();
+            if (game != null ) {
+                boolean isNowInstalled = isAppInstalled(game.play_store_id);
+                if (isNowInstalled && !game.isInstalled) {
+                    game.isInstalled = true;
+                    gameListChanged = true;
+                } else if (!isNowInstalled && game.isInstalled) {
+                    game.isInstalled = false;
+                    gameListChanged = true;
+                }
+            }
         }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mRecordingServiceConnection.isConnected()) {
-            getActivity().unbindService(mRecordingServiceConnection);
+        if (gameListChanged) {
+            updateRecordItemList();
+            mRecyclerAdapter.notifyDataSetChanged();
         }
     }
 
@@ -172,7 +177,7 @@ public class RecordFragment extends Fragment implements
 
     private void handleServiceRunning() {
         if (RecordingService.isRunning()) {
-            RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
+            RecordingSession recordingSession = RecordingService.getInstance().getRecordingSession();
             if (recordingSession != null) {
                 for (Game game : mGameList) {
                     if (game.play_store_id.equals(recordingSession.getGamePackageName())) {
@@ -216,30 +221,6 @@ public class RecordFragment extends Fragment implements
         void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        handleServiceRunning();
-        boolean gameListChanged = false;
-        for (RecordItem item : mRecordItemList) {
-            Game game = item.getGame();
-            if (game != null ) {
-                boolean isNowInstalled = isAppInstalled(game.play_store_id);
-                if (isNowInstalled && !game.isInstalled) {
-                    game.isInstalled = true;
-                    gameListChanged = true;
-                } else if (!isNowInstalled && game.isInstalled) {
-                    game.isInstalled = false;
-                    gameListChanged = true;
-                }
-            }
-        }
-        if (gameListChanged) {
-            updateRecordItemList();
-            mRecyclerAdapter.notifyDataSetChanged();
-        }
-    }
-
     public void obtainMediaProjection() {
         startActivityForResult(((MediaProjectionManager) getActivity().getSystemService(Context.MEDIA_PROJECTION_SERVICE))
                 .createScreenCaptureIntent(), MEDIA_PROJECTION_MANAGER_PERMISSION_CODE);
@@ -260,10 +241,9 @@ public class RecordFragment extends Fragment implements
                     MediaProjection projection = ((MediaProjectionManager) activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE))
                             .getMediaProjection(resultCode, data);
                     RecordingSession recordingSession = new RecordingSession(mSelectedGame);
-                    mRecordingServiceConnection.initializeForRecording(projection, recordingSession);
 
+                    RecordingService.initializeForRecording(projection, recordingSession);
                     activity.startService(new Intent(activity, RecordingService.class));
-                    activity.bindService(new Intent(activity, RecordingService.class), mRecordingServiceConnection, 0);
                 } catch (ActivityNotFoundException e) {
                     // TODO: show the user something about not finding the game.
                     Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);
@@ -351,10 +331,29 @@ public class RecordFragment extends Fragment implements
                 mSelectedGame = game;
                 obtainMediaProjection();
             } else {
-                RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
+                final RecordingSession recordingSession = RecordingService.getInstance().getRecordingSession();
                 if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
-                    stopRecording();
-                    shareRecording();
+                    if( !recordingSession.hasRecordedFrames() ) {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(R.string.nothingRecordedYet)
+                                .setMessage(String.format(getActivity().getResources().getString(R.string.kamcordHasntRecorded), recordingSession.getGameServerName()))
+                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        try {
+                                            Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
+                                            getActivity().startActivity(launchIntent);
+                                        } catch (Exception e) {
+                                            Log.e(TAG, "Unable to start " + recordingSession.getGameServerName(), e);
+                                        }
+                                    }
+                                })
+                                .setNeutralButton(android.R.string.cancel, null)
+                                .show();
+                    } else {
+                        stopRecording();
+                        shareRecording(recordingSession);
+                    }
                 } else {
                     String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
                     new AlertDialog.Builder(getActivity())
@@ -372,7 +371,6 @@ public class RecordFragment extends Fragment implements
                             .show();
                 }
             }
-
         } else {
 
             mSelectedGame = null;
@@ -394,15 +392,14 @@ public class RecordFragment extends Fragment implements
         mRecyclerAdapter.notifyDataSetChanged();
     }
 
-    private void shareRecording()
+    private void shareRecording(RecordingSession recordingSession)
     {
-        FragmentActivity activity = getActivity();
-        RecordingSession recordingSession = mRecordingServiceConnection.getServiceRecordingSession();
         if (recordingSession != null && recordingSession.hasRecordedFrames()) {
+            FragmentActivity activity = getActivity();
             FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
             ShareFragment recordShareFragment = new ShareFragment();
             Bundle bundle = new Bundle();
-            bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, mRecordingServiceConnection.getServiceRecordingSession());
+            bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, recordingSession);
             recordShareFragment.setArguments(bundle);
             activity.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
