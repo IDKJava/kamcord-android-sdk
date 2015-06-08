@@ -55,21 +55,9 @@ public class RecordActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Uploader.setUploadStatusListener(this);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         this.invalidateOptionsMenu();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Uploader.setUploadStatusListener(null);
     }
 
     public void initMainActivity() {

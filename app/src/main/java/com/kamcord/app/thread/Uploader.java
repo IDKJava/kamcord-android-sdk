@@ -37,10 +37,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -83,7 +85,7 @@ public class Uploader extends Thread {
     private String[] mVideoEtags;
     private String mS3UploadId = null;
 
-    private static UploadStatusListener sListener = null;
+    private static HashSet<WeakReference<UploadStatusListener>> sListeners = new HashSet<>();
 
     static {
         try {
@@ -95,9 +97,24 @@ public class Uploader extends Thread {
         }
     }
 
-    public static void setUploadStatusListener(UploadStatusListener listener)
+    public static void subscribe(UploadStatusListener listener)
     {
-        sListener = listener;
+        sListeners.add(new WeakReference<>(listener));
+    }
+
+    public static boolean unsubscribe(UploadStatusListener unsubscriber) {
+        boolean unsubscribed = false;
+
+        for( WeakReference<UploadStatusListener> listenerRef : sListeners ) {
+            UploadStatusListener listener = listenerRef.get();
+            if( listener != null && listener.equals(unsubscriber) ) {
+                sListeners.remove(listenerRef);
+                unsubscribed = true;
+                break;
+            }
+        }
+
+        return unsubscribed;
     }
 
     public Uploader(RecordingSession recordingSession, Context context) {
@@ -117,6 +134,7 @@ public class Uploader extends Thread {
 
         try {
             long start = System.currentTimeMillis();
+            
             if( sListener != null )
             {
                 sListener.onUploadStart(mRecordingSession);
