@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -62,9 +63,9 @@ public class ShareFragment extends Fragment {
     ViewGroup processingProgressBarContainer;
     @InjectView(R.id.share_toolbar)
     Toolbar mToolbar;
+    @InjectView(R.id.share_button)
+    Button shareButton;
 
-    private Menu menu;
-    private MenuItem shareMenuItem;
     private String videoPath;
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
@@ -151,18 +152,29 @@ public class ShareFragment extends Fragment {
                     @Override
                     public void call(Integer textLength) {
                         if (textLength > 0) {
-                            if (menu != null && shareMenuItem != null) {
-//                                ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.kamcordGreen));
-                                shareMenuItem.setEnabled(true);
-                            }
+                            shareButton.setBackgroundColor(getResources().getColor(R.color.ColorPrimaryDark));
                         } else {
-//                            ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.ColorPrimaryDark));
-                            shareMenuItem.setEnabled(false);
+                            shareButton.setBackgroundColor(getResources().getColor(R.color.kamcordGreen));
                         }
                     }
                 });
 
         return false;
+    }
+
+    @OnClick(R.id.share_button)
+    public void click(View v) {
+        if (AccountManager.isLoggedIn()) {
+            recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
+            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
+            getActivity().startService(uploadIntent);
+            getActivity().onBackPressed();
+        } else {
+            Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            getActivity().startActivity(intent);
+        }
     }
 
     @Override
@@ -210,15 +222,6 @@ public class ShareFragment extends Fragment {
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        this.menu = menu;
-        this.shareMenuItem = menu.findItem(R.id.action_share_upload);
-//        ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.ColorPrimaryDark));
-        this.shareMenuItem.getActionView().setBackgroundColor(getResources().getColor(R.color.kamcordGreen));
-        shareMenuItem.setEnabled(false);
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_share, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -231,21 +234,6 @@ public class ShareFragment extends Fragment {
                 KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
                 getActivity().onBackPressed();
                 break;
-            case R.id.action_share_upload: {
-                if (AccountManager.isLoggedIn()) {
-                    recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
-                    Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-                    uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
-                    getActivity().startService(uploadIntent);
-                    getActivity().onBackPressed();
-                } else {
-                    Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getActivity(), LoginActivity.class);
-                    getActivity().startActivity(intent);
-                }
-                break;
-            }
-
         }
         return super.onOptionsItemSelected(item);
     }

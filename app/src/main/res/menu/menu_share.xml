@@ -4,9 +4,4 @@
     tools:context="com.kamcord.app.activity.WelcomeActivity"
     android:id="@+id/menu_share">
 
-    <item
-        android:id="@+id/action_share_upload"
-        android:title="@string/fragmentShare"
-        android:orderInCategory="1"
-        app:showAsAction="ifRoom|withText" />
 </menu>

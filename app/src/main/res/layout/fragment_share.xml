@@ -12,7 +12,18 @@
         android:layout_height="@dimen/tabsHeight"
         android:background="@color/ColorPrimary"
         android:elevation="3dp"
-        app:theme="@style/ToolBarStyle" />
+        app:theme="@style/ToolBarStyle" >
+
+        <Button
+            android:id="@+id/share_button"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:text="@string/fragmentShare"
+            android:textColor="@color/ColorPrimary"
+            android:layout_gravity="end"
+            android:background="@color/kamcordGreen" />
+
+    </android.support.v7.widget.Toolbar>
 
     <ScrollView
         android:id="@+id/share_scrollview"
