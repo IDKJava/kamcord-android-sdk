@@ -61,6 +61,6 @@ public class ApplicationStateUtils {
 
         return isInForeground
                 && (initialForegroundProcesses.isEmpty() ||
-                        (initialForegroundProcesses.containsAll(currentForegroundProcessNames) && currentForegroundProcessNames.containsAll(initialForegroundProcesses)));
+                        (initialForegroundProcesses.size() == currentForegroundProcessNames.size() && currentForegroundProcessNames.containsAll(initialForegroundProcesses)));
     }
 }
