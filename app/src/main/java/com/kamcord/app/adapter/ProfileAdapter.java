@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -178,12 +179,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     video.likes = video.likes - 1;
                     videoLikesButton.setText(Integer.toString(video.likes));
                     videoLikesButton.setActivated(false);
+                    ViewAnimationUtils.createCircularReveal(videoLikesButton,
+                            videoLikesButton.getWidth(), videoLikesButton.getHeight(), 0,
+                            videoLikesButton.getHeight() * 2).start();
                     AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
                 } else {
                     video.is_user_liking = true;
                     video.likes = video.likes + 1;
                     videoLikesButton.setText(Integer.toString(video.likes));
                     videoLikesButton.setActivated(true);
+                    ViewAnimationUtils.createCircularReveal(videoLikesButton,
+                            videoLikesButton.getWidth() / 2, videoLikesButton.getHeight() / 2, 0,
+                            videoLikesButton.getHeight() * 2).start();
                     AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
                 }
             }
