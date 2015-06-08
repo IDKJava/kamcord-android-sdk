@@ -94,7 +94,7 @@
     <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
     <string name="theMostPopularGames">The most popular games on Kamcord</string>
-    <string name="followersWithCount">%d Followers</string>
+    <string name="followersWithCount">%s Followers</string>
 
     <string name="alreadyRecording">Already Recording!</string>
     <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>

@@ -14,6 +14,8 @@ import android.view.View;
 
 import com.kamcord.app.R;
 
+import java.util.Locale;
+
 /**
  * Created by donliang1 on 5/12/15.
  */
@@ -80,5 +82,17 @@ public class StringUtils {
     {
         return (first == null && second == null)
                 || (first != null && second != null && first.equals(second));
+    }
+
+    public static String abbreviatedCount(long count) {
+        if( count < 1000 ) {
+            return Long.toString(count);
+        } else if( count < 1000000 ) {
+            return String.format(Locale.ENGLISH, "%.1fK", ((double) count) / 1e3);
+        } else if( count < 1000000000 ) {
+            return String.format(Locale.ENGLISH, "%.1fM", ((double) count) / 1e6);
+        } else {
+            return String.format(Locale.ENGLISH, "%.1fB", ((double) count) / 1e9);
+        }
     }
 }

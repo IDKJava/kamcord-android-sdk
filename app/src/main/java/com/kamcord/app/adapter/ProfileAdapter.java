@@ -29,6 +29,7 @@ import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
+import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -102,9 +103,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 viewHolder.getProfileLetter().setText(user.username.substring(0, 1).toUpperCase());
             }
             viewHolder.getProfileUserTag().setText(user.tagline);
-            viewHolder.getProfileUserVideos().setText(Integer.toString(user.video_count != null ? user.video_count : 0));
-            viewHolder.getProfileUserFollowers().setText(Integer.toString(user.followers_count != null ? user.followers_count : 0));
-            viewHolder.getProfileUserFollowing().setText(Integer.toString(user.following_count != null ? user.following_count : 0));
+            viewHolder.getProfileUserVideos().setText(StringUtils.abbreviatedCount(user.video_count != null ? user.video_count : 0));
+            viewHolder.getProfileUserFollowers().setText(StringUtils.abbreviatedCount(user.followers_count != null ? user.followers_count : 0));
+            viewHolder.getProfileUserFollowing().setText(StringUtils.abbreviatedCount(user.following_count != null ? user.following_count : 0));
 
             int profileColor = mContext.getResources().getColor(R.color.defaultProfileColor);
             try {
@@ -146,7 +147,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         viewHolder.getProfileItemTitle().setText(video.title);
         final TextView videoViewsTextView = viewHolder.getVideoViews();
-        videoViewsTextView.setText(Integer.toString(video.views));
+        videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
         final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
         if (video.thumbnails != null && video.thumbnails.regular != null) {
             Picasso.with(mContext)
@@ -157,7 +158,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 video.views = video.views + 1;
-                videoViewsTextView.setText(Integer.toString(video.views));
+                videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
                 intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, video.video_url);
                 mContext.startActivity(intent);
@@ -166,10 +167,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
 
         viewHolder.getProfileItemAuthor().setText(String.format(Locale.ENGLISH, mContext.getResources().getString(R.string.byAuthor), video.username));
-        viewHolder.getVideoComments().setText(Integer.toString(video.comments));
+        viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));
 
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
-        videoLikesButton.setText(Integer.toString(video.likes));
+        videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,13 +184,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (video.is_user_liking) {
             video.is_user_liking = false;
             video.likes = video.likes - 1;
-            likeButton.setText(Integer.toString(video.likes));
+            likeButton.setText(StringUtils.abbreviatedCount(video.likes));
             likeButton.setActivated(false);
             AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
         } else {
             video.is_user_liking = true;
             video.likes = video.likes + 1;
-            likeButton.setText(Integer.toString(video.likes));
+            likeButton.setText(StringUtils.abbreviatedCount(video.likes));
             likeButton.setActivated(true);
             AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
         }
