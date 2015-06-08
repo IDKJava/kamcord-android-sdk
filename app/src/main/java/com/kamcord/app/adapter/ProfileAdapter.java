@@ -103,9 +103,16 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 viewHolder.getProfileLetter().setText(user.username.substring(0, 1).toUpperCase());
             }
             viewHolder.getProfileUserTag().setText(user.tagline);
-            viewHolder.getProfileUserVideos().setText(StringUtils.abbreviatedCount(user.video_count != null ? user.video_count : 0));
-            viewHolder.getProfileUserFollowers().setText(StringUtils.abbreviatedCount(user.followers_count != null ? user.followers_count : 0));
-            viewHolder.getProfileUserFollowing().setText(StringUtils.abbreviatedCount(user.following_count != null ? user.following_count : 0));
+
+            int count = user.video_count != null ? user.video_count : 0;
+            viewHolder.getVideosText().setText(mContext.getResources().getQuantityString(R.plurals.headerVideos, count));
+            viewHolder.getVideosCount().setText(StringUtils.abbreviatedCount(count));
+
+            count = user.followers_count != null ? user.followers_count : 0;
+            viewHolder.getFollowersText().setText(mContext.getResources().getQuantityString(R.plurals.headerFollowers, count));
+            viewHolder.getFollowersCount().setText(StringUtils.abbreviatedCount(count));
+
+            viewHolder.getFollowingCount().setText(StringUtils.abbreviatedCount(user.following_count != null ? user.following_count : 0));
 
             int profileColor = mContext.getResources().getColor(R.color.defaultProfileColor);
             try {

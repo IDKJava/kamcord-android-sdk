@@ -151,7 +151,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         viewHolder.gameNameTextView.setText(game.name);
         viewHolder.gameFollowerCountTextView.setText(
                 String.format(Locale.ENGLISH,
-                        mContext.getResources().getString(R.string.followersWithCount),
+                        mContext.getResources().getQuantityString(R.plurals.followersWithCount, game.number_of_followers),
                         StringUtils.abbreviatedCount(game.number_of_followers)));
 
         ImageButton gameActionImageButton = viewHolder.gameActionImageButton;

@@ -28,12 +28,20 @@ public class ProfileHeaderViewHolder extends RecyclerView.ViewHolder {
     TextView profileUserName;
     @InjectView(R.id.profile_user_tag)
     TextView profileUserTag;
+
+    @InjectView(R.id.videosText)
+    TextView videosText;
     @InjectView(R.id.profile_user_videos)
-    TextView profileUserVideos;
+    TextView videosCount;
+
+    @InjectView(R.id.followersText)
+    TextView followersText;
     @InjectView(R.id.profile_user_followers)
-    TextView profileUserFollowers;
+    TextView followersCount;
+
     @InjectView(R.id.profile_user_following)
-    TextView profileUserFollowing;
+    TextView followingCount;
+
     @InjectView(R.id.profile_headerLayout)
     LinearLayout profileHeaderLayout;
 
@@ -56,16 +64,22 @@ public class ProfileHeaderViewHolder extends RecyclerView.ViewHolder {
 
     public TextView getProfileUserTag() { return this.profileUserTag;}
 
-    public TextView getProfileUserVideos() {
-        return this.profileUserVideos;
+    public TextView getVideosText() {
+        return this.videosText;
+    }
+    public TextView getVideosCount() {
+        return this.videosCount;
     }
 
-    public TextView getProfileUserFollowers() {
-        return this.profileUserFollowers;
+    public TextView getFollowersText() {
+        return this.followersText;
+    }
+    public TextView getFollowersCount() {
+        return this.followersCount;
     }
 
-    public TextView getProfileUserFollowing() {
-        return this.profileUserFollowing;
+    public TextView getFollowingCount() {
+        return this.followingCount;
     }
 
     public LinearLayout getProfileHeaderLayout() {

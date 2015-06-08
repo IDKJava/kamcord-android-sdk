@@ -85,16 +85,28 @@
 
     <string name="defaultNumber">0</string>
     <string name="headeUserName">User Name</string>
-    <string name="headerVideos">Videos</string>
-    <string name="headerFollowers">Followers</string>
+    <plurals name="headerVideos">
+        <item quantity="one">Video</item>
+        <item quantity="other">Videos</item>
+    </plurals>
+    <plurals name="headerFollowers">
+        <item quantity="one">Follower</item>
+        <item quantity="other">Followers</item>
+    </plurals>
     <string name="headerFollowing">Following</string>
-    <string name="videoLikes">Likes</string>
+    <plurals name="videoLikes">
+        <item quantity="one">Like</item>
+        <item quantity="other">Likes</item>
+    </plurals>
     <string name="byAuthor">By %s</string>
     <string name="recordAndShare">Record &amp; Share</string>
     <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
     <string name="theMostPopularGames">The most popular games on Kamcord</string>
-    <string name="followersWithCount">%s Followers</string>
+    <plurals name="followersWithCount">
+        <item quantity="one">%s Follower</item>
+        <item quantity="other">%s Followers</item>
+    </plurals>
 
     <string name="alreadyRecording">Already Recording!</string>
     <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>
