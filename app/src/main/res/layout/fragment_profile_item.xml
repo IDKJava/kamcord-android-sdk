@@ -26,8 +26,11 @@
             android:layout_marginLeft="@dimen/cardview_standardmargin"
             android:layout_marginRight="@dimen/cardview_standardmargin"
             android:layout_marginTop="@dimen/cardview_lightermargin"
-            android:text="Video Title"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            android:textSize="20sp"
+            android:textColor="@color/kamcordDarkText" />
 
         <TextView
             android:id="@+id/profile_item_author"
@@ -35,8 +38,11 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/cardview_standardmargin"
             android:layout_marginRight="@dimen/cardview_standardmargin"
-            android:text="Video Author"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textSize="16sp"
+            android:text="@string/byAuthor"
+            android:textColor="@color/kamcordLightText"
+            android:maxLines="1"
+            android:ellipsize="end"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
