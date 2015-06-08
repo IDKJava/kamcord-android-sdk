@@ -6,18 +6,18 @@ import com.kamcord.app.server.model.Video;
 /**
  * Created by donliang1 on 6/1/15.
  */
-public class ProfileViewModel {
+public class ProfileItem {
 
-    private ProfileItemType type;
+    private Type type;
     private Video video;
     private User user;
 
-    public ProfileViewModel(ProfileItemType viewtype, Video video) {
+    public ProfileItem(Type viewtype, Video video) {
         this.type = viewtype;
         this.video = video;
     }
 
-    public ProfileItemType getType() {
+    public Type getType() {
         return type;
     }
 
@@ -33,6 +33,9 @@ public class ProfileViewModel {
         return video;
     }
 
-    public ProfileViewModel() {
+    public enum Type {
+        HEADER,
+        FOOTER,
+        VIDEO,
     }
 }

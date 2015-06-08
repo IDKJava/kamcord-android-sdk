@@ -59,6 +59,7 @@ public class WelcomeFragment extends Fragment {
         {
             createProfileButton.setVisibility(View.GONE);
             loginButton.setVisibility(View.GONE);
+            skipButton.setVisibility(View.GONE);
             if( clearHandler == null )
             {
                 clearHandler = new Handler();
