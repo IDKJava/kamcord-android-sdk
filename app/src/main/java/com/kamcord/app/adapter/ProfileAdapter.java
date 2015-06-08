@@ -31,6 +31,7 @@ import com.kamcord.app.utils.FileSystemManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -77,111 +78,116 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (viewHolder instanceof ProfileHeaderViewHolder) {
-            ProfileItem headerItem = getItem(position);
-            User user = headerItem.getUser();
-            if (headerItem != null) {
-                if (user != null && user.username != null) {
-                    if (user.username != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserName().setText(user.username);
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileLetter().setText(user.username.substring(0, 1).toUpperCase());
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileLetter().setTextColor(Color.parseColor(user.profile_color));
-                    }
-                    if (user.tagline != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserTag().setText(user.tagline);
-                    }
-                    if (user.video_count != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserVideos().setText(Integer.toString(user.video_count));
-                    }
-                    if (user.followers_count != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserFollowers().setText(Integer.toString(user.followers_count));
-
-                    }
-                    if (user.following_count != null) {
-                        ((ProfileHeaderViewHolder) viewHolder).getProfileUserFollowing().setText(Integer.toString(user.following_count));
-                    }
-                    ((ProfileHeaderViewHolder) viewHolder).getProfileHeaderLayout().setBackgroundColor(Color.parseColor(user.profile_color));
-                }
-                ((ProfileHeaderViewHolder) viewHolder).getActionMenuView().setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        PopupMenu popupMenu = new PopupMenu(mContext, v);
-                        popupMenu.getMenuInflater().inflate(R.menu.menu_record, popupMenu.getMenu());
-                        popupMenu.show();
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.action_cleancache: {
-                                        FileSystemManager.cleanCache();
-                                        break;
-                                    }
-                                    case R.id.action_signout: {
-                                        if (AccountManager.isLoggedIn()) {
-                                            AppServerClient.getInstance().logout(logoutCallback);
-                                        }
-                                        break;
-                                    }
-                                }
-                                return false;
-                            }
-                        });
-                    }
-                });
+            User user = getItem(position).getUser();
+            if( user != null ) {
+                bindProfileHeader((ProfileHeaderViewHolder) viewHolder, getItem(position).getUser());
             }
 
         } else if (viewHolder instanceof FooterViewHolder) {
 
         } else if (viewHolder instanceof ProfileVideoItemViewHolder) {
-            final ProfileItem profileItem = getItem(position);
-            final Video videoItem = profileItem.getVideo();
-            if (videoItem.title != null) {
-                ((ProfileVideoItemViewHolder) viewHolder).getProfileItemTitle().setText(videoItem.title);
+            Video video = getItem(position).getVideo();
+            if( video != null ) {
+                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, getItem(position).getVideo());
             }
-            final TextView videoViewsTextView = ((ProfileVideoItemViewHolder) viewHolder).getVideoViews();
-            videoViewsTextView.setText("Views: " + Integer.toString(videoItem.views));
-            final ImageView videoImageView = ((ProfileVideoItemViewHolder) viewHolder).getProfileItemThumbnail();
-            if (videoItem.thumbnails != null && videoItem.thumbnails.regular != null) {
-                Picasso.with(mContext)
-                        .load(videoItem.thumbnails.regular)
-                        .into(videoImageView);
-            }
-            videoImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AppServerClient.getInstance().updateVideoViews(videoItem.video_id, new UpdateVideoViewsCallback());
-                    videoItem.views = videoItem.views + 1;
-                    videoViewsTextView.setText("Views: " + Integer.toString(videoItem.views));
-                    Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
-                    intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, profileItem.getVideo().video_url);
-                    mContext.startActivity(intent);
-                }
-            });
-
-            ((ProfileVideoItemViewHolder) viewHolder).getProfileItemAuthor().setText(mContext.getResources().getString(R.string.byAuthor) + videoItem.username);
-            ((ProfileVideoItemViewHolder) viewHolder).getVideoComments().setText("Comments: " + Integer.toString(videoItem.comments));
-
-
-            final Button videoLikesButton = ((ProfileVideoItemViewHolder) viewHolder).getVideoLikesButton();
-            videoLikesButton.setText(Integer.toString(videoItem.likes));
-            videoLikesButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (videoItem.is_user_liking) {
-                        videoItem.is_user_liking = false;
-                        videoItem.likes = videoItem.likes - 1;
-                        videoLikesButton.setText(Integer.toString(videoItem.likes));
-                        AppServerClient.getInstance().unLikeVideo(videoItem.video_id, new UnLikeVideosCallback());
-                    } else {
-                        videoItem.is_user_liking = true;
-                        videoItem.likes = videoItem.likes + 1;
-                        videoLikesButton.setText(Integer.toString(videoItem.likes));
-                        AppServerClient.getInstance().likeVideo(videoItem.video_id, new LikeVideosCallback());
-                    }
-
-                }
-            });
         }
 
+    }
+
+    private void bindProfileHeader(ProfileHeaderViewHolder viewHolder, User user) {
+        if (user != null) {
+            viewHolder.getProfileUserName().setText(user.username);
+            if (user.username != null && user.username.length() > 0 ) {
+                viewHolder.getProfileLetter().setText(user.username.substring(0, 1).toUpperCase());
+            }
+            viewHolder.getProfileUserTag().setText(user.tagline);
+            viewHolder.getProfileUserVideos().setText(Integer.toString(user.video_count != null ? user.video_count : 0));
+            viewHolder.getProfileUserFollowers().setText(Integer.toString(user.followers_count != null ? user.followers_count : 0));
+            viewHolder.getProfileUserFollowing().setText(Integer.toString(user.following_count != null ? user.following_count : 0));
+
+            int profileColor = mContext.getResources().getColor(R.color.defaultProfileColor);
+            try {
+                profileColor = Color.parseColor(user.profile_color);
+            } catch( Exception e ) {
+            }
+            viewHolder.getProfileLetter().setTextColor(profileColor);
+            viewHolder.getProfileHeaderLayout().setBackgroundColor(profileColor);
+        }
+        viewHolder.getActionMenuView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(mContext, v);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_record, popupMenu.getMenu());
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_cleancache: {
+                                FileSystemManager.cleanCache();
+                                break;
+                            }
+                            case R.id.action_signout: {
+                                if (AccountManager.isLoggedIn()) {
+                                    AppServerClient.getInstance().logout(logoutCallback);
+                                }
+                                break;
+                            }
+                        }
+                        return false;
+                    }
+                });
+            }
+        });
+    }
+
+    private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video) {
+
+        viewHolder.getProfileItemTitle().setText(video.title);
+        final TextView videoViewsTextView = viewHolder.getVideoViews();
+        videoViewsTextView.setText(Integer.toString(video.views));
+        final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
+        if (video.thumbnails != null && video.thumbnails.regular != null) {
+            Picasso.with(mContext)
+                    .load(video.thumbnails.regular)
+                    .into(videoImageView);
+        }
+        videoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                video.views = video.views + 1;
+                videoViewsTextView.setText(Integer.toString(video.views));
+                Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
+                intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, video.video_url);
+                mContext.startActivity(intent);
+                AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
+            }
+        });
+
+        viewHolder.getProfileItemAuthor().setText(String.format(Locale.ENGLISH, mContext.getResources().getString(R.string.byAuthor), video.username));
+        viewHolder.getVideoComments().setText(Integer.toString(video.comments));
+
+        final Button videoLikesButton = viewHolder.getVideoLikesButton();
+        videoLikesButton.setText(Integer.toString(video.likes));
+        videoLikesButton.setActivated(video.is_user_liking);
+        videoLikesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (video.is_user_liking) {
+                    video.is_user_liking = false;
+                    video.likes = video.likes - 1;
+                    videoLikesButton.setText(Integer.toString(video.likes));
+                    videoLikesButton.setActivated(false);
+                    AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
+                } else {
+                    video.is_user_liking = true;
+                    video.likes = video.likes + 1;
+                    videoLikesButton.setText(Integer.toString(video.likes));
+                    videoLikesButton.setActivated(true);
+                    AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
+                }
+            }
+        });
     }
 
     @Override
