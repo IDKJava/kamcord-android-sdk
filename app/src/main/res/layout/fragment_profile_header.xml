@@ -40,7 +40,7 @@
             android:id="@+id/profile_user_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:gravity="center"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:baselineAligned="false"
             android:orientation="horizontal"
-            android:paddingTop="16dp"
+            android:paddingTop="18dp"
             android:paddingBottom="16dp">
 
             <LinearLayout
@@ -70,17 +70,17 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/defaultNumber"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="20sp"
                     android:textColor="@color/ColorPrimary" />
 
                 <TextView
                     android:id="@+id/videosText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="6dp"
                     android:gravity="center|top"
                     android:text="@string/headerVideos"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="16sp"
                     android:textColor="@color/ColorPrimary" />
             </LinearLayout>
 
@@ -97,17 +97,17 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/defaultNumber"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="20sp"
                     android:textColor="@color/ColorPrimary" />
 
                 <TextView
                     android:id="@+id/followersText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="6dp"
                     android:gravity="center|top"
                     android:text="@string/headerFollowers"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="16sp"
                     android:textColor="@color/ColorPrimary" />
             </LinearLayout>
 
@@ -124,17 +124,17 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/defaultNumber"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="20sp"
                     android:textColor="@color/ColorPrimary" />
 
                 <TextView
                     android:id="@+id/followingText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="6dp"
                     android:gravity="center|top"
                     android:text="@string/headerFollowing"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textSize="16sp"
                     android:textColor="@color/ColorPrimary" />
             </LinearLayout>
 
