@@ -174,27 +174,28 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (video.is_user_liking) {
-                    video.is_user_liking = false;
-                    video.likes = video.likes - 1;
-                    videoLikesButton.setText(Integer.toString(video.likes));
-                    videoLikesButton.setActivated(false);
-                    ViewAnimationUtils.createCircularReveal(videoLikesButton,
-                            videoLikesButton.getWidth() / 2, videoLikesButton.getHeight() / 2, 0,
-                            videoLikesButton.getHeight() * 2).start();
-                    AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
-                } else {
-                    video.is_user_liking = true;
-                    video.likes = video.likes + 1;
-                    videoLikesButton.setText(Integer.toString(video.likes));
-                    videoLikesButton.setActivated(true);
-                    ViewAnimationUtils.createCircularReveal(videoLikesButton,
-                            videoLikesButton.getWidth() / 2, videoLikesButton.getHeight() / 2, 0,
-                            videoLikesButton.getHeight() * 2).start();
-                    AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
-                }
+                toggleLikeButton(videoLikesButton, video);
             }
         });
+    }
+
+    private void toggleLikeButton(Button likeButton, Video video) {
+        if (video.is_user_liking) {
+            video.is_user_liking = false;
+            video.likes = video.likes - 1;
+            likeButton.setText(Integer.toString(video.likes));
+            likeButton.setActivated(false);
+            AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
+        } else {
+            video.is_user_liking = true;
+            video.likes = video.likes + 1;
+            likeButton.setText(Integer.toString(video.likes));
+            likeButton.setActivated(true);
+            AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
+        }
+        ViewAnimationUtils.createCircularReveal(likeButton,
+                likeButton.getWidth() / 2, likeButton.getHeight() / 2, 0,
+                likeButton.getHeight() * 2).start();
     }
 
     @Override
