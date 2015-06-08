@@ -48,13 +48,18 @@
             android:layout_height="@dimen/cardview_actionheight"
             android:layout_margin="@dimen/cardview_standardmargin" >
 
-            <Button
-                android:id="@+id/profile_video_likes_button"
+            <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="@string/defaultNumber"
-                style="@style/KamcordVideoCardCountButton"
-                android:drawableStart="@drawable/likes_icon_selector" />
+                android:background="@drawable/video_card_count_button_background" >
+                <Button
+                    android:id="@+id/profile_video_likes_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/defaultNumber"
+                    style="@style/KamcordVideoCardCountButton"
+                    android:drawableStart="@drawable/likes_icon_selector" />
+            </FrameLayout>
 
             <Space
                 android:layout_width="0dp"
