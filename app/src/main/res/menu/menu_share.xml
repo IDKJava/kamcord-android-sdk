@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/action_share_upload"
-        android:icon="@android:drawable/ic_menu_upload"
+        android:title="@string/fragmentShare"
         android:orderInCategory="1"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|withText" />
 </menu>

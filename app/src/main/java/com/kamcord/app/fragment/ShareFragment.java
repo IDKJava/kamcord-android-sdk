@@ -32,7 +32,6 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.VideoUtils;
-import com.kamcord.app.view.utils.ActionMenuDecorator;
 
 import java.io.File;
 
@@ -118,8 +117,6 @@ public class ShareFragment extends Fragment {
         upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         actionbar.setHomeAsUpIndicator(upArrow);
 
-        setHasOptionsMenu(true);
-
         recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
 
         File videoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
@@ -155,11 +152,11 @@ public class ShareFragment extends Fragment {
                     public void call(Integer textLength) {
                         if (textLength > 0) {
                             if (menu != null && shareMenuItem != null) {
-                                ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.kamcordGreen));
+//                                ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.kamcordGreen));
                                 shareMenuItem.setEnabled(true);
                             }
                         } else {
-                            ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.ColorPrimaryDark));
+//                            ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.ColorPrimaryDark));
                             shareMenuItem.setEnabled(false);
                         }
                     }
@@ -216,7 +213,8 @@ public class ShareFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         this.menu = menu;
         this.shareMenuItem = menu.findItem(R.id.action_share_upload);
-        ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.ColorPrimaryDark));
+//        ActionMenuDecorator.setMenuItemColor(shareMenuItem, getResources().getColor(R.color.ColorPrimaryDark));
+        this.shareMenuItem.getActionView().setBackgroundColor(getResources().getColor(R.color.kamcordGreen));
         shareMenuItem.setEnabled(false);
     }
 
