@@ -21,8 +21,10 @@
 
     <color name="transparentWhite">#9fff</color>
     <color name="TextViewBackgroundColor">#a4a4a4</color>
+    <color name="EditTextColor">#a4a4a4</color>
 
     <color name="DefaultBackgroundColor">#F1C40F</color>
+    <color name="ShareBackgroundColor">#e8e8e8</color>
     <color name="kamcordBlue">#00a8c0</color>
     <color name="kamcordGray">#999999</color>
 
