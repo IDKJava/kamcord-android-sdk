@@ -68,7 +68,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.profile_tab, container, false);
         ButterKnife.inject(this, root);
-        initKamcordProfileFragment(root);
+        initKamcordProfileFragment();
 
         return root;
     }
@@ -87,10 +87,10 @@ public class ProfileFragment extends Fragment {
         onRecyclerViewScrollListener = null;
     }
 
-    public void initKamcordProfileFragment(View view) {
+    public void initKamcordProfileFragment() {
 
         if(AccountManager.isLoggedIn()) {
-            userHeader = new ProfileItem(ProfileItem.Type.HEADER, null);
+            userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, (User) null);
             mProfileList.add(userHeader);
             signInPromptContainer.setVisibility(View.GONE);
             Account myAccount = AccountManager.getStoredAccount();
@@ -156,7 +156,7 @@ public class ProfileFragment extends Fragment {
 
     public void loadMoreItems() {
         footerVisible = true;
-        mProfileList.add(new ProfileItem(ProfileItem.Type.FOOTER, null));
+        mProfileList.add(new ProfileItem<>(ProfileItem.Type.FOOTER, null));
         mProfileAdapter.notifyItemInserted(mProfileAdapter.getItemCount());
         Account myAccount = AccountManager.getStoredAccount();
         AppServerClient.getInstance().getUserVideoFeed(myAccount.id, nextPage, new GetUserVideoFeedCallBack());
@@ -190,7 +190,7 @@ public class ProfileFragment extends Fragment {
                     mProfileList.subList(1, mProfileList.size()).clear();
                     nextPage = paginatedVideoListGenericResponse.response.next_page;
                     for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                        ProfileItem profileViewModel = new ProfileItem(ProfileItem.Type.VIDEO, video);
+                        ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
                         mProfileList.add(profileViewModel);
                     }
                 }
@@ -218,7 +218,7 @@ public class ProfileFragment extends Fragment {
                     mProfileList.remove(mProfileAdapter.getItemCount() - 1);
                 }
                 for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                    ProfileItem profileViewModel = new ProfileItem(ProfileItem.Type.VIDEO, video);
+                    ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
                     mProfileList.add(profileViewModel);
                 }
                 footerVisible = false;

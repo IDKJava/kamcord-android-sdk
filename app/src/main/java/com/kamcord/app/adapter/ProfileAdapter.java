@@ -21,8 +21,10 @@ import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
 import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
@@ -69,10 +71,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
                 return new FooterViewHolder(itemLayoutView);
             }
+            case UPLOAD_PROGRESS:
+                itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_upload_progress_item, parent, false);
+                return new ProfileUploadProgressViewHolder(itemLayoutView);
             default: {
                 break;
             }
-
         }
         return new FooterViewHolder(null);
     }
@@ -82,7 +86,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (viewHolder instanceof ProfileHeaderViewHolder) {
             User user = getItem(position).getUser();
             if( user != null ) {
-                bindProfileHeader((ProfileHeaderViewHolder) viewHolder, getItem(position).getUser());
+                bindProfileHeader((ProfileHeaderViewHolder) viewHolder, user);
             }
 
         } else if (viewHolder instanceof FooterViewHolder) {
@@ -90,7 +94,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof ProfileVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
             if( video != null ) {
-                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, getItem(position).getVideo());
+                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
+            }
+
+        } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
+            RecordingSession session = getItem(position).getSession();
+            if( session != null ) {
+                bindProfileUploadProgressViewHolder((ProfileVideoItemViewHolder) viewHolder, session);
             }
         }
 
@@ -185,6 +195,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 toggleLikeButton(videoLikesButton, video);
             }
         });
+    }
+
+    private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, RecordingSession session) {
+
     }
 
     private void toggleLikeButton(Button likeButton, Video video) {
