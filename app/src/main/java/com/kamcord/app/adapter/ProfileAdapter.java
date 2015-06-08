@@ -180,7 +180,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     videoLikesButton.setText(Integer.toString(video.likes));
                     videoLikesButton.setActivated(false);
                     ViewAnimationUtils.createCircularReveal(videoLikesButton,
-                            videoLikesButton.getWidth(), videoLikesButton.getHeight(), 0,
+                            videoLikesButton.getWidth() / 2, videoLikesButton.getHeight() / 2, 0,
                             videoLikesButton.getHeight() * 2).start();
                     AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
                 } else {
