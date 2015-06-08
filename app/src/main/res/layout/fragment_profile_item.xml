@@ -51,17 +51,10 @@
 
             <Button
                 android:id="@+id/profile_video_likes_button"
-                android:layout_width="@dimen/cardview_actionwidth"
-                android:layout_height="wrap_content"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:stateListAnimator="@null"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:text="@string/defaultNumber"
-                android:textColor="@color/kamcordGreen"
-                android:textSize="16sp"
-                android:background="@drawable/button_selector"
+                style="@style/KamcordVideoCardCountButton"
                 android:drawableStart="@drawable/likes_icon_selector" />
 
             <Space
@@ -69,19 +62,24 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
-            <TextView
+            <Button
                 android:id="@+id/video_comments"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Comments"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_height="match_parent"
+                android:text="@string/defaultNumber"
+                style="@style/KamcordVideoCardCountButton"
+                android:drawableStart="@drawable/comments_gray"
+                android:enabled="false" />
 
-            <TextView
+            <Button
                 android:id="@+id/video_views"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Views"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:text="@string/defaultNumber"
+                style="@style/KamcordVideoCardCountButton"
+                android:drawableStart="@drawable/views_gray"
+                android:enabled="false" />
         </LinearLayout>
     </LinearLayout>
 
