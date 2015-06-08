@@ -100,7 +100,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
             RecordingSession session = getItem(position).getSession();
             if( session != null ) {
-                bindProfileUploadProgressViewHolder((ProfileVideoItemViewHolder) viewHolder, session);
+                bindProfileUploadProgressViewHolder((ProfileUploadProgressViewHolder) viewHolder, session);
             }
         }
 
