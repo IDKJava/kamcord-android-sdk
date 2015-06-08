@@ -37,5 +37,6 @@ public class ProfileItem {
         HEADER,
         FOOTER,
         VIDEO,
+        UPLOAD_PROGRESS,
     }
 }

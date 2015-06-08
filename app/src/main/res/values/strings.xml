@@ -84,7 +84,6 @@
 
 
     <string name="defaultNumber">0</string>
-    <string name="headeUserName">User Name</string>
     <plurals name="headerVideos">
         <item quantity="one">Video</item>
         <item quantity="other">Videos</item>
