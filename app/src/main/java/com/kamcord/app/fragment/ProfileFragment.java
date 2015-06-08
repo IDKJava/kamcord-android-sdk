@@ -1,6 +1,5 @@
 package com.kamcord.app.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,14 +16,15 @@ import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.adapter.ProfileAdapter;
 import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
-import com.kamcord.app.utils.RecyclerViewScrollListener;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
@@ -42,7 +42,7 @@ import retrofit.client.Response;
 /**
  * Created by donliang1 on 5/6/15.
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements Uploader.UploadStatusListener {
 
     private static final int HEADER_EXISTS = 1;
 
@@ -58,7 +58,6 @@ public class ProfileFragment extends Fragment {
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<ProfileItem> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
-    private RecyclerViewScrollListener onRecyclerViewScrollListener;
     private ProfileItem userHeader;
     private String nextPage;
     private int totalItems = 0;
@@ -74,17 +73,20 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof RecyclerViewScrollListener) {
-            onRecyclerViewScrollListener = (RecyclerViewScrollListener) activity;
-        }
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        onRecyclerViewScrollListener = null;
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     public void initKamcordProfileFragment() {
@@ -125,9 +127,6 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-                if (onRecyclerViewScrollListener != null) {
-                    onRecyclerViewScrollListener.onRecyclerViewScrollStateChanged(recyclerView, state);
-                }
             }
 
             @Override
@@ -138,10 +137,6 @@ public class ProfileFragment extends Fragment {
                             && profileRecyclerView.getChildAt(0).getTop() == tabsHeight);
                 } else {
                     videoFeedRefreshLayout.setEnabled(true);
-                }
-
-                if (onRecyclerViewScrollListener != null) {
-                    onRecyclerViewScrollListener.onRecyclerViewScrolled(recyclerView, dy, dy);
                 }
 
                 if ((mProfileList.size() - 1) < totalItems
@@ -234,18 +229,6 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
     @OnClick(R.id.signInPromptButton)
     public void showSignInPrompt() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -253,4 +236,18 @@ public class ProfileFragment extends Fragment {
         getActivity().finish();
     }
 
+    @Override
+    public void onUploadStart(RecordingSession recordingSession) {
+
+    }
+
+    @Override
+    public void onUploadProgress(RecordingSession recordingSession, float progress) {
+
+    }
+
+    @Override
+    public void onUploadFinish(RecordingSession recordingSession, boolean success) {
+
+    }
 }

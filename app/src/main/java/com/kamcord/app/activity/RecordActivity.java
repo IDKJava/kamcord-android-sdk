@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -13,7 +12,6 @@ import android.widget.Toast;
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
-import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.view.SlidingTabLayout;
@@ -26,7 +24,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class RecordActivity extends AppCompatActivity implements
-        RecordFragment.RecyclerViewScrollListener,
         Uploader.UploadStatusListener {
     private static final String TAG = RecordActivity.class.getSimpleName();
 
@@ -93,26 +90,6 @@ public class RecordActivity extends AppCompatActivity implements
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
-    }
-
-    @Override
-    public void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state) {
-    }
-
-    @Override
-    public void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy) {
-        if (recyclerViewScrolledDistance > HIDE_THRESHOLD && controlsVisible
-                && !(recyclerView.getChildCount() > 0
-                && recyclerView.getChildAdapterPosition(recyclerView.getChildAt(0)) == 0
-                && recyclerView.getChildAt(0).getTop() > 0)) {
-            recyclerViewScrolledDistance = 0;
-        } else if (recyclerViewScrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-            recyclerViewScrolledDistance = 0;
-        }
-
-        if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
-            recyclerViewScrolledDistance += dy;
-        }
     }
 
     ObjectAnimator progressBarAnimator = null;

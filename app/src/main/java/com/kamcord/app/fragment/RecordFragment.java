@@ -68,7 +68,6 @@ public class RecordFragment extends Fragment implements
 
     private List<RecordItem> mRecordItemList = new ArrayList<>();
     private List<Game> mGameList = new ArrayList();
-    private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     private RecordingServiceConnection mRecordingServiceConnection = new RecordingServiceConnection();
 
@@ -78,20 +77,6 @@ public class RecordFragment extends Fragment implements
         ButterKnife.inject(this, v);
         initKamcordRecordFragment(v);
         return v;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof RecyclerViewScrollListener) {
-            onRecyclerViewScrollListener = (RecyclerViewScrollListener) activity;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        onRecyclerViewScrollListener = null;
     }
 
     @Override
@@ -147,9 +132,6 @@ public class RecordFragment extends Fragment implements
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-                if (onRecyclerViewScrollListener != null) {
-                    onRecyclerViewScrollListener.onRecyclerViewScrollStateChanged(recyclerView, state);
-                }
             }
 
             @Override
@@ -161,10 +143,6 @@ public class RecordFragment extends Fragment implements
                             && mRecyclerView.getChildAt(0).getTop() == gridMargin + tabsHeight);
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
-                }
-
-                if (onRecyclerViewScrollListener != null) {
-                    onRecyclerViewScrollListener.onRecyclerViewScrolled(recyclerView, dy, dy);
                 }
             }
         });
