@@ -255,10 +255,7 @@ public class RecordFragment extends Fragment implements
                             .getMediaProjection(resultCode, data);
                     RecordingSession recordingSession = new RecordingSession(mSelectedGame);
 
-                    boolean didStart = recordingServiceConnection.startRecording(projection, recordingSession);
-                    if( !didStart ) {
-                        Log.e(TAG, "DIDN'T START RECORDING!");
-                    }
+                    recordingServiceConnection.startRecording(projection, recordingSession);
                 } catch (ActivityNotFoundException e) {
                     // TODO: show the user something about not finding the game.
                     Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);

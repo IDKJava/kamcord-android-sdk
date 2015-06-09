@@ -57,13 +57,10 @@ public class RecordingService extends Service {
         super.onDestroy();
         // If we're getting destroyed, we should probably just stop the current recording session.
         stopRecording();
-        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
-        stopSelf();
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.v("FindMe", "ONBIND CALLED!!!");
         return mBinder;
     }
 
@@ -114,6 +111,7 @@ public class RecordingService extends Service {
         }
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         stopForeground(true);
+        stopSelf();
     }
 
     public synchronized boolean isRecording() {
