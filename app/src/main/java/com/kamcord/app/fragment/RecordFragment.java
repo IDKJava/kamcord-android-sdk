@@ -3,14 +3,18 @@ package com.kamcord.app.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -94,7 +98,7 @@ public class RecordFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        handleServiceRunning();
+        getActivity().bindService(new Intent(getActivity(), RecordingService.class), recordingServiceConnection, 0);
         boolean gameListChanged = false;
         for (RecordItem item : mRecordItemList) {
             Game game = item.getGame();
@@ -176,8 +180,8 @@ public class RecordFragment extends Fragment implements
     }
 
     private void handleServiceRunning() {
-        if (RecordingService.isRunning()) {
-            RecordingSession recordingSession = RecordingService.getInstance().getRecordingSession();
+        if (recordingServiceConnection.isServiceRecording()) {
+            RecordingSession recordingSession = .getRecordingSession();
             if (recordingSession != null) {
                 for (Game game : mGameList) {
                     if (game.play_store_id.equals(recordingSession.getGamePackageName())) {
@@ -409,4 +413,44 @@ public class RecordFragment extends Fragment implements
             // TODO: show the user something about being unable to get the recording session.
         }
     }
+
+    private class RecordingServiceConnection implements ServiceConnection {
+        private RecordingService recordingService = null;
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            recordingService = ((RecordingService.InstanceBinder) iBinder).getInstance();
+            handleServiceRunning();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            recordingService = null;
+        }
+
+        public boolean startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
+            if( recordingService != null ) {
+                recordingService.startRecording(mediaProjection, recordingSession);
+                return true;
+            }
+            return false;
+        }
+
+        public boolean stopRecording() {
+            if( recordingService != null ) {
+                recordingService.stopRecording();
+                return true;
+            }
+            return false;
+        }
+
+        public boolean isServiceRecording() {
+            return recordingService != null && recordingService.isRecording();
+        }
+
+        public RecordingSession getRecordingSession() {
+            return recordingService != null ? recordingService.getRecordingSession() : null;
+        }
+    }
+    private RecordingServiceConnection recordingServiceConnection = new RecordingServiceConnection();
 }

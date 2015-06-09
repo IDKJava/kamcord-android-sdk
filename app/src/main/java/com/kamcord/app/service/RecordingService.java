@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjection;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -15,16 +16,15 @@ import com.kamcord.app.thread.AudioRecordThread;
 import com.kamcord.app.thread.RecordHandlerThread;
 import com.kamcord.app.utils.NotificationUtils;
 
-import java.lang.ref.WeakReference;
 import java.util.concurrent.CyclicBarrier;
 
 public class RecordingService extends Service {
     private static final String TAG = RecordingService.class.getSimpleName();
     private static int NOTIFICATION_ID = 3141592;
 
-    private static WeakReference<RecordingService> sInstanceRef = null;
-    private static MediaProjection sMediaProjection = null;
-    private static RecordingSession sRecordingSession = null;
+    private final IBinder mBinder = new InstanceBinder();
+    private MediaProjection sMediaProjection = null;
+    private RecordingSession sRecordingSession = null;
 
     public static final long DROP_FIRST_MS = 3000;
 
@@ -38,23 +38,9 @@ public class RecordingService extends Service {
         super();
     }
 
-    public static boolean isRunning() {
-        return sInstanceRef != null && sInstanceRef.get() != null;
-    }
-
-    public static RecordingService getInstance() {
-        return sInstanceRef != null ? sInstanceRef.get() : null;
-    }
-
-    public static void initializeForRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
-        sMediaProjection = mediaProjection;
-        sRecordingSession = recordingSession;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
-        sInstanceRef = new WeakReference<>(this);
     }
 
     @Override
@@ -73,7 +59,6 @@ public class RecordingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        sInstanceRef.clear();
         // If we're getting destroyed, we should probably just stop the current recording session.
         stopRecording();
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
@@ -82,7 +67,7 @@ public class RecordingService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     /* Interface for starting and stopping a recording session */
@@ -127,6 +112,11 @@ public class RecordingService extends Service {
         stopForeground(true);
     }
 
+    public synchronized boolean isRecording() {
+        return (mRecordHandlerThread != null && mRecordHandlerThread.isAlive())
+                || (mAudioRecordThread != null && mAudioRecordThread.isAlive());
+    }
+
     public RecordingSession getRecordingSession()
     {
         return recordingSession;
@@ -141,6 +131,12 @@ public class RecordingService extends Service {
             }
         }
     };
+
+    public class InstanceBinder extends Binder {
+        public RecordingService getInstance() {
+            return RecordingService.this;
+        }
+    }
 }
 
 
