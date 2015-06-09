@@ -14,6 +14,8 @@ import android.view.View;
 
 import com.kamcord.app.R;
 
+import java.util.Locale;
+
 /**
  * Created by donliang1 on 5/12/15.
  */
@@ -82,9 +84,15 @@ public class StringUtils {
                 || (first != null && second != null && first.equals(second));
     }
 
-    public static String getFirstLetterUpperCase(String string) {
-        String upperCaseString = string;
-        upperCaseString = Character.toUpperCase(upperCaseString.charAt(0)) + upperCaseString.substring(1);
-        return upperCaseString;
+    public static String abbreviatedCount(long count) {
+        if( count < 1000 ) {
+            return Long.toString(count);
+        } else if( count < 1000000 ) {
+            return String.format(Locale.ENGLISH, "%.1fK", ((double) count) / 1e3);
+        } else if( count < 1000000000 ) {
+            return String.format(Locale.ENGLISH, "%.1fM", ((double) count) / 1e6);
+        } else {
+            return String.format(Locale.ENGLISH, "%.1fB", ((double) count) / 1e9);
+        }
     }
 }

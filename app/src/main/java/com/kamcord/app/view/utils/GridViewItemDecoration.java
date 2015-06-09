@@ -1,4 +1,4 @@
-package com.kamcord.app.view;
+package com.kamcord.app.view.utils;
 
 import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,10 +9,10 @@ import android.view.View;
 /**
  * Created by pplunkett on 6/3/15.
  */
-public class RecordItemDecoration extends RecyclerView.ItemDecoration {
+public class GridViewItemDecoration extends RecyclerView.ItemDecoration {
 
     private int spacing = 0;
-    public RecordItemDecoration(int spacing) {
+    public GridViewItemDecoration(int spacing) {
         this.spacing = spacing;
     }
 
