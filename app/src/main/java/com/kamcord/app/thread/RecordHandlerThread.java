@@ -101,7 +101,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ApplicationStateUtils.initializeForeground();
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
                 mHandler.sendEmptyMessage(Message.POLL);
