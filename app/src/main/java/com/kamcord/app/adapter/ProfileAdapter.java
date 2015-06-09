@@ -7,7 +7,9 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
+import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +29,7 @@ import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
+import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.ProfileItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
@@ -205,7 +208,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, RecordingSession session) {
+    private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, final RecordingSession session) {
         Picasso picasso = new Picasso.Builder(mContext)
                 .addRequestHandler(new ThumbnailRequestHandler())
                 .build();
@@ -223,16 +226,51 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             int progressBarProgress = (int) (viewHolder.uploadProgressBar.getMax() * session.getUploadProgress());
             uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), percentProgress);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
-            viewHolder.uploadProgressBar.setProgress(progressBarProgress);
             viewHolder.uploadProgressBar.setProgressTintList(
-                    new ColorStateList(new int[][]{new int[]{}}, new int[] {mContext.getResources().getColor(R.color.kamcordBlue)}));
+                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordBlue)}));
+            viewHolder.uploadProgressBar.setProgress(progressBarProgress);
+
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
             uploadStatus = mContext.getString(R.string.uploadFailed);
-            viewHolder.uploadFailedImageButton.setVisibility(View.VISIBLE);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
-            viewHolder.uploadProgressBar.setProgress(viewHolder.uploadProgressBar.getMax());
             viewHolder.uploadProgressBar.setProgressTintList(
                     new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordRed)}));
+            viewHolder.uploadProgressBar.setProgress(viewHolder.uploadProgressBar.getMax());
+
+            viewHolder.uploadFailedImageButton.setVisibility(View.VISIBLE);
+            viewHolder.uploadFailedImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popupMenu = new PopupMenu(mContext, v);
+                    popupMenu.getMenuInflater().inflate(R.menu.menu_upload_failed, popupMenu.getMenu());
+                    popupMenu.show();
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.action_retry_upload: {
+                                    if (mContext instanceof FragmentActivity) {
+                                        ShareFragment recordShareFragment = new ShareFragment();
+                                        Bundle bundle = new Bundle();
+                                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, session);
+                                        recordShareFragment.setArguments(bundle);
+                                        ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
+                                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
+                                                .add(R.id.activity_mdrecord_layout, recordShareFragment)
+                                                .addToBackStack("ShareFragment").commit();
+                                    }
+                                    break;
+                                }
+                                case R.id.action_delete: {
+                                    FileSystemManager.cleanRecordingSessionCacheDirectory(session);
+                                    break;
+                                }
+                            }
+                            return false;
+                        }
+                    });
+                }
+            });
         }
         viewHolder.uploadStatusTextView.setText(uploadStatus);
 
