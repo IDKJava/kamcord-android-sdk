@@ -21,19 +21,19 @@ public class ProfileItem<T> {
     }
 
     public User getUser() {
-        return data instanceof User ? (User) data : null;
+        return type == Type.HEADER ? (User) data : null;
     }
 
     public void setUser(User user) {
-        this.data = data instanceof User ? (T) user : null;
+        this.data = type == Type.HEADER ? (T) user : null;
     }
 
     public Video getVideo() {
-        return data instanceof Video ? (Video) data : null;
+        return type == Type.VIDEO ? (Video) data : null;
     }
 
     public RecordingSession getSession() {
-        return data instanceof RecordingSession ? (RecordingSession) data : null;
+        return type == Type.UPLOAD_PROGRESS ? (RecordingSession) data : null;
     }
 
     public enum Type {

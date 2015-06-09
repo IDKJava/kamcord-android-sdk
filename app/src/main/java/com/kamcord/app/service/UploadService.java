@@ -40,10 +40,9 @@ public class UploadService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int out = super.onStartCommand(intent, flags, startId);
         RecordingSession sessionToQueue = intent.getParcelableExtra(ARG_SESSION_TO_SHARE);
         queuedSessions.add(sessionToQueue);
-        return out;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override

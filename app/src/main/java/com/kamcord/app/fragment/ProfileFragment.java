@@ -61,7 +61,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<ProfileItem> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
-    private ProfileItem userHeader;
+    private ProfileItem<User> userHeader;
     private String nextPage;
     private int totalItems = 0;
     private boolean footerVisible = false;
@@ -155,12 +155,14 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
     }
 
     private void handleUploadService() {
+        boolean modified = false;
         {
             Iterator<ProfileItem> iterator = mProfileList.iterator();
             while (iterator.hasNext()) {
                 ProfileItem item = iterator.next();
                 if (item.getType() == ProfileItem.Type.UPLOAD_PROGRESS) {
                     iterator.remove();
+                    modified = true;
                 }
             }
         }
@@ -172,14 +174,19 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
                 Iterator<RecordingSession> iterator = uploadQueue.iterator();
                 while( iterator.hasNext() ) {
                     mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, iterator.next()));
+                    modified = true;
                 }
 
                 RecordingSession session = UploadService.getInstance().getCurrentlyUploadingSession();
                 if (session != null) {
                     mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
-                    onUploadStart(session);
+                    modified = true;
                 }
             }
+        }
+
+        if( modified ) {
+            mProfileAdapter.notifyDataSetChanged();
         }
     }
 
@@ -196,7 +203,11 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
         public void success(GenericResponse<User> userResponse, Response response) {
             if (userResponse != null && userResponse.response != null) {
                 userHeader.setUser(userResponse.response);
-                totalItems = userHeader.getUser().video_count;
+                if( userHeader.getUser() != null ) {
+                    totalItems = userHeader.getUser().video_count;
+                } else {
+                    totalItems = 0;
+                }
                 mProfileAdapter.notifyItemChanged(0);
                 videoFeedRefreshLayout.setRefreshing(false);
             }
@@ -272,6 +283,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     @Override
     public void onUploadStart(RecordingSession recordingSession) {
+        handleUploadService();
         updateUploadingSessionProgress(recordingSession, 0f);
     }
 
@@ -305,7 +317,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
         for(ProfileItem item : mProfileList) {
             if( item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
                     && session.equals(item.getSession()) ) {
-                item.getSession().setUploadProgress(0f);
+                item.getSession().setUploadProgress(progress);
                 mProfileAdapter.notifyItemChanged(index);
                 break;
             }

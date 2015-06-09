@@ -3,6 +3,7 @@ package com.kamcord.app.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
@@ -213,14 +214,25 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 .into(viewHolder.thumbnailImageView);
 
         viewHolder.uploadFailedImageButton.setVisibility(View.GONE);
+        viewHolder.uploadProgressBar.setVisibility(View.GONE);
         String uploadStatus = null;
         if( session.getUploadProgress() < 0f ) {
             uploadStatus = mContext.getString(R.string.queuedForUpload);
         } else if( session.getUploadProgress() <= 1f ) {
-            uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), session.getUploadProgress() * 100);
+            int percentProgress = (int) (100f * session.getUploadProgress());
+            int progressBarProgress = (int) (viewHolder.uploadProgressBar.getMax() * session.getUploadProgress());
+            uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), percentProgress);
+            viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
+            viewHolder.uploadProgressBar.setProgress(progressBarProgress);
+            viewHolder.uploadProgressBar.setProgressTintList(
+                    new ColorStateList(new int[][]{new int[]{}}, new int[] {mContext.getResources().getColor(R.color.kamcordBlue)}));
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
             uploadStatus = mContext.getString(R.string.uploadFailed);
             viewHolder.uploadFailedImageButton.setVisibility(View.VISIBLE);
+            viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
+            viewHolder.uploadProgressBar.setProgress(viewHolder.uploadProgressBar.getMax());
+            viewHolder.uploadProgressBar.setProgressTintList(
+                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordRed)}));
         }
         viewHolder.uploadStatusTextView.setText(uploadStatus);
 

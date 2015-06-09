@@ -26,6 +26,7 @@ public class ProfileLayoutSpanSizeLookup extends GridLayoutManager.SpanSizeLooku
             switch(type) {
                 case HEADER:
                 case FOOTER:
+                case UPLOAD_PROGRESS:
                     spanSize = ((GridLayoutManager) layoutManager).getSpanCount();
                     break;
                 default:

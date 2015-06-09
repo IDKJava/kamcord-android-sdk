@@ -24,6 +24,7 @@
 
     <color name="defaultProfileColor">#bbbbbb</color>
     <color name="kamcordBlue">#00a8c0</color>
+    <color name="kamcordRed">#b34</color>
     <color name="kamcordGray">#999999</color>
 
 </resources>

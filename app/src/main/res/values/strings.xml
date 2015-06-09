@@ -112,7 +112,7 @@
     <string name="nothingRecordedYet">Nothing Recorded Yet!</string>
     <string name="kamcordHasntRecorded">Kamcord hasn\'t recorded anything from %1$s yet! Do you want to go back to %1$s?</string>
 
-    <string name="currentlyUploadingPercent">Currently Uploading (%#1d\%)</string>
+    <string name="currentlyUploadingPercent">Currently Uploading (%1$d%%)</string>
     <string name="queuedForUpload">Queued for Upload</string>
     <string name="uploadFailed">Upload Failed</string>
 

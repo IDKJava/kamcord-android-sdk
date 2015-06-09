@@ -69,7 +69,7 @@ public class RecordFragment extends Fragment implements
     private Game mSelectedGame = null;
 
     private List<RecordItem> mRecordItemList = new ArrayList<>();
-    private List<Game> mGameList = new ArrayList();
+    private List<Game> mGameList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,20 +87,6 @@ public class RecordFragment extends Fragment implements
         super.onDestroyView();
         ButterKnife.reset(this);
         getActivity().unbindService(recordingServiceConnection);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof RecyclerViewScrollListener) {
-            onRecyclerViewScrollListener = (RecyclerViewScrollListener) activity;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        onRecyclerViewScrollListener = null;
     }
 
     @Override

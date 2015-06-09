@@ -19,6 +19,10 @@ public class ProfileViewItemDecoration extends GridViewItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
         int adapterPosition = parent.getChildAdapterPosition(view);
+        if( adapterPosition == RecyclerView.NO_POSITION ) {
+            return;
+        }
+
         int viewType = parent.getAdapter().getItemViewType(adapterPosition);
         ProfileItem.Type type = ProfileItem.Type.values()[viewType];
         if( type == ProfileItem.Type.HEADER || type == ProfileItem.Type.UPLOAD_PROGRESS ) {
