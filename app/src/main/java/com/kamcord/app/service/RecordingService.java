@@ -21,7 +21,10 @@ import java.util.concurrent.CyclicBarrier;
 public class RecordingService extends Service {
     private static final String TAG = RecordingService.class.getSimpleName();
     private static int NOTIFICATION_ID = 3141592;
-    private static volatile boolean mIsRunning = false;
+
+    private static RecordingService sInstance = null;
+    private static MediaProjection sMediaProjection = null;
+    private static RecordingSession sRecordingSession = null;
 
     public static final long DROP_FIRST_MS = 3000;
 
@@ -38,29 +41,43 @@ public class RecordingService extends Service {
     }
 
     public static boolean isRunning() {
-        return mIsRunning;
+        return sInstance != null;
+    }
+
+    public static RecordingService getInstance() {
+        return sInstance;
+    }
+
+    public static void initializeForRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
+        sMediaProjection = mediaProjection;
+        sRecordingSession = recordingSession;
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mIsRunning = true;
+        sInstance = this;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // Notification Setting
-        NotificationUtils.initializeWith(this.getApplicationContext());
-        startForeground(NOTIFICATION_ID, NotificationUtils.getNotification());
+        if( sMediaProjection != null && sRecordingSession != null ) {
+            // Notification Setting
+            NotificationUtils.initializeWith(this.getApplicationContext());
+            startForeground(NOTIFICATION_ID, NotificationUtils.getNotification());
+            startRecording(sMediaProjection, sRecordingSession);
+            sMediaProjection = null;
+            sRecordingSession = null;
+        }
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        sInstance = null;
         // If we're getting destroyed, we should probably just stop the current recording session.
         stopRecording();
-        mIsRunning = false;
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         stopSelf();
     }

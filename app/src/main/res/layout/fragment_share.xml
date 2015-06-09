@@ -12,16 +12,17 @@
         android:layout_height="@dimen/tabsHeight"
         android:background="@color/ColorPrimary"
         android:elevation="3dp"
-        app:theme="@style/ToolBarStyle" >
+        app:theme="@style/ToolBarStyle">
 
         <Button
             android:id="@+id/share_button"
-            android:layout_width="150dp"
+            android:layout_width="@dimen/actionbutton_width"
             android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@color/ButtonNotActivated"
             android:text="@string/fragmentShare"
             android:textColor="@color/ColorPrimary"
-            android:layout_gravity="end"
-            android:background="@color/kamcordGreen" />
+            android:textSize="16sp" />
 
     </android.support.v7.widget.Toolbar>
 
@@ -69,23 +70,23 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:background="#9fff"
                             android:gravity="center"
                             android:orientation="horizontal"
                             android:padding="8dp">
 
                             <ProgressBar
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
+                                android:layout_width="@dimen/actionbutton_width"
+                                android:layout_height="@dimen/actionbutton_width"
                                 android:layout_marginRight="8dp"
-                                android:indeterminate="true" />
+                                android:indeterminate="true"
+                                android:indeterminateDrawable="@drawable/custom_circular_progressbar" />
 
                         </LinearLayout>
 
                         <ImageView
                             android:id="@+id/playImageView"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="@dimen/actionbutton_width"
+                            android:layout_height="@dimen/actionbutton_width"
                             android:layout_gravity="center"
                             android:background="@drawable/video_play" />
 
@@ -128,7 +129,9 @@
                 android:layout_marginLeft="@dimen/view_extraspace"
                 android:layout_marginTop="@dimen/view_extraspace"
                 android:text="@string/alsoShare"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/kamcordDarkText"
+                android:textSize="18sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -141,21 +144,27 @@
 
                 <Button
                     android:id="@+id/share_youtubebutton"
+                    style="@style/KamcordShareButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/shareButtonHeight"
+                    android:layout_marginRight="@dimen/button_gap"
                     android:layout_weight="1"
                     android:background="@color/ColorPrimary"
+                    android:drawableLeft="@drawable/button_youtube_selector"
                     android:text="@string/youtubeShare"
-                    android:textColor="@color/EditTextColor" />
+                    android:textColor="@color/button_youtube_text" />
 
                 <Button
                     android:id="@+id/share_twitterbutton"
+                    style="@style/KamcordShareButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/shareButtonHeight"
+                    android:layout_marginLeft="@dimen/button_gap"
                     android:layout_weight="1"
                     android:background="@color/ColorPrimary"
+                    android:drawableStart="@drawable/button_twitter_selector"
                     android:text="@string/twitterShare"
-                    android:textColor="@color/EditTextColor" />
+                    android:textColor="@color/button_twitter_text" />
 
             </LinearLayout>
 

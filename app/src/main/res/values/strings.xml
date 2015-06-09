@@ -62,7 +62,6 @@
     <string name="shareThisVideo">Share This Video</string>
 
     <string name="writeATitle">Write the title your video&#8230;</string>
-    <string name="processing">Processing&#8230;</string>
 
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
     <string name="signInProfilePrompt">You must sign in to Kamcord to view your profile page.</string>
@@ -83,23 +82,38 @@
 
     <string name="defaultNumber">0</string>
     <string name="headeUserName">User Name</string>
-    <string name="headerVideos">Videos</string>
-    <string name="headerFollowers">Followers</string>
+    <plurals name="headerVideos">
+        <item quantity="one">Video</item>
+        <item quantity="other">Videos</item>
+    </plurals>
+    <plurals name="headerFollowers">
+        <item quantity="one">Follower</item>
+        <item quantity="other">Followers</item>
+    </plurals>
     <string name="headerFollowing">Following</string>
-    <string name="videoLikes">Likes</string>
-    <string name="byAuthor">By&#160;</string>
+    <plurals name="videoLikes">
+        <item quantity="one">Like</item>
+        <item quantity="other">Likes</item>
+    </plurals>
+    <string name="byAuthor">By %s</string>
     <string name="recordAndShare">Record &amp; Share</string>
     <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
     <string name="theMostPopularGames">The most popular games on Kamcord</string>
-    <string name="followersWithCount">%d Followers</string>
+    <plurals name="followersWithCount">
+        <item quantity="one">%s Follower</item>
+        <item quantity="other">%s Followers</item>
+    </plurals>
 
     <string name="alreadyRecording">Already Recording!</string>
     <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>
+    <string name="nothingRecordedYet">Nothing Recorded Yet!</string>
+    <string name="kamcordHasntRecorded">Kamcord hasn\'t recorded anything from %1$s yet! Do you want to go back to %1$s?</string>
 
     <!-- Share -->
     <string name="fragmentShare">Share</string>
     <string name="youtubeShare">Youtube</string>
     <string name="twitterShare">Twitter</string>
     <string name="alsoShare">Also share on</string>
+    <string name="writeYourTitle">Please write a title for your video.</string>
 </resources>

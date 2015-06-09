@@ -22,6 +22,7 @@ import com.kamcord.app.model.RecordItem;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -150,8 +151,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         viewHolder.gameNameTextView.setText(game.name);
         viewHolder.gameFollowerCountTextView.setText(
                 String.format(Locale.ENGLISH,
-                        mContext.getResources().getString(R.string.followersWithCount),
-                        game.number_of_followers));
+                        mContext.getResources().getQuantityString(R.plurals.followersWithCount, game.number_of_followers),
+                        StringUtils.abbreviatedCount(game.number_of_followers)));
 
         ImageButton gameActionImageButton = viewHolder.gameActionImageButton;
         gameActionImageButton.setOnClickListener(new View.OnClickListener() {

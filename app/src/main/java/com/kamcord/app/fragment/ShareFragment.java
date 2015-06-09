@@ -127,6 +127,10 @@ public class ShareFragment extends Fragment {
         } else {
             processingProgressBarContainer.setVisibility(View.VISIBLE);
             playImageView.setVisibility(View.GONE);
+
+            shareButton.setEnabled(false);
+            thumbnailImageView.setEnabled(false);
+
             stitchClipsThread = new StitchClipsThread(recordingSession,
                     getActivity().getApplicationContext(),
                     stitchSuccessListener);
@@ -152,9 +156,9 @@ public class ShareFragment extends Fragment {
                     @Override
                     public void call(Integer textLength) {
                         if (textLength > 0) {
-                            shareButton.setBackgroundColor(getResources().getColor(R.color.ColorPrimaryDark));
-                        } else {
                             shareButton.setBackgroundColor(getResources().getColor(R.color.kamcordGreen));
+                        } else {
+                            shareButton.setBackgroundColor(getResources().getColor(R.color.ButtonNotActivated));
                         }
                     }
                 });
@@ -164,12 +168,14 @@ public class ShareFragment extends Fragment {
 
     @OnClick(R.id.share_button)
     public void click(View v) {
-        if (AccountManager.isLoggedIn()) {
+        if (AccountManager.isLoggedIn() && titleEditText.getText().toString().length() != 0) {
             recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
+        } else if (AccountManager.isLoggedIn()) {
+            Toast.makeText(getActivity(), getResources().getString(R.string.writeYourTitle), Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -214,11 +220,9 @@ public class ShareFragment extends Fragment {
         if (playImageView != null) {
             playImageView.setVisibility(View.VISIBLE);
         }
-    }
 
-    private void videoProcessing() {
-        processingProgressBarContainer.setVisibility(View.VISIBLE);
-        playImageView.setVisibility(View.GONE);
+        shareButton.setEnabled(true);
+        thumbnailImageView.setEnabled(true);
     }
 
     @Override

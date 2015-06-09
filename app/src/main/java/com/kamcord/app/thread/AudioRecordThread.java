@@ -1,7 +1,6 @@
 package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -12,16 +11,15 @@ import android.media.MediaMuxer;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.PowerManager;
 
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.ApplicationStateUtils;
 import com.kamcord.app.utils.FileSystemManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CyclicBarrier;
 
@@ -65,7 +63,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
 
         switch (msg.what) {
             case Message.RECORD_CLIP:
-                audioNumber++;
                 try {
                     Thread.sleep(RecordingService.DROP_FIRST_MS);
                 } catch (InterruptedException e) {
@@ -77,7 +74,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 break;
 
             case Message.POLL:
-                if (!isGameInForeground()) {
+                if (!ApplicationStateUtils.isGameInForeground(mRecordingSession.getGamePackageName())) {
                     mHandler.removeMessages(Message.POLL);
                     mHandler.sendEmptyMessageDelayed(Message.POLL, 100);
                 } else {
@@ -95,31 +92,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     public void setHandler(Handler handler)
     {
         this.mHandler = handler;
-    }
-
-    private boolean isGameInForeground() {
-
-        if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
-        {
-            return false;
-        }
-
-        if( ((KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode() )
-        {
-            return false;
-        }
-
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = activityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
-            if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                for (String pkgName : runningAppProcessInfo.pkgList) {
-                    if (pkgName.equals(mRecordingSession.getGamePackageName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     private void recordUntilBackground() {
@@ -157,7 +129,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             }
             presentationStartUs = -1;
             mAudioRecord.startRecording();
-            while(isGameInForeground()) {
+            while(ApplicationStateUtils.isGameInForeground(mRecordingSession.getGamePackageName())) {
                 queueEncoder();
                 drainEncoder(info);
             }
@@ -245,13 +217,18 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             mAudioRecord = null;
         }
         if (mMediaMuxer != null) {
-            if (mMuxerStart && mMuxerWrite) {
+            if (mMuxerStart) {
                 mMediaMuxer.stop();
             }
+            mMuxerStart = false;
+
+            if( mMuxerWrite ) {
+                audioNumber++;
+            }
+            mMuxerWrite = false;
+
             mMediaMuxer.release();
             mMediaMuxer = null;
-            mMuxerStart = false;
-            mMuxerWrite = false;
         }
     }
 
