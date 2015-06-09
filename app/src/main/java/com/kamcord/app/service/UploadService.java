@@ -75,7 +75,7 @@ public class UploadService extends IntentService {
         currentlyUploadingSession = null;
     }
 
-    public UploadService getInstance() {
+    public static UploadService getInstance() {
         return sInstance;
     }
 

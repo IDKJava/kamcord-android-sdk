@@ -23,6 +23,7 @@ import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.view.DynamicRecyclerView;
@@ -30,7 +31,9 @@ import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Queue;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -81,12 +84,14 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
     @Override
     public void onResume() {
         super.onResume();
-
+        handleUploadService();
+        Uploader.subscribe(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Uploader.unsubscribe(this);
     }
 
     public void initKamcordProfileFragment() {
@@ -147,6 +152,34 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
                 }
             }
         });
+    }
+
+    private void handleUploadService() {
+        {
+            Iterator<ProfileItem> iterator = mProfileList.iterator();
+            while (iterator.hasNext()) {
+                ProfileItem item = iterator.next();
+                if (item.getType() == ProfileItem.Type.UPLOAD_PROGRESS) {
+                    iterator.remove();
+                }
+            }
+        }
+
+        {
+            UploadService uploadService = UploadService.getInstance();
+            if (uploadService != null) {
+                Queue<RecordingSession> uploadQueue = uploadService.getQueuedSessions();
+                Iterator<RecordingSession> iterator = uploadQueue.iterator();
+                while( iterator.hasNext() ) {
+
+                }
+
+                RecordingSession session = UploadService.getInstance().getCurrentlyUploadingSession();
+                if (session != null) {
+//                mProfileList.add(1, );
+                }
+            }
+        }
     }
 
     public void loadMoreItems() {
