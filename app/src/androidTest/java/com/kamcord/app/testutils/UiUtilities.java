@@ -1,10 +1,14 @@
 package com.kamcord.app.testutils;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Point;
+import android.net.Uri;
+import android.os.RemoteException;
+import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.BySelector;
@@ -17,6 +21,8 @@ import android.support.test.uiautomator.Until;
 import android.view.Surface;
 
 import com.kamcord.app.R;
+
+import java.util.ArrayList;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -41,7 +47,11 @@ public class UiUtilities {
     public static final String RIPPLE_TEST_MAIN_RES = "com.kamcord.ripples:id/mainlayout";
     public static final String ANDROID_DISMISS_TASK = "com.android.systemui:id/dismiss_task";
     public static final String ANDROID_SYSTEM_BUTTON1 = "android:id/button1";
+    public static final String ANDROID_SETTINGS_L_BUTTON = "com.android.settings:id/left_button";
     public static final String ANDROID_NOTIFICATION_HEADER = "com.android.systemui:id/header";
+    public static final String ANDROID_APP_ICON  = "com.android.systemui:id/application_icon";
+    public static final String ANDROID_SETTINGS_APP_RESID = "com.android.settings:id/name";
+    public static final String ANDROID_RUNNING_TASK_LIST = "android:id/list";
     public static final int UI_INTERACTION_DELAY_MS = 1000;
 
     public static final UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
@@ -70,11 +80,18 @@ public class UiUtilities {
     public static UiObject2 findUiObj(int id, UiObjIdType idType, UiObjSelType selType) {
         return findUiObj(id, idType, selType, UI_TIMEOUT_MS);
     }
-
     public static UiObject2 findUiObj(int id,
                                       UiObjIdType idType,
                                       UiObjSelType selType,
                                       int timeOut) {
+        return findUiObj(id, idType, selType, timeOut, true);
+    }
+
+    public static UiObject2 findUiObj(int id,
+                                      UiObjIdType idType,
+                                      UiObjSelType selType,
+                                      int timeOut,
+                                      boolean failIfNotFound) {
         String idString;
         switch (idType) {
             case Res:
@@ -87,21 +104,10 @@ public class UiUtilities {
                 throw new UnsupportedOperationException("Object Id type not supported!");
         }
 
-        BySelector objSelector;
-        switch (selType) {
-            case Res:
-                objSelector = By.res(idString);
-                break;
-            case Txt:
-                //TODO: Change to 'starts with' or 'contains'?? We may need to less restrictive with text!
-                objSelector = By.text(idString);
-                break;
-            default:
-                throw new UnsupportedOperationException("UI Selector type not supported!");
-        }
+        BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut);
+        assertTrue("UI Object failed to load!", notTimedOut && failIfNotFound);
         return mDevice.findObject(objSelector);
     }
     public static UiObject2 findUiObjInObj(UiObject2 parentObj,
@@ -109,6 +115,14 @@ public class UiUtilities {
                                            UiObjIdType idType,
                                            UiObjSelType selType,
                                            int timeOut) {
+        return findUiObjInObj(parentObj, id, idType, selType, timeOut, true);
+    }
+    public static UiObject2 findUiObjInObj(UiObject2 parentObj,
+                                           int id,
+                                           UiObjIdType idType,
+                                           UiObjSelType selType,
+                                           int timeOut,
+                                           boolean failIfNotFound) {
         //TODO: Refactor this into the findUiObj
         String idString;
         switch (idType) {
@@ -122,21 +136,29 @@ public class UiUtilities {
                 throw new UnsupportedOperationException("Object Id type not supported!");
         }
 
-        BySelector objSelector;
-        switch (selType) {
-            case Res:
-                objSelector = By.res(idString);
-                break;
-            case Txt:
-                //TODO: Change to 'starts with' or 'contains'?? We may need to less restrictive with text!
-                objSelector = By.text(idString);
-                break;
-            default:
-                throw new UnsupportedOperationException("UI Selector type not supported!");
-        }
+        BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = parentObj.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut);
+        assertTrue("UI Object failed to load!", notTimedOut && failIfNotFound);
+        return parentObj.findObject(objSelector);
+    }
+    public static UiObject2 findUiObjInObj(UiObject2 parentObj,
+                                           String idString,
+                                           UiObjSelType selType,
+                                           int timeOut)
+    {
+        return findUiObjInObj(parentObj, idString, selType, timeOut, true);
+    }
+    public static UiObject2 findUiObjInObj(UiObject2 parentObj,
+                                           String idString,
+                                           UiObjSelType selType,
+                                           int timeOut,
+                                           boolean failIfNotFound) {
+
+        BySelector objSelector = getSelector(selType, idString);
+
+        boolean notTimedOut = parentObj.wait(Until.hasObject(objSelector), timeOut);
+        assertTrue("UI Object failed to load!", notTimedOut && failIfNotFound);
         return parentObj.findObject(objSelector);
     }
     public static void loseUiObj(int id,
@@ -155,18 +177,7 @@ public class UiUtilities {
                 throw new UnsupportedOperationException("Object Id type not supported!");
         }
 
-        BySelector objSelector;
-        switch (selType) {
-            case Res:
-                objSelector = By.res(idString);
-                break;
-            case Txt:
-                //TODO: Change to 'starts with' or 'contains'?? We may need to less restrictive with text!
-                objSelector = By.text(idString);
-                break;
-            default:
-                throw new UnsupportedOperationException("UI Selector type not supported!");
-        }
+        BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = mDevice.wait(Until.gone(objSelector), timeOut);
         assertTrue("UI Object failed to load!", notTimedOut);
@@ -180,26 +191,12 @@ public class UiUtilities {
         return findUiObj(text, selType, timeOut, true);
     }
     public static UiObject2 findUiObj(String text, UiObjSelType selType, int timeOut, boolean failIfNotFound ) {
-        BySelector objSelector;
-        switch (selType) {
-            case Res:
-                objSelector = By.res(text);
-                break;
-            case Txt:
-                //TODO: Change to 'starts with' or 'contains'?? We may need to less restrictive with text!
-                objSelector = By.text(text);
-                break;
-            case Des:
-                objSelector = By.desc(text);
-                break;
-            default:
-                throw new UnsupportedOperationException("UI Selector type not supported!");
-        }
+        BySelector objSelector = getSelector(selType, text);
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
-        if (failIfNotFound) {
-            assertTrue("UI Object failed to load!", notTimedOut);
-        }
+
+        assertTrue("UI Object failed to load!", notTimedOut && failIfNotFound);
+
         return mDevice.findObject(objSelector);
     }
 
@@ -272,23 +269,7 @@ public class UiUtilities {
         return swipePoints;
     }
 
-    public static void startApplication(String appPackageName) {
-        final String launcherPackage = getLauncherPackageName();
 
-        assertThat(launcherPackage, notNullValue());
-
-        mDevice.wait(Until.hasObject(By.pkg(launcherPackage).depth(0)), APP_TIMEOUT_MS);
-
-        Context context = InstrumentationRegistry.getContext();
-
-        final Intent intent = context.getPackageManager()
-                .getLaunchIntentForPackage(appPackageName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.startActivity(intent);
-
-        boolean notTimedOut = mDevice.wait(Until.hasObject(By.pkg(KAMCORD_APP_PACKAGE).depth(0)), APP_TIMEOUT_MS);
-        assertTrue("Application load timed out!", notTimedOut);
-    }
 
     public static void scrollToBeginning(int id){
         //safe delay? 25ms for now, may need more.
@@ -311,7 +292,110 @@ public class UiUtilities {
         sleep(sleepAfterMs);
     }
     public static void executeTouchPattern(Point[] pattern, int steps) {
-        mDevice.swipe(validateSwipe(pattern),steps);
+        mDevice.swipe(validateSwipe(pattern), steps);
+    }
+
+    private static BySelector getSelector(UiObjSelType selType, String text){
+        BySelector objSelector;
+        switch (selType) {
+            case Res:
+                objSelector = By.res(text);
+                break;
+            case Txt:
+                //TODO: Change to 'starts with' or 'contains'?? We may need to less restrictive with text!
+                objSelector = By.text(text);
+                break;
+            case Des:
+                objSelector = By.desc(text);
+                break;
+            default:
+                throw new UnsupportedOperationException("UI Selector type not supported!");
+        }
+        return objSelector;
+    }
+
+    public static void closeApp(String appPackageName){
+        try {
+            Context context = InstrumentationRegistry.getContext();
+            Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            settingsIntent.setData(Uri.parse("package:" + appPackageName));
+            context.startActivity(settingsIntent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+            assertTrue("App could not be killed!", false);
+        }
+        findUiObj(ANDROID_SETTINGS_L_BUTTON, UiObjSelType.Res, UI_TIMEOUT_MS).click();
+        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS).click();
+
+    }
+    
+    public static void stopService(String appPackageName){
+        try {
+            Context context = InstrumentationRegistry.getContext();
+            Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
+            settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(settingsIntent);
+        } catch (ActivityNotFoundException e) {
+            e.printStackTrace();
+            assertTrue("App could not be killed!", false);
+        }
+        findUiObj("Running", UiObjSelType.Txt, UI_TIMEOUT_MS).click();
+        //findUiObj("com.android.settings:id/title", UiObjSelType.Res, UI_TIMEOUT_MS);
+        UiObject2 appService =  findAppItem(getStrByID(R.string.app_name));
+        if(appService != null){
+            appService.click();
+            findUiObj(ANDROID_SETTINGS_L_BUTTON, UiObjSelType.Res, UI_TIMEOUT_MS).click();
+        } else {
+            //nothing to be done service not listed.
+        }
+    }
+
+    public static UiObject2 findAppItem(String appName){
+        UiObject2 appObj = null;
+        try {
+            //TODO: Refactor to move the try catch block to utilities.
+            ArrayList<String> appTitles = new ArrayList<>();
+
+            //scrollable child.
+            UiScrollable appItems
+                    = new UiScrollable(new UiSelector()
+                    .resourceId(ANDROID_RUNNING_TASK_LIST));
+
+            assertTrue("Not scrollable!", appItems.isScrollable());
+
+            //larger number for max swipes.
+            appItems.flingToBeginning(100);
+            sleep(UI_INTERACTION_DELAY_MS);
+
+
+            boolean unique = true;
+            boolean found = false;
+            while (unique && !found) {
+                unique = false;
+                mDevice.waitForIdle();
+                for (UiObject2 appTitle :
+                        mDevice.findObjects(By.res(ANDROID_SETTINGS_APP_RESID))) {
+                    String title = appTitle.getText();
+                    if (!appTitles.contains(title)) {
+                        appTitles.add(title);
+                        unique = true;
+                    }
+                    if (title.equals(appName)) {
+                        found = true;
+                        appObj = appTitle;
+                        break;
+                    }
+                }
+                if(!found) {
+                    appItems.flingForward();
+                }
+            }
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+            assertTrue("Object not found!", false);
+        }
+        return appObj;
     }
 }
 

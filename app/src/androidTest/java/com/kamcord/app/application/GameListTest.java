@@ -27,7 +27,7 @@ public class GameListTest extends RecordAndPostTestBase {
         doLogin();
         mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
 
-        findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS)
+        findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des, APP_TIMEOUT_MS)
                 .click();
 
         ArrayList<String> gameTitles = new ArrayList<>();
@@ -59,7 +59,7 @@ public class GameListTest extends RecordAndPostTestBase {
         doLogin();
         mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
 
-        findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS)
+        findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des, APP_TIMEOUT_MS)
                 .click();
 
         ArrayList<String> gameTitles = new ArrayList<>();
@@ -91,7 +91,7 @@ public class GameListTest extends RecordAndPostTestBase {
         //TODO: Check for content not just count.
         doLogin();
 
-            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt).click();
+            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des).click();
 
             //main container for games tiles
             waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);

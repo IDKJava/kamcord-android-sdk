@@ -20,7 +20,7 @@ public class ProfileTest extends TestBase {
     public void testProfileLoadLoggedIn()
     {
         doLogin();
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Txt).click();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         //TODO: Add test member method call
         verifyProfileUserInfo();
     }
@@ -29,10 +29,10 @@ public class ProfileTest extends TestBase {
     public void testProfileLoadLoggedOut()
     {
         skipLogin();
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Txt).click();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         findUiObj(R.id.signInPromptButton, UiObjIdType.Res, UiObjSelType.Res).click();
         handleWelcomeLoginView();
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Txt).click();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         //TODO: Add test member method call
         verifyProfileUserInfo();
     }
@@ -40,7 +40,7 @@ public class ProfileTest extends TestBase {
     public void testProfileVideoLike(){
         //TODO: find a way to cover more than just video #1
         doLogin();
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Txt).click();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         waitForTileLoad(R.id.profile_recyclerview, APP_TIMEOUT_MS);
 
         UiObject2 likeObj =
@@ -70,7 +70,7 @@ public class ProfileTest extends TestBase {
     public void testProfileVideoView(){
         //TODO: find a way to cover more than just video #1
         doLogin();
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Txt).click();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         waitForTileLoad(R.id.profile_recyclerview, APP_TIMEOUT_MS);
 
         UiObject2 viewObj =

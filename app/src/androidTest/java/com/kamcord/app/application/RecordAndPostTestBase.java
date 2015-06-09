@@ -136,7 +136,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
 
         if (failIfNotLoggedIn) {
-            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt);
+            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des);
         } else {
             handleWelcomeLoginView();
             findUiObj(R.id.shareButton, UiObjIdType.Res, UiObjSelType.Res).click();
@@ -155,7 +155,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         mDevice.pressBack();
         //check if profile page works.
 
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Txt).click();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         //is it there?
         findUiObj(R.id.userProfileInfo, UiObjIdType.Res, UiObjSelType.Res);
     }
@@ -172,11 +172,11 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
     protected UiObject2 getRecordButtonForGame(String gameName, boolean start){
 
-        UiObject2 gameLabel = findUiObj(R.id.gameNameTextView, UiObjIdType.Res, UiObjSelType.Res);
+        UiObject2 gameLabel = findUiObj(gameName, UiObjSelType.Txt);
 
         UiObject2 completeGameItem = gameLabel.getParent().getParent();
 
-        UiObject2 button = findUiObjInObj(completeGameItem, R.id.recordImageButton,
+        UiObject2 button = findUiObjInObj(completeGameItem, R.id.gameActionImageButton,
                 UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
         String buttonDescExpected;
         if(start) {

@@ -2,6 +2,8 @@ package com.kamcord.app.application;
 
 import android.util.EventLogTags;
 
+import com.kamcord.app.R;
+
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
@@ -22,7 +24,7 @@ public class TestFailureRule extends TestWatcher {
 
     @Override
     protected void failed(Throwable e, Description description) {
-        forceStopApp(KAMCORD_APP_PACKAGE);
-        forceStopApp(RIPPLE_TEST_APP_PACKAGE);
+        stopService(KAMCORD_APP_PACKAGE);
+        closeApp(RIPPLE_TEST_APP_PACKAGE);
     }
 }

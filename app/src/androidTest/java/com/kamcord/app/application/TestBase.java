@@ -8,6 +8,7 @@ import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
+import android.test.AndroidTestCase;
 
 import com.kamcord.app.R;
 
@@ -19,6 +20,7 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 
 import static com.kamcord.app.testutils.UiUtilities.*;
+import static com.kamcord.app.testutils.SystemUtilities.*;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -138,8 +140,7 @@ public abstract class TestBase {
         try {
             //TODO: Refactor to move the try catch block to utilities.
             ArrayList<String> gameTitles = new ArrayList<>();
-
-            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS)
+            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des, APP_TIMEOUT_MS)
                     .click();
 
             waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);

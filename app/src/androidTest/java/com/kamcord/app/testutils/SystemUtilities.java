@@ -1,8 +1,19 @@
 package com.kamcord.app.testutils;
 
+
+import android.content.Context;
+import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.Until;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static com.kamcord.app.testutils.UiUtilities.*;
 
 /**
  * Created by Mehmet on 6/1/15.
@@ -35,8 +46,27 @@ public class SystemUtilities {
             return e.getStackTrace().toString();
         }
     }
+    public static void startApplication(String appPackageName) {
+        final String launcherPackage = getLauncherPackageName();
 
-    public static void forceStopApp(String appPackageName){
-        executeShellCommand(String.format("am force-stop %s", appPackageName));
+        assertThat(launcherPackage, notNullValue());
+
+        mDevice.wait(Until.hasObject(By.pkg(launcherPackage).depth(0)), APP_TIMEOUT_MS);
+
+        Context context = InstrumentationRegistry.getContext();
+
+        final Intent intent = context.getPackageManager()
+                .getLaunchIntentForPackage(appPackageName);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.stopService(intent);
+        context.startActivity(intent);
+
+
+        boolean notTimedOut = mDevice.wait(Until.hasObject(By.pkg(KAMCORD_APP_PACKAGE).depth(0)), APP_TIMEOUT_MS);
+        assertTrue("Application load timed out!", notTimedOut);
     }
+
+
+
 }
