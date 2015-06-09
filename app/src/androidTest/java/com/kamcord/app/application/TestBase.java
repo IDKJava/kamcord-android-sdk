@@ -31,8 +31,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 21)
 public abstract class TestBase {
-    @Rule
-    public TestFailureRule mTestFailureRule = new TestFailureRule();
+    //@Rule
+    //public TestFailureRule mTestFailureRule = new TestFailureRule();
 
     @Before
     public void setUp(){
@@ -108,7 +108,10 @@ public abstract class TestBase {
                 mDevice.hasObject(By.res(getResByID(R.id.loginButton)))) {
             return;
         } else {
-            findUiObj(OVERFLOW_DESCRIPTION, UiObjSelType.Des,  APP_TIMEOUT_MS).click();
+            findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
+                    .click();
+            findUiObj(R.id.profile_action_menu, UiObjIdType.Res, UiObjSelType.Res, APP_TIMEOUT_MS)
+                    .click();
             findUiObj(R.string.action_signout, UiObjIdType.Str, UiObjSelType.Txt).click();
             findUiObj(R.id.fragment_welcome_layout, UiObjIdType.Res, UiObjSelType.Res);
         }

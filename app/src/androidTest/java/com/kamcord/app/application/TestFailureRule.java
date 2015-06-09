@@ -24,7 +24,7 @@ public class TestFailureRule extends TestWatcher {
 
     @Override
     protected void failed(Throwable e, Description description) {
-        stopService(KAMCORD_APP_PACKAGE);
-        closeApp(RIPPLE_TEST_APP_PACKAGE);
+        //stopService(KAMCORD_APP_PACKAGE);
+        //closeApp(RIPPLE_TEST_APP_PACKAGE);
     }
 }

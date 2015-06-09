@@ -53,6 +53,7 @@ public class UiUtilities {
     public static final String ANDROID_SETTINGS_APP_RESID = "com.android.settings:id/name";
     public static final String ANDROID_RUNNING_TASK_LIST = "android:id/list";
     public static final int UI_INTERACTION_DELAY_MS = 1000;
+    public static final int MAX_CLICK_TRIALS = 3;
 
     public static final UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
 
@@ -107,7 +108,7 @@ public class UiUtilities {
         BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut && failIfNotFound);
+        assertTrue("UI Object failed to load!", notTimedOut || !failIfNotFound);
         return mDevice.findObject(objSelector);
     }
     public static UiObject2 findUiObjInObj(UiObject2 parentObj,
@@ -139,7 +140,7 @@ public class UiUtilities {
         BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = parentObj.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut && failIfNotFound);
+        assertTrue("UI Object failed to load!", notTimedOut || !failIfNotFound);
         return parentObj.findObject(objSelector);
     }
     public static UiObject2 findUiObjInObj(UiObject2 parentObj,
@@ -158,7 +159,7 @@ public class UiUtilities {
         BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = parentObj.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut && failIfNotFound);
+        assertTrue("UI Object failed to load!", notTimedOut || !failIfNotFound);
         return parentObj.findObject(objSelector);
     }
     public static void loseUiObj(int id,
@@ -195,7 +196,7 @@ public class UiUtilities {
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
 
-        assertTrue("UI Object failed to load!", notTimedOut && failIfNotFound);
+        assertTrue("UI Object failed to load!", notTimedOut || !failIfNotFound);
 
         return mDevice.findObject(objSelector);
     }
@@ -325,11 +326,18 @@ public class UiUtilities {
             e.printStackTrace();
             assertTrue("App could not be killed!", false);
         }
-        findUiObj(ANDROID_SETTINGS_L_BUTTON, UiObjSelType.Res, UI_TIMEOUT_MS).click();
+        UiObject2 obj =
+                findUiObj(ANDROID_SETTINGS_L_BUTTON, UiObjSelType.Res, UI_TIMEOUT_MS);
+        if(obj != null && obj.isClickable()) {
+            obj.click();
+         } else {
+            return;
+        }
+
         findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS).click();
 
     }
-    
+
     public static void stopService(String appPackageName){
         try {
             Context context = InstrumentationRegistry.getContext();
@@ -341,13 +349,18 @@ public class UiUtilities {
             assertTrue("App could not be killed!", false);
         }
         findUiObj("Running", UiObjSelType.Txt, UI_TIMEOUT_MS).click();
+
         //findUiObj("com.android.settings:id/title", UiObjSelType.Res, UI_TIMEOUT_MS);
-        UiObject2 appService =  findAppItem(getStrByID(R.string.app_name));
-        if(appService != null){
-            appService.click();
-            findUiObj(ANDROID_SETTINGS_L_BUTTON, UiObjSelType.Res, UI_TIMEOUT_MS).click();
+        UiObject2 obj =  findAppItem(getStrByID(R.string.app_name));
+        if(obj != null){
+            obj.click();
+            obj = findUiObj(ANDROID_SETTINGS_L_BUTTON, UiObjSelType.Res, UI_TIMEOUT_MS, false);
+            if(obj != null && obj.isClickable()){
+                obj.click();
+            }
         } else {
             //nothing to be done service not listed.
+            return;
         }
     }
 

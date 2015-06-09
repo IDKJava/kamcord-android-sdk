@@ -9,6 +9,7 @@ import com.kamcord.app.R;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static com.kamcord.app.testutils.UiUtilities.*;
+import static org.junit.Assert.fail;
 
 /**
  * Created by Mehmet on 5/27/15.
@@ -39,13 +40,19 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //wait for load!!!!
         findGame(gameName);
 
-        getRecordButtonForGame(gameName, true).longClick();
+        getRecordButtonForGame(gameName, true).click();
+        UiObject2 obj =  findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS, false);
+        int clickTrials = 0;
 
-        //Ack the message
-        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res).click();
-
+        while(obj == null && clickTrials < MAX_CLICK_TRIALS){
+            sleep(UI_INTERACTION_DELAY_MS);
+            getRecordButtonForGame(gameName, true).click();
+            obj = findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS);
+            clickTrials++;
+        }
+        obj.click();
         //test app loads?
-        findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, APP_TIMEOUT_MS);
+        findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, UI_TIMEOUT_MS, false);
 
         //pattern exec time hardcoded for now.
         int miniSleepInMs = 2000;
