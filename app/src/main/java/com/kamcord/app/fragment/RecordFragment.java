@@ -14,7 +14,6 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -70,7 +69,7 @@ public class RecordFragment extends Fragment implements
     private Game mSelectedGame = null;
 
     private List<RecordItem> mRecordItemList = new ArrayList<>();
-    private List<Game> mGameList = new ArrayList();
+    private List<Game> mGameList = new ArrayList<>();
     private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     @Override
@@ -78,7 +77,17 @@ public class RecordFragment extends Fragment implements
         View v = inflater.inflate(R.layout.record_tab, container, false);
         ButterKnife.inject(this, v);
         initKamcordRecordFragment(v);
+        if( !recordingServiceConnection.isBound() ) {
+            getActivity().bindService(new Intent(getActivity(), RecordingService.class), recordingServiceConnection, Context.BIND_AUTO_CREATE);
+        }
         return v;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+        getActivity().unbindService(recordingServiceConnection);
     }
 
     @Override
@@ -98,7 +107,7 @@ public class RecordFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().bindService(new Intent(getActivity(), RecordingService.class), recordingServiceConnection, 0);
+        handleServiceRunning();
         boolean gameListChanged = false;
         for (RecordItem item : mRecordItemList) {
             Game game = item.getGame();
@@ -181,7 +190,7 @@ public class RecordFragment extends Fragment implements
 
     private void handleServiceRunning() {
         if (recordingServiceConnection.isServiceRecording()) {
-            RecordingSession recordingSession = .getRecordingSession();
+            RecordingSession recordingSession = recordingServiceConnection.getRecordingSession();
             if (recordingSession != null) {
                 for (Game game : mGameList) {
                     if (game.play_store_id.equals(recordingSession.getGamePackageName())) {
@@ -246,8 +255,10 @@ public class RecordFragment extends Fragment implements
                             .getMediaProjection(resultCode, data);
                     RecordingSession recordingSession = new RecordingSession(mSelectedGame);
 
-                    RecordingService.initializeForRecording(projection, recordingSession);
-                    activity.startService(new Intent(activity, RecordingService.class));
+                    boolean didStart = recordingServiceConnection.startRecording(projection, recordingSession);
+                    if( !didStart ) {
+                        Log.e(TAG, "DIDN'T START RECORDING!");
+                    }
                 } catch (ActivityNotFoundException e) {
                     // TODO: show the user something about not finding the game.
                     Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);
@@ -331,11 +342,11 @@ public class RecordFragment extends Fragment implements
 
         if( game.isInstalled ) {
 
-            if (!RecordingService.isRunning()) {
+            if (!recordingServiceConnection.isServiceRecording()) {
                 mSelectedGame = game;
                 obtainMediaProjection();
             } else {
-                final RecordingSession recordingSession = RecordingService.getInstance().getRecordingSession();
+                final RecordingSession recordingSession = recordingServiceConnection.getRecordingSession();
                 if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
                     if( !recordingSession.hasRecordedFrames() ) {
                         new AlertDialog.Builder(getActivity())
@@ -386,8 +397,7 @@ public class RecordFragment extends Fragment implements
     }
 
     private void stopRecording() {
-        FragmentActivity activity = getActivity();
-        activity.stopService(new Intent(activity, RecordingService.class));
+        recordingServiceConnection.stopRecording();
         for( Game game : mGameList)
         {
             game.isRecording = false;
@@ -426,6 +436,10 @@ public class RecordFragment extends Fragment implements
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             recordingService = null;
+        }
+
+        public boolean isBound() {
+            return recordingService != null;
         }
 
         public boolean startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {

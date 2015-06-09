@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.AudioRecordThread;
 import com.kamcord.app.thread.RecordHandlerThread;
@@ -23,8 +22,8 @@ public class RecordingService extends Service {
     private static int NOTIFICATION_ID = 3141592;
 
     private final IBinder mBinder = new InstanceBinder();
-    private MediaProjection sMediaProjection = null;
-    private RecordingSession sRecordingSession = null;
+    private MediaProjection mMediaProjection = null;
+    private RecordingSession mRecordingSession = null;
 
     public static final long DROP_FIRST_MS = 3000;
 
@@ -32,7 +31,6 @@ public class RecordingService extends Service {
     private AudioRecordThread mAudioRecordThread;
     private Handler mHandler;
     private Handler mAudioRecordHandler;
-    private RecordingSession recordingSession;
 
     public RecordingService() {
         super();
@@ -45,13 +43,11 @@ public class RecordingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if( sMediaProjection != null && sRecordingSession != null ) {
+        if( mMediaProjection != null && mRecordingSession != null ) {
             // Notification Setting
             NotificationUtils.initializeWith(this.getApplicationContext());
             startForeground(NOTIFICATION_ID, NotificationUtils.getNotification());
-            startRecording(sMediaProjection, sRecordingSession);
-            sMediaProjection = null;
-            sRecordingSession = null;
+            startRecordingThreads();
         }
         return START_STICKY;
     }
@@ -67,6 +63,7 @@ public class RecordingService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.v("FindMe", "ONBIND CALLED!!!");
         return mBinder;
     }
 
@@ -74,20 +71,27 @@ public class RecordingService extends Service {
     public synchronized void startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
         if (mRecordHandlerThread == null || !mRecordHandlerThread.isAlive()) {
 
-            NotificationUtils.updateNotification(getResources().getString(R.string.recording));
+            mMediaProjection = mediaProjection;
+            mRecordingSession = recordingSession;
+            this.startService(new Intent(this, RecordingService.class));
 
-            this.recordingSession = recordingSession;
+        }
+    }
+
+    private void startRecordingThreads() {
+        if( mRecordHandlerThread == null || !mRecordHandlerThread.isAlive()) {
 
             CyclicBarrier clipStartBarrier = new CyclicBarrier(2);
 
-            mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession, clipStartBarrier);
+            mRecordHandlerThread = new RecordHandlerThread(mMediaProjection, getApplicationContext(), mRecordingSession, clipStartBarrier);
             mRecordHandlerThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
             mRecordHandlerThread.start();
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
             mRecordHandlerThread.setHandler(mHandler);
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.POLL);
+            mMediaProjection = null;
 
-            mAudioRecordThread = new AudioRecordThread(getApplicationContext(), recordingSession, clipStartBarrier);
+            mAudioRecordThread = new AudioRecordThread(getApplicationContext(), mRecordingSession, clipStartBarrier);
             mAudioRecordThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
             mAudioRecordThread.start();
             mAudioRecordHandler = new Handler(mAudioRecordThread.getLooper(), mAudioRecordThread);
@@ -119,13 +123,15 @@ public class RecordingService extends Service {
 
     public RecordingSession getRecordingSession()
     {
-        return recordingSession;
+        return mRecordingSession;
     }
 
     Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread thread, Throwable throwable) {
             try {
+                Log.w(TAG, "Uncaught exception: ");
+                throwable.printStackTrace();
                 stopForeground(true);
             } catch( Exception e ) {
             }
