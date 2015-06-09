@@ -171,12 +171,13 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
                 Queue<RecordingSession> uploadQueue = uploadService.getQueuedSessions();
                 Iterator<RecordingSession> iterator = uploadQueue.iterator();
                 while( iterator.hasNext() ) {
-
+                    mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, iterator.next()));
                 }
 
                 RecordingSession session = UploadService.getInstance().getCurrentlyUploadingSession();
                 if (session != null) {
-//                mProfileList.add(1, );
+                    mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
+                    onUploadStart(session);
                 }
             }
         }
@@ -271,16 +272,44 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     @Override
     public void onUploadStart(RecordingSession recordingSession) {
-
+        updateUploadingSessionProgress(recordingSession, 0f);
     }
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, float progress) {
-
+        updateUploadingSessionProgress(recordingSession, progress);
     }
 
     @Override
     public void onUploadFinish(RecordingSession recordingSession, boolean success) {
+        if( success ) {
+            int index = 0;
+            Iterator<ProfileItem> iterator = mProfileList.iterator();
+            while( iterator.hasNext() ) {
+                ProfileItem item = iterator.next();
+                if( item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
+                        && recordingSession.equals(item.getSession()) ) {
+                        iterator.remove();
+                        mProfileAdapter.notifyItemRemoved(index);
+                    break;
+                }
+                index++;
+            }
+        } else {
+            updateUploadingSessionProgress(recordingSession, RecordingSession.UPLOAD_FAILED_PROGRESS);
+        }
+    }
 
+    private void updateUploadingSessionProgress(RecordingSession session, float progress) {
+        int index = 0;
+        for(ProfileItem item : mProfileList) {
+            if( item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
+                    && session.equals(item.getSession()) ) {
+                item.getSession().setUploadProgress(0f);
+                mProfileAdapter.notifyItemChanged(index);
+                break;
+            }
+            index++;
+        }
     }
 }

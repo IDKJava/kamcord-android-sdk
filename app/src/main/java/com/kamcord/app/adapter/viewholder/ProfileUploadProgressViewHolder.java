@@ -24,6 +24,8 @@ public class ProfileUploadProgressViewHolder extends RecyclerView.ViewHolder {
     public ImageButton uploadFailedImageButton;
     @InjectView(R.id.uploadProgressBar)
     public ProgressBar uploadProgressBar;
+    @InjectView(R.id.videoTitleTextView)
+    public TextView videoTitleTextView;
 
     public ProfileUploadProgressViewHolder(final View itemLayoutView) {
         super(itemLayoutView);

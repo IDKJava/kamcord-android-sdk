@@ -3,7 +3,10 @@ package com.kamcord.app.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,7 +36,11 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Request;
+import com.squareup.picasso.RequestHandler;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -198,7 +205,26 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, RecordingSession session) {
+        Picasso picasso = new Picasso.Builder(mContext)
+                .addRequestHandler(new ThumbnailRequestHandler())
+                .build();
+        String path = new File(FileSystemManager.getRecordingSessionCacheDirectory(session), FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath();
+        picasso.load(ThumbnailRequestHandler.SCHEME + ":" + path)
+                .into(viewHolder.thumbnailImageView);
 
+        viewHolder.uploadFailedImageButton.setVisibility(View.GONE);
+        String uploadStatus = null;
+        if( session.getUploadProgress() < 0f ) {
+            uploadStatus = mContext.getString(R.string.queuedForUpload);
+        } else if( session.getUploadProgress() <= 1f ) {
+            uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), session.getUploadProgress() * 100);
+        } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
+            uploadStatus = mContext.getString(R.string.uploadFailed);
+            viewHolder.uploadFailedImageButton.setVisibility(View.VISIBLE);
+        }
+        viewHolder.uploadStatusTextView.setText(uploadStatus);
+
+        viewHolder.videoTitleTextView.setText(session.getVideoTitle());
     }
 
     private void toggleLikeButton(Button likeButton, Video video) {
@@ -288,4 +314,20 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
     };
+
+    private static class ThumbnailRequestHandler extends RequestHandler {
+        public static final String SCHEME = "video";
+
+        @Override
+        public boolean canHandleRequest(Request data) {
+            String scheme = data.uri.getScheme();
+            return SCHEME.equals(scheme);
+        }
+
+        @Override
+        public Result load(Request request, int networkPolicy) throws IOException {
+            Bitmap bm = ThumbnailUtils.createVideoThumbnail(request.uri.getPath(), MediaStore.Images.Thumbnails.MINI_KIND);
+            return new Result(bm, Picasso.LoadedFrom.DISK);
+        }
+    }
 }

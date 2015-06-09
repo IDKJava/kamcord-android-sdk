@@ -12,6 +12,8 @@ import java.util.UUID;
  * Created by pplunkett on 5/15/15.
  */
 public class RecordingSession implements Parcelable {
+    public static final float UPLOAD_FAILED_PROGRESS = Float.MAX_VALUE;
+
     private String uuid;
     private String videoTitle;
     private String videoDescription;
@@ -19,6 +21,7 @@ public class RecordingSession implements Parcelable {
     private String gameServerName;
     private String gamePackageName;
     private boolean recordedFrames = false;
+    private float uploadProgress = -1f;
 
     public RecordingSession()
     {
@@ -63,6 +66,14 @@ public class RecordingSession implements Parcelable {
         this.videoDescription = videoDescription;
     }
 
+    public void setUploadProgress(float uploadProgress) {
+        this.uploadProgress = uploadProgress;
+    }
+
+    public float getUploadProgress() {
+        return uploadProgress;
+    }
+
     public void setRecordedFrames(boolean recordedFrames)
     {
         this.recordedFrames = recordedFrames;
@@ -86,6 +97,7 @@ public class RecordingSession implements Parcelable {
         parcel.writeString(gameServerName);
         parcel.writeString(gamePackageName);
         parcel.writeBooleanArray(new boolean[]{recordedFrames});
+        parcel.writeFloat(uploadProgress);
     }
 
     public static final Parcelable.Creator<RecordingSession> CREATOR
@@ -110,6 +122,7 @@ public class RecordingSession implements Parcelable {
         boolean[] booleanArray = new boolean[1];
         in.readBooleanArray(booleanArray);
         recordedFrames = booleanArray[0];
+        uploadProgress = in.readFloat();
     }
 
     @Override

@@ -21,7 +21,7 @@ public class ProfileViewItemDecoration extends GridViewItemDecoration {
         int adapterPosition = parent.getChildAdapterPosition(view);
         int viewType = parent.getAdapter().getItemViewType(adapterPosition);
         ProfileItem.Type type = ProfileItem.Type.values()[viewType];
-        if( type == ProfileItem.Type.HEADER ) {
+        if( type == ProfileItem.Type.HEADER || type == ProfileItem.Type.UPLOAD_PROGRESS ) {
             outRect.top = 0;
             outRect.left = 0;
             outRect.right = 0;
