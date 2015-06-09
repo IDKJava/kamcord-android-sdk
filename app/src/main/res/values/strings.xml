@@ -61,6 +61,8 @@
     <string name="install">Install</string>
     <string name="shareThisVideo">Share This Video</string>
 
+    <string name="writeADescription">Write a description&#8230;</string>
+    <string name="processing">Processing&#8230;</string>
     <string name="writeATitle">Write the title your video&#8230;</string>
 
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
