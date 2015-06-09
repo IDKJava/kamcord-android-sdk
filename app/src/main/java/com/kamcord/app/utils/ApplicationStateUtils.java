@@ -59,8 +59,8 @@ public class ApplicationStateUtils {
             }
         }
 
-        return isInForeground
-                && (initialForegroundProcesses.isEmpty() ||
-                        (initialForegroundProcesses.size() == currentForegroundProcessNames.size() && currentForegroundProcessNames.containsAll(initialForegroundProcesses)));
+        return isInForeground;
+//                && (initialForegroundProcesses.isEmpty() ||
+//                        (initialForegroundProcesses.size() == currentForegroundProcessNames.size() && currentForegroundProcessNames.containsAll(initialForegroundProcesses)));
     }
 }

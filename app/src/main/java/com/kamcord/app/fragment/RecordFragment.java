@@ -354,7 +354,7 @@ public class RecordFragment extends Fragment implements
                         stopRecording();
                         shareRecording(recordingSession);
                     }
-                } else {
+                } else if( recordingSession != null ) {
                     String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
                     new AlertDialog.Builder(getActivity())
                             .setTitle(R.string.alreadyRecording)

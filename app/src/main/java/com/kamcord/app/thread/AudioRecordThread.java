@@ -219,6 +219,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         if (mMediaMuxer != null) {
             if (mMuxerStart) {
                 mMediaMuxer.stop();
+                throw new IllegalStateException("MUAHAHAHAHAHAHAHA");
             }
             mMuxerStart = false;
 

@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjection;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -16,19 +15,18 @@ import com.kamcord.app.thread.AudioRecordThread;
 import com.kamcord.app.thread.RecordHandlerThread;
 import com.kamcord.app.utils.NotificationUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.CyclicBarrier;
 
 public class RecordingService extends Service {
     private static final String TAG = RecordingService.class.getSimpleName();
     private static int NOTIFICATION_ID = 3141592;
 
-    private static RecordingService sInstance = null;
+    private static WeakReference<RecordingService> sInstanceRef = null;
     private static MediaProjection sMediaProjection = null;
     private static RecordingSession sRecordingSession = null;
 
     public static final long DROP_FIRST_MS = 3000;
-
-    private final IBinder mBinder = new LocalBinder();
 
     private RecordHandlerThread mRecordHandlerThread;
     private AudioRecordThread mAudioRecordThread;
@@ -41,11 +39,11 @@ public class RecordingService extends Service {
     }
 
     public static boolean isRunning() {
-        return sInstance != null;
+        return sInstanceRef != null && sInstanceRef.get() != null;
     }
 
     public static RecordingService getInstance() {
-        return sInstance;
+        return sInstanceRef != null ? sInstanceRef.get() : null;
     }
 
     public static void initializeForRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
@@ -56,7 +54,7 @@ public class RecordingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        sInstance = this;
+        sInstanceRef = new WeakReference<>(this);
     }
 
     @Override
@@ -75,7 +73,7 @@ public class RecordingService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        sInstance = null;
+        sInstanceRef.clear();
         // If we're getting destroyed, we should probably just stop the current recording session.
         stopRecording();
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
@@ -84,7 +82,7 @@ public class RecordingService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return null;
     }
 
     /* Interface for starting and stopping a recording session */
@@ -98,12 +96,14 @@ public class RecordingService extends Service {
             CyclicBarrier clipStartBarrier = new CyclicBarrier(2);
 
             mRecordHandlerThread = new RecordHandlerThread(mediaProjection, getApplicationContext(), recordingSession, clipStartBarrier);
+            mRecordHandlerThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
             mRecordHandlerThread.start();
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
             mRecordHandlerThread.setHandler(mHandler);
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.POLL);
 
             mAudioRecordThread = new AudioRecordThread(getApplicationContext(), recordingSession, clipStartBarrier);
+            mAudioRecordThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
             mAudioRecordThread.start();
             mAudioRecordHandler = new Handler(mAudioRecordThread.getLooper(), mAudioRecordThread);
             mAudioRecordThread.setHandler(mAudioRecordHandler);
@@ -120,10 +120,11 @@ public class RecordingService extends Service {
             mRecordHandlerThread.quitSafely();
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
             mAudioRecordThread.quitSafely();
-            ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
         } else {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }
+        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(NOTIFICATION_ID);
+        stopForeground(true);
     }
 
     public RecordingSession getRecordingSession()
@@ -131,11 +132,15 @@ public class RecordingService extends Service {
         return recordingSession;
     }
 
-    public class LocalBinder extends Binder {
-        public RecordingService getService() {
-            return RecordingService.this;
+    Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
+        @Override
+        public void uncaughtException(Thread thread, Throwable throwable) {
+            try {
+                stopForeground(true);
+            } catch( Exception e ) {
+            }
         }
-    }
+    };
 }
 
 
