@@ -1,7 +1,5 @@
 package com.kamcord.app.thread;
 
-import android.app.ActivityManager;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
@@ -14,7 +12,6 @@ import android.media.projection.MediaProjection;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.PowerManager;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Surface;
@@ -23,13 +20,13 @@ import android.view.WindowManager;
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.ApplicationStateUtils;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.NotificationUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CyclicBarrier;
 
@@ -54,36 +51,34 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private int mTrackIndex = -1;
     private static final String VIDEO_TYPE = "video/avc";
 
-    private ActivityManager mActivityManager;
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
     private long presentationStartUs = -1;
 
-    private static class CodecSettings
-    {
+    private static class CodecSettings {
         private static final int FRAME_RATE = 30;
         private static final int BIT_RATE = 4000000;
         private static final float RESOLUTION_MULTIPLIER = 0.5f;
     }
 
-    private enum AspectRatio
-    {
+    private enum AspectRatio {
         INDETERMINATE,
         PORTRAIT,
         LANDSCAPE,
     }
+
     private AspectRatio aspectRatio = AspectRatio.INDETERMINATE;
 
-    private static class Dimensions
-    {
-        public Dimensions(int width, int height)
-        {
+    private static class Dimensions {
+        public Dimensions(int width, int height) {
             this.width = width;
             this.height = height;
         }
+
         public int width;
         public int height;
     }
+
     private Dimensions codecDimensions = null;
 
     public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier) {
@@ -91,7 +86,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mMediaProjection = mediaProjection;
         this.mContext = context;
 
-        this.mActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
         this.mRecordingSession = recordingSession;
         this.clipStartBarrier = clipStartBarrier;
     }
@@ -101,7 +95,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
 
         switch (msg.what) {
             case Message.RECORD_CLIP:
-                clipNumber++;
                 try {
                     Thread.sleep(RecordingService.DROP_FIRST_MS);
                 } catch (InterruptedException e) {
@@ -114,7 +107,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 break;
 
             case Message.POLL:
-                if (!isGameInForeground()) {
+                if (!ApplicationStateUtils.isGameInForeground(mRecordingSession.getGamePackageName())) {
                     mHandler.removeMessages(Message.POLL);
                     mHandler.sendEmptyMessageDelayed(Message.POLL, 100);
                 } else {
@@ -135,30 +128,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         this.mHandler = handler;
     }
 
-    private boolean isGameInForeground() {
-
-        if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
-        {
-            return false;
-        }
-
-        if( ((KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode() )
-        {
-            return false;
-        }
-
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = mActivityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
-            if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                for (String pkgName : runningAppProcessInfo.pkgList) {
-                    if (pkgName.equals(mRecordingSession.getGamePackageName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 
     private void recordUntilBackground() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -176,8 +145,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             int screenHeight = (int) (metrics.heightPixels * CodecSettings.RESOLUTION_MULTIPLIER);
             int screenDensity = metrics.densityDpi;
 
-            if( (aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight) || (aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth) )
-            {
+            if ((aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight) || (aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth)) {
                 int tmp = screenWidth;
                 screenWidth = screenHeight;
                 screenHeight = tmp;
@@ -197,13 +165,10 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             }
             mVideoEncoder.start();
 
-            try
-            {
+            try {
                 clipStartBarrier.await();
                 clipStartBarrier.reset();
-            }
-            catch(Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             presentationStartUs = -1;
@@ -225,7 +190,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             return;
         }
 
-        if( codecDimensions == null ) {
+        if (codecDimensions == null) {
             MediaCodecInfo.VideoCapabilities videoCapabilities;
 
             MediaCodecInfo.CodecCapabilities codecCapabilities = mVideoEncoder.getCodecInfo().getCapabilitiesForType(VIDEO_TYPE);
@@ -246,8 +211,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             }
         }
 
-        if( aspectRatio == AspectRatio.INDETERMINATE )
-        {
+        if (aspectRatio == AspectRatio.INDETERMINATE) {
             aspectRatio = codecDimensions.width > codecDimensions.height ? AspectRatio.LANDSCAPE : AspectRatio.PORTRAIT;
         }
 
@@ -263,19 +227,14 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         mSurface = mVideoEncoder.createInputSurface();
     }
 
-    private int roundToNearest(int intToRound, int modulus)
-    {
+    private int roundToNearest(int intToRound, int modulus) {
         int rounded = intToRound;
 
-        if( modulus > 0 )
-        {
+        if (modulus > 0) {
             int remainder = intToRound % modulus;
-            if( remainder / 2 < modulus )
-            {
+            if (remainder / 2 < modulus) {
                 rounded -= remainder;
-            }
-            else
-            {
+            } else {
                 rounded += modulus - remainder;
             }
         }
@@ -284,7 +243,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     }
 
     private boolean drainEncoder() {
-        while (isGameInForeground()) {
+        while (ApplicationStateUtils.isGameInForeground(mRecordingSession.getGamePackageName())) {
 
             int encoderStatus = mVideoEncoder.dequeueOutputBuffer(mVideoBufferInfo, 0);
 
@@ -308,12 +267,11 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                     mVideoBufferInfo.size = 0;
                 }
 
-                if (mVideoBufferInfo.size != 0 && mMuxerStart ) {
+                if (mVideoBufferInfo.size != 0 && mMuxerStart) {
                     encodedData.position(mVideoBufferInfo.offset);
                     encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
                     mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
-                    if( presentationStartUs < 0 )
-                    {
+                    if (presentationStartUs < 0) {
                         presentationStartUs = mVideoBufferInfo.presentationTimeUs;
                     }
                     mMuxerWrite = true;
@@ -335,13 +293,24 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mVirtualDisplay.release();
         }
         if (mMuxer != null) {
-            if (mMuxerStart && mMuxerWrite) {
-                mMuxer.stop();
+            if (mMuxerStart) {
+                try {
+                    mMuxer.stop();
+                } catch (Exception e) {
+                }
             }
-            mMuxer.release();
-            mMuxer = null;
             mMuxerStart = false;
+
+            if (mMuxerWrite) {
+                clipNumber++;
+            }
             mMuxerWrite = false;
+
+            try {
+                mMuxer.release();
+            } catch (Exception e) {
+            }
+            mMuxer = null;
         }
         if (mVideoEncoder != null) {
             mVideoEncoder.stop();

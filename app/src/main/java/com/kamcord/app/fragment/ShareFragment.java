@@ -123,6 +123,10 @@ public class ShareFragment extends Fragment {
         } else {
             processingProgressBarContainer.setVisibility(View.VISIBLE);
             playImageView.setVisibility(View.GONE);
+
+            shareButton.setEnabled(false);
+            thumbnailImageView.setEnabled(false);
+
             stitchClipsThread = new StitchClipsThread(recordingSession,
                     getActivity().getApplicationContext(),
                     stitchSuccessListener);
@@ -193,11 +197,9 @@ public class ShareFragment extends Fragment {
         if (playImageView != null) {
             playImageView.setVisibility(View.VISIBLE);
         }
-    }
 
-    private void videoProcessing() {
-        processingProgressBarContainer.setVisibility(View.VISIBLE);
-        playImageView.setVisibility(View.GONE);
+        shareButton.setEnabled(true);
+        thumbnailImageView.setEnabled(true);
     }
 
     @Override

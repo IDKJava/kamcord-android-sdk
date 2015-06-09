@@ -1,7 +1,6 @@
 package com.kamcord.app.thread;
 
 import android.app.ActivityManager;
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -12,16 +11,15 @@ import android.media.MediaMuxer;
 import android.media.MediaRecorder;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.PowerManager;
 
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.ApplicationStateUtils;
 import com.kamcord.app.utils.FileSystemManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CyclicBarrier;
 
@@ -65,7 +63,6 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
 
         switch (msg.what) {
             case Message.RECORD_CLIP:
-                audioNumber++;
                 try {
                     Thread.sleep(RecordingService.DROP_FIRST_MS);
                 } catch (InterruptedException e) {
@@ -77,7 +74,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 break;
 
             case Message.POLL:
-                if (!isGameInForeground()) {
+                if (!ApplicationStateUtils.isGameInForeground(mRecordingSession.getGamePackageName())) {
                     mHandler.removeMessages(Message.POLL);
                     mHandler.sendEmptyMessageDelayed(Message.POLL, 100);
                 } else {
@@ -92,34 +89,8 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         return false;
     }
 
-    public void setHandler(Handler handler)
-    {
+    public void setHandler(Handler handler) {
         this.mHandler = handler;
-    }
-
-    private boolean isGameInForeground() {
-
-        if( !((PowerManager) mContext.getSystemService(Context.POWER_SERVICE)).isInteractive() )
-        {
-            return false;
-        }
-
-        if( ((KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE)).inKeyguardRestrictedInputMode() )
-        {
-            return false;
-        }
-
-        List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = activityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo runningAppProcessInfo : runningAppProcessInfoList) {
-            if (runningAppProcessInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                for (String pkgName : runningAppProcessInfo.pkgList) {
-                    if (pkgName.equals(mRecordingSession.getGamePackageName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     private void recordUntilBackground() {
@@ -129,7 +100,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 CodecSettings.SAMPLE_RATE,
                 AudioFormat.CHANNEL_IN_MONO,
                 AudioFormat.ENCODING_PCM_16BIT,
-                AudioRecord.getMinBufferSize(CodecSettings.SAMPLE_RATE,AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT));
+                AudioRecord.getMinBufferSize(CodecSettings.SAMPLE_RATE, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT));
 
         prepareMediaCodec();
 
@@ -138,13 +109,11 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                     FileSystemManager.getRecordingSessionCacheDirectory(mRecordingSession),
                     String.format(Locale.ENGLISH, "audio%03d.mp4", audioNumber));
             mMediaMuxer = new MediaMuxer(audioFile.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-        } catch( IOException e)
-        {
+        } catch (IOException e) {
             mMediaMuxer = null;
         }
 
-        if( mAudioCodec != null && mMediaMuxer != null)
-        {
+        if (mAudioCodec != null && mMediaMuxer != null) {
             MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
             mAudioCodec.start();
 
@@ -157,7 +126,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
             }
             presentationStartUs = -1;
             mAudioRecord.startRecording();
-            while(isGameInForeground()) {
+            while (ApplicationStateUtils.isGameInForeground(mRecordingSession.getGamePackageName())) {
                 queueEncoder();
                 drainEncoder(info);
             }
@@ -166,24 +135,21 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         }
     }
 
-    private void prepareMediaCodec()
-    {
+    private void prepareMediaCodec() {
         try {
             mAudioCodec = MediaCodec.createEncoderByType("audio/mp4a-latm");
             MediaFormat format = MediaFormat.createAudioFormat("audio/mp4a-latm", CodecSettings.SAMPLE_RATE, 1);
             format.setInteger(MediaFormat.KEY_BIT_RATE, CodecSettings.BIT_RATE);
             format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
             mAudioCodec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        } catch(IOException e)
-        {
+        } catch (IOException e) {
             mAudioCodec = null;
         }
     }
 
     private void queueEncoder() {
         int bufferIndex = mAudioCodec.dequeueInputBuffer(1000);
-        if (bufferIndex >= 0)
-        {
+        if (bufferIndex >= 0) {
             ByteBuffer buffer = mAudioCodec.getInputBuffer(bufferIndex);
             int numBytesRead = mAudioRecord.read(buffer, buffer.capacity());
             mAudioCodec.queueInputBuffer(bufferIndex, 0, numBytesRead, System.nanoTime() / 1000, 0);
@@ -191,6 +157,7 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     }
 
     private long lastPresentationTimeUs = -1;
+
     private void drainEncoder(MediaCodec.BufferInfo info) {
         int encoderStatus = mAudioCodec.dequeueOutputBuffer(info, 0);
         if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
@@ -213,14 +180,13 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
                 info.size = 0;
             }
 
-            if (info.size != 0 && mMuxerStart ) {
+            if (info.size != 0 && mMuxerStart) {
                 encodedData.position(info.offset);
                 encodedData.limit(info.offset + info.size);
-                if( presentationStartUs < 0 )
-                {
+                if (presentationStartUs < 0) {
                     presentationStartUs = info.presentationTimeUs;
                 }
-                if( info.presentationTimeUs > lastPresentationTimeUs ) {
+                if (info.presentationTimeUs > lastPresentationTimeUs) {
                     mMediaMuxer.writeSampleData(mTrackIndex, encodedData, info);
                     lastPresentationTimeUs = info.presentationTimeUs;
                     mMuxerWrite = true;
@@ -231,27 +197,36 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
         }
     }
 
-    private void releaseEncoder()
-    {
+    private void releaseEncoder() {
         if (mAudioCodec != null) {
             mAudioCodec.stop();
             mAudioCodec.release();
             mAudioCodec = null;
         }
-        if( mAudioRecord != null )
-        {
+        if (mAudioRecord != null) {
             mAudioRecord.stop();
             mAudioRecord.release();
             mAudioRecord = null;
         }
         if (mMediaMuxer != null) {
-            if (mMuxerStart && mMuxerWrite) {
-                mMediaMuxer.stop();
+            if (mMuxerStart) {
+                try {
+                    mMediaMuxer.stop();
+                } catch (Exception e) {
+                }
             }
-            mMediaMuxer.release();
-            mMediaMuxer = null;
             mMuxerStart = false;
+
+            if (mMuxerWrite) {
+                audioNumber++;
+            }
             mMuxerWrite = false;
+
+            try {
+                mMediaMuxer.release();
+            } catch (Exception e) {
+            }
+            mMediaMuxer = null;
         }
     }
 
