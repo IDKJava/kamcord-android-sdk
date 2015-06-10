@@ -71,7 +71,8 @@ dependencies {
         transitive = true;
     }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
-    
+    compile 'io.reactivex:rxandroid:0.24.0'
+
     // Testing-only dependencies
     androidTestCompile 'com.android.support.test:runner:0.2'
     // UiAutomator Testing
@@ -83,5 +84,7 @@ dependencies {
     compile 'com.amazonaws:aws-android-sdk-s3:2.2.1'
     compile 'com.amazonaws:aws-android-sdk-ddb:2.2.1'
     compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.1'
+
+
 
 }

@@ -27,10 +27,10 @@ import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoPreviewActivity;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
-import com.kamcord.app.utils.AccountManager;
-import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
+import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.VideoUtils;
 
@@ -40,6 +40,11 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.OnTouch;
+import rx.Observable;
+import rx.android.widget.OnTextChangeEvent;
+import rx.android.widget.WidgetObservable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 public class ShareFragment extends Fragment {
     public static final String ARG_RECORDING_SESSION = "recording_session";
@@ -50,8 +55,6 @@ public class ShareFragment extends Fragment {
     ImageView thumbnailImageView;
     @InjectView(R.id.playImageView)
     ImageView playImageView;
-    @InjectView(R.id.shareButton)
-    Button shareButton;
     @InjectView(R.id.titleEditText)
     EditText titleEditText;
     @InjectView(R.id.videoDurationTextView)
@@ -60,6 +63,8 @@ public class ShareFragment extends Fragment {
     ViewGroup processingProgressBarContainer;
     @InjectView(R.id.share_toolbar)
     Toolbar mToolbar;
+    @InjectView(R.id.share_button)
+    Button shareButton;
 
     private String videoPath;
     private RecordingSession recordingSession;
@@ -104,6 +109,7 @@ public class ShareFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_share, container, false);
         ButterKnife.inject(this, root);
         RecordActivity activity = ((RecordActivity) getActivity());
+        setHasOptionsMenu(true);
         activity.setSupportActionBar(mToolbar);
         ActionBar actionbar = activity.getSupportActionBar();
         actionbar.setTitle(getResources().getString(R.string.fragmentShare));
@@ -111,8 +117,6 @@ public class ShareFragment extends Fragment {
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha, null);
         upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         actionbar.setHomeAsUpIndicator(upArrow);
-
-        setHasOptionsMenu(true);
 
         recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
 
@@ -139,15 +143,51 @@ public class ShareFragment extends Fragment {
     public boolean scrollToBottom() {
         scrollView.smoothScrollTo(0, scrollView.getBottom());
         KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
+
+        Observable<OnTextChangeEvent> editTextObservable = WidgetObservable.text(titleEditText);
+        editTextObservable
+                .map(new Func1<OnTextChangeEvent, Integer>() {
+                    @Override
+                    public Integer call(OnTextChangeEvent onTextChangeEvent) {
+                        return onTextChangeEvent.text().length();
+                    }
+                })
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer textLength) {
+                        if (textLength > 0) {
+                            shareButton.setBackgroundColor(getResources().getColor(R.color.kamcordGreen));
+                        } else {
+                            shareButton.setBackgroundColor(getResources().getColor(R.color.ButtonNotActivated));
+                        }
+                    }
+                });
+
         return false;
+    }
+
+    @OnClick(R.id.share_button)
+    public void click(View v) {
+        if (AccountManager.isLoggedIn() && titleEditText.getText().toString().length() != 0) {
+            recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
+            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
+            getActivity().startService(uploadIntent);
+            getActivity().onBackPressed();
+        } else if (AccountManager.isLoggedIn()) {
+            Toast.makeText(getActivity(), getResources().getString(R.string.writeYourTitle), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            getActivity().startActivity(intent);
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
-        if( stitchClipsThread != null )
-        {
+        if (stitchClipsThread != null) {
             stitchClipsThread.cancelStitching();
         }
     }
@@ -161,23 +201,6 @@ public class ShareFragment extends Fragment {
         Intent intent = new Intent(getActivity().getApplicationContext(), VideoPreviewActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
-    }
-
-    @OnClick(R.id.shareButton)
-    public void share() {
-
-        if (AccountManager.isLoggedIn()) {
-            recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
-
-            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
-            getActivity().startService(uploadIntent);
-            getActivity().onBackPressed();
-        } else {
-            Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            getActivity().startActivity(intent);
-        }
     }
 
     private void videoPrepared(File videoFile) {
@@ -214,7 +237,7 @@ public class ShareFragment extends Fragment {
             case android.R.id.home:
                 KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
                 getActivity().onBackPressed();
-                return true;
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
