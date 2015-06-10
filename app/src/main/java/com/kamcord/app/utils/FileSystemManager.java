@@ -6,6 +6,7 @@ import android.util.Log;
 import com.kamcord.app.model.RecordingSession;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.UUID;
@@ -106,10 +107,28 @@ public class FileSystemManager {
     }
 
     public static void markRecordingSession(RecordingSession session, Mark mark) {
+        markRecordingSession(session, mark, "");
+    }
+
+    public static void markRecordingSession(RecordingSession session, Mark mark, String info) {
+        FileWriter fileWriter = null;
         try {
-            new File(getRecordingSessionCacheDirectory(session), "." + mark.name()).createNewFile();
+            File markFile = new File(getRecordingSessionCacheDirectory(session), "." + mark.name());
+            markFile.createNewFile();
+            if( info != null ) {
+                fileWriter = new FileWriter(markFile, false);
+                fileWriter.write(info);
+            }
         } catch( IOException e ) {
             Log.w("Kamcord", "Unable to mark recording session with mark " + mark.name());
+        }
+        finally{
+            if (fileWriter != null) {
+                try {
+                    fileWriter.close();
+                } catch( Exception e ) {
+                }
+            }
         }
     }
 

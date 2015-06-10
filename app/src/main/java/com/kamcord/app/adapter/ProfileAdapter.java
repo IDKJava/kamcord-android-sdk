@@ -111,7 +111,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
             RecordingSession session = getItem(position).getSession();
             if( session != null ) {
-                bindProfileUploadProgressViewHolder((ProfileUploadProgressViewHolder) viewHolder, session);
+                bindProfileUploadProgressViewHolder((ProfileUploadProgressViewHolder) viewHolder, session, position);
             }
         }
 
@@ -204,7 +204,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, final RecordingSession session) {
+    private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
         Picasso picasso = new Picasso.Builder(mContext)
                 .addRequestHandler(new ThumbnailRequestHandler())
                 .build();
@@ -259,6 +259,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 }
                                 case R.id.action_delete: {
                                     FileSystemManager.cleanRecordingSessionCacheDirectory(session);
+                                    mProfileList.remove(position);
+                                    notifyItemRemoved(position);
                                     break;
                                 }
                             }
@@ -353,6 +355,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @Override
         public void failure(RetrofitError error) {
+            AccountManager.clearStoredAccount();
             if (mContext != null) {
                 Intent loginIntent = new Intent(mContext, LoginActivity.class);
                 mContext.startActivity(loginIntent);

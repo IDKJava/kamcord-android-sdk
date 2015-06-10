@@ -165,10 +165,11 @@ public class ShareFragment extends Fragment {
 
     @OnClick(R.id.shareButton)
     public void share() {
-        FileSystemManager.markRecordingSession(recordingSession, FileSystemManager.Mark.SHARED);
+        String title = null;
 
         if (AccountManager.isLoggedIn()) {
-            recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+            title = titleEditText.getEditableText().toString();
+            recordingSession.setVideoTitle(title);
 
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
@@ -179,6 +180,8 @@ public class ShareFragment extends Fragment {
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(intent);
         }
+
+        FileSystemManager.markRecordingSession(recordingSession, FileSystemManager.Mark.SHARED, title);
     }
 
     private void videoPrepared(File videoFile) {
