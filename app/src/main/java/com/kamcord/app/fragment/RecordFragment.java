@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
+import com.google.gson.Gson;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.GameRecordListAdapter;
@@ -36,6 +37,7 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
@@ -234,7 +236,9 @@ public class RecordFragment extends Fragment implements
                             .getMediaProjection(resultCode, data);
                     RecordingSession recordingSession = new RecordingSession(mSelectedGame);
 
-                    recordingServiceConnection.startRecording(projection, recordingSession);
+                    if( recordingServiceConnection.startRecording(projection, recordingSession) ) {
+                        ActiveRecordingSessionManager.addActiveSession(recordingSession);
+                    }
                 } catch (ActivityNotFoundException e) {
                     // TODO: show the user something about not finding the game.
                     Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);
@@ -389,7 +393,7 @@ public class RecordFragment extends Fragment implements
             FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
             ShareFragment recordShareFragment = new ShareFragment();
             Bundle bundle = new Bundle();
-            bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, recordingSession);
+            bundle.putString(ShareFragment.ARG_RECORDING_SESSION, new Gson().toJson(recordingSession));
             recordShareFragment.setArguments(bundle);
             activity.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
@@ -420,7 +424,7 @@ public class RecordFragment extends Fragment implements
 
         public boolean startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
             if( recordingService != null ) {
-                FileSystemManager.removeOldRecordings();
+                FileSystemManager.removeInactiveRecordingSessions();
                 recordingService.startRecording(mediaProjection, recordingSession);
                 return true;
             }

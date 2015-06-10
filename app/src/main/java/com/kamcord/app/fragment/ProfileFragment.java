@@ -26,14 +26,18 @@ import com.kamcord.app.server.model.Video;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -60,6 +64,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<ProfileItem> mProfileList = new ArrayList<>();
+    private Set<RecordingSession> currentUploads = new HashSet<>();
     private ProfileAdapter mProfileAdapter;
     private ProfileItem<User> userHeader;
     private String nextPage;
@@ -84,7 +89,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
     @Override
     public void onResume() {
         super.onResume();
-        handleUploadingVideos();
+        marshalUploadingSessions();
         Uploader.subscribe(this);
     }
 
@@ -154,16 +159,28 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
         });
     }
 
-    private void handleUploadingVideos() {
-        handleCachedVideos();
-        handleUploadServiceQueue();
+    private void marshalUploadingSessions() {
+        marshalCachedSessionUploads();
+        marshalUploadServiceSessions();
     }
 
-    private void handleCachedVideos() {
+    private void marshalCachedSessionUploads() {
+        HashSet<RecordingSession> uploadedSessions = new HashSet<>();
+        HashSet<RecordingSession> sharedSessions = new HashSet<>();
 
+        File cacheDirectory = FileSystemManager.getCacheDirectory();
+        for( File gameCache : cacheDirectory.listFiles(FileSystemManager.PACKAGE_FILENAME_FILTER) ) {
+            for( File recordingSessionCache : gameCache.listFiles(FileSystemManager.UUID_FILENAME_FILTER) ) {
+                RecordingSession session = new RecordingSession(recordingSessionCache.getName());
+                if( FileSystemManager.directoryHasMark(recordingSessionCache, FileSystemManager.Mark.UPLOADED) )
+                {
+                    uploadedSessions.add(session);
+                }
+            }
+        }
     }
 
-    private void handleUploadServiceQueue() {
+    private void marshalUploadServiceSessions() {
         boolean modified = false;
         {
             Iterator<ProfileItem> iterator = mProfileList.iterator();
@@ -292,7 +309,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     @Override
     public void onUploadStart(RecordingSession recordingSession) {
-        handleUploadingVideos();
+        marshalUploadServiceSessions();
         updateUploadingSessionProgress(recordingSession, 0f);
     }
 
@@ -303,6 +320,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     @Override
     public void onUploadFinish(RecordingSession recordingSession, boolean success) {
+        marshalUploadServiceSessions();
         if( success ) {
             int index = 0;
             Iterator<ProfileItem> iterator = mProfileList.iterator();

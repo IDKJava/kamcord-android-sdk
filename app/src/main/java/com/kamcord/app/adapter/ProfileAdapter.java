@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
@@ -248,7 +249,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                     if (mContext instanceof FragmentActivity) {
                                         ShareFragment recordShareFragment = new ShareFragment();
                                         Bundle bundle = new Bundle();
-                                        bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, session);
+                                        bundle.putString(ShareFragment.ARG_RECORDING_SESSION, new Gson().toJson(session));
                                         recordShareFragment.setArguments(bundle);
                                         ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
                                                 .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)

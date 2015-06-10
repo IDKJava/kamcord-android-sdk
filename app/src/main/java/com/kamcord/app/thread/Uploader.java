@@ -19,6 +19,7 @@ import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.server.model.builder.ReserveVideoEntityBuilder;
 import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 
 import org.apache.http.Header;
@@ -146,7 +147,10 @@ public class Uploader extends Thread {
             }
             finishUploadToS3(UploadType.VIDEO);
             informKamcordUploadFinished();
-            FileSystemManager.markRecordingSession(mRecordingSession, FileSystemManager.Mark.UPLOADED, mServerVideoId);
+
+            mRecordingSession.setState(RecordingSession.State.UPLOADED);
+            ActiveRecordingSessionManager.updateActiveSession(mRecordingSession);
+
             notifyUploadFinished(mRecordingSession, true);
 
             long end = System.currentTimeMillis();

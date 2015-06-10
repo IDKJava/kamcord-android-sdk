@@ -21,16 +21,18 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoPreviewActivity;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
-import com.kamcord.app.utils.AccountManager;
-import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
+import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.ActiveRecordingSessionManager;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.VideoUtils;
 
@@ -172,7 +174,7 @@ public class ShareFragment extends Fragment {
             recordingSession.setVideoTitle(title);
 
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
+            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
         } else {
@@ -181,7 +183,8 @@ public class ShareFragment extends Fragment {
             getActivity().startActivity(intent);
         }
 
-        FileSystemManager.markRecordingSession(recordingSession, FileSystemManager.Mark.SHARED, title);
+        recordingSession.setState(RecordingSession.State.SHARED);
+        ActiveRecordingSessionManager.updateActiveSession(recordingSession);
     }
 
     private void videoPrepared(File videoFile) {
