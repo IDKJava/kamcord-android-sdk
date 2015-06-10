@@ -315,7 +315,7 @@ public class UiUtilities {
         return objSelector;
     }
 
-    public static void closeApp(String appPackageName){
+    public static void closeAppUI(String appPackageName){
         try {
             Context context = InstrumentationRegistry.getContext();
             Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -338,7 +338,11 @@ public class UiUtilities {
 
     }
 
-    public static void stopService(String appPackageName){
+    public static void stopServiceUI(String appPackageName){
+        //it takes a max of two home presses to get home.
+        mDevice.pressHome();
+        mDevice.pressHome();
+
         try {
             Context context = InstrumentationRegistry.getContext();
             Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_SETTINGS);
@@ -351,6 +355,7 @@ public class UiUtilities {
         findUiObj("Running", UiObjSelType.Txt, UI_TIMEOUT_MS).click();
 
         //findUiObj("com.android.settings:id/title", UiObjSelType.Res, UI_TIMEOUT_MS);
+        mDevice.waitForIdle();
         UiObject2 obj =  findAppItem(getStrByID(R.string.app_name));
         if(obj != null){
             obj.click();

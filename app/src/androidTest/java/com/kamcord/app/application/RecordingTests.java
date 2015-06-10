@@ -63,7 +63,7 @@ public class RecordingTests extends RecordAndPostTestBase{
     public void recordRippleTestSkipLoginShort(){
         skipLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, 1000);
-        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
+        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res).click();
     }
 
     @Test

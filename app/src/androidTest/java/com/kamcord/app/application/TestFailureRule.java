@@ -24,7 +24,8 @@ public class TestFailureRule extends TestWatcher {
 
     @Override
     protected void failed(Throwable e, Description description) {
-        //stopService(KAMCORD_APP_PACKAGE);
+        stopService(com.kamcord.app.service.RecordingService.class);
+        stopService(com.kamcord.app.service.UploadService.class);
         //closeApp(RIPPLE_TEST_APP_PACKAGE);
     }
 }

@@ -31,8 +31,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 21)
 public abstract class TestBase {
-    //@Rule
-    //public TestFailureRule mTestFailureRule = new TestFailureRule();
+    @Rule
+    public TestFailureRule mTestFailureRule = new TestFailureRule();
 
     @Before
     public void setUp(){
@@ -43,6 +43,8 @@ public abstract class TestBase {
     @After
     public void cleanUp(){
         //do nothing here setUp makes sure test is ready to go.
+        stopService(com.kamcord.app.service.RecordingService.class);
+        stopService(com.kamcord.app.service.UploadService.class);
     }
 
     protected void startKamcordApp(){

@@ -1,6 +1,7 @@
 package com.kamcord.app.testutils;
 
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.support.test.InstrumentationRegistry;
@@ -67,6 +68,12 @@ public class SystemUtilities {
         assertTrue("Application load timed out!", notTimedOut);
     }
 
+    public static void stopService(Class<?> serviceClass){
+
+        String intent = serviceClass.getName().replace(".service", "/.service");
+        String cmd = String.format("su -c am stopservice %s", intent);
+        String result = executeShellCommand(cmd);
+    }
 
 
 }

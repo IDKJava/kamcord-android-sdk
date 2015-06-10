@@ -164,7 +164,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
         findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         //is it there?
-        findUiObj(R.id.userProfileInfo, UiObjIdType.Res, UiObjSelType.Res);
+        findUiObj(R.id.profile_headerLayout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
     protected void executeRectPattern() {
