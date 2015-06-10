@@ -84,7 +84,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
     @Override
     public void onResume() {
         super.onResume();
-        handleUploadService();
+        handleUploadingVideos();
         Uploader.subscribe(this);
     }
 
@@ -154,7 +154,16 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
         });
     }
 
-    private void handleUploadService() {
+    private void handleUploadingVideos() {
+        handleCachedVideos();
+        handleUploadServiceQueue();
+    }
+
+    private void handleCachedVideos() {
+
+    }
+
+    private void handleUploadServiceQueue() {
         boolean modified = false;
         {
             Iterator<ProfileItem> iterator = mProfileList.iterator();
@@ -283,7 +292,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     @Override
     public void onUploadStart(RecordingSession recordingSession) {
-        handleUploadService();
+        handleUploadingVideos();
         updateUploadingSessionProgress(recordingSession, 0f);
     }
 

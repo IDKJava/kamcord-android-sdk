@@ -5,10 +5,14 @@ import android.util.Log;
 
 import com.kamcord.app.model.RecordingSession;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.UUID;
 
 /**
@@ -134,6 +138,32 @@ public class FileSystemManager {
 
     public static boolean directoryHasMark(File directory, Mark mark) {
         return new File(directory, "." + mark.name()).exists();
+    }
+
+    public static String getMarkInfo(File directory, Mark mark) {
+        String info = null;
+
+        if( directoryHasMark(directory, mark) ) {
+            try {
+                File markFile = new File(directory, "." + mark.name());
+                StringBuilder stringBuilder = new StringBuilder();
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(
+                                new FileInputStream(markFile)));
+                String line;
+                while( (line = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(line).append("\n");
+                }
+                bufferedReader.close();
+                info = stringBuilder.toString();
+            } catch( FileNotFoundException e ) {
+                info = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return info;
     }
 
     public static void removeOldRecordings() {
