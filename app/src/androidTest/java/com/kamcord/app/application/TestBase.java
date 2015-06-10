@@ -13,6 +13,7 @@ import android.test.AndroidTestCase;
 import com.kamcord.app.R;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
@@ -38,6 +39,7 @@ public abstract class TestBase {
     public void setUp(){
         startKamcordApp();
         doLogout();
+
     }
 
     @After
@@ -45,6 +47,10 @@ public abstract class TestBase {
         //do nothing here setUp makes sure test is ready to go.
         stopService(com.kamcord.app.service.RecordingService.class);
         stopService(com.kamcord.app.service.UploadService.class);
+    }
+    @AfterClass
+    public void cleanUpClass(){
+        stopApp(RIPPLE_TEST_APP_PACKAGE);
     }
 
     protected void startKamcordApp(){

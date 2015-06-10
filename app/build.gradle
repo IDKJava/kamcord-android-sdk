@@ -78,4 +78,10 @@ dependencies {
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.0'
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
 
+    compile 'com.amazonaws:aws-android-sdk-core:2.2.1'
+    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.1'
+    compile 'com.amazonaws:aws-android-sdk-s3:2.2.1'
+    compile 'com.amazonaws:aws-android-sdk-ddb:2.2.1'
+    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.1'
+
 }
