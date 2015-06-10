@@ -146,6 +146,7 @@ public class Uploader extends Thread {
             }
             finishUploadToS3(UploadType.VIDEO);
             informKamcordUploadFinished();
+            FileSystemManager.markRecordingSession(mRecordingSession, FileSystemManager.Mark.UPLOADED);
             notifyUploadFinished(mRecordingSession, true);
 
             long end = System.currentTimeMillis();

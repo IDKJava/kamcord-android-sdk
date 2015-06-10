@@ -165,6 +165,7 @@ public class ShareFragment extends Fragment {
 
     @OnClick(R.id.shareButton)
     public void share() {
+        FileSystemManager.markRecordingSession(recordingSession, FileSystemManager.Mark.SHARED);
 
         if (AccountManager.isLoggedIn()) {
             recordingSession.setVideoTitle(titleEditText.getEditableText().toString());

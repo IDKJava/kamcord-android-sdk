@@ -153,10 +153,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
-                            case R.id.action_cleancache: {
-                                FileSystemManager.cleanCache();
-                                break;
-                            }
                             case R.id.action_signout: {
                                 if (AccountManager.isLoggedIn()) {
                                     AppServerClient.getInstance().logout(logoutCallback);
