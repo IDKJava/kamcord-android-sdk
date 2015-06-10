@@ -36,6 +36,7 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.GridViewItemDecoration;
@@ -419,6 +420,7 @@ public class RecordFragment extends Fragment implements
 
         public boolean startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
             if( recordingService != null ) {
+                FileSystemManager.removeOldRecordings();
                 recordingService.startRecording(mediaProjection, recordingSession);
                 return true;
             }
