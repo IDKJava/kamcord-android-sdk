@@ -7,7 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.kamcord.app.server.model.Account;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Created by pplunkett on 5/13/15.
@@ -18,7 +18,7 @@ public class AccountManager {
     private static final Object accountLock = new Object();
     private static SharedPreferences preferences = null;
     private static boolean currentLoginState = false;
-    private static ArrayList<AccountListener> accountListeners = new ArrayList<AccountListener>();
+    private static HashSet<AccountListener> accountListeners = new HashSet<>();
 
     public synchronized static void initializeWith(Context context)
     {
@@ -78,7 +78,7 @@ public class AccountManager {
             if( accountListeners != null )
             {
                 for( AccountListener listener : accountListeners )
-                    listener.isLoggedInChanged(state);
+                    listener.onLoggedInChanged(state);
             }
         }
     }

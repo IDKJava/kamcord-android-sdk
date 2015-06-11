@@ -169,7 +169,7 @@ public class ProfileFragment extends Fragment implements AccountListener {
     }
 
     @Override
-    public void isLoggedInChanged(boolean state) {
+    public void onLoggedInChanged(boolean state) {
         if (state) {
             userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
             mProfileList.add(userHeader);
