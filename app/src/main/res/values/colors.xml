@@ -16,15 +16,21 @@
 
     <color name="ButtonTextColor">#40d18b</color>
     <color name="ButtonOutlineColor">#40d18b</color>
+    <color name="ButtonNotActivated">#6647d894</color>
     <color name="EditTextBackgroundColor">#e2e2e2</color>
     <color name="TermsHighLighted">#353e44</color>
 
     <color name="transparentWhite">#9fff</color>
     <color name="TextViewBackgroundColor">#a4a4a4</color>
+    <color name="EditTextColor">#a4a4a4</color>
 
+    <color name="DefaultBackgroundColor">#F1C40F</color>
+    <color name="ShareBackgroundColor">#e8e8e8</color>
     <color name="defaultProfileColor">#bbbbbb</color>
     <color name="kamcordBlue">#00a8c0</color>
     <color name="kamcordRed">#b34</color>
     <color name="kamcordGray">#999999</color>
 
+    <color name="twitterBlue">#55acee</color>
+    <color name="youtubeRed">#cd201f</color>
 </resources>

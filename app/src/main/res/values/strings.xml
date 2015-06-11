@@ -11,7 +11,6 @@
     <string name="toolbarTitle">Kamcord</string>
     <string name="stopRecording">Stop Recording</string>
     <string name="startRecording">Start Recording</string>
-    <string name="fragmentShare">Share</string>
 
     <!-- Login -->
     <string name="termsAndPolicy">By creating a profile, you are agreeing to Kamcord\'s Terms of Service and Privacy Policy</string>
@@ -62,9 +61,9 @@
     <string name="install">Install</string>
     <string name="shareThisVideo">Share This Video</string>
 
-    <string name="writeATitle">Write a title&#8230;</string>
     <string name="writeADescription">Write a description&#8230;</string>
     <string name="processing">Processing&#8230;</string>
+    <string name="writeATitle">Write a title&#8230;</string>
 
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
     <string name="signInProfilePrompt">You must sign in to Kamcord to view your profile page.</string>
@@ -119,4 +118,10 @@
     <string name="retry">Retry</string>
     <string name="delete">Delete</string>
 
+    <!-- Share -->
+    <string name="fragmentShare">Share</string>
+    <string name="youtubeShare">Youtube</string>
+    <string name="twitterShare">Twitter</string>
+    <string name="alsoShare">Also share on</string>
+    <string name="writeYourTitle">Please write a title for your video.</string>
 </resources>

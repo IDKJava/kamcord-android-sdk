@@ -81,7 +81,6 @@ public class RecordingService extends Service {
             CyclicBarrier clipStartBarrier = new CyclicBarrier(2);
 
             mRecordHandlerThread = new RecordHandlerThread(mMediaProjection, getApplicationContext(), mRecordingSession, clipStartBarrier);
-            mRecordHandlerThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
             mRecordHandlerThread.start();
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
             mRecordHandlerThread.setHandler(mHandler);
@@ -89,7 +88,6 @@ public class RecordingService extends Service {
             mMediaProjection = null;
 
             mAudioRecordThread = new AudioRecordThread(getApplicationContext(), mRecordingSession, clipStartBarrier);
-            mAudioRecordThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
             mAudioRecordThread.start();
             mAudioRecordHandler = new Handler(mAudioRecordThread.getLooper(), mAudioRecordThread);
             mAudioRecordThread.setHandler(mAudioRecordHandler);
@@ -123,18 +121,6 @@ public class RecordingService extends Service {
     {
         return mRecordingSession;
     }
-
-    Thread.UncaughtExceptionHandler uncaughtExceptionHandler = new Thread.UncaughtExceptionHandler() {
-        @Override
-        public void uncaughtException(Thread thread, Throwable throwable) {
-            try {
-                Log.w(TAG, "Uncaught exception: ");
-                throwable.printStackTrace();
-                stopForeground(true);
-            } catch( Exception e ) {
-            }
-        }
-    };
 
     public class InstanceBinder extends Binder {
         public RecordingService getInstance() {
