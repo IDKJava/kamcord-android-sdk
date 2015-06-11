@@ -91,6 +91,7 @@ public class Uploader extends Thread {
 
     private String[] mVideoEtags;
     private String mS3UploadId = null;
+    private ReserveVideoEntity reserveVideoEntity;
 
     private static UploadStatusListener sListener = null;
 
@@ -166,7 +167,7 @@ public class Uploader extends Thread {
 
     private void reserveVideoUpload() throws Exception {
         try {
-            ReserveVideoEntity reserveVideoEntity = new ReserveVideoEntityBuilder()
+            reserveVideoEntity = new ReserveVideoEntityBuilder()
                     .setUserTitle(mRecordingSession.getVideoTitle())
                     .setDescription(mRecordingSession.getVideoDescription())
                     .setDefaultTitle("default title") // TODO: fill this in with something that makes sense.
@@ -184,27 +185,6 @@ public class Uploader extends Thread {
                 // TODO: notify *someone* that were weren't able to reserve the video.
                 return;
             }
-
-            // Share to Twitter, if applicable.
-            TwitterSession session = Twitter.getSessionManager().getActiveSession();
-            if (session != null) {
-                TwitterApiClient client = Twitter.getApiClient(session);
-                client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/" + genericResponse.response.video_id,
-                        null, null, null, null, null, null, null, new Callback<Tweet>() {
-                            @Override
-                            public void success(Result<Tweet> result) {
-                                Log.i(TAG, "Tweet success!");
-                            }
-
-                            @Override
-                            public void failure(TwitterException e) {
-                                Log.i(TAG, "Tweet failure!");
-                            }
-                        });
-            } else {
-                Log.v(TAG, "Twitter session was null!");
-            }
-
 
             mServerVideoId = genericResponse.response.video_id;
             mVideoBucketName = genericResponse.response.video_location.bucket;
@@ -447,6 +427,25 @@ public class Uploader extends Thread {
                 share.source = VideoUploadedEntity.ShareSource.TWITTER;
                 share.access_token = session.getAuthToken().token;
                 videoUploadedEntityBuilder.addShare(share);
+
+                if (session != null) {
+                    TwitterApiClient client = Twitter.getApiClient(session);
+                    client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/"
+                                    + AppServerClient.getInstance().reserveVideo(reserveVideoEntity).response.video_id,
+                            null, null, null, null, null, null, null, new Callback<Tweet>() {
+                                @Override
+                                public void success(Result<Tweet> result) {
+                                    Log.i(TAG, "Tweet success!");
+                                }
+
+                                @Override
+                                public void failure(TwitterException e) {
+                                    Log.i(TAG, "Tweet failure!");
+                                }
+                            });
+                } else {
+                    Log.v(TAG, "Twitter session was null!");
+                }
             }
         }
 

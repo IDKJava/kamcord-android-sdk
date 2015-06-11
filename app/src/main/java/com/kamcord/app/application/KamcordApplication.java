@@ -27,10 +27,15 @@ public class KamcordApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Fabric.with(
-                this,
-                new Crashlytics(),
-                new Twitter(new TwitterAuthConfig(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)));
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(
+                    this,
+                    new Crashlytics(),
+                    new Twitter(new TwitterAuthConfig(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)));
+        } else {
+            Fabric.with(this, new Twitter(new TwitterAuthConfig(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)));
+        }
+
 
 
         AccountManager.initializeWith(this);

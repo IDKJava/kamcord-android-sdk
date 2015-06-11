@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -117,8 +116,10 @@ public class ShareFragment extends Fragment {
         }
     };
     private StitchClipsThread stitchClipsThread;
-    private Toast videoTitlteToast = null;
+    private Toast videoTitleToast = null;
     private HashMap<Integer, Boolean> shareSourceHashMap = new HashMap<>();
+    private static final int TWITTER_INDEX = 0;
+    private static final int YOUTUBE_INDEX = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -159,15 +160,15 @@ public class ShareFragment extends Fragment {
                 new Callback<TwitterSession>() {
                     @Override
                     public void success(Result<TwitterSession> result) {
-                        if (shareSourceButtonViews.get(0) != null) {
-                            shareSourceButtonViews.get(0).setSelected(true);
+                        if (shareSourceButtonViews.get(TWITTER_INDEX) != null) {
+                            shareSourceButtonViews.get(TWITTER_INDEX).setSelected(true);
                         }
                     }
 
                     @Override
                     public void failure(TwitterException exception) {
-                        if (shareSourceButtonViews.get(0) != null) {
-                            shareSourceButtonViews.get(0).setSelected(false);
+                        if (shareSourceButtonViews.get(TWITTER_INDEX) != null) {
+                            shareSourceButtonViews.get(TWITTER_INDEX).setSelected(false);
                         }
                     }
                 }
@@ -217,12 +218,12 @@ public class ShareFragment extends Fragment {
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
-            if (videoTitlteToast == null) {
-                videoTitlteToast = Toast.makeText(getActivity(), getResources().getString(R.string.writeYourTitle), Toast.LENGTH_SHORT);
-                videoTitlteToast.show();
+            if (videoTitleToast == null) {
+                videoTitleToast = Toast.makeText(getActivity(), getResources().getString(R.string.writeYourTitle), Toast.LENGTH_SHORT);
+                videoTitleToast.show();
             } else {
-                videoTitlteToast.cancel();
-                videoTitlteToast = null;
+                videoTitleToast.cancel();
+                videoTitleToast = null;
             }
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
@@ -240,10 +241,10 @@ public class ShareFragment extends Fragment {
                 } else {
                     TwitterSession twitterSession = Twitter.getSessionManager().getActiveSession();
                     if (twitterSession != null) {
-                        shareSourceHashMap.put(shareSourceButtonViews.get(0).getId(), true);
+                        shareSourceHashMap.put(shareSourceButtonViews.get(TWITTER_INDEX).getId(), true);
                         button.setSelected(true);
                     } else {
-                        shareSourceHashMap.put(shareSourceButtonViews.get(0).getId(), false);
+                        shareSourceHashMap.put(shareSourceButtonViews.get(TWITTER_INDEX).getId(), false);
                         button.setSelected(false);
                         twitterLoginButton.callOnClick();
                     }
@@ -260,7 +261,6 @@ public class ShareFragment extends Fragment {
         for (Button shareSourceButton : shareSourceButtonViews) {
             shareSourceHashMap.put(shareSourceButton.getId(), false);
         }
-        Log.d("shareSourceHashMap", Integer.toString(shareSourceHashMap.size()));
     }
 
     @Override
