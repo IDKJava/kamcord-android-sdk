@@ -210,8 +210,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 .addRequestHandler(new ThumbnailRequestHandler())
                 .build();
         String path = new File(FileSystemManager.getRecordingSessionCacheDirectory(session), FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath();
-        picasso.load(ThumbnailRequestHandler.SCHEME + ":" + path)
-                .into(viewHolder.thumbnailImageView);
+        if( !path.equals(viewHolder.thumbnailImageView.getTag()) ) {
+            viewHolder.thumbnailImageView.setTag(path);
+            picasso.load(ThumbnailRequestHandler.SCHEME + ":" + path)
+                    .into(viewHolder.thumbnailImageView);
+        }
 
         viewHolder.uploadFailedImageButton.setVisibility(View.GONE);
         viewHolder.uploadProgressBar.setVisibility(View.GONE);
