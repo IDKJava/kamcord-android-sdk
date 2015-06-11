@@ -2,7 +2,6 @@ package com.kamcord.app.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.kamcord.app.model.RecordingSession;
@@ -76,7 +75,6 @@ public class ActiveRecordingSessionManager {
 
         activeSessions.clear();
         for( String serializedSession : serializedSessions ) {
-            Log.v("FindMe", "loading active session " + serializedSession);
             activeSessions.add(new Gson().fromJson(serializedSession, RecordingSession.class));
         }
     }
@@ -85,7 +83,6 @@ public class ActiveRecordingSessionManager {
         Set<String> serializedSessions = new HashSet<>();
         for( RecordingSession session : activeSessions) {
             String serializedSession = new Gson().toJson(session);
-            Log.v("FindMe", "saving active session: " + serializedSession);
             serializedSessions.add(serializedSession);
         }
         preferences.edit()
