@@ -545,5 +545,5 @@ public class Uploader extends Thread {
         void onUploadStart(RecordingSession recordingSession);
         void onUploadProgress(RecordingSession recordingSession, float progress);
         void onUploadFinish(RecordingSession recordingSession, boolean success);
-}
+    }
 }
