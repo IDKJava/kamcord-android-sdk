@@ -216,6 +216,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .into(viewHolder.thumbnailImageView);
         }
 
+        viewHolder.retryUploadImageButton.setVisibility(View.GONE);
         viewHolder.uploadFailedImageButton.setVisibility(View.GONE);
         viewHolder.uploadProgressBar.setVisibility(View.GONE);
         String uploadStatus = null;
@@ -251,19 +252,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
-                                case R.id.action_retry_upload: {
-                                    if (mContext instanceof FragmentActivity) {
-                                        ShareFragment recordShareFragment = new ShareFragment();
-                                        Bundle bundle = new Bundle();
-                                        bundle.putString(ShareFragment.ARG_RECORDING_SESSION, new Gson().toJson(session));
-                                        recordShareFragment.setArguments(bundle);
-                                        ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                                                .add(R.id.activity_mdrecord_layout, recordShareFragment)
-                                                .addToBackStack("ShareFragment").commit();
-                                    }
-                                    break;
-                                }
                                 case R.id.action_delete: {
                                     FileSystemManager.cleanRecordingSessionCacheDirectory(session);
                                     mProfileList.remove(position);
@@ -274,6 +262,22 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             return false;
                         }
                     });
+                }
+            });
+            viewHolder.retryUploadImageButton.setVisibility(View.VISIBLE);
+            viewHolder.retryUploadImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mContext instanceof FragmentActivity) {
+                        ShareFragment recordShareFragment = new ShareFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ShareFragment.ARG_RECORDING_SESSION, new Gson().toJson(session));
+                        recordShareFragment.setArguments(bundle);
+                        ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
+                                .add(R.id.activity_mdrecord_layout, recordShareFragment)
+                                .addToBackStack("ShareFragment").commit();
+                    }
                 }
             });
         }

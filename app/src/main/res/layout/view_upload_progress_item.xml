@@ -44,9 +44,21 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/retryUploadImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
+            android:background="@null"
+            android:src="@drawable/ic_refresh_white_24dp"
+            android:tint="@color/kamcordGreen"
+            android:tintMode="multiply"
+            android:visibility="gone" />
+
+        <ImageButton
             android:id="@+id/uploadFailedImageButton"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginEnd="8dp"
             android:background="@null"
             android:src="@drawable/ic_more_vert_white_24dp"
             android:tint="@color/ColorPrimaryDark"

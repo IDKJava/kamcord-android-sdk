@@ -3,13 +3,8 @@
     android:id="@+id/menu_upload_failed">
 
     <item
-        android:id="@+id/action_retry_upload"
-        android:orderInCategory="1"
-        android:title="@string/retry" />
-
-    <item
         android:id="@+id/action_delete"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/delete" />
 
 </menu>

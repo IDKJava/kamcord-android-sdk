@@ -68,6 +68,7 @@ public class FileSystemManager {
     {
         File recordingSessionCacheDirectory = getRecordingSessionCacheDirectory(recordingSession);
         nukeDirectory(recordingSessionCacheDirectory);
+        ActiveRecordingSessionManager.removeActiveSession(recordingSession);
     }
 
 
@@ -100,17 +101,16 @@ public class FileSystemManager {
 
     public static void removeInactiveRecordingSessions() {
         File cacheDirectory = getCacheDirectory();
-        for( File dir : cacheDirectory.listFiles(PACKAGE_FILENAME_FILTER) ) {
-            for( File recordingCache : dir.listFiles(UUID_FILENAME_FILTER) ) {
+        for( File gameCache : cacheDirectory.listFiles(PACKAGE_FILENAME_FILTER) ) {
+            for( File recordingCache : gameCache.listFiles(UUID_FILENAME_FILTER) ) {
 
                 // If the recording session was not shared, or the recording session has completed upload,
                 // we remove the recording cache.
-                RecordingSession session = new RecordingSession(recordingCache.getName());
+                RecordingSession session = new RecordingSession(recordingCache.getName(), gameCache.getName());
                 RecordingSession.State state = ActiveRecordingSessionManager.getActiveSessionState(session);
                 if( state == null ||
                         state == RecordingSession.State.STARTED || state == RecordingSession.State.PROCESSED ) {
-                    nukeDirectory(recordingCache);
-                    ActiveRecordingSessionManager.removeActiveSession(session);
+                    cleanRecordingSessionCacheDirectory(session);
                 }
             }
         }

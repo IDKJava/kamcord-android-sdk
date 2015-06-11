@@ -33,8 +33,9 @@ public class RecordingSession {
 
     public RecordingSession() {}
 
-    public RecordingSession(String uuid) {
+    public RecordingSession(String uuid, String gamePackageName) {
         this.uuid = uuid;
+        this.gamePackageName = gamePackageName;
     }
 
     public RecordingSession(Game game) {

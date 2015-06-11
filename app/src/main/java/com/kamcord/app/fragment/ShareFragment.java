@@ -31,6 +31,7 @@ import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.VideoUtils;
@@ -184,6 +185,9 @@ public class ShareFragment extends Fragment {
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(intent);
         }
+
+        recordingSession.setState(RecordingSession.State.SHARED);
+        ActiveRecordingSessionManager.updateActiveSession(recordingSession);
     }
 
     @Override
