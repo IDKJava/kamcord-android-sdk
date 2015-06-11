@@ -32,7 +32,7 @@ public class CacheTest extends RecordAndPostTestBase {
     @Test
     public void checkCacheNoMediaTest(){
         //Run post test video
-        skipLogin();
+        doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
         String files = executeShellCommand(String.format("ls -al %s/%s", SDCARD_ROOT, KAMCORD_CACHE_FOLDER));
         assertTrue(".nodmedia tag is not present!", files.contains(NOMEDIA_TAG));

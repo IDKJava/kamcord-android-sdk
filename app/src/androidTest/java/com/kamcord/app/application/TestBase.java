@@ -8,7 +8,7 @@ import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
-import android.test.AndroidTestCase;
+
 
 import com.kamcord.app.R;
 
@@ -26,30 +26,36 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import com.kamcord.app.testutils.testrules.FailureRule;
+import com.kamcord.app.testutils.testrules.RetryRule;
+
+
 /**
  * Created by Mehmet on 5/27/15.
  */
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 21)
 public abstract class TestBase {
+
     @Rule
-    public TestFailureRule mTestFailureRule = new TestFailureRule();
+    public RetryRule mTestRetryRule = new RetryRule(3);
+    @Rule
+    public FailureRule mTestFailureRule = new FailureRule();
 
     @Before
     public void setUp(){
         startKamcordApp();
         doLogout();
-
     }
 
     @After
     public void cleanUp(){
         //do nothing here setUp makes sure test is ready to go.
-        stopService(com.kamcord.app.service.RecordingService.class);
-        stopService(com.kamcord.app.service.UploadService.class);
+        //stopService(com.kamcord.app.service.RecordingService.class);
+        //stopService(com.kamcord.app.service.UploadService.class);
     }
     @AfterClass
-    public void cleanUpClass(){
+    public static void cleanUpClass(){
         stopApp(RIPPLE_TEST_APP_PACKAGE);
     }
 
@@ -69,7 +75,7 @@ public abstract class TestBase {
             if (loginButton != null)
                 return false;
         } else {
-            UiObject2 profileTab = mDevice.findObject(By.text(getStrByID(R.string.kamcordProfileTab)));
+            UiObject2 profileTab = mDevice.findObject(By.desc(getStrByID(R.string.kamcordProfileTab)));
             if (profileTab != null) {
                 profileTab.click();
                 boolean result =
@@ -133,7 +139,10 @@ public abstract class TestBase {
     }
 
     protected void clearCache() {
-        findUiObj(OVERFLOW_DESCRIPTION, UiObjSelType.Des,  APP_TIMEOUT_MS).click();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
+                .click();
+        findUiObj(R.id.profile_action_menu, UiObjIdType.Res, UiObjSelType.Res, APP_TIMEOUT_MS)
+                .click();
         findUiObj(R.string.action_cleancache, UiObjIdType.Str, UiObjSelType.Txt).click();
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
@@ -218,6 +227,7 @@ public abstract class TestBase {
         while(!gone && retries < maxRetries){
             gone = true;
             mDevice.waitForIdle();
+            sleep(UI_INTERACTION_DELAY_MS);
             UiObject2 gameTiles = findUiObj(gameTileParentId, UiObjIdType.Res, UiObjSelType.Res);
             for (UiObject2 child : gameTiles.getChildren()) {
                 if (child.getClassName().equals(android.widget.ImageView.class.getName())) {

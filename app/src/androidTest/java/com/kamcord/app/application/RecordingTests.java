@@ -73,8 +73,9 @@ public class RecordingTests extends RecordAndPostTestBase{
         handleShareView(RECORDING_DURATION_MS);
 
     }
-    @Test
-    public void recordRippleTestLoginFirstSwitchWithRecentApps(){
+    //TODO: Enable after resolution of AA-23
+    //@Test
+    public void recordRippleTestLoginFirstSwitchWithNotificationClick(){
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME,
                 RIPPLE_TEST_APP_NAME,

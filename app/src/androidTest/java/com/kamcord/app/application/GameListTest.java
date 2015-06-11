@@ -22,27 +22,36 @@ import static org.junit.Assert.assertTrue;
 public class GameListTest extends RecordAndPostTestBase {
 
     @Test
-    public void checkGamesToInstallList() throws UiObjectNotFoundException{
+    public void checkGamesInstalledList() throws UiObjectNotFoundException{
         //TODO: Check for content not just count.
         doLogin();
-        mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
 
         findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des, APP_TIMEOUT_MS)
                 .click();
 
         ArrayList<String> gameTitles = new ArrayList<>();
-
+        mDevice.swipe(validateSwipe(new Point[]{new Point(380, 400), new Point(380, 1150)}), 40);
         waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
         boolean unique = true;
         while(unique) {
             unique = false;
             mDevice.waitForIdle();
-            for (UiObject2 gameTitle : mDevice.findObjects(By.res(getResByID(R.id.item_packagename)))) {
-                String title = gameTitle.getText();
-                if(!gameTitles.contains(title)){
-                    gameTitles.add(title);
-                    unique = true;
+            for (UiObject2 button : mDevice.findObjects(
+                    By.res(getResByID(R.id.gameActionImageButton)))) {
+                String buttonDesc = button.getContentDescription();
+                UiObject2 gameTitle = findUiObjInObj(button.getParent(),
+                        R.id.gameNameTextView,
+                        UiObjIdType.Res,
+                        UiObjSelType.Res,
+                        UI_TIMEOUT_MS, false);
+                if (gameTitle != null && buttonDesc != null) {
+                    String title = gameTitle.getText();
+                    if (!gameTitles.contains(title) &&
+                            buttonDesc.equals(getStrByID(R.string.idle))) {
+                        gameTitles.add(title);
+                        unique = true;
+                    }
                 }
             }
 
@@ -54,10 +63,9 @@ public class GameListTest extends RecordAndPostTestBase {
     }
 
     @Test
-    public void checkGamesInstalledList() throws UiObjectNotFoundException{
+    public void checkGameList() throws UiObjectNotFoundException{
         //TODO: Check for content not just count.
         doLogin();
-        mDevice.findObject(By.text(getStrByID(R.string.kamcordRecordTab))).click();
 
         findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des, APP_TIMEOUT_MS)
                 .click();

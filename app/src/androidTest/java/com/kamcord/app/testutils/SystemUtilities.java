@@ -74,6 +74,12 @@ public class SystemUtilities {
         String cmd = String.format("su -c am stopservice %s", intent);
         String result = executeShellCommand(cmd);
     }
+    public static void stopActivity(Class<?> activityClass){
+
+        String appPackage = activityClass.getName().replace(".activity", "/.activity");
+        String cmd = String.format("su -c pm disable %s", appPackage);
+        String result = executeShellCommand(cmd);
+    }
     public static void stopApp(String appPackageName){
 
         String cmd = String.format("su -c am force-stop %s", appPackageName);

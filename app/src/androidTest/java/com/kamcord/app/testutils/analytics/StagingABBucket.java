@@ -12,7 +12,7 @@ public class StagingABBucket {
     private String lastModifiedDate;
     private String variantId;
 
-    @DynamoDBIndexRangeKey(attributeName = "experiment_id")
+    @DynamoDBHashKey(attributeName = "experiment_id")
     public String getExperimentId() {
         return this.experimentId;
     }
@@ -21,7 +21,7 @@ public class StagingABBucket {
         this.experimentId = Id;
     }
 
-    @DynamoDBIndexHashKey(attributeName = "bucket_number")
+    @DynamoDBRangeKey(attributeName = "bucket_number")
     public int getBucketNumber() {
         return this.bucketNumber;
     }
@@ -44,8 +44,17 @@ public class StagingABBucket {
         return this.variantId;
     }
 
-    public void getVariantId(String varId) {
+    public void setVariantId(String varId) {
         this.variantId = varId;
+    }
+
+    @DynamoDBAttribute(attributeName = "last_modified_at")
+    public String getLastModifiedAt() {
+        return this.lastModifiedDate;
+    }
+
+    public void setLastModifiedAt(String lastModified) {
+        this.lastModifiedDate = lastModified;
     }
 
 

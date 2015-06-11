@@ -33,7 +33,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                                    String gameTitle,
                                    int durationInMs,
                                    boolean pauseAfterGesture,
-                                   boolean useRecentAppsToSwitchToKamcord) {
+                                   boolean doNotUseRecentAppsToSwitchToKamcord) {
         mDevice.waitForIdle();
         waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
         //find ripples app logo and click
@@ -104,7 +104,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
         findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
-        if(useRecentAppsToSwitchToKamcord){
+        if(!doNotUseRecentAppsToSwitchToKamcord){
             //closes notifications so we can pick from recent apps.
             mDevice.pressBack();
         }
@@ -138,7 +138,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //close soft keyboard
         mDevice.pressBack();
 
-        findUiObj(R.id.shareButton, UiObjIdType.Res, UiObjSelType.Res).click();
+        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
 
 
 
@@ -146,7 +146,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
             findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des);
         } else {
             handleWelcomeLoginView();
-            findUiObj(R.id.shareButton, UiObjIdType.Res, UiObjSelType.Res).click();
+            findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
         }
 
         //check if it's recording, we seem not to be fast enough to check this.
@@ -164,7 +164,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
         findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         //is it there?
-        findUiObj(R.id.profile_headerLayout, UiObjIdType.Res, UiObjSelType.Res);
+        findUiObj(R.string.recordAndShare, UiObjIdType.Str, UiObjSelType.Txt);
     }
 
     protected void executeRectPattern() {

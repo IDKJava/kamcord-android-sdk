@@ -18,14 +18,20 @@ public class AnalyticsReader {
     public static AmazonDynamoDBClient dynamoDBClient = null;
 
     public static AmazonDynamoDBClient getAnalyticsClient(Context context){
-        if(dynamoDBClient == null) {
-            if (analyticsCredentialProvider == null) {
-                analyticsCredentialProvider =
-                        new CognitoCachingCredentialsProvider(context, identityPoolId, Regions.US_EAST_1);
+        try {
+            if (dynamoDBClient == null) {
+                if (analyticsCredentialProvider == null) {
+                    analyticsCredentialProvider =
+                            new CognitoCachingCredentialsProvider(context, identityPoolId, Regions.US_EAST_1);
+                }
+
+                dynamoDBClient =
+                        new AmazonDynamoDBClient(analyticsCredentialProvider);
             }
 
-            dynamoDBClient =
-                    new AmazonDynamoDBClient(analyticsCredentialProvider);
+        } catch (Exception e) {
+            e.printStackTrace();
+
         }
         return dynamoDBClient;
     }

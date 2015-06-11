@@ -71,13 +71,14 @@ public class ProfileTest extends TestBase {
         //TODO: find a way to cover more than just video #1
         doLogin();
         findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
-        waitForTileLoad(R.id.profile_recyclerview, APP_TIMEOUT_MS);
+        scrollToBeginning(R.id.profile_recyclerview);
+        waitForTileLoad(R.id.profile_recyclerview, 10000);
 
         UiObject2 viewObj =
                 findUiObj(R.id.video_views, UiObjIdType.Res, UiObjSelType.Res);
         int numViews;
         try {
-            numViews = Integer.parseInt(viewObj.getText().split(":")[1].trim());
+            numViews = Integer.parseInt(viewObj.getText());
         } catch (Exception e){
             e.printStackTrace();
             numViews = 0;
@@ -95,7 +96,7 @@ public class ProfileTest extends TestBase {
                 findUiObj(R.id.video_views, UiObjIdType.Res, UiObjSelType.Res);
         int numViewsAfter;
         try {
-            numViewsAfter = Integer.parseInt(viewObj.getText().split(":")[1].trim());
+            numViewsAfter = Integer.parseInt(viewObj.getText());
         } catch (Exception e){
             e.printStackTrace();
             numViewsAfter = Integer.MAX_VALUE;
