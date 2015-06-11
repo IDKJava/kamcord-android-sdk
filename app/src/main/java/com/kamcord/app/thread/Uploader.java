@@ -18,6 +18,13 @@ import com.kamcord.app.server.model.builder.ReserveVideoEntityBuilder;
 import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.models.Tweet;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -60,6 +67,8 @@ public class Uploader extends Thread {
     }
 
     private RecordingSession mRecordingSession;
+    private VideoUploadedEntity.Share share;
+    private HashMap<Integer, Boolean> mShareSourceHashMap;
 
     private int mTotalParts = 0;
     private FileInputStream mPartInputStream;
@@ -95,14 +104,14 @@ public class Uploader extends Thread {
         }
     }
 
-    public static void setUploadStatusListener(UploadStatusListener listener)
-    {
+    public static void setUploadStatusListener(UploadStatusListener listener) {
         sListener = listener;
     }
 
-    public Uploader(RecordingSession recordingSession, Context context) {
+    public Uploader(RecordingSession recordingSession, Context context, HashMap<Integer, Boolean> shareSourceHashMap) {
         mRecordingSession = recordingSession;
         mContext = context;
+        mShareSourceHashMap = shareSourceHashMap;
     }
 
     @Override
@@ -117,23 +126,20 @@ public class Uploader extends Thread {
 
         try {
             long start = System.currentTimeMillis();
-            if( sListener != null )
-            {
+            if (sListener != null) {
                 sListener.onUploadStart(mRecordingSession);
             }
             reserveVideoUpload();
             startUploadToS3(UploadType.VIDEO);
             for (int part = 0; part < mTotalParts; part++) {
                 uploadPartToS3(part, UploadType.VIDEO);
-                        if( sListener != null )
-                        {
-                            sListener.onUploadProgress(mRecordingSession, (float) (part+1) / (float) mTotalParts);
+                if (sListener != null) {
+                    sListener.onUploadProgress(mRecordingSession, (float) (part + 1) / (float) mTotalParts);
+                }
             }
-                    }
             finishUploadToS3(UploadType.VIDEO);
             informKamcordUploadFinished();
-            if( sListener != null )
-            {
+            if (sListener != null) {
                 sListener.onUploadFinish(mRecordingSession, true);
                 sListener = null;
             }
@@ -149,8 +155,7 @@ public class Uploader extends Thread {
             e.printStackTrace();
         }
 
-        if( sListener != null )
-        {
+        if (sListener != null) {
             sListener.onUploadFinish(mRecordingSession, false);
             sListener = null;
         }
@@ -179,6 +184,27 @@ public class Uploader extends Thread {
                 // TODO: notify *someone* that were weren't able to reserve the video.
                 return;
             }
+
+            // Share to Twitter, if applicable.
+            TwitterSession session = Twitter.getSessionManager().getActiveSession();
+            if (session != null) {
+                TwitterApiClient client = Twitter.getApiClient(session);
+                client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/" + genericResponse.response.video_id,
+                        null, null, null, null, null, null, null, new Callback<Tweet>() {
+                            @Override
+                            public void success(Result<Tweet> result) {
+                                Log.i(TAG, "Tweet success!");
+                            }
+
+                            @Override
+                            public void failure(TwitterException e) {
+                                Log.i(TAG, "Tweet failure!");
+                            }
+                        });
+            } else {
+                Log.v(TAG, "Twitter session was null!");
+            }
+
 
             mServerVideoId = genericResponse.response.video_id;
             mVideoBucketName = genericResponse.response.video_location.bucket;
@@ -377,7 +403,6 @@ public class Uploader extends Thread {
             Log.e(TAG, "Something unexpected happened when handling Amazon's response while uploading part of a file...");
             throw new Exception();
         }
-
     }
 
     private void finishUploadToS3(UploadType uploadType) throws Exception {
@@ -412,9 +437,20 @@ public class Uploader extends Thread {
     }
 
     private void informKamcordUploadFinished() throws Exception {
-        VideoUploadedEntity videoUploadedEntity = new VideoUploadedEntityBuilder()
-                .setVideoId(mServerVideoId)
-                .build();
+        VideoUploadedEntityBuilder videoUploadedEntityBuilder = new VideoUploadedEntityBuilder();
+        videoUploadedEntityBuilder.setVideoId(mServerVideoId);
+
+        for (Map.Entry<Integer, Boolean> entry : mShareSourceHashMap.entrySet()) {
+            if (entry.getKey() == R.id.share_twitterbutton && entry.getValue() == true) {
+                TwitterSession session = Twitter.getSessionManager().getActiveSession();
+                share = new VideoUploadedEntity.Share();
+                share.source = VideoUploadedEntity.ShareSource.TWITTER;
+                share.access_token = session.getAuthToken().token;
+                videoUploadedEntityBuilder.addShare(share);
+            }
+        }
+
+        VideoUploadedEntity videoUploadedEntity = videoUploadedEntityBuilder.build();
 
         GenericResponse<?> genericResponse = null;
         try {
@@ -540,10 +576,11 @@ public class Uploader extends Thread {
         }
     }
 
-    public interface UploadStatusListener
-    {
+    public interface UploadStatusListener {
         void onUploadStart(RecordingSession recordingSession);
+
         void onUploadProgress(RecordingSession recordingSession, float progress);
+
         void onUploadFinish(RecordingSession recordingSession, boolean success);
-}
+    }
 }

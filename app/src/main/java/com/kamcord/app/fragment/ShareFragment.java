@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,11 +34,20 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.VideoUtils;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.InjectViews;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 import rx.Observable;
@@ -47,6 +57,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class ShareFragment extends Fragment {
+    public static final String TAG = ShareFragment.class.getSimpleName();
     public static final String ARG_RECORDING_SESSION = "recording_session";
 
     @InjectView(R.id.share_scrollview)
@@ -65,6 +76,10 @@ public class ShareFragment extends Fragment {
     Toolbar mToolbar;
     @InjectView(R.id.share_button)
     Button shareButton;
+    @InjectViews({R.id.share_twitterbutton, R.id.share_youtubebutton})
+    List<Button> shareSourceButtonViews;
+    @InjectView(R.id.twitterLoginButton)
+    TwitterLoginButton twitterLoginButton;
 
     private String videoPath;
     private RecordingSession recordingSession;
@@ -102,12 +117,15 @@ public class ShareFragment extends Fragment {
         }
     };
     private StitchClipsThread stitchClipsThread;
+    private Toast videoTitlteToast = null;
+    private HashMap<Integer, Boolean> shareSourceHashMap = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_share, container, false);
         ButterKnife.inject(this, root);
+        initShareSourceHashMap();
         RecordActivity activity = ((RecordActivity) getActivity());
         setHasOptionsMenu(true);
         activity.setSupportActionBar(mToolbar);
@@ -136,6 +154,23 @@ public class ShareFragment extends Fragment {
                     stitchSuccessListener);
             stitchClipsThread.start();
         }
+
+        twitterLoginButton.setCallback(
+                new Callback<TwitterSession>() {
+                    @Override
+                    public void success(Result<TwitterSession> result) {
+                        Log.d(TAG, "Logged with twitter");
+                        shareSourceButtonViews.get(0).setSelected(true);
+                    }
+
+                    @Override
+                    public void failure(TwitterException exception) {
+                        Log.d(TAG, "Failed logged with twitter");
+                        shareSourceButtonViews.get(0).setSelected(false);
+                    }
+                }
+        );
+
         return root;
     }
 
@@ -172,15 +207,58 @@ public class ShareFragment extends Fragment {
             recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
+
+            if (shareSourceHashMap.size() > 0) {
+                uploadIntent.putExtra(UploadService.ARG_SHARE_SOURCE, shareSourceHashMap);
+            }
+
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
-            Toast.makeText(getActivity(), getResources().getString(R.string.writeYourTitle), Toast.LENGTH_SHORT).show();
+            if (videoTitlteToast == null) {
+                videoTitlteToast = Toast.makeText(getActivity(), getResources().getString(R.string.writeYourTitle), Toast.LENGTH_SHORT);
+                videoTitlteToast.show();
+            } else {
+                videoTitlteToast.cancel();
+                videoTitlteToast = null;
+            }
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(intent);
         }
+    }
+
+    @OnClick({R.id.share_twitterbutton, R.id.share_youtubebutton})
+    public void onClick(Button button) {
+        switch (button.getId()) {
+            case R.id.share_twitterbutton: {
+                if (button.isSelected()) {
+                    button.setSelected(false);
+                } else {
+                    TwitterSession twitterSession = Twitter.getSessionManager().getActiveSession();
+                    if (twitterSession != null) {
+                        shareSourceHashMap.put(shareSourceButtonViews.get(0).getId(), true);
+                        button.setSelected(true);
+                    } else {
+                        shareSourceHashMap.put(shareSourceButtonViews.get(0).getId(), false);
+                        button.setSelected(false);
+                        twitterLoginButton.callOnClick();
+                    }
+                }
+                break;
+            }
+            case R.id.share_youtubebutton: {
+                break;
+            }
+        }
+    }
+
+    public void initShareSourceHashMap() {
+        for (Button shareSourceButton : shareSourceButtonViews) {
+            shareSourceHashMap.put(shareSourceButton.getId(), false);
+        }
+        Log.d("shareSourceHashMap", Integer.toString(shareSourceHashMap.size()));
     }
 
     @Override
@@ -240,6 +318,12 @@ public class ShareFragment extends Fragment {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
 }
