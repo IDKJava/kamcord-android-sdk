@@ -107,8 +107,8 @@ public class FileSystemManager {
                 // we remove the recording cache.
                 RecordingSession session = new RecordingSession(recordingCache.getName());
                 RecordingSession.State state = ActiveRecordingSessionManager.getActiveSessionState(session);
-                if( state != null &&
-                        (state == RecordingSession.State.STARTED || state == RecordingSession.State.PROCESSED) ) {
+                if( state == null ||
+                        state == RecordingSession.State.STARTED || state == RecordingSession.State.PROCESSED ) {
                     nukeDirectory(recordingCache);
                 }
             }

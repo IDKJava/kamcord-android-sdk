@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.content.Intent;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
@@ -40,14 +41,14 @@ public class UploadService extends IntentService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        RecordingSession sessionToQueue = intent.getParcelableExtra(ARG_SESSION_TO_SHARE);
+        RecordingSession sessionToQueue = new Gson().fromJson(intent.getStringExtra(ARG_SESSION_TO_SHARE), RecordingSession.class);
         queuedSessions.add(sessionToQueue);
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        currentlyUploadingSession = intent.getParcelableExtra(ARG_SESSION_TO_SHARE);
+        currentlyUploadingSession = new Gson().fromJson(intent.getStringExtra(ARG_SESSION_TO_SHARE), RecordingSession.class);
 
         RecordingSession nextSession = queuedSessions.poll();
         if( !nextSession.getUUID().equals(currentlyUploadingSession.getUUID()) ) {

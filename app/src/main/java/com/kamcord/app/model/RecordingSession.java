@@ -10,6 +10,7 @@ import java.util.UUID;
  */
 public class RecordingSession {
     public static final float UPLOAD_FAILED_PROGRESS = Float.MAX_VALUE;
+    public static final float UPLOAD_PROCESSING_PROGRESS = 2f;
 
     private String uuid;
     private String videoTitle;

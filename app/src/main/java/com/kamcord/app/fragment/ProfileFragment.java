@@ -26,17 +26,15 @@ import com.kamcord.app.server.model.Video;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountManager;
-import com.kamcord.app.utils.FileSystemManager;
+import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 
 import butterknife.ButterKnife;
@@ -64,7 +62,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     private static final String TAG = ProfileFragment.class.getSimpleName();
     private List<ProfileItem> mProfileList = new ArrayList<>();
-    private Set<RecordingSession> currentUploads = new HashSet<>();
+    private List<RecordingSession> currentUploads = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
     private ProfileItem<User> userHeader;
     private String nextPage;
@@ -89,7 +87,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
     @Override
     public void onResume() {
         super.onResume();
-        marshalUploadingSessions();
+        marshalActiveSessions();
         Uploader.subscribe(this);
     }
 
@@ -124,6 +122,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
             public void onRefresh() {
                 if (AccountManager.isLoggedIn()) {
                     videoFeedRefreshLayout.setRefreshing(true);
+                    marshalActiveSessions();
                     Account myAccount = AccountManager.getStoredAccount();
                     AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
                     AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
@@ -159,28 +158,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
         });
     }
 
-    private void marshalUploadingSessions() {
-        marshalCachedSessionUploads();
-        marshalUploadServiceSessions();
-    }
-
-    private void marshalCachedSessionUploads() {
-        HashSet<RecordingSession> uploadedSessions = new HashSet<>();
-        HashSet<RecordingSession> sharedSessions = new HashSet<>();
-
-        File cacheDirectory = FileSystemManager.getCacheDirectory();
-        for( File gameCache : cacheDirectory.listFiles(FileSystemManager.PACKAGE_FILENAME_FILTER) ) {
-            for( File recordingSessionCache : gameCache.listFiles(FileSystemManager.UUID_FILENAME_FILTER) ) {
-                RecordingSession session = new RecordingSession(recordingSessionCache.getName());
-                if( FileSystemManager.directoryHasMark(recordingSessionCache, FileSystemManager.Mark.UPLOADED) )
-                {
-                    uploadedSessions.add(session);
-                }
-            }
-        }
-    }
-
-    private void marshalUploadServiceSessions() {
+    private void marshalActiveSessions() {
         boolean modified = false;
         {
             Iterator<ProfileItem> iterator = mProfileList.iterator();
@@ -193,22 +171,37 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
             }
         }
 
-        {
-            UploadService uploadService = UploadService.getInstance();
-            if (uploadService != null) {
-                Queue<RecordingSession> uploadQueue = uploadService.getQueuedSessions();
-                Iterator<RecordingSession> iterator = uploadQueue.iterator();
-                while( iterator.hasNext() ) {
-                    mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, iterator.next()));
-                    modified = true;
-                }
+        Set<RecordingSession> activeSessions = ActiveRecordingSessionManager.getActiveSessions();
+        Set<RecordingSession> queuedSessions = new HashSet<>();
+        RecordingSession currentSession = null;
+        UploadService uploadService = UploadService.getInstance();
+        if( uploadService != null ) {
+            queuedSessions = new HashSet<>(uploadService.getQueuedSessions());
+            currentSession = uploadService.getCurrentlyUploadingSession();
+        }
 
-                RecordingSession session = UploadService.getInstance().getCurrentlyUploadingSession();
-                if (session != null) {
-                    mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
-                    modified = true;
-                }
+        for( RecordingSession session : activeSessions ) {
+            if( session.getState() == RecordingSession.State.SHARED
+                    && !queuedSessions.contains(session)
+                    && !session.equals(currentSession) ) {
+                session.setUploadProgress(RecordingSession.UPLOAD_FAILED_PROGRESS);
+                mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
+                modified = true;
+
+            } else if( session.getState() == RecordingSession.State.UPLOADED ) {
+                session.setUploadProgress(RecordingSession.UPLOAD_PROCESSING_PROGRESS);
+                mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
+                modified = true;
             }
+        }
+
+        if( uploadService != null ) {
+            for( RecordingSession queuedSession : uploadService.getQueuedSessions() ) {
+                queuedSession.setUploadProgress(-1f);
+                mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, queuedSession));
+                modified = true;
+            }
+            mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, uploadService.getCurrentlyUploadingSession()));
         }
 
         if( modified ) {
@@ -252,13 +245,16 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
                     && paginatedVideoListGenericResponse.response.video_list != null) {
-                if(mProfileList.size() > 1) {
-                    mProfileList.subList(1, mProfileList.size()).clear();
-                    nextPage = paginatedVideoListGenericResponse.response.next_page;
-                    for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                        ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
-                        mProfileList.add(profileViewModel);
+                Iterator<ProfileItem> iterator = mProfileList.iterator();
+                while( iterator.hasNext() ) {
+                    if( iterator.next().getType() == ProfileItem.Type.VIDEO ) {
+                        iterator.remove();
                     }
+                }
+                nextPage = paginatedVideoListGenericResponse.response.next_page;
+                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                    ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
+                    mProfileList.add(profileViewModel);
                 }
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
@@ -309,7 +305,6 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     @Override
     public void onUploadStart(RecordingSession recordingSession) {
-        marshalUploadServiceSessions();
         updateUploadingSessionProgress(recordingSession, 0f);
     }
 
@@ -320,20 +315,8 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
     @Override
     public void onUploadFinish(RecordingSession recordingSession, boolean success) {
-        marshalUploadServiceSessions();
         if( success ) {
-            int index = 0;
-            Iterator<ProfileItem> iterator = mProfileList.iterator();
-            while( iterator.hasNext() ) {
-                ProfileItem item = iterator.next();
-                if( item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
-                        && recordingSession.equals(item.getSession()) ) {
-                        iterator.remove();
-                        mProfileAdapter.notifyItemRemoved(index);
-                    break;
-                }
-                index++;
-            }
+            updateUploadingSessionProgress(recordingSession, RecordingSession.UPLOAD_PROCESSING_PROGRESS);
         } else {
             updateUploadingSessionProgress(recordingSession, RecordingSession.UPLOAD_FAILED_PROGRESS);
         }

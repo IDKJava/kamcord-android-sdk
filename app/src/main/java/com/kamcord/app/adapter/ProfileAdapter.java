@@ -227,6 +227,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordBlue)}));
             viewHolder.uploadProgressBar.setProgress(progressBarProgress);
 
+        } else if( session.getUploadProgress() == RecordingSession.UPLOAD_PROCESSING_PROGRESS ) {
+            uploadStatus = mContext.getString(R.string.processingPullToRefresh);
+
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
             uploadStatus = mContext.getString(R.string.uploadFailed);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
@@ -271,8 +274,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
         }
-        viewHolder.uploadStatusTextView.setText(uploadStatus);
 
+        viewHolder.uploadStatusTextView.setText(uploadStatus);
         viewHolder.videoTitleTextView.setText(session.getVideoTitle());
     }
 

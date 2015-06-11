@@ -116,7 +116,7 @@ public class ShareFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
+        recordingSession = new Gson().fromJson(getArguments().getString(ARG_RECORDING_SESSION), RecordingSession.class);
 
         File videoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                 FileSystemManager.MERGED_VIDEO_FILENAME);
