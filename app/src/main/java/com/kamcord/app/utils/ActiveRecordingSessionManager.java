@@ -48,6 +48,10 @@ public class ActiveRecordingSessionManager {
         return updated;
     }
 
+    public synchronized static boolean removeActiveSession(RecordingSession session) {
+        return activeSessions.remove(session);
+    }
+
     public synchronized static Set<RecordingSession> getActiveSessions() {
         return activeSessions;
     }

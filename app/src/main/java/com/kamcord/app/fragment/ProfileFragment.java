@@ -216,8 +216,23 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
         Set<RecordingSession> activeSessions = ActiveRecordingSessionManager.getActiveSessions();
         for( RecordingSession activeSession : activeSessions ) {
             if( activeSession.getState() == RecordingSession.State.UPLOADED ) {
-                AppServerClient.getInstance().getVideoInfo(activeSession.getGlobalId(), );
+                AppServerClient.getInstance().getVideoInfo(activeSession.getGlobalId(), new VideoProcessingDoneCallback(activeSession));
             }
+        }
+    }
+
+    private void removeProcessedSession(RecordingSession session) {
+        int index = 0;
+        Iterator<ProfileItem> iterator = mProfileList.iterator();
+        while( iterator.hasNext() ) {
+            ProfileItem item = iterator.next();
+            if( item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
+                    && item.getSession().equals(session) ) {
+                iterator.remove();
+                mProfileAdapter.notifyItemRemoved(index);
+                break;
+            }
+            index++;
         }
     }
 
@@ -318,8 +333,12 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
         @Override
         public void success(GenericResponse<Video> responseWrapper, Response response) {
             if( responseWrapper != null && responseWrapper.response != null
-                    && responseWrapper.status == StatusCode.OK ) {
-
+                    && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK) ) {
+                if( responseWrapper.response.video_state == Video.State.PROCESSED ) {
+                    session.setState(RecordingSession.State.PROCESSED);
+                    ActiveRecordingSessionManager.updateActiveSession(session);
+                    removeProcessedSession(session);
+                }
             }
         }
 
@@ -356,15 +375,20 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
     }
 
     private void updateUploadingSessionProgress(RecordingSession session, float progress) {
+        boolean updated = false;
         int index = 0;
         for(ProfileItem item : mProfileList) {
             if( item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
                     && session.equals(item.getSession()) ) {
                 item.getSession().setUploadProgress(progress);
                 mProfileAdapter.notifyItemChanged(index);
+                updated = true;
                 break;
             }
             index++;
+        }
+        if( !updated ) {
+            marshalActiveSessions();
         }
     }
 }

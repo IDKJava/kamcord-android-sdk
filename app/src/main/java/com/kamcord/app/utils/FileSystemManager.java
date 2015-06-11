@@ -110,6 +110,7 @@ public class FileSystemManager {
                 if( state == null ||
                         state == RecordingSession.State.STARTED || state == RecordingSession.State.PROCESSED ) {
                     nukeDirectory(recordingCache);
+                    ActiveRecordingSessionManager.removeActiveSession(session);
                 }
             }
         }
