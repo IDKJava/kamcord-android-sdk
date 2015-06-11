@@ -21,6 +21,7 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedVideoList;
+import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.service.UploadService;
@@ -127,6 +128,7 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
                     AppServerClient.AppServer client = AppServerClient.getInstance();
                     client.getUserInfo(myAccount.id, new GetUserInfoCallBack());
                     client.getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
+                    checkProcessingSessions();
                 } else {
                     videoFeedRefreshLayout.setRefreshing(false);
                 }
@@ -207,6 +209,15 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
 
         if( modified ) {
             mProfileAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void checkProcessingSessions() {
+        Set<RecordingSession> activeSessions = ActiveRecordingSessionManager.getActiveSessions();
+        for( RecordingSession activeSession : activeSessions ) {
+            if( activeSession.getState() == RecordingSession.State.UPLOADED ) {
+                AppServerClient.getInstance().getVideoInfo(activeSession.getGlobalId(), );
+            }
         }
     }
 
@@ -294,6 +305,27 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
             videoFeedRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private class VideoProcessingDoneCallback implements Callback<GenericResponse<Video>> {
+
+        private RecordingSession session;
+        public VideoProcessingDoneCallback(RecordingSession session) {
+            this.session = session;
+        }
+
+        @Override
+        public void success(GenericResponse<Video> responseWrapper, Response response) {
+            if( responseWrapper != null && responseWrapper.response != null
+                    && responseWrapper.status == StatusCode.OK ) {
+
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            // Do nothing.
         }
     }
 
