@@ -11,6 +11,7 @@
     <string name="toolbarTitle">Kamcord</string>
     <string name="stopRecording">Stop Recording</string>
     <string name="startRecording">Start Recording</string>
+    <string name="recordingPaused">Recording Paused</string>
 
     <!-- Login -->
     <string name="termsAndPolicy">By creating a profile, you are agreeing to Kamcord\'s Terms of Service and Privacy Policy</string>

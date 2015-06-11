@@ -16,7 +16,7 @@
             android:id="@+id/profile_item_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:background="@drawable/default_thumbnails"
+            android:background="@drawable/default_video_thumb"
             android:scaleType="centerCrop" />
 
         <TextView

@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +65,11 @@ public class RecordFragment extends Fragment implements
     SwipeRefreshLayout mSwipeRefreshLayout;
     @InjectView(R.id.record_recyclerview)
     DynamicRecyclerView mRecyclerView;
+
+    @InjectView(R.id.stopRecordingTakeoverContainer)
+    ViewGroup stopRecordingTakeoverContainer;
+    @InjectView(R.id.currentGameThumbnailImageView)
+    ImageView currentGameThumbnailImageView;
 
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
