@@ -95,7 +95,7 @@ public class AppServerClient {
         void getUserVideoFeed(@Path("userId") String userId, @Query("page") String page, Callback<GenericResponse<PaginatedVideoList>> cb);
 
         @GET("/app/v3/videos/{videoId}")
-        void getVideoInfo(@Path("videoId") String videoId, , Callback<GenericResponse<Video>> cb);
+        void getVideoInfo(@Path("videoId") String videoId, Callback<GenericResponse<Video>> cb);
 
         @POST("/app/v3/videos/{videoId}/like")
         void likeVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
