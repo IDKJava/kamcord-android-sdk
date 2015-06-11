@@ -124,8 +124,9 @@ public class ProfileFragment extends Fragment implements Uploader.UploadStatusLi
                     videoFeedRefreshLayout.setRefreshing(true);
                     marshalActiveSessions();
                     Account myAccount = AccountManager.getStoredAccount();
-                    AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-                    AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
+                    AppServerClient.AppServer client = AppServerClient.getInstance();
+                    client.getUserInfo(myAccount.id, new GetUserInfoCallBack());
+                    client.getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
                 } else {
                     videoFeedRefreshLayout.setRefreshing(false);
                 }
