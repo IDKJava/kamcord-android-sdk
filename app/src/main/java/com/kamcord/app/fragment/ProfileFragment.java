@@ -167,7 +167,7 @@ public class ProfileFragment extends Fragment implements AccountListener {
     @Override
     public void onLoggedInChanged(boolean state) {
         if (state) {
-            userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
+            userHeader = new ProfileItem(ProfileItem.Type.HEADER, null);
             mProfileList.add(userHeader);
             signInPromptContainer.setVisibility(View.GONE);
             Account myAccount = AccountManager.getStoredAccount();
