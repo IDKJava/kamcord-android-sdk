@@ -55,31 +55,30 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private int clipNumber = 0;
     private long presentationStartUs = -1;
 
-    private static class CodecSettings
-    {
+    private static class CodecSettings {
         private static final int FRAME_RATE = 30;
         private static final int BIT_RATE = 4000000;
         private static final float RESOLUTION_MULTIPLIER = 0.5f;
     }
 
-    private enum AspectRatio
-    {
+    private enum AspectRatio {
         INDETERMINATE,
         PORTRAIT,
         LANDSCAPE,
     }
+
     private AspectRatio aspectRatio = AspectRatio.INDETERMINATE;
 
-    private static class Dimensions
-    {
-        public Dimensions(int width, int height)
-        {
+    private static class Dimensions {
+        public Dimensions(int width, int height) {
             this.width = width;
             this.height = height;
         }
+
         public int width;
         public int height;
     }
+
     private Dimensions codecDimensions = null;
 
     public RecordHandlerThread(MediaProjection mediaProjection, Context context, RecordingSession recordingSession, CyclicBarrier clipStartBarrier) {
@@ -101,7 +100,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                ApplicationStateUtils.initializeForeground();
                 recordUntilBackground();
                 mHandler.removeMessages(Message.POLL);
                 mHandler.sendEmptyMessage(Message.POLL);
@@ -147,8 +145,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             int screenHeight = (int) (metrics.heightPixels * CodecSettings.RESOLUTION_MULTIPLIER);
             int screenDensity = metrics.densityDpi;
 
-            if( (aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight) || (aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth) )
-            {
+            if ((aspectRatio == AspectRatio.PORTRAIT && screenWidth > screenHeight) || (aspectRatio == AspectRatio.LANDSCAPE && screenHeight > screenWidth)) {
                 int tmp = screenWidth;
                 screenWidth = screenHeight;
                 screenHeight = tmp;
@@ -168,13 +165,10 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             }
             mVideoEncoder.start();
 
-            try
-            {
+            try {
                 clipStartBarrier.await();
                 clipStartBarrier.reset();
-            }
-            catch(Exception e )
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             presentationStartUs = -1;
@@ -196,7 +190,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             return;
         }
 
-        if( codecDimensions == null ) {
+        if (codecDimensions == null) {
             MediaCodecInfo.VideoCapabilities videoCapabilities;
 
             MediaCodecInfo.CodecCapabilities codecCapabilities = mVideoEncoder.getCodecInfo().getCapabilitiesForType(VIDEO_TYPE);
@@ -217,8 +211,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             }
         }
 
-        if( aspectRatio == AspectRatio.INDETERMINATE )
-        {
+        if (aspectRatio == AspectRatio.INDETERMINATE) {
             aspectRatio = codecDimensions.width > codecDimensions.height ? AspectRatio.LANDSCAPE : AspectRatio.PORTRAIT;
         }
 
@@ -234,19 +227,14 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         mSurface = mVideoEncoder.createInputSurface();
     }
 
-    private int roundToNearest(int intToRound, int modulus)
-    {
+    private int roundToNearest(int intToRound, int modulus) {
         int rounded = intToRound;
 
-        if( modulus > 0 )
-        {
+        if (modulus > 0) {
             int remainder = intToRound % modulus;
-            if( remainder / 2 < modulus )
-            {
+            if (remainder / 2 < modulus) {
                 rounded -= remainder;
-            }
-            else
-            {
+            } else {
                 rounded += modulus - remainder;
             }
         }
@@ -279,12 +267,11 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                     mVideoBufferInfo.size = 0;
                 }
 
-                if (mVideoBufferInfo.size != 0 && mMuxerStart ) {
+                if (mVideoBufferInfo.size != 0 && mMuxerStart) {
                     encodedData.position(mVideoBufferInfo.offset);
                     encodedData.limit(mVideoBufferInfo.offset + mVideoBufferInfo.size);
                     mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
-                    if( presentationStartUs < 0 )
-                    {
+                    if (presentationStartUs < 0) {
                         presentationStartUs = mVideoBufferInfo.presentationTimeUs;
                     }
                     mMuxerWrite = true;
@@ -307,17 +294,22 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
         }
         if (mMuxer != null) {
             if (mMuxerStart) {
-                mMuxer.stop();
+                try {
+                    mMuxer.stop();
+                } catch (Exception e) {
+                }
             }
             mMuxerStart = false;
 
-            if( mMuxerWrite )
-            {
+            if (mMuxerWrite) {
                 clipNumber++;
             }
             mMuxerWrite = false;
 
-            mMuxer.release();
+            try {
+                mMuxer.release();
+            } catch (Exception e) {
+            }
             mMuxer = null;
         }
         if (mVideoEncoder != null) {

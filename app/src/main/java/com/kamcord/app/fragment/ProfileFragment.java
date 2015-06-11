@@ -23,6 +23,7 @@ import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.utils.AccountListener;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.RecyclerViewScrollListener;
 import com.kamcord.app.view.DynamicRecyclerView;
@@ -42,7 +43,7 @@ import retrofit.client.Response;
 /**
  * Created by donliang1 on 5/6/15.
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements AccountListener {
 
     private static final int HEADER_EXISTS = 1;
 
@@ -67,6 +68,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.profile_tab, container, false);
+        AccountManager.addListener(this);
         ButterKnife.inject(this, root);
         initKamcordProfileFragment(root);
 
@@ -162,10 +164,24 @@ public class ProfileFragment extends Fragment {
         AppServerClient.getInstance().getUserVideoFeed(myAccount.id, nextPage, new GetUserVideoFeedCallBack());
     }
 
+    @Override
+    public void onLoggedInChanged(boolean state) {
+        if (state) {
+            userHeader = new ProfileViewModel(ProfileItemType.HEADER, null);
+            mProfileList.add(userHeader);
+            signInPromptContainer.setVisibility(View.GONE);
+            Account myAccount = AccountManager.getStoredAccount();
+            AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+        } else {
+            signInPromptContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
     private class GetUserInfoCallBack implements Callback<GenericResponse<User>> {
         @Override
         public void success(GenericResponse<User> userResponse, Response response) {
-            if (userResponse != null && userResponse.response != null) {
+            if (userResponse != null && userResponse.response != null && userHeader != null) {
                 userHeader.setUser(userResponse.response);
                 totalItems = userHeader.getUser().video_count;
                 mProfileAdapter.notifyItemChanged(0);
@@ -237,13 +253,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        AccountManager.removeListener(this);
         ButterKnife.reset(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
     }
 
     @OnClick(R.id.signInPromptButton)
