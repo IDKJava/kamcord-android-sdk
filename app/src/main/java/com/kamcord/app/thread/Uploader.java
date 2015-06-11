@@ -149,6 +149,7 @@ public class Uploader extends Thread {
             informKamcordUploadFinished();
 
             mRecordingSession.setState(RecordingSession.State.UPLOADED);
+            mRecordingSession.setGlobalId(mServerVideoId);
             ActiveRecordingSessionManager.updateActiveSession(mRecordingSession);
 
             notifyUploadFinished(mRecordingSession, true);

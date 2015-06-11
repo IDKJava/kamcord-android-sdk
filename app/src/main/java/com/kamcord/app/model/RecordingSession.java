@@ -12,6 +12,13 @@ public class RecordingSession {
     public static final float UPLOAD_FAILED_PROGRESS = Float.MAX_VALUE;
     public static final float UPLOAD_PROCESSING_PROGRESS = 2f;
 
+    public enum State {
+        STARTED,
+        SHARED,
+        UPLOADED,
+        PROCESSED,
+    }
+
     private String uuid;
     private String videoTitle;
     private String videoDescription;
@@ -19,6 +26,7 @@ public class RecordingSession {
     private String gameServerName;
     private String gamePackageName;
     private State state = State.STARTED;
+    private String globalId = null;
 
     private transient boolean recordedFrames = false;
     private transient float uploadProgress = -1f;
@@ -92,11 +100,11 @@ public class RecordingSession {
         return state;
     }
 
-    public enum State {
-        STARTED,
-        SHARED,
-        UPLOADED,
-        PROCESSED,
+    public void setGlobalId(String globalId) {
+        this.globalId = globalId;
+    }
+    public String getGlobalId() {
+        return globalId;
     }
 
     @Override
