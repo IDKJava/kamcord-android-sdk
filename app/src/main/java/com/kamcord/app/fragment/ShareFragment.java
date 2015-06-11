@@ -159,14 +159,16 @@ public class ShareFragment extends Fragment {
                 new Callback<TwitterSession>() {
                     @Override
                     public void success(Result<TwitterSession> result) {
-                        Log.d(TAG, "Logged with twitter");
-                        shareSourceButtonViews.get(0).setSelected(true);
+                        if (shareSourceButtonViews.get(0) != null) {
+                            shareSourceButtonViews.get(0).setSelected(true);
+                        }
                     }
 
                     @Override
                     public void failure(TwitterException exception) {
-                        Log.d(TAG, "Failed logged with twitter");
-                        shareSourceButtonViews.get(0).setSelected(false);
+                        if (shareSourceButtonViews.get(0) != null) {
+                            shareSourceButtonViews.get(0).setSelected(false);
+                        }
                     }
                 }
         );
