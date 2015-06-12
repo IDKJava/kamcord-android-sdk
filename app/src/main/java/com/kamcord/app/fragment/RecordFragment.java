@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -182,7 +183,7 @@ public class RecordFragment extends Fragment implements
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-                }
+            }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -194,7 +195,7 @@ public class RecordFragment extends Fragment implements
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
                 }
-                }
+            }
         });
     }
 
@@ -232,7 +233,9 @@ public class RecordFragment extends Fragment implements
                     });
 
                     currentGameNameTextView.setText(game.name);
-                    currentGameTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MICROSECONDS, recordingSession.getDurationUs()));
+                    currentGameTimeTextView.setText(
+                            String.format(Locale.ENGLISH, getActivity().getString(R.string.timeRecorded),
+                                    VideoUtils.videoDurationString(TimeUnit.MICROSECONDS, recordingSession.getDurationUs())));
 
                     stopRecordingImageButton.setOnClickListener(new View.OnClickListener() {
                         @Override

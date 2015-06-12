@@ -164,6 +164,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }
+            lastPresentationUs = 0;
             mVideoEncoder.start();
 
             try {
