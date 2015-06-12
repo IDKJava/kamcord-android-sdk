@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
+import com.google.gson.Gson;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.RecordActivity;
@@ -39,7 +40,10 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.service.RecordingService;
+import com.kamcord.app.utils.ActiveRecordingSessionManager;
+import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.GameListUtils;
+import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.GridViewItemDecoration;
 import com.kamcord.app.view.utils.OnBackPressedListener;
@@ -50,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -86,7 +91,6 @@ public class RecordFragment extends Fragment implements
 
     private List<RecordItem> mRecordItemList = new ArrayList<>();
     private List<Game> mGameList = new ArrayList<>();
-    private RecyclerViewScrollListener onRecyclerViewScrollListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -113,39 +117,7 @@ public class RecordFragment extends Fragment implements
         myActivity.unbindService(recordingServiceConnection);
         if( myActivity instanceof RecordActivity ) {
             ((RecordActivity) myActivity).setOnBackPressedListener(null);
-        }
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof RecyclerViewScrollListener) {
-            onRecyclerViewScrollListener = (RecyclerViewScrollListener) activity;
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        onRecyclerViewScrollListener = null;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.v("FindMe", "onPause()");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.v("FindMe", "onStop()");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.v("FindMe", "onStart()");
     }
 
     @Override
@@ -210,10 +182,7 @@ public class RecordFragment extends Fragment implements
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-                if (onRecyclerViewScrollListener != null) {
-                    onRecyclerViewScrollListener.onRecyclerViewScrollStateChanged(recyclerView, state);
                 }
-            }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -225,11 +194,7 @@ public class RecordFragment extends Fragment implements
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
                 }
-
-                if (onRecyclerViewScrollListener != null) {
-                    onRecyclerViewScrollListener.onRecyclerViewScrolled(recyclerView, dy, dy);
                 }
-            }
         });
     }
 
@@ -267,7 +232,7 @@ public class RecordFragment extends Fragment implements
                     });
 
                     currentGameNameTextView.setText(game.name);
-                    currentGameTimeTextView.setText(null);
+                    currentGameTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MICROSECONDS, recordingSession.getDurationUs()));
 
                     stopRecordingImageButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -289,18 +254,18 @@ public class RecordFragment extends Fragment implements
                                         })
                                         .setNeutralButton(android.R.string.cancel, null)
                                         .show();
-                            } else {
+                    } else {
                                 stopRecording();
                                 shareRecording(recordingSession);
-                            }
-                        }
+                    }
+                }
                     });
                 }
             } else {
                 Log.v(TAG, "Unable to get the recording session!");
             }
+            }
         }
-    }
 
     private boolean isAppInstalled(String packageName) {
         boolean appIsInstalled = false;
@@ -351,7 +316,9 @@ public class RecordFragment extends Fragment implements
                             .getMediaProjection(resultCode, data);
                     RecordingSession recordingSession = new RecordingSession(mSelectedGame);
 
-                    recordingServiceConnection.startRecording(projection, recordingSession);
+                    if( recordingServiceConnection.startRecording(projection, recordingSession) ) {
+                        ActiveRecordingSessionManager.addActiveSession(recordingSession);
+                    }
                 } catch (ActivityNotFoundException e) {
                     // TODO: show the user something about not finding the game.
                     Log.w(TAG, "Could not find activity with package " + mSelectedGame.play_store_id);
@@ -434,10 +401,10 @@ public class RecordFragment extends Fragment implements
     public void onGameActionButtonClick(final Game game) {
 
         if( game.isInstalled && !recordingServiceConnection.isServiceRecording()) {
-            mSelectedGame = game;
-            obtainMediaProjection();
+                mSelectedGame = game;
+                obtainMediaProjection();
 
-        } else {
+            } else {
             mSelectedGame = null;
             Intent intent = new Intent(
                     Intent.ACTION_VIEW,
@@ -463,7 +430,7 @@ public class RecordFragment extends Fragment implements
             FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
             ShareFragment recordShareFragment = new ShareFragment();
             Bundle bundle = new Bundle();
-            bundle.putParcelable(ShareFragment.ARG_RECORDING_SESSION, recordingSession);
+            bundle.putString(ShareFragment.ARG_RECORDING_SESSION, new Gson().toJson(recordingSession));
             recordShareFragment.setArguments(bundle);
             activity.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
@@ -494,6 +461,7 @@ public class RecordFragment extends Fragment implements
 
         public boolean startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
             if( recordingService != null ) {
+                FileSystemManager.removeInactiveRecordingSessions();
                 recordingService.startRecording(mediaProjection, recordingSession);
                 return true;
             }

@@ -5,14 +5,8 @@
     tools:context="com.kamcord.app.activity.RecordActivity">
 
     <item
-        android:id="@+id/action_cleancache"
-        android:orderInCategory="1"
-        android:title="@string/action_cleancache"
-        app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_signout"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/action_signout"
         app:showAsAction="never" />
 

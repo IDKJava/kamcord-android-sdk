@@ -54,6 +54,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
     private long presentationStartUs = -1;
+    private long lastPresentationUs = 0;
 
     private static class CodecSettings {
         private static final int FRAME_RATE = 30;
@@ -274,6 +275,10 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                     if (presentationStartUs < 0) {
                         presentationStartUs = mVideoBufferInfo.presentationTimeUs;
                     }
+                    if( lastPresentationUs > 0 ) {
+                        mRecordingSession.incrementDurationUs(mVideoBufferInfo.presentationTimeUs - lastPresentationUs);
+                    }
+                    lastPresentationUs = mVideoBufferInfo.presentationTimeUs;
                     mMuxerWrite = true;
                     mRecordingSession.setRecordedFrames(true);
                 }

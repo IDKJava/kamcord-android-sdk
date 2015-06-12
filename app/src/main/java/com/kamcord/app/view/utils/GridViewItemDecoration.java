@@ -24,6 +24,10 @@ public class GridViewItemDecoration extends RecyclerView.ItemDecoration {
         int halfSpacing = spacing / 2;
 
         int position = parent.getChildAdapterPosition(view);
+        if( position == RecyclerView.NO_POSITION ) {
+            return;
+        }
+
         int totalSpan = getTotalSpan(parent);
         int row = getRow(position, totalSpan, parent);
         int col = getCol(position, totalSpan, parent);

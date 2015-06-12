@@ -5,6 +5,8 @@ import android.os.Environment;
 import com.kamcord.app.model.RecordingSession;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.UUID;
 
 /**
  * Created by pplunkett on 5/13/15.
@@ -65,23 +67,16 @@ public class FileSystemManager {
     public static void cleanRecordingSessionCacheDirectory(RecordingSession recordingSession)
     {
         File recordingSessionCacheDirectory = getRecordingSessionCacheDirectory(recordingSession);
-        clearCacheRecursive(recordingSessionCacheDirectory);
+        nukeDirectory(recordingSessionCacheDirectory);
+        ActiveRecordingSessionManager.removeActiveSession(recordingSession);
     }
 
 
-    public static void cleanCache() {
-        try {
-            clearCacheRecursive(getCacheDirectory());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static void clearCacheRecursive(File file)
+    private static void nukeDirectory(File file)
     {
         if(file.isDirectory()) {
             for(File child : file.listFiles()) {
-                clearCacheRecursive(child);
+                nukeDirectory(child);
             }
         }
         file.delete();
@@ -103,6 +98,42 @@ public class FileSystemManager {
         new File(sessionCache, STITCHED_VIDEO_FILENAME).delete();
         new File(sessionCache, STITCHED_AUDIO_FILENAME).delete();
     }
+
+    public static void removeInactiveRecordingSessions() {
+        File cacheDirectory = getCacheDirectory();
+        for( File gameCache : cacheDirectory.listFiles(PACKAGE_FILENAME_FILTER) ) {
+            for( File recordingCache : gameCache.listFiles(UUID_FILENAME_FILTER) ) {
+
+                // If the recording session was not shared, or the recording session has completed upload,
+                // we remove the recording cache.
+                RecordingSession session = new RecordingSession(recordingCache.getName(), gameCache.getName());
+                RecordingSession.State state = ActiveRecordingSessionManager.getActiveSessionState(session);
+                if( state == null ||
+                        state == RecordingSession.State.STARTED || state == RecordingSession.State.PROCESSED ) {
+                    cleanRecordingSessionCacheDirectory(session);
+                }
+            }
+        }
+    }
+
+    public static final FilenameFilter PACKAGE_FILENAME_FILTER = new FilenameFilter() {
+        @Override
+        public boolean accept(File parent, String filename) {
+            return new File(parent, filename).isDirectory() && filename.matches("^[^\\.]*(\\.[^\\.]*)*$");
+        }
+    };
+
+    public static final FilenameFilter UUID_FILENAME_FILTER = new FilenameFilter() {
+        @Override
+        public boolean accept(File parent, String filename) {
+            try {
+                UUID.fromString(filename);
+                return new File(parent, filename).isDirectory();
+            } catch( Exception e ) {
+            }
+            return false;
+        }
+    };
 
     private static void makeNoMedia(File directory)
     {

@@ -11,6 +11,12 @@ public class Video {
         public String regular;
     }
 
+    public enum State {
+        RESERVED,
+        IN_PROCESSING,
+        PROCESSED,
+    }
+
     public Thumbnails thumbnails;
     public String title;
     public String video_id;
@@ -29,6 +35,8 @@ public class Video {
     public String username;
     public String game_name;
     public boolean featured;
+
+    public State video_state;
 
     public Game game;
     public User user;

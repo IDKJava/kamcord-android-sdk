@@ -84,7 +84,6 @@
 
 
     <string name="defaultNumber">0</string>
-    <string name="headeUserName">User Name</string>
     <plurals name="headerVideos">
         <item quantity="one">Video</item>
         <item quantity="other">Videos</item>
@@ -113,10 +112,20 @@
     <string name="nothingRecordedYet">Nothing Recorded Yet!</string>
     <string name="kamcordHasntRecorded">Kamcord hasn\'t recorded anything from %1$s yet! Do you want to go back to %1$s?</string>
 
+    <string name="currentlyUploadingPercent">Currently Uploading (%1$d%%)</string>
+    <string name="queuedForUpload">Queued for Upload</string>
+    <string name="uploadFailed">Upload Failed</string>
+    <string name="processingPullToRefresh">Processing. Pull to Refresh.</string>
+    <string name="retry">Retry</string>
+    <string name="delete">Delete</string>
+
     <!-- Share -->
     <string name="fragmentShare">Share</string>
     <string name="youtubeShare">Youtube</string>
     <string name="twitterShare">Twitter</string>
     <string name="alsoShare">Also share on</string>
     <string name="writeYourTitle">Please write a title for your video.</string>
+
+    <string name="timeRecorded">%1$s recorded</string>
+
 </resources>

@@ -1,8 +1,5 @@
 package com.kamcord.app.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.utils.StringUtils;
 
@@ -11,17 +8,35 @@ import java.util.UUID;
 /**
  * Created by pplunkett on 5/15/15.
  */
-public class RecordingSession implements Parcelable {
+public class RecordingSession {
+    public static final float UPLOAD_FAILED_PROGRESS = Float.MAX_VALUE;
+    public static final float UPLOAD_PROCESSING_PROGRESS = 2f;
+
+    public enum State {
+        STARTED,
+        SHARED,
+        UPLOADED,
+        PROCESSED,
+    }
+
     private String uuid;
     private String videoTitle;
     private String videoDescription;
     private String gameServerID;
     private String gameServerName;
     private String gamePackageName;
-    private boolean recordedFrames = false;
+    private State state = State.STARTED;
+    private String globalId = null;
 
-    public RecordingSession()
-    {
+    private transient boolean recordedFrames = false;
+    private transient float uploadProgress = -1f;
+    private transient long durationUs = 0;
+
+    public RecordingSession() {}
+
+    public RecordingSession(String uuid, String gamePackageName) {
+        this.uuid = uuid;
+        this.gamePackageName = gamePackageName;
     }
 
     public RecordingSession(Game game) {
@@ -63,6 +78,14 @@ public class RecordingSession implements Parcelable {
         this.videoDescription = videoDescription;
     }
 
+    public void setUploadProgress(float uploadProgress) {
+        this.uploadProgress = uploadProgress;
+    }
+
+    public float getUploadProgress() {
+        return uploadProgress;
+    }
+
     public void setRecordedFrames(boolean recordedFrames)
     {
         this.recordedFrames = recordedFrames;
@@ -72,44 +95,25 @@ public class RecordingSession implements Parcelable {
         return recordedFrames;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setState(State state) {
+        this.state = state;
+    }
+    public State getState() {
+        return state;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int flags) {
-        parcel.writeString(uuid);
-        parcel.writeString(videoTitle);
-        parcel.writeString(videoDescription);
-        parcel.writeString(gameServerID);
-        parcel.writeString(gameServerName);
-        parcel.writeString(gamePackageName);
-        parcel.writeBooleanArray(new boolean[]{recordedFrames});
+    public void setGlobalId(String globalId) {
+        this.globalId = globalId;
+    }
+    public String getGlobalId() {
+        return globalId;
     }
 
-    public static final Parcelable.Creator<RecordingSession> CREATOR
-            = new Parcelable.Creator<RecordingSession>() {
-        public RecordingSession createFromParcel(Parcel in) {
-            return new RecordingSession(in);
-        }
-
-        public RecordingSession[] newArray(int size) {
-            return new RecordingSession[size];
-        }
-    };
-
-    private RecordingSession(Parcel in) {
-        uuid = in.readString();
-        videoTitle = in.readString();
-        videoDescription = in.readString();
-        gameServerID = in.readString();
-        gameServerName = in.readString();
-        gamePackageName = in.readString();
-
-        boolean[] booleanArray = new boolean[1];
-        in.readBooleanArray(booleanArray);
-        recordedFrames = booleanArray[0];
+    public void incrementDurationUs(long increment) {
+        durationUs += increment;
+    }
+    public long getDurationUs() {
+        return durationUs;
     }
 
     @Override
@@ -128,16 +132,7 @@ public class RecordingSession implements Parcelable {
     }
 
     @Override
-    public String toString()
-    {
-        return new StringBuilder()
-                .append("[")
-                .append(uuid).append(",")
-                .append(videoTitle).append(",")
-                .append(videoDescription).append(",")
-                .append(gameServerID).append(",")
-                .append(gameServerName).append(",")
-                .append(gamePackageName)
-                .append("]").toString();
+    public int hashCode() {
+        return uuid.hashCode();
     }
 }

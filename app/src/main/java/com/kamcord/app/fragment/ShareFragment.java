@@ -21,6 +21,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
@@ -30,6 +31,7 @@ import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.VideoUtils;
@@ -118,7 +120,9 @@ public class ShareFragment extends Fragment {
         upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         actionbar.setHomeAsUpIndicator(upArrow);
 
-        recordingSession = getArguments().getParcelable(ARG_RECORDING_SESSION);
+        setHasOptionsMenu(true);
+
+        recordingSession = new Gson().fromJson(getArguments().getString(ARG_RECORDING_SESSION), RecordingSession.class);
 
         File videoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                 FileSystemManager.MERGED_VIDEO_FILENAME);
@@ -171,7 +175,7 @@ public class ShareFragment extends Fragment {
         if (AccountManager.isLoggedIn() && titleEditText.getText().toString().length() != 0) {
             recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, recordingSession);
+            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
@@ -181,6 +185,9 @@ public class ShareFragment extends Fragment {
             Intent intent = new Intent(getActivity(), LoginActivity.class);
             getActivity().startActivity(intent);
         }
+
+        recordingSession.setState(RecordingSession.State.SHARED);
+        ActiveRecordingSessionManager.updateActiveSession(recordingSession);
     }
 
     @Override

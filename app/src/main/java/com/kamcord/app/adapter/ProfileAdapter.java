@@ -3,7 +3,13 @@ package com.kamcord.app.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.media.ThumbnailUtils;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,13 +22,17 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
+import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
@@ -31,7 +41,11 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Request;
+import com.squareup.picasso.RequestHandler;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -69,10 +83,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
                 return new FooterViewHolder(itemLayoutView);
             }
+            case UPLOAD_PROGRESS:
+                itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_upload_progress_item, parent, false);
+                return new ProfileUploadProgressViewHolder(itemLayoutView);
             default: {
                 break;
             }
-
         }
         return new FooterViewHolder(null);
     }
@@ -82,7 +98,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (viewHolder instanceof ProfileHeaderViewHolder) {
             User user = getItem(position).getUser();
             if( user != null ) {
-                bindProfileHeader((ProfileHeaderViewHolder) viewHolder, getItem(position).getUser());
+                bindProfileHeader((ProfileHeaderViewHolder) viewHolder, user);
             }
 
         } else if (viewHolder instanceof FooterViewHolder) {
@@ -90,7 +106,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof ProfileVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
             if( video != null ) {
-                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, getItem(position).getVideo());
+                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
+            }
+
+        } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
+            RecordingSession session = getItem(position).getSession();
+            if( session != null ) {
+                bindProfileUploadProgressViewHolder((ProfileUploadProgressViewHolder) viewHolder, session, position);
             }
         }
 
@@ -132,10 +154,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
-                            case R.id.action_cleancache: {
-                                FileSystemManager.cleanCache();
-                                break;
-                            }
                             case R.id.action_signout: {
                                 if (AccountManager.isLoggedIn()) {
                                     AppServerClient.getInstance().logout(logoutCallback);
@@ -185,6 +203,87 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 toggleLikeButton(videoLikesButton, video);
             }
         });
+    }
+
+    private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
+        Picasso picasso = new Picasso.Builder(mContext)
+                .addRequestHandler(new ThumbnailRequestHandler())
+                .build();
+        String path = new File(FileSystemManager.getRecordingSessionCacheDirectory(session), FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath();
+        if( !path.equals(viewHolder.thumbnailImageView.getTag()) ) {
+            viewHolder.thumbnailImageView.setTag(path);
+            picasso.load(ThumbnailRequestHandler.SCHEME + ":" + path)
+                    .into(viewHolder.thumbnailImageView);
+        }
+
+        viewHolder.retryUploadImageButton.setVisibility(View.GONE);
+        viewHolder.uploadFailedImageButton.setVisibility(View.GONE);
+        viewHolder.uploadProgressBar.setVisibility(View.GONE);
+        String uploadStatus = null;
+        if( session.getUploadProgress() < 0f ) {
+            uploadStatus = mContext.getString(R.string.queuedForUpload);
+        } else if( session.getUploadProgress() <= 1f ) {
+            int percentProgress = (int) (100f * session.getUploadProgress());
+            int progressBarProgress = (int) (viewHolder.uploadProgressBar.getMax() * session.getUploadProgress());
+            uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), percentProgress);
+            viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
+            viewHolder.uploadProgressBar.setProgressTintList(
+                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordBlue)}));
+            viewHolder.uploadProgressBar.setProgress(progressBarProgress);
+
+        } else if( session.getUploadProgress() == RecordingSession.UPLOAD_PROCESSING_PROGRESS ) {
+            uploadStatus = mContext.getString(R.string.processingPullToRefresh);
+
+        } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
+            uploadStatus = mContext.getString(R.string.uploadFailed);
+            viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
+            viewHolder.uploadProgressBar.setProgressTintList(
+                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordRed)}));
+            viewHolder.uploadProgressBar.setProgress(viewHolder.uploadProgressBar.getMax());
+
+            viewHolder.uploadFailedImageButton.setVisibility(View.VISIBLE);
+            viewHolder.uploadFailedImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popupMenu = new PopupMenu(mContext, v);
+                    popupMenu.getMenuInflater().inflate(R.menu.menu_upload_failed, popupMenu.getMenu());
+                    popupMenu.show();
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            switch (item.getItemId()) {
+                                case R.id.action_delete: {
+                                    FileSystemManager.cleanRecordingSessionCacheDirectory(session);
+                                    mProfileList.remove(position);
+                                    notifyItemRemoved(position);
+                                    break;
+                                }
+                            }
+                            return false;
+                        }
+                    });
+                }
+            });
+            viewHolder.retryUploadImageButton.setVisibility(View.VISIBLE);
+            viewHolder.retryUploadImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mContext instanceof FragmentActivity) {
+                        ShareFragment recordShareFragment = new ShareFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ShareFragment.ARG_RECORDING_SESSION, new Gson().toJson(session));
+                        recordShareFragment.setArguments(bundle);
+                        ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
+                                .add(R.id.activity_mdrecord_layout, recordShareFragment)
+                                .addToBackStack("ShareFragment").commit();
+                    }
+                }
+            });
+        }
+
+        viewHolder.uploadStatusTextView.setText(uploadStatus);
+        viewHolder.videoTitleTextView.setText(session.getVideoTitle());
     }
 
     private void toggleLikeButton(Button likeButton, Video video) {
@@ -267,6 +366,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @Override
         public void failure(RetrofitError error) {
+            AccountManager.clearStoredAccount();
             if (mContext != null) {
                 Intent loginIntent = new Intent(mContext, LoginActivity.class);
                 mContext.startActivity(loginIntent);
@@ -274,4 +374,20 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
     };
+
+    private static class ThumbnailRequestHandler extends RequestHandler {
+        public static final String SCHEME = "video";
+
+        @Override
+        public boolean canHandleRequest(Request data) {
+            String scheme = data.uri.getScheme();
+            return SCHEME.equals(scheme);
+        }
+
+        @Override
+        public Result load(Request request, int networkPolicy) throws IOException {
+            Bitmap bm = ThumbnailUtils.createVideoThumbnail(request.uri.getPath(), MediaStore.Images.Thumbnails.MINI_KIND);
+            return new Result(bm, Picasso.LoadedFrom.DISK);
+        }
+    }
 }
