@@ -86,7 +86,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         super.onDestroyView();
         ButterKnife.reset(this);
         AccountManager.removeListener(this);
-    }
+        }
 
     @Override
     public void onResume() {
@@ -103,7 +103,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
 
     public void initKamcordProfileFragment() {
 
-        if (AccountManager.isLoggedIn()) {
+        if(AccountManager.isLoggedIn()) {
             userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, (User) null);
             mProfileList.add(userHeader);
             signInPromptContainer.setVisibility(View.GONE);
@@ -137,12 +137,12 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                 }
             }
         });
-
+        
         profileRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-            }
+                }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -267,7 +267,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             if (userResponse != null && userResponse.response != null && userHeader != null) {
                 userHeader.setUser(userResponse.response);
                 if (userHeader.getUser() != null) {
-                    totalItems = userHeader.getUser().video_count;
+                totalItems = userHeader.getUser().video_count;
                 } else {
                     totalItems = 0;
                 }
@@ -295,11 +295,11 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                         iterator.remove();
                     }
                 }
-                nextPage = paginatedVideoListGenericResponse.response.next_page;
-                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                    nextPage = paginatedVideoListGenericResponse.response.next_page;
+                    for (Video video : paginatedVideoListGenericResponse.response.video_list) {
                     ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
-                    mProfileList.add(profileViewModel);
-                }
+                        mProfileList.add(profileViewModel);
+                    }
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
                 videoFeedRefreshLayout.setRefreshing(false);
@@ -348,7 +348,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             this.session = session;
         }
 
-        @Override
+    @Override
         public void success(GenericResponse<Video> responseWrapper, Response response) {
             if (responseWrapper != null && responseWrapper.response != null
                     && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK)) {
@@ -356,7 +356,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     session.setState(RecordingSession.State.PROCESSED);
                     ActiveRecordingSessionManager.updateActiveSession(session);
                     removeProcessedSession(session);
-                }
+    }
             }
         }
 
@@ -376,7 +376,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     @Override
     public void onUploadStart(RecordingSession recordingSession) {
         updateUploadingSessionProgress(recordingSession, 0f);
-    }
+}
 
     @Override
     public void onUploadProgress(RecordingSession recordingSession, float progress) {
