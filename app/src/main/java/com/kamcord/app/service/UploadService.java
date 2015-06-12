@@ -51,7 +51,7 @@ public class UploadService extends IntentService {
         currentlyUploadingSession = new Gson().fromJson(intent.getStringExtra(ARG_SESSION_TO_SHARE), RecordingSession.class);
 
         RecordingSession nextSession = queuedSessions.poll();
-        if( !nextSession.getUUID().equals(currentlyUploadingSession.getUUID()) ) {
+        if( nextSession == null || !nextSession.getUUID().equals(currentlyUploadingSession.getUUID()) ) {
             Log.w(TAG, "Inconsistency in the upload queue...");
         }
 
