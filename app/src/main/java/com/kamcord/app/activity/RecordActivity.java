@@ -2,6 +2,7 @@ package com.kamcord.app.activity;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
+import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.view.SlidingTabLayout;
@@ -25,7 +27,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class RecordActivity extends AppCompatActivity implements
         Uploader.UploadStatusListener {
-    private static final String TAG = RecordActivity.class.getSimpleName();
 
     @InjectView(R.id.main_pager) ViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
@@ -145,5 +146,15 @@ public class RecordActivity extends AppCompatActivity implements
     public void onDestroy() {
         super.onDestroy();
         FlurryAgent.onEndSession(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentByTag(ShareFragment.TAG);
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

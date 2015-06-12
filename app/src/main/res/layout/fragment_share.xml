@@ -166,6 +166,12 @@
                     android:text="@string/twitterShare"
                     android:textColor="@color/button_twitter_text" />
 
+                <com.twitter.sdk.android.core.identity.TwitterLoginButton
+                    android:id="@+id/twitterLoginButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
         </LinearLayout>

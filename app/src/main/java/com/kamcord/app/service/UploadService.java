@@ -10,17 +10,25 @@ import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
 
+import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import retrofit.http.HEAD;
+
 
 public class UploadService extends IntentService {
     private static final String TAG = RecordingService.class.getSimpleName();
     public static final String ARG_SESSION_TO_SHARE = "session_to_share";
+    public static final String ARG_SHARE_SOURCE = "source_to_share";
     private static int NOTIFICATION_ID = 271828;
 
     private RecordingSession currentlyUploadingSession = null;
+    private HashMap<Integer, Boolean> serviceShareSourceHashMap;
+
     private Queue<RecordingSession> queuedSessions = new ConcurrentLinkedQueue<>();
     private static UploadService sInstance = null;
+
 
     public UploadService() {
         super("Kamcord Upload Service");
@@ -63,7 +71,7 @@ public class UploadService extends IntentService {
                 .build();
         startForeground(NOTIFICATION_ID, notification);
 
-        Uploader uploader = new Uploader(currentlyUploadingSession, getApplicationContext());
+        Uploader uploader = new Uploader(currentlyUploadingSession, getApplicationContext(), serviceShareSourceHashMap);
         uploader.start();
         try {
             uploader.join();

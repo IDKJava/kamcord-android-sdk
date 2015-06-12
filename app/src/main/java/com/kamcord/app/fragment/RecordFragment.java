@@ -397,7 +397,7 @@ public class RecordFragment extends Fragment implements
             recordShareFragment.setArguments(bundle);
             activity.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                    .add(R.id.activity_mdrecord_layout, recordShareFragment)
+                    .add(R.id.activity_mdrecord_layout, recordShareFragment, ShareFragment.TAG)
                     .addToBackStack("ShareFragment").commit();
         } else {
             // TODO: show the user something about being unable to get the recording session.
