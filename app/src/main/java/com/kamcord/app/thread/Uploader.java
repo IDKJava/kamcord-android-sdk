@@ -21,6 +21,13 @@ import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterApiClient;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.models.Tweet;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -54,6 +61,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import retrofit.RetrofitError;
+import retrofit.http.HEAD;
 
 public class Uploader extends Thread {
     private static final String TAG = Uploader.class.getSimpleName();
@@ -65,6 +73,8 @@ public class Uploader extends Thread {
     }
 
     private RecordingSession mRecordingSession;
+    private VideoUploadedEntity.Share share;
+    private HashMap<Integer, Boolean> mShareSourceHashMap;
 
     private int mTotalParts = 0;
     private FileInputStream mPartInputStream;
@@ -120,9 +130,10 @@ public class Uploader extends Thread {
         return unsubscribed;
     }
 
-    public Uploader(RecordingSession recordingSession, Context context) {
+    public Uploader(RecordingSession recordingSession, Context context, HashMap<Integer, Boolean> shareSourceHashMap) {
         mRecordingSession = recordingSession;
         mContext = context;
+        mShareSourceHashMap = shareSourceHashMap;
     }
 
     @Override
@@ -390,7 +401,6 @@ public class Uploader extends Thread {
             Log.e(TAG, "Something unexpected happened when handling Amazon's response while uploading part of a file...");
             throw new Exception();
         }
-
     }
 
     private void finishUploadToS3(UploadType uploadType) throws Exception {
@@ -425,9 +435,38 @@ public class Uploader extends Thread {
     }
 
     private void informKamcordUploadFinished() throws Exception {
-        VideoUploadedEntity videoUploadedEntity = new VideoUploadedEntityBuilder()
-                .setVideoId(mServerVideoId)
-                .build();
+        VideoUploadedEntityBuilder videoUploadedEntityBuilder = new VideoUploadedEntityBuilder();
+        videoUploadedEntityBuilder.setVideoId(mServerVideoId);
+
+        for (Map.Entry<Integer, Boolean> entry : mShareSourceHashMap.entrySet()) {
+            if (entry.getKey() == R.id.share_twitterbutton && entry.getValue() == true) {
+                TwitterSession session = Twitter.getSessionManager().getActiveSession();
+                share = new VideoUploadedEntity.Share();
+                share.source = VideoUploadedEntity.ShareSource.TWITTER;
+                share.access_token = session.getAuthToken().token;
+                videoUploadedEntityBuilder.addShare(share);
+
+                if (session != null) {
+                    TwitterApiClient client = Twitter.getApiClient(session);
+                    client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/" + mServerVideoId,
+                            null, null, null, null, null, null, null, new Callback<Tweet>() {
+                                @Override
+                                public void success(Result<Tweet> result) {
+                                    Log.i(TAG, "Tweet success!");
+                                }
+
+                                @Override
+                                public void failure(TwitterException e) {
+                                    Log.i(TAG, "Tweet failure!");
+                                }
+                            });
+                } else {
+                    Log.v(TAG, "Twitter session was null!");
+                }
+            }
+        }
+
+        VideoUploadedEntity videoUploadedEntity = videoUploadedEntityBuilder.build();
 
         GenericResponse<?> genericResponse = null;
         try {
@@ -598,7 +637,9 @@ public class Uploader extends Thread {
     public interface UploadStatusListener
     {
         void onUploadStart(RecordingSession recordingSession);
+
         void onUploadProgress(RecordingSession recordingSession, float progress);
+
         void onUploadFinish(RecordingSession recordingSession, boolean success);
     }
 }
