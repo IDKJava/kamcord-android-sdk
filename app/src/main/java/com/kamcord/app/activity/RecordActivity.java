@@ -3,6 +3,7 @@ package com.kamcord.app.activity;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -181,4 +182,14 @@ public class RecordActivity extends AppCompatActivity implements
         super.onDestroy();
         FlurryAgent.onEndSession(this);
     }
+
+    private FragmentManager.OnBackStackChangedListener onBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
+        @Override
+        public void onBackStackChanged() {
+            FragmentManager manager = getSupportFragmentManager();
+            if( manager != null ) {
+
+            }
+        }
+    };
 }

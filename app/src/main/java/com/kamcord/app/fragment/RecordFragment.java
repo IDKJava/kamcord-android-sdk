@@ -118,6 +118,24 @@ public class RecordFragment extends Fragment implements
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        Log.v("FindMe", "onPause()");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.v("FindMe", "onStop()");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.v("FindMe", "onStart()");
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         Log.v("FindMe", "onResume()");
