@@ -45,6 +45,9 @@ android {
     lintOptions {
         warning 'InvalidPackage'
     }
+    testOptions {
+        reportDir project.hasProperty('reportDir') ? project.reportDir : 'default'
+    }
 
 }
 
