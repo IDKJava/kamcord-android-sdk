@@ -1,4 +1,5 @@
 package com.kamcord.app.testutils.analytics;
+
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.*;
 
 /**

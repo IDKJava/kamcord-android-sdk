@@ -79,14 +79,13 @@ dependencies {
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.0'
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
 
-    compile 'com.amazonaws:aws-android-sdk-core:2.2.1'
-    compile 'com.amazonaws:aws-android-sdk-cognito:2.2.1'
-    compile 'com.amazonaws:aws-android-sdk-s3:2.2.1'
-    compile 'com.amazonaws:aws-android-sdk-ddb:2.2.1'
-    compile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.1'
-    compile 'com.amazonaws:aws-android-sdk-sdb:2.2.1'
-    compile 'com.amazonaws:aws-android-sdk-ses:2.2.1'
-    compile 'com.amazonaws:aws-android-sdk-sns:2.2.1'
+    //adding gson to avoid resolved dep conflict between app and aws libs
+    androidTestCompile 'com.google.code.gson:gson:2.3.1'
+    androidTestCompile 'com.amazonaws:aws-android-sdk-core:2.2.1'
+    androidTestCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.1'
+    androidTestCompile 'com.amazonaws:aws-android-sdk-ddb:2.2.1'
+    androidTestCompile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.1'
+
 
 
 
