@@ -15,6 +15,7 @@ import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.UserErrorCode;
+import com.kamcord.app.server.model.Video;
 import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.DeviceManager;
@@ -92,6 +93,9 @@ public class AppServerClient {
 
         @GET("/app/v3/users/{userId}/videos/feed")
         void getUserVideoFeed(@Path("userId") String userId, @Query("page") String page, Callback<GenericResponse<PaginatedVideoList>> cb);
+
+        @GET("/app/v3/videos/{videoId}")
+        void getVideoInfo(@Path("videoId") String videoId, Callback<GenericResponse<Video>> cb);
 
         @POST("/app/v3/videos/{videoId}/like")
         void likeVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
