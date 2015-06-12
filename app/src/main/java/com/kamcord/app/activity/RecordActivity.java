@@ -3,7 +3,6 @@ package com.kamcord.app.activity;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +17,7 @@ import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.view.SlidingTabLayout;
+import com.kamcord.app.view.utils.OnBackPressedListener;
 
 import java.util.Locale;
 
@@ -42,6 +42,8 @@ public class RecordActivity extends AppCompatActivity implements
     private static final int HIDE_THRESHOLD = 20;
     private boolean controlsVisible = true;
     private int recyclerViewScrolledDistance = 0;
+
+    private OnBackPressedListener onBackPressedListener = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +96,18 @@ public class RecordActivity extends AppCompatActivity implements
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
+    }
+
+    public void setOnBackPressedListener(OnBackPressedListener listener) {
+        onBackPressedListener = listener;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if( onBackPressedListener != null ) {
+            onBackPressedListener.onBackPressed();
+        }
     }
 
     @Override
@@ -182,14 +196,4 @@ public class RecordActivity extends AppCompatActivity implements
         super.onDestroy();
         FlurryAgent.onEndSession(this);
     }
-
-    private FragmentManager.OnBackStackChangedListener onBackStackChangedListener = new FragmentManager.OnBackStackChangedListener() {
-        @Override
-        public void onBackStackChanged() {
-            FragmentManager manager = getSupportFragmentManager();
-            if( manager != null ) {
-
-            }
-        }
-    };
 }

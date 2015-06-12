@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
+import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.adapter.GameRecordListAdapter;
 import com.kamcord.app.model.RecordItem;
 import com.kamcord.app.model.RecordingSession;
@@ -41,6 +42,7 @@ import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.GridViewItemDecoration;
+import com.kamcord.app.view.utils.OnBackPressedListener;
 import com.kamcord.app.view.utils.RecordLayoutSpanSizeLookup;
 import com.squareup.picasso.Picasso;
 
@@ -56,7 +58,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class RecordFragment extends Fragment implements
-        GameRecordListAdapter.OnGameActionButtonClickListener {
+        GameRecordListAdapter.OnGameActionButtonClickListener,
+        OnBackPressedListener {
     private static final String TAG = RecordFragment.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
@@ -90,8 +93,13 @@ public class RecordFragment extends Fragment implements
         View v = inflater.inflate(R.layout.record_tab, container, false);
         ButterKnife.inject(this, v);
         initKamcordRecordFragment(v);
+
+        Activity myActivity = getActivity();
         if( !recordingServiceConnection.isBound() ) {
-            getActivity().bindService(new Intent(getActivity(), RecordingService.class), recordingServiceConnection, Context.BIND_AUTO_CREATE);
+            myActivity.bindService(new Intent(myActivity, RecordingService.class), recordingServiceConnection, Context.BIND_AUTO_CREATE);
+        }
+        if( myActivity instanceof RecordActivity ) {
+            ((RecordActivity) myActivity).setOnBackPressedListener(this);
         }
         return v;
     }
@@ -100,7 +108,12 @@ public class RecordFragment extends Fragment implements
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
-        getActivity().unbindService(recordingServiceConnection);
+
+        Activity myActivity = getActivity();
+        myActivity.unbindService(recordingServiceConnection);
+        if( myActivity instanceof RecordActivity ) {
+            ((RecordActivity) myActivity).setOnBackPressedListener(null);
+        }
     }
 
     @Override
@@ -305,6 +318,12 @@ public class RecordFragment extends Fragment implements
     }
 
     private Toast startRecordingToast = null;
+
+    @Override
+    public void onBackPressed() {
+        handleServiceRunning();
+    }
+
     public interface RecyclerViewScrollListener {
         void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
 
