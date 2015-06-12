@@ -28,6 +28,7 @@
     <color name="ShareBackgroundColor">#e8e8e8</color>
     <color name="defaultProfileColor">#bbbbbb</color>
     <color name="kamcordBlue">#00a8c0</color>
+    <color name="kamcordRed">#b34</color>
     <color name="kamcordGray">#999999</color>
 
     <color name="twitterBlue">#55acee</color>
