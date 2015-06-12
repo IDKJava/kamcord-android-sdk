@@ -212,8 +212,12 @@ public class ShareFragment extends Fragment {
     public void click(View v) {
         if (AccountManager.isLoggedIn() && titleEditText.getText().toString().length() != 0) {
             recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
+            if (shareSourceHashMap.size() > 0) {
+                uploadIntent.putExtra(UploadService.ARG_SHARE_SOURCE, shareSourceHashMap);
+            }
 
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();

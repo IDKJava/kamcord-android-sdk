@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import retrofit.http.HEAD;
-
 
 public class UploadService extends IntentService {
     private static final String TAG = RecordingService.class.getSimpleName();
@@ -57,6 +55,7 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         currentlyUploadingSession = new Gson().fromJson(intent.getStringExtra(ARG_SESSION_TO_SHARE), RecordingSession.class);
+        serviceShareSourceHashMap = (HashMap) intent.getSerializableExtra(ARG_SHARE_SOURCE);
 
         RecordingSession nextSession = queuedSessions.poll();
         if( nextSession == null || !nextSession.getUUID().equals(currentlyUploadingSession.getUUID()) ) {
