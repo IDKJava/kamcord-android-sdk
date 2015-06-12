@@ -16,9 +16,9 @@ repositories {
 
 
 android {
+    
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
-
     defaultConfig {
         applicationId "com.kamcord.app"
         minSdkVersion 21
@@ -34,21 +34,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     packagingOptions {
         exclude 'LICENSE.txt'
     }
     productFlavors {
 
     }
-
     lintOptions {
         warning 'InvalidPackage'
     }
     testOptions {
         reportDir project.hasProperty('reportDir') ? project.reportDir : 'default'
     }
-
 }
 
 //repositories {
@@ -75,21 +72,15 @@ dependencies {
     }
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
     compile 'io.reactivex:rxandroid:0.24.0'
-
     // Testing-only dependencies
     androidTestCompile 'com.android.support.test:runner:0.2'
     // UiAutomator Testing
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.0'
     androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
-
     //adding gson to avoid resolved dep conflict between app and aws libs
     androidTestCompile 'com.google.code.gson:gson:2.3.1'
     androidTestCompile 'com.amazonaws:aws-android-sdk-core:2.2.1'
     androidTestCompile 'com.amazonaws:aws-android-sdk-cognito:2.2.1'
     androidTestCompile 'com.amazonaws:aws-android-sdk-ddb:2.2.1'
     androidTestCompile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.1'
-
-
-
-
 }

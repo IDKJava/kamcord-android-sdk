@@ -48,3 +48,6 @@
 
 # Kamcord
 -keep class com.kamcord.app.server.model.** { *; }
+
+# Don't Warn
+-dontwarn rx.internal.util.**
