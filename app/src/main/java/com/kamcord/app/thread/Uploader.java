@@ -1,6 +1,8 @@
 package com.kamcord.app.thread;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 
@@ -17,6 +19,7 @@ import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.server.model.builder.ReserveVideoEntityBuilder;
 import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
@@ -44,10 +47,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -56,6 +61,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import retrofit.RetrofitError;
+import retrofit.http.HEAD;
 
 public class Uploader extends Thread {
     private static final String TAG = Uploader.class.getSimpleName();
@@ -92,7 +98,7 @@ public class Uploader extends Thread {
     private String[] mVideoEtags;
     private String mS3UploadId = null;
 
-    private static UploadStatusListener sListener = null;
+    private static HashSet<WeakReference<UploadStatusListener>> sListeners = new HashSet<>();
 
     static {
         try {
@@ -104,8 +110,24 @@ public class Uploader extends Thread {
         }
     }
 
-    public static void setUploadStatusListener(UploadStatusListener listener) {
-        sListener = listener;
+    public static void subscribe(UploadStatusListener listener)
+    {
+        sListeners.add(new WeakReference<>(listener));
+    }
+
+    public static boolean unsubscribe(UploadStatusListener unsubscriber) {
+        boolean unsubscribed = false;
+
+        for( WeakReference<UploadStatusListener> listenerRef : sListeners ) {
+            UploadStatusListener listener = listenerRef.get();
+            if( listener != null && listener.equals(unsubscriber) ) {
+                sListeners.remove(listenerRef);
+                unsubscribed = true;
+                break;
+            }
+        }
+
+        return unsubscribed;
     }
 
     public Uploader(RecordingSession recordingSession, Context context, HashMap<Integer, Boolean> shareSourceHashMap) {
@@ -126,23 +148,23 @@ public class Uploader extends Thread {
 
         try {
             long start = System.currentTimeMillis();
-            if (sListener != null) {
-                sListener.onUploadStart(mRecordingSession);
-            }
+
+            notifyUploadStart(mRecordingSession);
             reserveVideoUpload();
             startUploadToS3(UploadType.VIDEO);
             for (int part = 0; part < mTotalParts; part++) {
                 uploadPartToS3(part, UploadType.VIDEO);
-                if (sListener != null) {
-                    sListener.onUploadProgress(mRecordingSession, (float) (part + 1) / (float) mTotalParts);
-                }
+                notifyUploadProgressed(mRecordingSession, (float) (part+1) / (float) mTotalParts);
             }
             finishUploadToS3(UploadType.VIDEO);
             informKamcordUploadFinished();
-            if (sListener != null) {
-                sListener.onUploadFinish(mRecordingSession, true);
-                sListener = null;
-            }
+
+            mRecordingSession.setState(RecordingSession.State.UPLOADED);
+            mRecordingSession.setGlobalId(mServerVideoId);
+            ActiveRecordingSessionManager.updateActiveSession(mRecordingSession);
+
+            notifyUploadFinished(mRecordingSession, true);
+
             long end = System.currentTimeMillis();
             videoParams.put(mContext.getResources().getString(R.string.flurryVideoID), mServerVideoId);
             videoParams.put(mContext.getResources().getString(R.string.flurryDuration), Long.toString(end - start));
@@ -155,10 +177,7 @@ public class Uploader extends Thread {
             e.printStackTrace();
         }
 
-        if (sListener != null) {
-            sListener.onUploadFinish(mRecordingSession, false);
-            sListener = null;
-        }
+        notifyUploadFinished(mRecordingSession, false);
         videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "false");
         FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
         Log.e(TAG, "Unable to upload video, giving up.");
@@ -573,7 +592,50 @@ public class Uploader extends Thread {
         }
     }
 
-    public interface UploadStatusListener {
+    private void notifyUploadStart(final RecordingSession session) {
+        for( WeakReference<UploadStatusListener> listenerRef : sListeners ) {
+            final UploadStatusListener listener = listenerRef.get();
+            if( listener != null ) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onUploadStart(session);
+                    }
+                });
+            }
+        }
+    }
+
+    private void notifyUploadProgressed(final RecordingSession session, final float progress) {
+        for( WeakReference<UploadStatusListener> listenerRef : sListeners ) {
+            final UploadStatusListener listener = listenerRef.get();
+            if( listener != null ) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onUploadProgress(session, progress);
+                    }
+                });
+            }
+        }
+    }
+
+    private void notifyUploadFinished(final RecordingSession session, final boolean success) {
+        for( WeakReference<UploadStatusListener> listenerRef : sListeners ) {
+            final UploadStatusListener listener = listenerRef.get();
+            if( listener != null ) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.onUploadFinish(session, success);
+                    }
+                });
+            }
+        }
+    }
+
+    public interface UploadStatusListener
+    {
         void onUploadStart(RecordingSession recordingSession);
 
         void onUploadProgress(RecordingSession recordingSession, float progress);

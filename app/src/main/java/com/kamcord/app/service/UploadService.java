@@ -3,14 +3,19 @@ package com.kamcord.app.service;
 import android.app.IntentService;
 import android.app.Notification;
 import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
+import android.util.Log;
 
+import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
 
 import java.util.HashMap;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import retrofit.http.HEAD;
+
 
 public class UploadService extends IntentService {
     private static final String TAG = RecordingService.class.getSimpleName();
@@ -18,15 +23,12 @@ public class UploadService extends IntentService {
     public static final String ARG_SHARE_SOURCE = "source_to_share";
     private static int NOTIFICATION_ID = 271828;
 
-    private static volatile boolean sIsRunning = false;
-    public static boolean isRunning()
-    {
-        return sIsRunning;
-    }
-
-    private IBinder mBinder = new LocalBinder();
     private RecordingSession currentlyUploadingSession = null;
     private HashMap<Integer, Boolean> serviceShareSourceHashMap;
+
+    private Queue<RecordingSession> queuedSessions = new ConcurrentLinkedQueue<>();
+    private static UploadService sInstance = null;
+
 
     public UploadService() {
         super("Kamcord Upload Service");
@@ -34,11 +36,32 @@ public class UploadService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        currentlyUploadingSession = intent.getParcelableExtra(ARG_SESSION_TO_SHARE);
-        serviceShareSourceHashMap = (HashMap)intent.getSerializableExtra(ARG_SHARE_SOURCE);
+    public void onCreate() {
+        super.onCreate();
+        sInstance = this;
+    }
 
-        sIsRunning = true;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sInstance = null;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        RecordingSession sessionToQueue = new Gson().fromJson(intent.getStringExtra(ARG_SESSION_TO_SHARE), RecordingSession.class);
+        queuedSessions.add(sessionToQueue);
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        currentlyUploadingSession = new Gson().fromJson(intent.getStringExtra(ARG_SESSION_TO_SHARE), RecordingSession.class);
+
+        RecordingSession nextSession = queuedSessions.poll();
+        if( nextSession == null || !nextSession.getUUID().equals(currentlyUploadingSession.getUUID()) ) {
+            Log.w(TAG, "Inconsistency in the upload queue...");
+        }
 
         Notification.Builder notificationBuilder = new Notification.Builder(this);
         Notification notification = notificationBuilder
@@ -57,23 +80,19 @@ public class UploadService extends IntentService {
         }
 
         stopForeground(true);
-        sIsRunning = false;
         currentlyUploadingSession = null;
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-}
+    public static UploadService getInstance() {
+        return sInstance;
+    }
 
     public RecordingSession getCurrentlyUploadingSession()
     {
         return currentlyUploadingSession;
     }
 
-    public class LocalBinder extends Binder {
-        public UploadService getService() {
-            return UploadService.this;
-        }
+    public Queue<RecordingSession> getQueuedSessions() {
+        return queuedSessions;
     }
 }

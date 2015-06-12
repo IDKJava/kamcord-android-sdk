@@ -6,15 +6,14 @@ import com.kamcord.app.server.model.Video;
 /**
  * Created by donliang1 on 6/1/15.
  */
-public class ProfileItem {
+public class ProfileItem<T> {
 
     private Type type;
-    private Video video;
-    private User user;
+    private T data;
 
-    public ProfileItem(Type viewtype, Video video) {
+    public ProfileItem(Type viewtype, T data) {
         this.type = viewtype;
-        this.video = video;
+        this.data = data;
     }
 
     public Type getType() {
@@ -22,20 +21,25 @@ public class ProfileItem {
     }
 
     public User getUser() {
-        return user;
+        return type == Type.HEADER ? (User) data : null;
     }
 
     public void setUser(User user) {
-        this.user = user;
+        this.data = type == Type.HEADER ? (T) user : null;
     }
 
     public Video getVideo() {
-        return video;
+        return type == Type.VIDEO ? (Video) data : null;
+    }
+
+    public RecordingSession getSession() {
+        return type == Type.UPLOAD_PROGRESS ? (RecordingSession) data : null;
     }
 
     public enum Type {
         HEADER,
         FOOTER,
         VIDEO,
+        UPLOAD_PROGRESS,
     }
 }
