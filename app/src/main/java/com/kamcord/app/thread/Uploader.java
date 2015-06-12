@@ -91,7 +91,6 @@ public class Uploader extends Thread {
 
     private String[] mVideoEtags;
     private String mS3UploadId = null;
-    private ReserveVideoEntity reserveVideoEntity;
 
     private static UploadStatusListener sListener = null;
 
@@ -167,7 +166,7 @@ public class Uploader extends Thread {
 
     private void reserveVideoUpload() throws Exception {
         try {
-            reserveVideoEntity = new ReserveVideoEntityBuilder()
+            ReserveVideoEntity reserveVideoEntity = new ReserveVideoEntityBuilder()
                     .setUserTitle(mRecordingSession.getVideoTitle())
                     .setDescription(mRecordingSession.getVideoDescription())
                     .setDefaultTitle("default title") // TODO: fill this in with something that makes sense.
@@ -430,8 +429,7 @@ public class Uploader extends Thread {
 
                 if (session != null) {
                     TwitterApiClient client = Twitter.getApiClient(session);
-                    client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/"
-                                    + AppServerClient.getInstance().reserveVideo(reserveVideoEntity).response.video_id,
+                    client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/" + mServerVideoId,
                             null, null, null, null, null, null, null, new Callback<Tweet>() {
                                 @Override
                                 public void success(Result<Tweet> result) {
