@@ -124,4 +124,7 @@
     <string name="twitterShare">Twitter</string>
     <string name="alsoShare">Also share on</string>
     <string name="writeYourTitle">Please write a title for your video.</string>
+
+    <string name="shareTo">Share to&#8230;</string>
+    <string name="externalShareText">%1$s %2$s Recorded with Kamcord for Android</string>
 </resources>

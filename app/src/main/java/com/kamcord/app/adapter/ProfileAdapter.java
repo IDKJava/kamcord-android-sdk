@@ -215,7 +215,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch( menuItem.getItemId() ) {
                             case R.id.action_external_share:
-
+                                doExternalShare(video);
                                 break;
 
                             case R.id.action_delete:
@@ -398,6 +398,33 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
     };
+
+    private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
+    private static final String ELLIPSIS = "...";
+    private void doExternalShare(Video video) {
+        if( mContext instanceof Activity ) {
+            Activity activity = (Activity) mContext;
+
+            String externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
+                    video.title, video.video_site_watch_page);
+            int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
+            if( diff > 0 ) {
+                int truncatedVideoTitleLength = video.title.length() - diff - ELLIPSIS.length();
+                if (truncatedVideoTitleLength <= 0) {
+                    truncatedVideoTitleLength = 1;
+                }
+                String truncatedTitle = video.title.substring(0, truncatedVideoTitleLength) + ELLIPSIS;
+                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
+                        truncatedTitle, video.video_site_watch_page);
+            }
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, externalShareText);
+            shareIntent.setType("text/plain");
+            activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.shareTo)));
+        }
+    }
 
     private static class ThumbnailRequestHandler extends RequestHandler {
         public static final String SCHEME = "video";
