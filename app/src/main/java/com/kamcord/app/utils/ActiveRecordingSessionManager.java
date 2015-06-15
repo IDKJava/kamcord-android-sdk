@@ -48,7 +48,11 @@ public class ActiveRecordingSessionManager {
     }
 
     public synchronized static boolean removeActiveSession(RecordingSession session) {
-        return activeSessions.remove(session);
+        boolean removed = activeSessions.remove(session);
+        if( removed ) {
+            saveActiveSessions();
+        }
+        return removed;
     }
 
     public synchronized static Set<RecordingSession> getActiveSessions() {

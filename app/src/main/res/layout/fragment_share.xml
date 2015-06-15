@@ -113,8 +113,7 @@
                         android:layout_marginLeft="@dimen/edittext_extraspace"
                         android:layout_marginTop="@dimen/edittext_extraspace"
                         android:background="@null"
-                        android:ellipsize="end"
-                        android:hint="@string/writeATitle" />
+                        android:ellipsize="end" />
 
                     <View
                         android:layout_width="match_parent"

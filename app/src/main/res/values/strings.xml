@@ -125,6 +125,7 @@
     <string name="twitterShare">Twitter</string>
     <string name="alsoShare">Also share on</string>
     <string name="writeYourTitle">Please write a title for your video.</string>
+    <string name="myLatestVideo">My latest %1$s video</string>
 
     <string name="timeRecorded">%1$s recorded</string>
 

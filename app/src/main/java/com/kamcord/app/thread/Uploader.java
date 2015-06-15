@@ -21,6 +21,7 @@ import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
+import com.kamcord.app.utils.StringUtils;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -187,7 +188,7 @@ public class Uploader extends Thread {
             ReserveVideoEntity reserveVideoEntity = new ReserveVideoEntityBuilder()
                     .setUserTitle(mRecordingSession.getVideoTitle())
                     .setDescription(mRecordingSession.getVideoDescription())
-                    .setDefaultTitle("default title") // TODO: fill this in with something that makes sense.
+                    .setDefaultTitle(StringUtils.defaultVideoTitle(mContext, mRecordingSession))
                     .setGameId(mRecordingSession.getGameServerID())
                     .build();
 
