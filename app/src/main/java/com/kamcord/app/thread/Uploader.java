@@ -61,7 +61,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import retrofit.RetrofitError;
-import retrofit.http.HEAD;
 
 public class Uploader extends Thread {
     private static final String TAG = Uploader.class.getSimpleName();
@@ -438,30 +437,32 @@ public class Uploader extends Thread {
         VideoUploadedEntityBuilder videoUploadedEntityBuilder = new VideoUploadedEntityBuilder();
         videoUploadedEntityBuilder.setVideoId(mServerVideoId);
 
-        for (Map.Entry<Integer, Boolean> entry : mShareSourceHashMap.entrySet()) {
-            if (entry.getKey() == R.id.share_twitterbutton && entry.getValue() == true) {
-                TwitterSession session = Twitter.getSessionManager().getActiveSession();
-                share = new VideoUploadedEntity.Share();
-                share.source = VideoUploadedEntity.ShareSource.TWITTER;
-                share.access_token = session.getAuthToken().token;
-                videoUploadedEntityBuilder.addShare(share);
+        if( mShareSourceHashMap != null ) {
+            for (Map.Entry<Integer, Boolean> entry : mShareSourceHashMap.entrySet()) {
+                if (entry.getKey() == R.id.share_twitterbutton && entry.getValue() == true) {
+                    TwitterSession session = Twitter.getSessionManager().getActiveSession();
+                    share = new VideoUploadedEntity.Share();
+                    share.source = VideoUploadedEntity.ShareSource.TWITTER;
+                    share.access_token = session.getAuthToken().token;
+                    videoUploadedEntityBuilder.addShare(share);
 
-                if (session != null) {
-                    TwitterApiClient client = Twitter.getApiClient(session);
-                    client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/" + mServerVideoId,
-                            null, null, null, null, null, null, null, new Callback<Tweet>() {
-                                @Override
-                                public void success(Result<Tweet> result) {
-                                    Log.i(TAG, "Tweet success!");
-                                }
+                    if (session != null) {
+                        TwitterApiClient client = Twitter.getApiClient(session);
+                        client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/" + mServerVideoId,
+                                null, null, null, null, null, null, null, new Callback<Tweet>() {
+                                    @Override
+                                    public void success(Result<Tweet> result) {
+                                        Log.i(TAG, "Tweet success!");
+                                    }
 
-                                @Override
-                                public void failure(TwitterException e) {
-                                    Log.i(TAG, "Tweet failure!");
-                                }
-                            });
-                } else {
-                    Log.v(TAG, "Twitter session was null!");
+                                    @Override
+                                    public void failure(TwitterException e) {
+                                        Log.i(TAG, "Tweet failure!");
+                                    }
+                                });
+                    } else {
+                        Log.v(TAG, "Twitter session was null!");
+                    }
                 }
             }
         }

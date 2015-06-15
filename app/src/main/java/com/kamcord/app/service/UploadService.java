@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class UploadService extends IntentService {
     private static final String TAG = RecordingService.class.getSimpleName();
     public static final String ARG_SESSION_TO_SHARE = "session_to_share";
-    public static final String ARG_SHARE_SOURCE = "source_to_share";
     private static int NOTIFICATION_ID = 271828;
 
     private RecordingSession currentlyUploadingSession = null;
@@ -55,7 +54,7 @@ public class UploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         currentlyUploadingSession = new Gson().fromJson(intent.getStringExtra(ARG_SESSION_TO_SHARE), RecordingSession.class);
-        serviceShareSourceHashMap = (HashMap) intent.getSerializableExtra(ARG_SHARE_SOURCE);
+        serviceShareSourceHashMap = currentlyUploadingSession.getShareSources();
 
         RecordingSession nextSession = queuedSessions.poll();
         if( nextSession == null || !nextSession.getUUID().equals(currentlyUploadingSession.getUUID()) ) {

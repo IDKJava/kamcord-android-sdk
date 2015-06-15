@@ -216,7 +216,7 @@ public class ShareFragment extends Fragment {
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
             if (shareSourceHashMap.size() > 0) {
-                uploadIntent.putExtra(UploadService.ARG_SHARE_SOURCE, shareSourceHashMap);
+                recordingSession.setShareSources(shareSourceHashMap);
             }
 
             getActivity().startService(uploadIntent);
