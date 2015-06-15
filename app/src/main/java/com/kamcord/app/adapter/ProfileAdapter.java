@@ -7,9 +7,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
-import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,13 +28,13 @@ import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
-import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.ProfileItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
@@ -268,16 +266,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             viewHolder.retryUploadImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mContext instanceof FragmentActivity) {
-                        ShareFragment recordShareFragment = new ShareFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(ShareFragment.ARG_RECORDING_SESSION, new Gson().toJson(session));
-                        recordShareFragment.setArguments(bundle);
-                        ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                                .add(R.id.activity_mdrecord_layout, recordShareFragment)
-                                .addToBackStack("ShareFragment").commit();
-                    }
+                    Intent uploadIntent = new Intent(mContext, UploadService.class);
+                    uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(session));
+                    mContext.startService(uploadIntent);
                 }
             });
         }
