@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.kamcord.app.model.RecordingSession;
 
-import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -49,7 +48,11 @@ public class ActiveRecordingSessionManager {
     }
 
     public synchronized static boolean removeActiveSession(RecordingSession session) {
-        return activeSessions.remove(session);
+        boolean removed = activeSessions.remove(session);
+        if( removed ) {
+            saveActiveSessions();
+        }
+        return removed;
     }
 
     public synchronized static Set<RecordingSession> getActiveSessions() {
@@ -76,12 +79,7 @@ public class ActiveRecordingSessionManager {
 
         activeSessions.clear();
         for( String serializedSession : serializedSessions ) {
-            RecordingSession deserializedSession = new Gson().fromJson(serializedSession, RecordingSession.class);
-            File mergedVideoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(deserializedSession),
-                    FileSystemManager.MERGED_VIDEO_FILENAME);
-            if( mergedVideoFile.exists() ) {
-                activeSessions.add(deserializedSession);
-            }
+            activeSessions.add(new Gson().fromJson(serializedSession, RecordingSession.class));
         }
     }
 
