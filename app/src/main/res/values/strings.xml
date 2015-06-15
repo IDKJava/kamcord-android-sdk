@@ -97,7 +97,7 @@
         <item quantity="one">Like</item>
         <item quantity="other">Likes</item>
     </plurals>
-    <string name="byAuthor">By %s</string>
+    <string name="byAuthorGame">By %1$s &#183; %2$s</string>
     <string name="recordAndShare">Record &amp; Share</string>
     <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
@@ -128,4 +128,12 @@
 
     <string name="timeRecorded">%1$s recorded</string>
 
+    <string name="shareTo">Share to&#8230;</string>
+    <string name="externalShareText">%1$s %2$s Recorded with Kamcord for Android</string>
+    <string name="externalShareTextNoTitle">%1$s Recorded with Kamcord for Android</string>
+
+    <string name="areYouSure">Are you sure?</string>
+    <string name="ifYouDeleteThis">If you delete this video, the world will never see it again! :( Delete your awesome vid?</string>
+    <string name="deleteVideo">Delete Video</string>
+    <string name="failedToDelete">Failed to delete video. Check your network connection.</string>
 </resources>
