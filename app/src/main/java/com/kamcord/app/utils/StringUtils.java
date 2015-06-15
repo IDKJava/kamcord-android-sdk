@@ -102,6 +102,9 @@ public class StringUtils {
                 || input.length() < ELLIPSIS.length()) {
             return input;
         }
+        if( maxLength < 0 ) {
+            return "";
+        }
         if( maxLength < ELLIPSIS.length() ) {
             return input.substring(0, maxLength);
         }
