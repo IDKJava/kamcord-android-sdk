@@ -17,6 +17,7 @@ import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.view.SlidingTabLayout;
+import com.kamcord.app.view.utils.OnBackPressedListener;
 
 import java.util.Locale;
 
@@ -39,6 +40,8 @@ public class RecordActivity extends AppCompatActivity implements
     private static final int HIDE_THRESHOLD = 20;
     private boolean controlsVisible = true;
     private int recyclerViewScrolledDistance = 0;
+
+    private OnBackPressedListener onBackPressedListener = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +82,18 @@ public class RecordActivity extends AppCompatActivity implements
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
+    }
+
+    public void setOnBackPressedListener(OnBackPressedListener listener) {
+        onBackPressedListener = listener;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if( onBackPressedListener != null ) {
+            onBackPressedListener.onBackPressed();
+        }
     }
 
     ObjectAnimator progressBarAnimator = null;

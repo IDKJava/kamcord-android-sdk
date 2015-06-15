@@ -97,6 +97,21 @@ public class StringUtils {
         }
     }
 
+    private static final String ELLIPSIS = "...";
+    public static String ellipsize(String input, int maxLength) {
+        if (input == null || input.length() <= maxLength
+                || input.length() < ELLIPSIS.length()) {
+            return input;
+        }
+        if( maxLength < 0 ) {
+            return "";
+        }
+        if( maxLength < ELLIPSIS.length() ) {
+            return input.substring(0, maxLength);
+        }
+        return input.substring(0, maxLength - ELLIPSIS.length()).concat(ELLIPSIS);
+    }
+
     public static String defaultVideoTitle(Context context, RecordingSession session) {
         return String.format(Locale.ENGLISH,
                 context.getString(R.string.myLatestVideo),

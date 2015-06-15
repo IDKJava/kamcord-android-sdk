@@ -3,6 +3,7 @@ package com.kamcord.app.model;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.utils.StringUtils;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -26,10 +27,13 @@ public class RecordingSession {
     private String gameServerName;
     private String gamePackageName;
     private State state = State.STARTED;
+
     private String globalId = null;
+    private HashMap<Integer, Boolean> shareSources = null;
 
     private transient boolean recordedFrames = false;
     private transient float uploadProgress = -1f;
+    private transient long durationUs = 0;
 
     public RecordingSession() {}
 
@@ -106,6 +110,21 @@ public class RecordingSession {
     }
     public String getGlobalId() {
         return globalId;
+    }
+
+    public void incrementDurationUs(long increment) {
+        durationUs += increment;
+    }
+    public long getDurationUs() {
+        return durationUs;
+    }
+
+    public HashMap<Integer, Boolean> getShareSources() {
+        return shareSources;
+    }
+
+    public void setShareSources(HashMap<Integer, Boolean> shareSources) {
+        this.shareSources = shareSources;
     }
 
     @Override
