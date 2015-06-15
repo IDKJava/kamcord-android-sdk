@@ -124,7 +124,6 @@ public class RecordFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        Log.v("FindMe", "onResume()");
         handleServiceRunning();
         boolean gameListChanged = false;
         for (RecordItem item : mRecordItemList) {
