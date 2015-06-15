@@ -19,14 +19,7 @@ public class VideoUtils {
             retriever.setDataSource(filePath);
             time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             videoDuration = Integer.parseInt(time);
-            hours = TimeUnit.MILLISECONDS.toHours(videoDuration);
-            mins = TimeUnit.MILLISECONDS.toMinutes(videoDuration) % 60;
-            secs = TimeUnit.MILLISECONDS.toSeconds(videoDuration) % 60;
-            if(hours == 0) {
-                time = String.format("%02d:%02d", mins, secs);
-            } else {
-                time = String.format("%02d:%02d:%02d", hours, mins, secs);
-            }
+            time = videoDurationString(TimeUnit.MILLISECONDS, videoDuration);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (RuntimeException e) {
@@ -38,6 +31,21 @@ public class VideoUtils {
                 e.printStackTrace();
             }
         }
+        return time;
+    }
+
+    public static String videoDurationString(TimeUnit unit, long duration) {
+        String time;
+
+        long hours = unit.toHours(duration);
+        long mins = unit.toMinutes(duration) % 60;
+        long secs = unit.toSeconds(duration) % 60;
+        if(hours == 0) {
+            time = String.format("%02d:%02d", mins, secs);
+        } else {
+            time = String.format("%02d:%02d:%02d", hours, mins, secs);
+        }
+
         return time;
     }
 

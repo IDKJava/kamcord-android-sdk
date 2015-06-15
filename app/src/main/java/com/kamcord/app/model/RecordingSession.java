@@ -30,6 +30,7 @@ public class RecordingSession {
 
     private transient boolean recordedFrames = false;
     private transient float uploadProgress = -1f;
+    private transient long durationUs = 0;
 
     public RecordingSession() {}
 
@@ -106,6 +107,13 @@ public class RecordingSession {
     }
     public String getGlobalId() {
         return globalId;
+    }
+
+    public void incrementDurationUs(long increment) {
+        durationUs += increment;
+    }
+    public long getDurationUs() {
+        return durationUs;
     }
 
     @Override
