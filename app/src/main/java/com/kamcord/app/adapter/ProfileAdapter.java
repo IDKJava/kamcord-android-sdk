@@ -203,6 +203,30 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 toggleLikeButton(videoLikesButton, video);
             }
         });
+
+        viewHolder.getMoreVideoActions().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+                popupMenu.inflate(R.menu.menu_more_video_actions);
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch( menuItem.getItemId() ) {
+                            case R.id.action_external_share:
+                                
+                                break;
+
+                            case R.id.action_delete:
+
+                                break;
+                        }
+                        return true;
+                    }
+                });
+            }
+        });
     }
 
     private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {

@@ -19,29 +19,52 @@
             android:background="@drawable/default_thumbnails"
             android:scaleType="centerCrop" />
 
-        <TextView
-            android:id="@+id/profile_item_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/cardview_standardmargin"
-            android:layout_marginRight="@dimen/cardview_standardmargin"
-            android:layout_marginTop="@dimen/cardview_lightermargin"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:textSize="20sp"
-            android:textColor="@color/kamcordDarkText" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/profile_item_author"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/cardview_standardmargin"
-            android:layout_marginRight="@dimen/cardview_standardmargin"
-            android:textSize="16sp"
-            android:text="@string/byAuthor"
-            android:textColor="@color/kamcordLightText"
-            android:maxLines="1"
-            android:ellipsize="end"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/profile_item_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/cardview_standardmargin"
+                    android:layout_marginRight="@dimen/cardview_standardmargin"
+                    android:layout_marginTop="@dimen/cardview_lightermargin"
+                    android:maxLines="2"
+                    android:ellipsize="end"
+                    android:textSize="20sp"
+                    android:textColor="@color/kamcordDarkText" />
+
+                <TextView
+                    android:id="@+id/profile_item_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/cardview_standardmargin"
+                    android:layout_marginRight="@dimen/cardview_standardmargin"
+                    android:textSize="16sp"
+                    android:text="@string/byAuthor"
+                    android:textColor="@color/kamcordLightText"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/moreVideoActionsImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/ic_more_vert_white_24dp"
+                android:tint="@color/kamcordGray"
+                android:tintMode="multiply" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

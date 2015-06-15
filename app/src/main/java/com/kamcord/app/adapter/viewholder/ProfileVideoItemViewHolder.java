@@ -3,6 +3,7 @@ package com.kamcord.app.adapter.viewholder;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,6 +29,8 @@ public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
     TextView videoComments;
     @InjectView(R.id.video_views)
     TextView videoViews;
+    @InjectView(R.id.moreVideoActionsImageButton)
+    ImageButton moreVideoActions;
 
     public ProfileVideoItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
@@ -56,5 +59,9 @@ public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
 
     public TextView getVideoViews() {
         return this.videoViews;
+    }
+
+    public ImageButton getMoreVideoActions() {
+        return this.moreVideoActions;
     }
 }
