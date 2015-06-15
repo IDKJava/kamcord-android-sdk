@@ -16,32 +16,57 @@
             android:id="@+id/profile_item_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:background="@drawable/default_thumbnails"
+            android:background="@drawable/default_video_thumb"
             android:scaleType="centerCrop" />
 
-        <TextView
-            android:id="@+id/profile_item_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/cardview_standardmargin"
-            android:layout_marginRight="@dimen/cardview_standardmargin"
             android:layout_marginTop="@dimen/cardview_lightermargin"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:textSize="20sp"
-            android:textColor="@color/kamcordDarkText" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/profile_item_author"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/cardview_standardmargin"
-            android:layout_marginRight="@dimen/cardview_standardmargin"
-            android:textSize="16sp"
-            android:text="@string/byAuthor"
-            android:textColor="@color/kamcordLightText"
-            android:maxLines="1"
-            android:ellipsize="end"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/profile_item_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/cardview_standardmargin"
+                    android:layout_marginRight="@dimen/cardview_standardmargin"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textSize="20sp"
+                    android:textColor="@color/kamcordDarkText" />
+
+                <TextView
+                    android:id="@+id/profile_item_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/cardview_standardmargin"
+                    android:layout_marginRight="@dimen/cardview_standardmargin"
+                    android:textSize="16sp"
+                    android:text="@string/byAuthorGame"
+                    android:textColor="@color/kamcordLightText"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/moreVideoActionsImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:scaleType="center"
+                android:background="@null"
+                android:src="@drawable/ic_more_vert_white_24dp"
+                android:tint="@color/kamcordGray"
+                android:tintMode="multiply" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,6 +90,7 @@
                 android:id="@+id/video_comments"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
                 android:text="@string/defaultNumber"
                 style="@style/KamcordVideoCardCountButton"
                 android:drawableStart="@drawable/comments_gray"

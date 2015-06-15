@@ -33,6 +33,7 @@ public class RecordingSession {
 
     private transient boolean recordedFrames = false;
     private transient float uploadProgress = -1f;
+    private transient long durationUs = 0;
 
     public RecordingSession() {}
 
@@ -111,6 +112,13 @@ public class RecordingSession {
         return globalId;
     }
 
+    public void incrementDurationUs(long increment) {
+        durationUs += increment;
+    }
+    public long getDurationUs() {
+        return durationUs;
+    }
+
     public HashMap<Integer, Boolean> getShareSources() {
         return shareSources;
     }
@@ -118,7 +126,6 @@ public class RecordingSession {
     public void setShareSources(HashMap<Integer, Boolean> shareSources) {
         this.shareSources = shareSources;
     }
-
 
     @Override
     public boolean equals(Object other)

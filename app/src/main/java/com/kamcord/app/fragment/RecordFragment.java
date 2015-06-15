@@ -22,6 +22,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,7 @@ import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
+import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.adapter.GameRecordListAdapter;
 import com.kamcord.app.model.RecordItem;
 import com.kamcord.app.model.RecordingSession;
@@ -40,15 +43,19 @@ import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.GameListUtils;
+import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.GridViewItemDecoration;
+import com.kamcord.app.view.utils.OnBackPressedListener;
 import com.kamcord.app.view.utils.RecordLayoutSpanSizeLookup;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -57,7 +64,8 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class RecordFragment extends Fragment implements
-        GameRecordListAdapter.OnGameActionButtonClickListener {
+        GameRecordListAdapter.OnGameActionButtonClickListener,
+        OnBackPressedListener {
     private static final String TAG = RecordFragment.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
 
@@ -67,6 +75,17 @@ public class RecordFragment extends Fragment implements
     SwipeRefreshLayout mSwipeRefreshLayout;
     @InjectView(R.id.record_recyclerview)
     DynamicRecyclerView mRecyclerView;
+
+    @InjectView(R.id.stopRecordingTakeoverContainer)
+    ViewGroup stopRecordingTakeoverContainer;
+    @InjectView(R.id.currentGameThumbnailImageView)
+    ImageView currentGameThumbnailImageView;
+    @InjectView(R.id.currentGameNameTextView)
+    TextView currentGameNameTextView;
+    @InjectView(R.id.currentGameTimeTextView)
+    TextView currentGameTimeTextView;
+    @InjectView(R.id.stopRecordingImageButton)
+    ImageButton stopRecordingImageButton;
 
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
@@ -79,8 +98,13 @@ public class RecordFragment extends Fragment implements
         View v = inflater.inflate(R.layout.record_tab, container, false);
         ButterKnife.inject(this, v);
         initKamcordRecordFragment(v);
+
+        Activity myActivity = getActivity();
         if( !recordingServiceConnection.isBound() ) {
-            getActivity().bindService(new Intent(getActivity(), RecordingService.class), recordingServiceConnection, Context.BIND_AUTO_CREATE);
+            myActivity.bindService(new Intent(myActivity, RecordingService.class), recordingServiceConnection, Context.BIND_AUTO_CREATE);
+        }
+        if (myActivity instanceof RecordActivity) {
+            ((RecordActivity) myActivity).setOnBackPressedListener(this);
         }
         return v;
     }
@@ -89,7 +113,12 @@ public class RecordFragment extends Fragment implements
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
-        getActivity().unbindService(recordingServiceConnection);
+
+        Activity myActivity = getActivity();
+        myActivity.unbindService(recordingServiceConnection);
+        if (myActivity instanceof RecordActivity) {
+            ((RecordActivity) myActivity).setOnBackPressedListener(null);
+    }
     }
 
     @Override
@@ -170,28 +199,81 @@ public class RecordFragment extends Fragment implements
     }
 
     private void handleServiceRunning() {
+        stopRecordingTakeoverContainer.setVisibility(View.GONE);
+
         if (recordingServiceConnection.isServiceRecording()) {
-            RecordingSession recordingSession = recordingServiceConnection.getRecordingSession();
+            final RecordingSession recordingSession = recordingServiceConnection.getRecordingSession();
             if (recordingSession != null) {
-                for (Game game : mGameList) {
-                    if (game.play_store_id.equals(recordingSession.getGamePackageName())) {
-                        game.isRecording = true;
-                    } else {
-                        game.isRecording = false;
+                Game game = null;
+                for (Game g : mGameList) {
+                    if (g.play_store_id.equals(recordingSession.getGamePackageName())) {
+                        game = g;
+                        break;
                     }
                 }
+                if (game != null) {
+                    stopRecordingTakeoverContainer.setVisibility(View.VISIBLE);
+
+                    if (game.icons != null && game.icons.regular != null) {
+                        Picasso.with(getActivity())
+                                .load(game.icons.regular)
+                                .into(currentGameThumbnailImageView);
+                    }
+                    currentGameThumbnailImageView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
+                                getActivity().startActivity(launchIntent);
+                            } catch (Exception e) {
+                                Log.e(TAG, "Unable to start " + recordingSession.getGameServerName(), e);
+                            }
+                        }
+                    });
+
+                    currentGameNameTextView.setText(game.name);
+                    currentGameTimeTextView.setText(
+                            String.format(Locale.ENGLISH, getActivity().getString(R.string.timeRecorded),
+                                    VideoUtils.videoDurationString(TimeUnit.MICROSECONDS, recordingSession.getDurationUs())));
+
+                    stopRecordingImageButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (!recordingSession.hasRecordedFrames()) {
+                                new AlertDialog.Builder(getActivity())
+                                        .setTitle(R.string.nothingRecordedYet)
+                                        .setMessage(String.format(getActivity().getResources().getString(R.string.kamcordHasntRecorded), recordingSession.getGameServerName()))
+                                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                try {
+                                                    Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
+                                                    getActivity().startActivity(launchIntent);
+                                                } catch (Exception e) {
+                                                    Log.e(TAG, "Unable to start " + recordingSession.getGameServerName(), e);
+                                                }
+                                            }
+                                        })
+                                        .setNeutralButton(R.string.stopRecording, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                stopRecording();
+                                                stopRecordingTakeoverContainer.setVisibility(View.GONE);
+                                            }
+                                        })
+                                        .show();
+                    } else {
+                                stopRecording();
+                                shareRecording(recordingSession);
+                    }
+                }
+                    });
+                }
             } else {
-                // TODO: Show the user something about not finding the recording session.
                 Log.v(TAG, "Unable to get the recording session!");
             }
-        } else {
-            for (Game game : mGameList) {
-                game.isRecording = false;
             }
         }
-        updateRecordItemList();
-        mRecyclerAdapter.notifyDataSetChanged();
-    }
 
     private boolean isAppInstalled(String packageName) {
         boolean appIsInstalled = false;
@@ -209,6 +291,12 @@ public class RecordFragment extends Fragment implements
     }
 
     private Toast startRecordingToast = null;
+
+    @Override
+    public void onBackPressed() {
+        handleServiceRunning();
+    }
+
     public interface RecyclerViewScrollListener {
         void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
 
@@ -320,54 +408,11 @@ public class RecordFragment extends Fragment implements
     @Override
     public void onGameActionButtonClick(final Game game) {
 
-        if( game.isInstalled ) {
-
-            if (!recordingServiceConnection.isServiceRecording()) {
+        if (game.isInstalled && !recordingServiceConnection.isServiceRecording()) {
                 mSelectedGame = game;
                 obtainMediaProjection();
-            } else {
-                final RecordingSession recordingSession = recordingServiceConnection.getRecordingSession();
-                if( recordingSession != null && recordingSession.getGamePackageName().equals(game.play_store_id) ) {
-                    if( !recordingSession.hasRecordedFrames() ) {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle(R.string.nothingRecordedYet)
-                                .setMessage(String.format(getActivity().getResources().getString(R.string.kamcordHasntRecorded), recordingSession.getGameServerName()))
-                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        try {
-                                            Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage(mSelectedGame.play_store_id);
-                                            getActivity().startActivity(launchIntent);
-                                        } catch (Exception e) {
-                                            Log.e(TAG, "Unable to start " + recordingSession.getGameServerName(), e);
-                                        }
-                                    }
-                                })
-                                .setNeutralButton(android.R.string.cancel, null)
-                                .show();
-                    } else {
-                        stopRecording();
-                        shareRecording(recordingSession);
-                    }
-                } else if( recordingSession != null ) {
-                    String message = String.format(Locale.ENGLISH, getResources().getString(R.string.youreAlreadyRecording), recordingSession.getGameServerName());
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(R.string.alreadyRecording)
-                            .setMessage(message)
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    stopRecording();
-                                    mSelectedGame = game;
-                                    obtainMediaProjection();
-                                }
-                            })
-                            .setNeutralButton(android.R.string.cancel, null)
-                            .show();
-                }
-            }
-        } else {
 
+            } else {
             mSelectedGame = null;
             Intent intent = new Intent(
                     Intent.ACTION_VIEW,
@@ -378,16 +423,14 @@ public class RecordFragment extends Fragment implements
 
     private void stopRecording() {
         recordingServiceConnection.stopRecording();
-        for( Game game : mGameList)
-        {
+        for (Game game : mGameList) {
             game.isRecording = false;
         }
         updateRecordItemList();
         mRecyclerAdapter.notifyDataSetChanged();
     }
 
-    private void shareRecording(RecordingSession recordingSession)
-    {
+    private void shareRecording(RecordingSession recordingSession) {
         if (recordingSession != null && recordingSession.hasRecordedFrames()) {
             FragmentActivity activity = getActivity();
             FlurryAgent.logEvent(getResources().getString(R.string.flurryReplayShareView));
@@ -447,5 +490,6 @@ public class RecordFragment extends Fragment implements
             return recordingService != null ? recordingService.getRecordingSession() : null;
         }
     }
+
     private RecordingServiceConnection recordingServiceConnection = new RecordingServiceConnection();
 }
