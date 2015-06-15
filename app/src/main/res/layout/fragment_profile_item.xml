@@ -22,6 +22,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/cardview_lightermargin"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
@@ -36,7 +37,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/cardview_standardmargin"
                     android:layout_marginRight="@dimen/cardview_standardmargin"
-                    android:layout_marginTop="@dimen/cardview_lightermargin"
                     android:maxLines="2"
                     android:ellipsize="end"
                     android:textSize="20sp"
@@ -59,6 +59,8 @@
                 android:id="@+id/moreVideoActionsImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:scaleType="center"
                 android:background="@null"
                 android:src="@drawable/ic_more_vert_white_24dp"
                 android:tint="@color/kamcordGray"

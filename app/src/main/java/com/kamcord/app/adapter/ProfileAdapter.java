@@ -215,7 +215,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch( menuItem.getItemId() ) {
                             case R.id.action_external_share:
-                                
+
                                 break;
 
                             case R.id.action_delete:
