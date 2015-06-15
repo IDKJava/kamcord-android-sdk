@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/cardview_standardmargin"
                     android:layout_marginRight="@dimen/cardview_standardmargin"
-                    android:maxLines="2"
+                    android:maxLines="1"
                     android:ellipsize="end"
                     android:textSize="20sp"
                     android:textColor="@color/kamcordDarkText" />
@@ -49,7 +49,7 @@
                     android:layout_marginLeft="@dimen/cardview_standardmargin"
                     android:layout_marginRight="@dimen/cardview_standardmargin"
                     android:textSize="16sp"
-                    android:text="@string/byAuthor"
+                    android:text="@string/byAuthorGame"
                     android:textColor="@color/kamcordLightText"
                     android:maxLines="1"
                     android:ellipsize="end"/>
@@ -90,6 +90,7 @@
                 android:id="@+id/video_comments"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
                 android:text="@string/defaultNumber"
                 style="@style/KamcordVideoCardCountButton"
                 android:drawableStart="@drawable/comments_gray"

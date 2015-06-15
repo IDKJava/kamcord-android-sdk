@@ -96,7 +96,7 @@
         <item quantity="one">Like</item>
         <item quantity="other">Likes</item>
     </plurals>
-    <string name="byAuthor">By %s</string>
+    <string name="byAuthorGame">By %1$s &#183; %2$s</string>
     <string name="recordAndShare">Record &amp; Share</string>
     <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
