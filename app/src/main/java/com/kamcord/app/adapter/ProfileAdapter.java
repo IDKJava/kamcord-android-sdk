@@ -218,7 +218,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch( menuItem.getItemId() ) {
+                        switch (menuItem.getItemId()) {
                             case R.id.action_external_share:
                                 doExternalShare(video);
                                 break;
@@ -350,23 +350,27 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
-    private static final String ELLIPSIS = "...";
     private void doExternalShare(Video video) {
-        if( mContext instanceof Activity ) {
+        if( mContext instanceof Activity && video.video_id != null ) {
             Activity activity = (Activity) mContext;
+            String watchPageLink = "www.kamcord.com/v/" + video.video_id;
 
-            String externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                    video.title, video.video_site_watch_page);
-            int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
-            if( diff > 0 ) {
-                int truncatedVideoTitleLength = video.title.length() - diff - ELLIPSIS.length();
-                if (truncatedVideoTitleLength <= 0) {
-                    truncatedVideoTitleLength = 1;
-                }
-                String truncatedTitle = video.title.substring(0, truncatedVideoTitleLength) + ELLIPSIS;
+
+            String externalShareText = null;
+            if( video.title != null ) {
                 externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                        truncatedTitle, video.video_site_watch_page);
+                        video.title, watchPageLink);
+                int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
+                if( diff > 0 ) {
+                    String truncatedTitle = StringUtils.ellipsize(video.title, video.title.length() - diff);
+                    externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
+                            truncatedTitle, video.video_site_watch_page);
+                }
+            } else {
+                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextNoTitle),
+                        watchPageLink);
             }
+            externalShareText = StringUtils.ellipsize(externalShareText, MAX_EXTERNAL_SHARE_TEXT_LENGTH);
 
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
