@@ -92,12 +92,18 @@ public class RecordActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        boolean handled = false;
+        boolean fragmentHandled = false;
+
         FragmentManager manager = getSupportFragmentManager();
         for( Fragment fragment : manager.getFragments() ) {
             if( fragment instanceof OnBackPressedListener ) {
-                handled |= ((OnBackPressedListener) fragment).onBackPressed();
+                fragmentHandled |= ((OnBackPressedListener) fragment).onBackPressed();
             }
+        }
+
+        // We only forward the back click to super if none of our fragments handled it.
+        if( !fragmentHandled ) {
+            super.onBackPressed();
         }
     }
 

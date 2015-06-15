@@ -1,7 +1,6 @@
 package com.kamcord.app.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +16,7 @@ import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -290,8 +290,9 @@ public class RecordFragment extends Fragment implements
     }
 
     @Override
-    public void onBackPressed() {
+    public boolean onBackPressed() {
         handleServiceRunning();
+        return false;
     }
 
     public void obtainMediaProjection() {

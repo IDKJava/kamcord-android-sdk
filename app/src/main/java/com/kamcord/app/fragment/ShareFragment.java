@@ -1,5 +1,6 @@
 package com.kamcord.app.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,6 +37,7 @@ import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.VideoUtils;
+import com.kamcord.app.view.utils.OnBackPressedListener;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -57,7 +60,7 @@ import rx.android.widget.WidgetObservable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
-public class ShareFragment extends Fragment {
+public class ShareFragment extends Fragment implements OnBackPressedListener {
     public static final String TAG = ShareFragment.class.getSimpleName();
     public static final String ARG_RECORDING_SESSION = "recording_session";
 
@@ -335,4 +338,31 @@ public class ShareFragment extends Fragment {
         twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
+    private boolean showingDeleteVideoDialog = false;
+    @Override
+    public boolean onBackPressed() {
+        if( !showingDeleteVideoDialog ) {
+            showingDeleteVideoDialog = true;
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.areYouSure)
+                    .setMessage(R.string.youWillLoseMonster)
+                    .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            FileSystemManager.cleanRecordingSessionCacheDirectory(recordingSession);
+                            getActivity().onBackPressed();
+                            showingDeleteVideoDialog = false;
+                        }
+                    })
+                    .setNeutralButton(android.R.string.cancel, null)
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            showingDeleteVideoDialog = false;
+                        }
+                    }).show();
+            return true;
+        }
+        return false;
+    }
 }
