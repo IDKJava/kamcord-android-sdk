@@ -71,7 +71,6 @@ public class FileSystemManager {
         ActiveRecordingSessionManager.removeActiveSession(recordingSession);
     }
 
-
     private static void nukeDirectory(File file)
     {
         if(file.isDirectory()) {

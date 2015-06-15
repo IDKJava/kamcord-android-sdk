@@ -34,6 +34,7 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
+import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
@@ -160,6 +161,8 @@ public class ShareFragment extends Fragment {
             stitchClipsThread.start();
         }
 
+        titleEditText.setHint(StringUtils.defaultVideoTitle(getActivity(), recordingSession));
+
         twitterLoginButton.setCallback(
                 new Callback<TwitterSession>() {
                     @Override
@@ -219,6 +222,9 @@ public class ShareFragment extends Fragment {
                 uploadIntent.putExtra(UploadService.ARG_SHARE_SOURCE, shareSourceHashMap);
             }
 
+            recordingSession.setState(RecordingSession.State.SHARED);
+            ActiveRecordingSessionManager.updateActiveSession(recordingSession);
+
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
@@ -235,8 +241,6 @@ public class ShareFragment extends Fragment {
             getActivity().startActivity(intent);
         }
 
-        recordingSession.setState(RecordingSession.State.SHARED);
-        ActiveRecordingSessionManager.updateActiveSession(recordingSession);
     }
 
     @OnClick({R.id.share_twitterbutton, R.id.share_youtubebutton})

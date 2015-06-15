@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.kamcord.app.R;
+import com.kamcord.app.model.RecordingSession;
 
 import java.util.Locale;
 
@@ -94,5 +95,11 @@ public class StringUtils {
         } else {
             return String.format(Locale.ENGLISH, "%.1fB", ((double) count) / 1e9);
         }
+    }
+
+    public static String defaultVideoTitle(Context context, RecordingSession session) {
+        return String.format(Locale.ENGLISH,
+                context.getString(R.string.myLatestVideo),
+                session.getGameServerName());
     }
 }
