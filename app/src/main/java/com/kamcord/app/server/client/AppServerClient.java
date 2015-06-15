@@ -28,6 +28,7 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.GsonConverter;
 import retrofit.http.Body;
+import retrofit.http.DELETE;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
@@ -105,6 +106,9 @@ public class AppServerClient {
 
         @POST("/app/v3/videos/{videoId}/updatestats")
         void updateVideoViews(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
+
+        @DELETE("/app/v3/videos/{videoId}")
+        void deleteVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
     }
 
     private static AppServer instance;

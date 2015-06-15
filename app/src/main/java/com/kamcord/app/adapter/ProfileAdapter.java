@@ -2,6 +2,7 @@ package com.kamcord.app.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.kamcord.app.R;
@@ -219,7 +222,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 break;
 
                             case R.id.action_delete:
-
+                                showDeleteVideoDialog(video);
                                 break;
                         }
                         return true;
@@ -344,6 +347,48 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return mProfileList.get(position);
     }
 
+    private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
+    private static final String ELLIPSIS = "...";
+    private void doExternalShare(Video video) {
+        if( mContext instanceof Activity ) {
+            Activity activity = (Activity) mContext;
+
+            String externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
+                    video.title, video.video_site_watch_page);
+            int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
+            if( diff > 0 ) {
+                int truncatedVideoTitleLength = video.title.length() - diff - ELLIPSIS.length();
+                if (truncatedVideoTitleLength <= 0) {
+                    truncatedVideoTitleLength = 1;
+                }
+                String truncatedTitle = video.title.substring(0, truncatedVideoTitleLength) + ELLIPSIS;
+                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
+                        truncatedTitle, video.video_site_watch_page);
+            }
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, externalShareText);
+            shareIntent.setType("text/plain");
+            activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.shareTo)));
+        }
+    }
+
+    private void showDeleteVideoDialog(final Video video) {
+        new AlertDialog.Builder(mContext)
+                .setTitle(R.string.areYouSure)
+                .setMessage(R.string.ifYouDeleteThis)
+                .setNeutralButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AppServerClient.getInstance().deleteVideo(
+                                video.video_id,
+                                new DeleteVideoCallback(video));
+                    }
+                }).show();
+    }
+
     private class LikeVideosCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
@@ -377,6 +422,32 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+    private class DeleteVideoCallback implements Callback<GenericResponse<?>> {
+        private Video video;
+        public DeleteVideoCallback(Video video) {
+            this.video = video;
+        }
+
+        @Override
+        public void success(GenericResponse<?> genericResponse, Response response) {
+            int index = 0;
+            for( ProfileItem item : mProfileList ) {
+                if( item.getType() == ProfileItem.Type.VIDEO
+                    && item.getVideo().video_id.equals(video.video_id) ) {
+                    mProfileList.remove(index);
+                    notifyItemRemoved(index);
+                    break;
+                }
+                index++;
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Toast.makeText(mContext, mContext.getString(R.string.failedToDelete), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
@@ -398,33 +469,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
     };
-
-    private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
-    private static final String ELLIPSIS = "...";
-    private void doExternalShare(Video video) {
-        if( mContext instanceof Activity ) {
-            Activity activity = (Activity) mContext;
-
-            String externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                    video.title, video.video_site_watch_page);
-            int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
-            if( diff > 0 ) {
-                int truncatedVideoTitleLength = video.title.length() - diff - ELLIPSIS.length();
-                if (truncatedVideoTitleLength <= 0) {
-                    truncatedVideoTitleLength = 1;
-                }
-                String truncatedTitle = video.title.substring(0, truncatedVideoTitleLength) + ELLIPSIS;
-                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                        truncatedTitle, video.video_site_watch_page);
-            }
-
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, externalShareText);
-            shareIntent.setType("text/plain");
-            activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.shareTo)));
-        }
-    }
 
     private static class ThumbnailRequestHandler extends RequestHandler {
         public static final String SCHEME = "video";
