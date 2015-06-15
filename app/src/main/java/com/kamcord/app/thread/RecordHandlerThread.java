@@ -177,6 +177,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
             drainEncoder();
+            mRecordingSession.incrementDurationUs(lastPresentationUs - presentationStartUs);
             releaseEncoders();
         }
     }
@@ -275,9 +276,6 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                     mMuxer.writeSampleData(mTrackIndex, encodedData, mVideoBufferInfo);
                     if (presentationStartUs < 0) {
                         presentationStartUs = mVideoBufferInfo.presentationTimeUs;
-                    }
-                    if( lastPresentationUs > 0 ) {
-                        mRecordingSession.incrementDurationUs(mVideoBufferInfo.presentationTimeUs - lastPresentationUs);
                     }
                     lastPresentationUs = mVideoBufferInfo.presentationTimeUs;
                     mMuxerWrite = true;
