@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
@@ -290,17 +289,9 @@ public class RecordFragment extends Fragment implements
         return appIsInstalled;
     }
 
-    private Toast startRecordingToast = null;
-
     @Override
     public void onBackPressed() {
         handleServiceRunning();
-    }
-
-    public interface RecyclerViewScrollListener {
-        void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
-
-        void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy);
     }
 
     public void obtainMediaProjection() {
