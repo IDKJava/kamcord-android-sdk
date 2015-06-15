@@ -191,12 +191,12 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     && !queuedSessions.contains(session)
                     && !session.equals(currentSession)) {
                 session.setUploadProgress(RecordingSession.UPLOAD_FAILED_PROGRESS);
-                mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
+                addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
                 modified = true;
 
             } else if (session.getState() == RecordingSession.State.UPLOADED) {
                 session.setUploadProgress(RecordingSession.UPLOAD_PROCESSING_PROGRESS);
-                mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
+                addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
                 modified = true;
             }
         }
@@ -204,15 +204,23 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         if (uploadService != null) {
             for (RecordingSession queuedSession : uploadService.getQueuedSessions()) {
                 queuedSession.setUploadProgress(-1f);
-                mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, queuedSession));
+                addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, queuedSession));
                 modified = true;
             }
-            mProfileList.add(1, new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, uploadService.getCurrentlyUploadingSession()));
+            addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, uploadService.getCurrentlyUploadingSession()));
         }
 
         if (modified) {
             mProfileAdapter.notifyDataSetChanged();
         }
+    }
+
+    public void addToProfileList(ProfileItem item)
+    {
+        if(mProfileList.size() > 0)
+            mProfileList.add(1, item);
+        else
+            mProfileList.add(item);
     }
 
     public void checkProcessingSessions() {
