@@ -197,7 +197,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         viewHolder.getProfileItemAuthor().setText(String.format(Locale.ENGLISH,
                 mContext.getResources().getString(R.string.byAuthorGame),
                 video.username, video.game_name));
-        viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));
+        /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
