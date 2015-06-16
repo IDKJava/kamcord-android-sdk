@@ -225,6 +225,7 @@ public class ShareFragment extends Fragment {
             recordingSession.setState(RecordingSession.State.SHARED);
             ActiveRecordingSessionManager.updateActiveSession(recordingSession);
 
+            KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
