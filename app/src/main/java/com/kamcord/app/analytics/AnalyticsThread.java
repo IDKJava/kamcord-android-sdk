@@ -8,18 +8,16 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
-import com.kamcord.app.server.model.analytics.Event;
-
-import java.util.HashMap;
-
 /**
  * Created by pplunkett on 6/15/15.
  */
 public class AnalyticsThread extends HandlerThread implements Handler.Callback, Application.ActivityLifecycleCallbacks {
     private static final int SEND_EVERY_MS = 300000;
 
-    private long lastSendTime;
     private Handler handler;
+    private long lastSendTime;
+    private int foregroundActivityCount = 0;
+
 
     public AnalyticsThread(String name, long lastSendTime) {
         super(name);
@@ -41,31 +39,31 @@ public class AnalyticsThread extends HandlerThread implements Handler.Callback, 
         Log.v("FindMe", "say what again: " + what);
         Log.v("FindMe", "  with obj: " + message.obj);
 
+        boolean backgroundedOrForegrounded = false;
         switch( what ) {
             case ACTIVITY_STARTED:
+                if( foregroundActivityCount == 0 ) {
+                    backgroundedOrForegrounded = true;
+                }
+                foregroundActivityCount++;
                 break;
 
             case ACTIVITY_STOPPED:
-
+                if( foregroundActivityCount == 1 ) {
+                    backgroundedOrForegrounded = true;
+                }
+                foregroundActivityCount--;
                 break;
 
             case UNKNOWN:
-
+            default:
                 break;
         }
 
-        if( shouldSendEvents() ) {
+        if( System.currentTimeMillis() - lastSendTime > SEND_EVERY_MS || backgroundedOrForegrounded ) {
             sendEvents();
         }
 
-        return false;
-    }
-
-    private boolean shouldSendEvents() {
-        long now = System.currentTimeMillis();
-        if( now - lastSendTime > SEND_EVERY_MS ) {
-
-        }
         return false;
     }
 
