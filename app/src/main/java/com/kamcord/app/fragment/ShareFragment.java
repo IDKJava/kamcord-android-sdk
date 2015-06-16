@@ -226,6 +226,9 @@ public class ShareFragment extends Fragment {
             ActiveRecordingSessionManager.updateActiveSession(recordingSession);
 
             getActivity().startService(uploadIntent);
+            if (getActivity() instanceof  RecordActivity) {
+                ((RecordActivity) getActivity()).setCurrentItem(1);
+            }
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
             if (videoTitleToast == null) {
