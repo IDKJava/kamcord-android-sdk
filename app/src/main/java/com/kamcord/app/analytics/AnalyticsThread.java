@@ -16,16 +16,23 @@ public class AnalyticsThread extends HandlerThread implements Handler.Callback, 
 
     private Handler handler;
     private long lastSendTime;
+    private boolean firstLaunch = false;
+
     private int foregroundActivityCount = 0;
 
-
-    public AnalyticsThread(String name, long lastSendTime) {
+    public AnalyticsThread(String name, long lastSendTime, boolean firstLaunch) {
         super(name);
         this.lastSendTime = lastSendTime;
+        this.firstLaunch = firstLaunch;
     }
 
     public void setHandler(Handler handler) {
         this.handler = handler;
+    }
+
+    public void sendLaunchEvent() {
+        Message msg = Message.obtain(handler, What.LAUNCH.ordinal());
+        handler.sendMessage(msg);
     }
 
     @Override
@@ -55,6 +62,10 @@ public class AnalyticsThread extends HandlerThread implements Handler.Callback, 
                 foregroundActivityCount--;
                 break;
 
+            case LAUNCH:
+
+                break;
+
             case UNKNOWN:
             default:
                 break;
@@ -74,6 +85,7 @@ public class AnalyticsThread extends HandlerThread implements Handler.Callback, 
     private enum What {
         ACTIVITY_STOPPED,
         ACTIVITY_STARTED,
+        LAUNCH,
         UNKNOWN,
     }
 

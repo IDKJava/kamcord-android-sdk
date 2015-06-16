@@ -1,11 +1,29 @@
 package com.kamcord.app.server.model.analytics;
 
 import com.google.gson.annotations.SerializedName;
+import com.kamcord.app.utils.Connectivity;
+
+import java.util.UUID;
 
 /**
  * Created by pplunkett on 6/15/15.
  */
 public class Event {
+
+    public Event(Name name, String appSessionId) {
+        this.name = name;
+        this.event_id = UUID.randomUUID().toString();
+        this.app_session_id = appSessionId;
+
+        this.start_time = System.currentTimeMillis() / 1000;
+        if(Connectivity.isConnected()) {
+            if( Connectivity.isConnectedWifi()) {
+                connection_type = ConnectionType.WIFI;
+            } else if( Connectivity.isConnectedMobile() ) {
+                connection_type = ConnectionType.MOBILE;
+            }
+        }
+    }
 
     public Name name;
     public long start_time;
@@ -28,6 +46,18 @@ public class Event {
         @SerializedName("mobile")
         MOBILE,
     }
+
+    // For navigational events.
+    public Long event_duration = null;
+    public SourceView source_view = null;
+
+    public enum SourceView {
+
+    }
+
+    // For server events.
+    public Long request_duration = null;
+    public Boolean is_success = null;
 
     @Override
     public int hashCode() {
