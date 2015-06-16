@@ -28,4 +28,19 @@ public class Event {
         @SerializedName("mobile")
         MOBILE,
     }
+
+    @Override
+    public int hashCode() {
+        return event_id != null ? event_id.hashCode() : 0;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if( other != null && other instanceof Event &&
+                ((Event) other).event_id != null &&
+                ((Event) other).event_id.equals(this.event_id) ) {
+            return true;
+        }
+        return false;
+    }
 }

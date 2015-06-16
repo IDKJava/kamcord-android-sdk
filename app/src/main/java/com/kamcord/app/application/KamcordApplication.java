@@ -38,9 +38,7 @@ public class KamcordApplication extends Application {
             Fabric.with(this, new Twitter(new TwitterAuthConfig(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)));
         }
 
-        if( !BuildConfig.DEBUG ) {
-            KamcordAnalytics.initializeWith(this);
-        }
+        KamcordAnalytics.initializeWith(this);
 
         AccountManager.initializeWith(this);
         DeviceManager.initialize();

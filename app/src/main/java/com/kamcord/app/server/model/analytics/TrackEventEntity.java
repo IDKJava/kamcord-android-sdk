@@ -10,7 +10,7 @@ import java.util.Locale;
 /**
  * Created by pplunkett on 6/15/15.
  */
-public class TrackEventRequestEntity {
+public class TrackEventEntity {
     public String app_device_id;
     public String user_registration_id;
     public List<Event> event;
@@ -24,4 +24,28 @@ public class TrackEventRequestEntity {
     public final String device_model = Build.MODEL;
     public final String language = Locale.getDefault().getLanguage();
     public final String country = Locale.getDefault().getCountry();
+
+    public static class Builder {
+        private TrackEventEntity entity = new TrackEventEntity();
+
+        public Builder setAppDeviceId(String appDeviceId) {
+            entity.app_device_id = appDeviceId;
+            return this;
+        }
+
+        public Builder setUserRegistrationId(String userRegistrationId) {
+            entity.user_registration_id = userRegistrationId;
+            return this;
+        }
+
+        public Builder addEvent(Event e) {
+            entity.event.add(e);
+            return this;
+        }
+
+        public TrackEventEntity build() {
+            entity.sent_time = System.currentTimeMillis() / 1000;
+            return entity;
+        }
+    }
 }
