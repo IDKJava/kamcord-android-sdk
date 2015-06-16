@@ -9,7 +9,7 @@ import com.kamcord.app.R;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 import static com.kamcord.app.testutils.UiUtilities.*;
-
+import static com.kamcord.app.testutils.SystemUtilities.*;
 /**
  * Created by Mehmet on 6/3/15.
  */
@@ -72,7 +72,7 @@ public class ProfileTest extends TestBase {
         doLogin();
         findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
         scrollToBeginning(R.id.profile_recyclerview);
-        waitForTileLoad(R.id.profile_recyclerview, 10000);
+        waitForTileLoad(R.id.profile_recyclerview, APP_TIMEOUT_MS);
 
         UiObject2 viewObj =
                 findUiObj(R.id.video_views, UiObjIdType.Res, UiObjSelType.Res);
@@ -105,10 +105,27 @@ public class ProfileTest extends TestBase {
 
 
     }
+    //TODO: enable after AA-36 is fixed.
+    //@Test
+    public void verifyProfileOffline(){
+        //Addresses AA-36
+        doLogin();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
+                .click();
+        verifyProfileUserInfo();
+        toggleNetwork(false);
+        mDevice.pressHome();
 
+        startKamcordApp();
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
+                .click();
+        verifyProfileUserInfo();
+
+
+    }
     protected void verifyProfileUserInfo() {
         //TODO: Add more features to test.
-        String expectedUserName = "bar1000";
+
         //verify video tile load
         //scrollable child.
         scrollToBeginning(R.id.profile_recyclerview);
@@ -118,7 +135,7 @@ public class ProfileTest extends TestBase {
         String userNameString = findUiObj(R.id.profile_user_name, UiObjIdType.Res, UiObjSelType.Res)
                 .getText()
                 .toLowerCase();
-        assertTrue("Wrong user name!", userNameString.equals(expectedUserName));
+        assertTrue("Wrong user name!", userNameString.equals(USERNAME1));
 
         //check profile letter
         String profileLetter = findUiObj(R.id.profileLetter, UiObjIdType.Res, UiObjSelType.Res)

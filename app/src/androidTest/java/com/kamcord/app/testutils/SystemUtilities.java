@@ -1,9 +1,9 @@
 package com.kamcord.app.testutils;
 
-
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.Until;
@@ -22,7 +22,7 @@ import static com.kamcord.app.testutils.UiUtilities.*;
 public class SystemUtilities {
     public static final String KAMCORD_CACHE_FOLDER = "Kamcord_Android";
     public static final String NOMEDIA_TAG = ".nomedia";
-    public static final String SDCARD_ROOT = "/storage/sdcard0/";
+    public static final String SDCARD_ROOT = "/sdcard/";
 
     public static String executeShellCommand(String cmd) {
         try {
@@ -84,6 +84,40 @@ public class SystemUtilities {
 
         String cmd = String.format("su -c am force-stop %s", appPackageName);
         String result = executeShellCommand(cmd);
+    }
+
+    public static int getFolderSize(String fullPath){
+        String du = executeShellCommand(
+                String.format("du -sk %s", fullPath));
+        int folderSizeInKB = 0;
+        try{
+            folderSizeInKB = Integer.parseInt(du.split("\\s+")[0]);
+        } catch (Exception e){
+            e.printStackTrace();
+            folderSizeInKB = -1;
+        }
+        return folderSizeInKB;
+    }
+    public static boolean doWeHaveInternet(){
+        Context context  = InstrumentationRegistry.getContext();
+        ConnectivityManager cm =
+                (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnected();
+        return isConnected;
+    }
+
+    public static void toggleNetwork(boolean On){
+        String opWord =  On ? "enable" : "disable";
+        executeShellCommand(String.format("su -c svc wifi %s", opWord));
+        executeShellCommand(String.format("su -c svc data %s", opWord));
+        int timeOut = 10;
+        int timeOutCtr = 0;
+        while(doWeHaveInternet() != On && timeOutCtr < timeOut){
+            sleep(100);
+            timeOutCtr++;
+        }
     }
 
 }

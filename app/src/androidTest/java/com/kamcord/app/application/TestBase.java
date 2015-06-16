@@ -38,12 +38,13 @@ import com.kamcord.app.testutils.testrules.RetryRule;
 public abstract class TestBase {
 
     @Rule
-    public RetryRule mTestRetryRule = new RetryRule(3);
+    public RetryRule mTestRetryRule = new RetryRule(1);
     @Rule
     public FailureRule mTestFailureRule = new FailureRule();
 
     @Before
     public void setUp(){
+        toggleNetwork(true);
         startKamcordApp();
         doLogout();
     }
@@ -105,13 +106,13 @@ public abstract class TestBase {
                 UiObjIdType.Res,
                 UiObjSelType.Res);
         uName.click();
-        uName.setText("bar1000");
+        uName.setText(USERNAME1);
         //is password here?
         UiObject2 pWord = findUiObj(R.id.passwordEditText,
                 UiObjIdType.Res,
                 UiObjSelType.Res);
         pWord.click();
-        pWord.setText("hello123");
+        pWord.setText(PASSWORD1);
         //hide the soft keyboard.
         mDevice.pressBack();
         findUiObj(R.id.loginButton, UiObjIdType.Res, UiObjSelType.Res).click();
@@ -124,6 +125,8 @@ public abstract class TestBase {
         } else {
             findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
                     .click();
+            scrollToBeginning(R.id.profile_recyclerview);
+            waitForTileLoad(R.id.profile_recyclerview, APP_TIMEOUT_MS);
             findUiObj(R.id.profile_action_menu, UiObjIdType.Res, UiObjSelType.Res, APP_TIMEOUT_MS)
                     .click();
             findUiObj(R.string.action_signout, UiObjIdType.Str, UiObjSelType.Txt).click();

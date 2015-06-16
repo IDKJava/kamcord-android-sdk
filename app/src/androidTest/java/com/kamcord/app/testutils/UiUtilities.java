@@ -55,7 +55,11 @@ public class UiUtilities {
     public static final int UI_INTERACTION_DELAY_MS = 1000;
     public static final int MAX_CLICK_TRIALS = 3;
 
+    public static final String USERNAME1 = "bar1000";
+    public static final String PASSWORD1 = "hello123";
     public static final UiDevice mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
+
 
     public enum UiObjIdType {
         Res,
@@ -65,9 +69,10 @@ public class UiUtilities {
     public enum UiObjSelType {
         Res,
         Txt,
-        Des
+        Des,
+        TxtContains,
+        DesContains
     }
-
 
     public static void sleep(int timeInMS) {
         try {
@@ -191,7 +196,10 @@ public class UiUtilities {
     {
         return findUiObj(text, selType, timeOut, true);
     }
-    public static UiObject2 findUiObj(String text, UiObjSelType selType, int timeOut, boolean failIfNotFound ) {
+    public static UiObject2 findUiObj(String text,
+                                      UiObjSelType selType,
+                                      int timeOut,
+                                      boolean failIfNotFound) {
         BySelector objSelector = getSelector(selType, text);
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
@@ -308,6 +316,12 @@ public class UiUtilities {
                 break;
             case Des:
                 objSelector = By.desc(text);
+                break;
+            case TxtContains:
+                objSelector = By.textContains(text);
+                break;
+            case DesContains:
+                objSelector = By.descContains(text);
                 break;
             default:
                 throw new UnsupportedOperationException("UI Selector type not supported!");

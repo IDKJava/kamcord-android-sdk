@@ -5,16 +5,26 @@ import android.os.RemoteException;
 import android.support.test.uiautomator.UiObject2;
 
 import com.kamcord.app.R;
+import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static com.kamcord.app.testutils.UiUtilities.*;
+import static com.kamcord.app.testutils.SystemUtilities.*;
 import static org.junit.Assert.fail;
+
+
 
 /**
  * Created by Mehmet on 5/27/15.
  */
 public abstract class RecordAndPostTestBase extends TestBase {
+    public enum UploadTestVariant {
+        NoNetwork,
+        Interrupted,
+        Normal
+    }
 
     protected void recordGameVideo(String gameName, int durationInMs){
         recordGameVideo(gameName, gameName, durationInMs, false);
@@ -115,15 +125,18 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
     }
 
-    protected void handleShareView(int durationInMs) {
-        handleShareView(durationInMs, true, true);
+    protected void handleShareViewNotificationCheck(int durationInMs) {
+        handleShareViewNotificationCheck(durationInMs, true, true);
     }
 
-    protected void handleShareView(int durationInMs, boolean failIfNotLoggedIn) {
-        handleShareView(durationInMs, failIfNotLoggedIn, true);
+    protected void handleShareViewNotificationCheck(int durationInMs, boolean failIfNotLoggedIn) {
+        handleShareViewNotificationCheck(durationInMs, failIfNotLoggedIn, true);
     }
 
-    protected void handleShareView(int durationInMs, boolean failIfNotLoggedIn, boolean waitForUpload) {
+    protected void handleShareViewNotificationCheck(int durationInMs,
+                                                    boolean failIfNotLoggedIn,
+                                                    boolean waitForUpload) {
+        String videoTitle = UUID.randomUUID().toString();
         //wait for video processing to finish
         //TODO: Adjust the "1" divider to something reasonable as stitching perf. improves.
         int processingTimeout = Math.max((durationInMs / 1), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
@@ -133,7 +146,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
         UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);
         title.click();
-        title.setText("my awesome test video");
+        title.setText(videoTitle);
 
         //close soft keyboard
         mDevice.pressBack();
@@ -167,6 +180,155 @@ public abstract class RecordAndPostTestBase extends TestBase {
         findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des).click();
         findUiObj(R.string.recordAndShare, UiObjIdType.Str, UiObjSelType.Txt);
     }
+    protected void handleShareViewQueueCheck(int durationInMs,
+                                             boolean failIfNotLoggedIn) {
+        handleShareViewQueueCheck(durationInMs, failIfNotLoggedIn, UploadTestVariant.Normal);
+    }
+
+    protected void handleShareViewQueueCheck(int durationInMs,
+                                             boolean failIfNotLoggedIn,
+                                             UploadTestVariant uploadTestType) {
+        String videoTitle = UUID.randomUUID().toString();
+        String currentlyUploading = getStrByID(R.string.currentlyUploadingPercent).split("\\(")[0];
+        //wait for video processing to finish
+        //TODO: Adjust the "1" divider to something reasonable as stitching perf. improves.
+        int processingTimeout = Math.max((durationInMs / 1), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
+        int uploadTimeout = Math.max((durationInMs / 1), DEFAULT_UPLOAD_TIMEOUT);
+        mDevice.waitForIdle();
+        findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, processingTimeout);
+
+        UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);
+        title.click();
+        title.setText(videoTitle);
+
+        //close soft keyboard
+        mDevice.pressBack();
+        UiObject2 procVidObj;
+        int maxReTries;
+        int reTries;
+        String videoAuthor;
+        switch (uploadTestType) {
+
+            case Normal:
+
+                findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
+
+                //TODO: wait on profile view?
+
+
+                findUiObj(R.string.kamcordProfileTab,
+                        UiObjIdType.Str,
+                        UiObjSelType.Des,
+                        UI_TIMEOUT_MS).click();
+                //sleep(50);
+                findUiObj(currentlyUploading, UiObjSelType.TxtContains, APP_TIMEOUT_MS);
+                //check if it's recording, we seem not to be fast enough to check this.
+                mDevice.openNotification();
+                //We're not fast enough to check both before the upload finishes. :(
+                //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
+                findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
+                mDevice.pressBack();
+                //go to profile
+                findUiObj(R.string.processingPullToRefresh,
+                        UiObjIdType.Str,
+                        UiObjSelType.Txt,
+                        uploadTimeout);
+                //pull to refresh and see what's going on.
+                procVidObj = findUiObj(R.string.processingPullToRefresh,
+                        UiObjIdType.Str, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
+                //UI timeout * 2 * 30 = 120s. We give it ~1min be processed.
+                maxReTries = 30;
+                reTries = 0;
+                while (reTries < maxReTries && procVidObj != null) {
+                    reTries++;
+                    procVidObj = findUiObj(R.string.processingPullToRefresh,
+                            UiObjIdType.Str, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
+                    scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
+                    sleep(UI_TIMEOUT_MS);
+                }
+                assertTrue("Processing timed out!", reTries <= maxReTries);
+                //look for the video id in the feed
+                maxReTries = 15;
+                reTries = 0;
+                procVidObj = null;
+                while (reTries < maxReTries && procVidObj == null) {
+                    reTries++;
+                    procVidObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
+                    scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
+                    sleep(UI_TIMEOUT_MS);
+                }
+                assertTrue("Feed timed out!", reTries <= maxReTries);
+                videoAuthor = getVideoAuthor(videoTitle);
+                assertTrue("Video not found!", videoAuthor.contains(USERNAME1));
+
+                //close notifications
+                break;
+            case NoNetwork:
+                toggleNetwork(false);
+                findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
+
+                //TODO: wait on profile view?
+
+                findUiObj(R.string.kamcordProfileTab,
+                        UiObjIdType.Str,
+                        UiObjSelType.Des,
+                        UI_TIMEOUT_MS).click();
+
+                //sleep(50);
+                findUiObj(R.string.uploadFailed, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
+                //check if it's recording, we seem not to be fast enough to check this.
+                //turning on the Internets
+                toggleNetwork(true);
+                findUiObj(R.id.retryUploadImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
+
+                //disabling notification checks... Odd? 
+                /*
+                mDevice.openNotification();
+                //We're not fast enough to check both before the upload finishes. :(
+                //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
+                findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
+                mDevice.pressBack();
+                */
+                //go to profile
+                findUiObj(R.string.processingPullToRefresh,
+                        UiObjIdType.Str,
+                        UiObjSelType.Txt,
+                        uploadTimeout);
+                //pull to refresh and see what's going on.
+                procVidObj = findUiObj(R.string.processingPullToRefresh,
+                        UiObjIdType.Str, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
+                //UI timeout * 2 * 30 = 120s. We give it ~1min be processed.
+                maxReTries = 30;
+                reTries = 0;
+                while (reTries < maxReTries && procVidObj != null) {
+                    reTries++;
+                    procVidObj = findUiObj(R.string.processingPullToRefresh,
+                            UiObjIdType.Str, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
+                    scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
+                    sleep(UI_TIMEOUT_MS);
+                }
+                assertTrue("Processing timed out!", reTries <= maxReTries);
+                //look for the video id in the feed
+                maxReTries = 15;
+                reTries = 0;
+                procVidObj = null;
+                while (reTries < maxReTries && procVidObj == null) {
+                    reTries++;
+                    procVidObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
+                    scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
+                    sleep(UI_TIMEOUT_MS);
+                }
+                assertTrue("Feed timed out!", reTries <= maxReTries);
+                videoAuthor = getVideoAuthor(videoTitle);
+                assertTrue("Video not found!", videoAuthor.contains(USERNAME1));
+
+
+                break;
+            default:
+                break;
+        }
+    }
+
 
     protected void executeRectPattern() {
         Point[] pattern = new Point[]{new Point(500, 300),
@@ -197,6 +359,48 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 button.getContentDescription().equals(buttonDescExpected));
         return button;
     }
+    //TODO: Refactor to a class for this kind of uploadvideo object
+    protected UiObject2 getUploadRetryButton(String videoTitle){
+        UiObject2 videoTitleObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS);
+        UiObject2 listItemObj = videoTitleObj.getParent().getParent().getParent();
+        UiObject2 button = findUiObjInObj(listItemObj,
+                R.id.retryUploadImageButton,
+                UiObjIdType.Res,
+                UiObjSelType.Res,
+                UI_TIMEOUT_MS);
+        return button;
+    }
 
+    protected UiObject2 getUploadOptionsButton(String videoTitle){
+        UiObject2 videoTitleObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS);
+        UiObject2 listItemObj = videoTitleObj.getParent().getParent().getParent();
+        UiObject2 button = findUiObjInObj(listItemObj,
+                R.id.uploadFailedImageButton,
+                UiObjIdType.Res,
+                UiObjSelType.Res,
+                UI_TIMEOUT_MS);
+        return button;
+    }
+    protected String getUploadStatus(String videoTitle){
+        UiObject2 videoTitleObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS);
+        UiObject2 listItemObj = videoTitleObj.getParent();
+        UiObject2 button = findUiObjInObj(listItemObj,
+                R.id.uploadStatusTextView,
+                UiObjIdType.Res,
+                UiObjSelType.Res,
+                UI_TIMEOUT_MS);
+        return button.getText();
+
+    }
+    protected String getVideoAuthor(String videoTitle){
+        UiObject2 videoTitleObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS);
+        UiObject2 listItemObj = videoTitleObj.getParent();
+        UiObject2 obj = findUiObjInObj(listItemObj,
+                R.id.profile_item_author,
+                UiObjIdType.Res,
+                UiObjSelType.Res,
+                UI_TIMEOUT_MS);
+        return obj.getText();
+    }
 
 }
