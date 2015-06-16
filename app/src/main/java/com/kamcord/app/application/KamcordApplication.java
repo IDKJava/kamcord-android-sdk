@@ -7,6 +7,7 @@ import com.crashlytics.android.Crashlytics;
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.ApplicationStateUtils;
@@ -37,7 +38,9 @@ public class KamcordApplication extends Application {
             Fabric.with(this, new Twitter(new TwitterAuthConfig(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)));
         }
 
-
+        if( !BuildConfig.DEBUG ) {
+            KamcordAnalytics.initializeWith(this);
+        }
 
         AccountManager.initializeWith(this);
         DeviceManager.initialize();
