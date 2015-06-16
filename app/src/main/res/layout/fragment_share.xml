@@ -113,8 +113,7 @@
                         android:layout_marginLeft="@dimen/edittext_extraspace"
                         android:layout_marginTop="@dimen/edittext_extraspace"
                         android:background="@null"
-                        android:ellipsize="end"
-                        android:hint="@string/writeATitle" />
+                        android:ellipsize="end" />
 
                     <View
                         android:layout_width="match_parent"
@@ -165,6 +164,12 @@
                     android:drawableStart="@drawable/button_twitter_selector"
                     android:text="@string/twitterShare"
                     android:textColor="@color/button_twitter_text" />
+
+                <com.twitter.sdk.android.core.identity.TwitterLoginButton
+                    android:id="@+id/twitterLoginButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
 
             </LinearLayout>
 

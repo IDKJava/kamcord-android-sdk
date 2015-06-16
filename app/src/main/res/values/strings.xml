@@ -11,6 +11,7 @@
     <string name="toolbarTitle">Kamcord</string>
     <string name="stopRecording">Stop Recording</string>
     <string name="startRecording">Start Recording</string>
+    <string name="recordingPaused">Recording Paused</string>
 
     <!-- Login -->
     <string name="termsAndPolicy">By creating a profile, you are agreeing to Kamcord\'s Terms of Service and Privacy Policy</string>
@@ -96,7 +97,7 @@
         <item quantity="one">Like</item>
         <item quantity="other">Likes</item>
     </plurals>
-    <string name="byAuthor">By %s</string>
+    <string name="byAuthorGame">By %1$s &#183; %2$s</string>
     <string name="recordAndShare">Record &amp; Share</string>
     <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
@@ -124,4 +125,16 @@
     <string name="twitterShare">Twitter</string>
     <string name="alsoShare">Also share on</string>
     <string name="writeYourTitle">Please write a title for your video.</string>
+    <string name="myLatestVideo">My latest %1$s video</string>
+
+    <string name="timeRecorded">%1$s recorded</string>
+
+    <string name="shareTo">Share to&#8230;</string>
+    <string name="externalShareText">%1$s %2$s Recorded with Kamcord for Android</string>
+    <string name="externalShareTextNoTitle">%1$s Recorded with Kamcord for Android</string>
+
+    <string name="areYouSure">Are you sure?</string>
+    <string name="ifYouDeleteThis">If you delete this video, the world will never see it again! :( Delete your awesome vid?</string>
+    <string name="deleteVideo">Delete Video</string>
+    <string name="failedToDelete">Failed to delete video. Check your network connection.</string>
 </resources>

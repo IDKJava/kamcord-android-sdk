@@ -2,14 +2,14 @@ package com.kamcord.app.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
-import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.kamcord.app.R;
@@ -30,13 +31,13 @@ import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
-import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.ProfileItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
@@ -191,7 +192,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         });
 
-        viewHolder.getProfileItemAuthor().setText(String.format(Locale.ENGLISH, mContext.getResources().getString(R.string.byAuthor), video.username));
+        viewHolder.getProfileItemAuthor().setText(String.format(Locale.ENGLISH,
+                mContext.getResources().getString(R.string.byAuthorGame),
+                video.username, video.game_name));
         viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));
 
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
@@ -201,6 +204,30 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 toggleLikeButton(videoLikesButton, video);
+            }
+        });
+
+        viewHolder.getMoreVideoActions().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+                popupMenu.inflate(R.menu.menu_more_video_actions);
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.action_external_share:
+                                doExternalShare(video);
+                                break;
+
+                            case R.id.action_delete:
+                                showDeleteVideoDialog(video);
+                                break;
+                        }
+                        return true;
+                    }
+                });
             }
         });
     }
@@ -268,17 +295,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             viewHolder.retryUploadImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mContext instanceof FragmentActivity) {
-                        ShareFragment recordShareFragment = new ShareFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putString(ShareFragment.ARG_RECORDING_SESSION, new Gson().toJson(session));
-                        recordShareFragment.setArguments(bundle);
-                        ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                                .add(R.id.activity_mdrecord_layout, recordShareFragment)
-                                .addToBackStack("ShareFragment").commit();
+                    Intent uploadIntent = new Intent(mContext, UploadService.class);
+                    uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(session));
+                    mContext.startService(uploadIntent);
                     }
-                }
             });
         }
 
@@ -320,6 +340,52 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return mProfileList.get(position);
     }
 
+    private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
+    private void doExternalShare(Video video) {
+        if( mContext instanceof Activity && video.video_id != null ) {
+            Activity activity = (Activity) mContext;
+            String watchPageLink = "www.kamcord.com/v/" + video.video_id;
+
+
+            String externalShareText = null;
+            if( video.title != null ) {
+                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
+                        video.title, watchPageLink);
+                int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
+                if( diff > 0 ) {
+                    String truncatedTitle = StringUtils.ellipsize(video.title, video.title.length() - diff);
+                    externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
+                            truncatedTitle, video.video_site_watch_page);
+                }
+            } else {
+                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextNoTitle),
+                        watchPageLink);
+            }
+            externalShareText = StringUtils.ellipsize(externalShareText, MAX_EXTERNAL_SHARE_TEXT_LENGTH);
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, externalShareText);
+            shareIntent.setType("text/plain");
+            activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.shareTo)));
+        }
+    }
+
+    private void showDeleteVideoDialog(final Video video) {
+        new AlertDialog.Builder(mContext)
+                .setTitle(R.string.areYouSure)
+                .setMessage(R.string.ifYouDeleteThis)
+                .setNeutralButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AppServerClient.getInstance().deleteVideo(
+                                video.video_id,
+                                new DeleteVideoCallback(video));
+                    }
+                }).show();
+    }
+
     private class LikeVideosCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
@@ -350,6 +416,32 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public void failure(RetrofitError error) {
             Log.e("Retrofit Unlike Failure", "  " + error.toString());
+        }
+    }
+
+    private class DeleteVideoCallback implements Callback<GenericResponse<?>> {
+        private Video video;
+        public DeleteVideoCallback(Video video) {
+            this.video = video;
+        }
+
+        @Override
+        public void success(GenericResponse<?> genericResponse, Response response) {
+            int index = 0;
+            for( ProfileItem item : mProfileList ) {
+                if( item.getType() == ProfileItem.Type.VIDEO
+                    && item.getVideo().video_id.equals(video.video_id) ) {
+                    mProfileList.remove(index);
+                    notifyItemRemoved(index);
+                    break;
+                }
+                index++;
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Toast.makeText(mContext, mContext.getString(R.string.failedToDelete), Toast.LENGTH_SHORT).show();
         }
     }
 

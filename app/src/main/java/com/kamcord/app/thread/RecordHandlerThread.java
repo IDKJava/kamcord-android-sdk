@@ -54,6 +54,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
     private RecordingSession mRecordingSession;
     private int clipNumber = 0;
     private long presentationStartUs = -1;
+    private long lastPresentationUs = 0;
 
     private static class CodecSettings {
         private static final int FRAME_RATE = 30;
@@ -163,6 +164,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             } catch (IOException ioe) {
                 throw new RuntimeException("Muxer failed.", ioe);
             }
+            lastPresentationUs = 0;
             mVideoEncoder.start();
 
             try {
@@ -175,6 +177,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
             mVirtualDisplay = mMediaProjection.createVirtualDisplay("KamcordVirtualDisplay", screenWidth, screenHeight, screenDensity,
                     DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mSurface, null, null);
             drainEncoder();
+            mRecordingSession.incrementDurationUs(lastPresentationUs - presentationStartUs);
             releaseEncoders();
         }
     }
@@ -274,6 +277,7 @@ public class RecordHandlerThread extends HandlerThread implements Handler.Callba
                     if (presentationStartUs < 0) {
                         presentationStartUs = mVideoBufferInfo.presentationTimeUs;
                     }
+                    lastPresentationUs = mVideoBufferInfo.presentationTimeUs;
                     mMuxerWrite = true;
                     mRecordingSession.setRecordedFrames(true);
                 }
