@@ -10,12 +10,12 @@ import java.util.UUID;
  */
 public class Event {
 
-    public Event(Name name, String appSessionId) {
+    public Event(Name name, long whenMs, String appSessionId) {
         this.name = name;
         this.event_id = UUID.randomUUID().toString();
         this.app_session_id = appSessionId;
 
-        this.start_time = System.currentTimeMillis() / 1000;
+        this.start_time = whenMs / 1000;
         if(Connectivity.isConnected()) {
             if( Connectivity.isConnectedWifi()) {
                 connection_type = ConnectionType.WIFI;
@@ -23,6 +23,11 @@ public class Event {
                 connection_type = ConnectionType.MOBILE;
             }
         }
+    }
+
+    public void setDurationFromStopTime(long stopTimeMs) {
+        float stopTimeS = ((float) stopTimeMs) / 1000f;
+        this.event_duration = Math.max(((float) start_time) - stopTimeS, 0f);
     }
 
     public Name name;
@@ -34,8 +39,8 @@ public class Event {
     public ConnectionType connection_type;
 
     public enum Name {
-        LAUNCH,
-        FIRST_LAUNCH,
+        KAMCORD_APP_LAUNCH,
+        FIRST_APP_LAUNCH,
         UPLOAD,
         EXTERNAL_SHARE,
     }
@@ -48,7 +53,7 @@ public class Event {
     }
 
     // For navigational events.
-    public Long event_duration = null;
+    public Float event_duration = null;
     public SourceView source_view = null;
 
     public enum SourceView {

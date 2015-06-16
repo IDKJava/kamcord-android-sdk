@@ -8,62 +8,77 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
+import com.kamcord.app.server.model.analytics.Event;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.WeakHashMap;
+
 /**
  * Created by pplunkett on 6/15/15.
  */
 public class AnalyticsThread extends HandlerThread implements Handler.Callback, Application.ActivityLifecycleCallbacks {
     private static final int SEND_EVERY_MS = 300000;
+    private static final String WHEN_KEY = "when";
 
     private Handler handler;
-    private long lastSendTime;
-    private boolean firstLaunch = false;
 
+    private String appSessionId = null;
     private int foregroundActivityCount = 0;
+    Map<Object, Event> pendingEvents = new WeakHashMap<>();
+    private boolean sendingEvents = false;
 
-    public AnalyticsThread(String name, long lastSendTime, boolean firstLaunch) {
+    public AnalyticsThread(String name) {
         super(name);
-        this.lastSendTime = lastSendTime;
-        this.firstLaunch = firstLaunch;
     }
 
     public void setHandler(Handler handler) {
         this.handler = handler;
     }
 
-    public void sendLaunchEvent() {
-        Message msg = Message.obtain(handler, What.LAUNCH.ordinal());
-        handler.sendMessage(msg);
-    }
-
     @Override
     public boolean handleMessage(Message message) {
+
+        Object who = message.obj;
 
         What what = What.UNKNOWN;
         try {
             what = What.values()[message.what];
         } catch( IndexOutOfBoundsException e ) {}
 
-        Log.v("FindMe", "say what again: " + what);
-        Log.v("FindMe", "  with obj: " + message.obj);
+        Bundle data = message.getData();
+        long whenMs = 0;
+        if( data != null ) {
+            whenMs = data.getLong(WHEN_KEY, 0);
+        }
 
-        boolean backgroundedOrForegrounded = false;
+        if( appSessionId == null ) {
+            appSessionId = UUID.randomUUID().toString();
+        }
+
+        boolean appForegrounded = false;
+        boolean appBackgrounded = false;
         switch( what ) {
             case ACTIVITY_STARTED:
                 if( foregroundActivityCount == 0 ) {
-                    backgroundedOrForegrounded = true;
+                    appForegrounded = true;
+                    pendingEvents.put(who, new Event(Event.Name.KAMCORD_APP_LAUNCH, whenMs, appSessionId));
                 }
                 foregroundActivityCount++;
                 break;
 
             case ACTIVITY_STOPPED:
                 if( foregroundActivityCount == 1 ) {
-                    backgroundedOrForegrounded = true;
+                    appBackgrounded = true;
+                    if( pendingEvents.containsKey(who) ) {
+                        Event launchEvent = pendingEvents.get(who);
+                        launchEvent.setDurationFromStopTime(whenMs);
+                        KamcordAnalytics.addUnsentEvent(launchEvent);
+                    } else {
+                        Log.w(KamcordAnalytics.TAG, "No start session corresponding to Object " + who + "!");
+                    }
                 }
                 foregroundActivityCount--;
-                break;
-
-            case LAUNCH:
-
                 break;
 
             case UNKNOWN:
@@ -71,8 +86,18 @@ public class AnalyticsThread extends HandlerThread implements Handler.Callback, 
                 break;
         }
 
-        if( System.currentTimeMillis() - lastSendTime > SEND_EVERY_MS || backgroundedOrForegrounded ) {
+        if( appForegrounded && KamcordAnalytics.isFirstLaunch() ) {
+            KamcordAnalytics.writeFirstLaunch();
+            KamcordAnalytics.addUnsentEvent(new Event(Event.Name.FIRST_APP_LAUNCH, whenMs, appSessionId));
+        }
+
+        if( (System.currentTimeMillis() - KamcordAnalytics.getLastSendTime() > SEND_EVERY_MS
+                || appForegrounded || appBackgrounded) && !sendingEvents ) {
             sendEvents();
+        }
+
+        if( appBackgrounded ) {
+            appSessionId = null;
         }
 
         return false;
@@ -82,10 +107,17 @@ public class AnalyticsThread extends HandlerThread implements Handler.Callback, 
 
     }
 
+    private Message newMessage(Object who, What what) {
+        Message msg = Message.obtain(handler, what.ordinal(), who);
+        Bundle data = new Bundle();
+        data.putLong(WHEN_KEY, System.currentTimeMillis());
+        msg.setData(data);
+        return msg;
+    }
+
     private enum What {
         ACTIVITY_STOPPED,
         ACTIVITY_STARTED,
-        LAUNCH,
         UNKNOWN,
     }
 
@@ -95,8 +127,7 @@ public class AnalyticsThread extends HandlerThread implements Handler.Callback, 
 
     @Override
     public void onActivityStarted(Activity activity) {
-        Message msg = Message.obtain(handler, What.ACTIVITY_STARTED.ordinal(), activity.getComponentName().toString());
-        handler.sendMessage(msg);
+        handler.sendMessage(newMessage(activity, What.ACTIVITY_STARTED));
     }
 
     @Override
@@ -109,8 +140,7 @@ public class AnalyticsThread extends HandlerThread implements Handler.Callback, 
 
     @Override
     public void onActivityStopped(Activity activity) {
-        Message msg = Message.obtain(handler, What.ACTIVITY_STOPPED.ordinal(), activity.getComponentName().toString());
-        handler.sendMessage(msg);
+        handler.sendMessage(newMessage(activity, What.ACTIVITY_STOPPED));
     }
 
     @Override
