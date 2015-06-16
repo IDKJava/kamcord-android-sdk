@@ -223,6 +223,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
             }
 
             getActivity().startService(uploadIntent);
+            showDeleteDialogOnBack = false;
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
             if (videoTitleToast == null) {
@@ -338,11 +339,11 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
-    private boolean showingDeleteVideoDialog = false;
+    private boolean showDeleteDialogOnBack = true;
     @Override
     public boolean onBackPressed() {
-        if( !showingDeleteVideoDialog ) {
-            showingDeleteVideoDialog = true;
+        if( showDeleteDialogOnBack ) {
+            showDeleteDialogOnBack = false;
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.areYouSure)
                     .setMessage(R.string.youWillLoseMonster)
@@ -351,14 +352,14 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                         public void onClick(DialogInterface dialogInterface, int i) {
                             FileSystemManager.cleanRecordingSessionCacheDirectory(recordingSession);
                             getActivity().onBackPressed();
-                            showingDeleteVideoDialog = false;
+                            showDeleteDialogOnBack = true;
                         }
                     })
                     .setNeutralButton(android.R.string.cancel, null)
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialogInterface) {
-                            showingDeleteVideoDialog = false;
+                            showDeleteDialogOnBack = true;
                         }
                     }).show();
             return true;
