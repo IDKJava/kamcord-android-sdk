@@ -99,16 +99,31 @@ public class RecordingTests extends RecordAndPostTestBase {
     }
 
     @Test
-    public void recordRippleTestLoginFirstRetryUpload() {
+    public void recordRippleTestLoginFirstRetryUploadInterrupted() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
-        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.NoNetwork);
+        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.Interrupted);
 
 
     }
-    //@Test
-    public void recordRippleTestLoginFirstNTimesDelete() {
-        //
+    @Test
+    public void recordRippleTestLoginFirstRetryUploadNoNetwork() {
+        doLogin();
+        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
+        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.NoNetwork);
+    }
+
+    @Test
+    public void recordRippleTestLoginUploadCompleteFlowChecks() {
+        doLogin();
+        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
+        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.Normal);
+    }
+    @Test
+    public void recordRippleTestLoginFirstRetryUploadDelete() {
+        doLogin();
+        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
+        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.Delete);
     }
 
 }

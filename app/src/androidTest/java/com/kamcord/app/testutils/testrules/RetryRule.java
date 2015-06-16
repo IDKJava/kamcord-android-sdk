@@ -39,6 +39,9 @@ public class RetryRule implements TestRule {
                     } catch (Throwable t) {
                         caughtThrowable = t;
                         System.err.println(String.format("%s run %d failed", description.getDisplayName(), (i + 1)));
+                        if(t instanceof NullPointerException){
+                            throw t;
+                        }
                     }
                 }
                 System.err.println(String.format("%s giving up after %s failures", description.getDisplayName(), retryCount));

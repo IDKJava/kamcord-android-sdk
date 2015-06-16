@@ -112,12 +112,13 @@ public class SystemUtilities {
         String opWord =  On ? "enable" : "disable";
         executeShellCommand(String.format("su -c svc wifi %s", opWord));
         executeShellCommand(String.format("su -c svc data %s", opWord));
-        int timeOut = 10;
+        int timeOut = 30000;
         int timeOutCtr = 0;
         while(doWeHaveInternet() != On && timeOutCtr < timeOut){
             sleep(100);
             timeOutCtr++;
         }
+        assertTrue("Network toggle timed out!", timeOutCtr < timeOut);
     }
 
 }

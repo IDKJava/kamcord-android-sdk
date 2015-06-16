@@ -23,7 +23,8 @@ public abstract class RecordAndPostTestBase extends TestBase {
     public enum UploadTestVariant {
         NoNetwork,
         Interrupted,
-        Normal
+        Normal,
+        Delete
     }
 
     protected void recordGameVideo(String gameName, int durationInMs){
@@ -50,13 +51,13 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //wait for load!!!!
         findGame(gameName);
 
-        getRecordButtonForGame(gameName, true).click();
+        getStartRecordingButtonForGame(gameName).click();
         UiObject2 obj =  findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS, false);
         int clickTrials = 0;
 
         while(obj == null && clickTrials < MAX_CLICK_TRIALS){
             sleep(UI_INTERACTION_DELAY_MS);
-            getRecordButtonForGame(gameName, true).click();
+            getStartRecordingButtonForGame(gameName).click();
             obj = findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS);
             clickTrials++;
         }
@@ -121,7 +122,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //click on notification to resume app.
         findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
         //find stop recording button.
-        getRecordButtonForGame(gameName, false).click();
+        findUiObj(R.id.stopRecordingImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
 
     }
 
@@ -198,6 +199,8 @@ public abstract class RecordAndPostTestBase extends TestBase {
         findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, processingTimeout);
 
         UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);
+        assertTrue("Default video title not correct!",
+                String.format("My latest %s video", RIPPLE_TEST_APP_NAME).equals(title.getText()));
         title.click();
         title.setText(videoTitle);
 
@@ -207,20 +210,57 @@ public abstract class RecordAndPostTestBase extends TestBase {
         int maxReTries;
         int reTries;
         String videoAuthor;
+        //network start state
         switch (uploadTestType) {
 
+            case NoNetwork:
+            case Delete:
+                toggleNetwork(false);
+                break;
             case Normal:
+            case Interrupted:
+                //let normal run here and interrupt if need be
+                break;
+        }
+        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
 
-                findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
+        findUiObj(R.string.kamcordProfileTab,
+                UiObjIdType.Str,
+                UiObjSelType.Des,
+                UI_TIMEOUT_MS).click();
 
-                //TODO: wait on profile view?
-
-
-                findUiObj(R.string.kamcordProfileTab,
-                        UiObjIdType.Str,
-                        UiObjSelType.Des,
-                        UI_TIMEOUT_MS).click();
+        //Decisions on how to resume.
+        switch (uploadTestType) {
+            case NoNetwork:
+            case Delete:
                 //sleep(50);
+                findUiObj(R.string.uploadFailed, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
+                //check if it's recording, we seem not to be fast enough to check this.
+                //turning on the Internets
+                toggleNetwork(true);
+                break;
+            case Normal:
+                //do nothing
+                break;
+            case Interrupted:
+                //let it start
+                findUiObj(currentlyUploading, UiObjSelType.TxtContains, APP_TIMEOUT_MS);
+                //interrupt
+                toggleNetwork(false);
+                findUiObj(R.string.uploadFailed, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
+                //check if it's recording, we seem not to be fast enough to check this.
+                //turning on the Internets
+                toggleNetwork(true);
+                break;
+        }
+        //the finale
+        switch (uploadTestType) {
+            case Interrupted:
+            case NoNetwork:
+                findUiObj(R.id.retryUploadImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
+                //let it run.
+            case Normal:
+                //Successful Completion Ending.
                 findUiObj(currentlyUploading, UiObjSelType.TxtContains, APP_TIMEOUT_MS);
                 //check if it's recording, we seem not to be fast enough to check this.
                 mDevice.openNotification();
@@ -263,68 +303,19 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
                 //close notifications
                 break;
-            case NoNetwork:
-                toggleNetwork(false);
-                findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
-
-                //TODO: wait on profile view?
-
-                findUiObj(R.string.kamcordProfileTab,
-                        UiObjIdType.Str,
-                        UiObjSelType.Des,
+            case Delete:
+                findUiObj(R.id.uploadFailedImageButton,
+                        UiObjIdType.Res,
+                        UiObjSelType.Res,
                         UI_TIMEOUT_MS).click();
-
-                //sleep(50);
-                findUiObj(R.string.uploadFailed, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
-                //check if it's recording, we seem not to be fast enough to check this.
-                //turning on the Internets
-                toggleNetwork(true);
-                findUiObj(R.id.retryUploadImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
-
-                //disabling notification checks... Odd? 
-                /*
-                mDevice.openNotification();
-                //We're not fast enough to check both before the upload finishes. :(
-                //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
-                findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
-                mDevice.pressBack();
-                */
-                //go to profile
-                findUiObj(R.string.processingPullToRefresh,
+                findUiObj(R.string.delete,
                         UiObjIdType.Str,
                         UiObjSelType.Txt,
-                        uploadTimeout);
-                //pull to refresh and see what's going on.
-                procVidObj = findUiObj(R.string.processingPullToRefresh,
-                        UiObjIdType.Str, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
-                //UI timeout * 2 * 30 = 120s. We give it ~1min be processed.
-                maxReTries = 30;
-                reTries = 0;
-                while (reTries < maxReTries && procVidObj != null) {
-                    reTries++;
-                    procVidObj = findUiObj(R.string.processingPullToRefresh,
-                            UiObjIdType.Str, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
-                    scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
-                    sleep(UI_TIMEOUT_MS);
-                }
-                assertTrue("Processing timed out!", reTries <= maxReTries);
-                //look for the video id in the feed
-                maxReTries = 15;
-                reTries = 0;
-                procVidObj = null;
-                while (reTries < maxReTries && procVidObj == null) {
-                    reTries++;
-                    procVidObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
-                    scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
-                    sleep(UI_TIMEOUT_MS);
-                }
-                assertTrue("Feed timed out!", reTries <= maxReTries);
-                videoAuthor = getVideoAuthor(videoTitle);
-                assertTrue("Video not found!", videoAuthor.contains(USERNAME1));
-
-
-                break;
-            default:
+                        UI_TIMEOUT_MS).click();
+                loseUiObj(R.string.processingPullToRefresh,
+                        UiObjIdType.Str,
+                        UiObjSelType.Txt,
+                        UI_TIMEOUT_MS);
                 break;
         }
     }
@@ -340,7 +331,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         executeTouchPattern(pattern, 25);
     }
 
-    protected UiObject2 getRecordButtonForGame(String gameName, boolean start){
+    protected UiObject2 getStartRecordingButtonForGame(String gameName){
 
         UiObject2 gameLabel = findUiObj(gameName, UiObjSelType.Txt);
 
@@ -349,16 +340,14 @@ public abstract class RecordAndPostTestBase extends TestBase {
         UiObject2 button = findUiObjInObj(completeGameItem, R.id.gameActionImageButton,
                 UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
         String buttonDescExpected;
-        if(start) {
-            buttonDescExpected = getStrByID(R.string.idle);
-        } else {
-            buttonDescExpected = getStrByID(R.string.recording);
-        }
+
+        buttonDescExpected = getStrByID(R.string.idle);
 
         assertTrue("Wrong button showing!",
                 button.getContentDescription().equals(buttonDescExpected));
         return button;
     }
+
     //TODO: Refactor to a class for this kind of uploadvideo object
     protected UiObject2 getUploadRetryButton(String videoTitle){
         UiObject2 videoTitleObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS);
