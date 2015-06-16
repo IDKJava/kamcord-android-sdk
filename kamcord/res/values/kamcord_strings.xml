@@ -14,6 +14,7 @@
     <!-- Share tab. -->
     <string name="kamcordWatchVideo">Watch Video</string>
     <string name="kamcordWriteATitle">Write a title...</string>
+    <string name="kamcordWriteADescription">Write a description...</string>
     <string name="kamcordFacebook">Facebook</string>
     <string name="kamcordYouTube">YouTube</string>
     <string name="kamcordTwitter">Twitter</string>
@@ -23,6 +24,7 @@
     <string name="kamcordKakaoTalk">KakaoTalk</string>
     <string name="kamcordShareReplay">Share Replay</string>
     <string name="kamcordRetry">Retry</string>
+    <string name="kamcordShareButton">Share</string>
     <string name="kamcordPoweredByKamcord">Powered by Kamcord</string>
     
     <string name="kamcordUploadFinished">Upload Finished!</string>
@@ -84,6 +86,21 @@
     <string name="kamcordAddComment">Add a comment</string>
     <string name="kamcordPost">Post</string>
 
+    
+    <!-- Search. -->
+    <string name="kamcordSearchHint">Search…</string>
+    <string name="kamcordNoSearchResults">No search results found.</string>
+    <string name="kamcordSort">Sort:</string>
+    <string name="kamcordFilterSearch">Filter Search:</string>
+    <string name="kamcordTrendingNow">Trending Now</string>
+    <string name="kamcordMostPopular">Most Popular</string>
+    <string name="kamcordMostLiked">Most Liked</string>
+    <string-array name="kamcordSortOptions">
+        <item>@string/kamcordTrendingNow</item>
+        <item>@string/kamcordMostPopular</item>
+        <item>@string/kamcordMostLiked</item>
+    </string-array>
+    
 
     <!-- Follow list. -->
     <plurals name="kamcordFollowers">
@@ -99,12 +116,18 @@
     <string name="kamcordUnfollow">Unfollow</string>
     <string name="kamcordErrorRetrievingUserList">There was an error retrieving the list of users. Check your internet connection.</string>
     <string name="kamcordErrorRetrievingNotificationList">There was an error retrieving the list of notifications. Check your internet connection.</string>
+    <string name="kamcordFollowSomePlayers">Your feed is empty. Follow some players to see their videos in your feed!</string>
+    <string name="kamcordNoVideosLiked">Your likes feed is empty because you haven\'t liked any videos!</string>
+    <string name="kamcordNoNotifications">You don\'t have any notifications. Share some videos to get noticed!</string>
+    
     
     <!-- Feed types -->
     <string name="kamcordFeatured">Featured</string>
     <string name="kamcordRecent">Recent</string>
     <string name="kamcordTrending">Trending</string>
     <string name="kamcordMostViewed">Most Viewed</string>
+    <string name="kamcordErrorGettingFeeds">There was an error retrieving the list of feeds. Check your internet connection.</string>
+    <string name="kamcordTryAgain">Try Again</string>
     
     
     <!-- Dialogs. -->
@@ -157,6 +180,7 @@
     <string name="kamcordErrorRetrievingUserInfo">There was an error retrieving this user\'s information. Check your internet connection.</string>
     <string name="kamcordSettings">Settings</string>
     <string name="kamcordUserNotUploadedVideos">This user has not uploaded any videos yet.</string>
+    <string name="kamcordYouHaveNotUploadedVideos">You have not uploaded any videos yet.</string>
     
     
     <!-- Sign in. -->
@@ -231,7 +255,8 @@
     <string name="kamcordVoiceOverlayEnabledExclamation">Voice Overlay Enabled!</string>
     <string name="kamcordNotNow">Not Now</string>
     
-    
+    <!-- Toast Message -->
+    <string name="kamcordCopyToClipboard">Comment copied to clipboard</string>
     
     <!-- ********** Colors. ********** -->
     <color name="kamcordActivityBackground">#EEE</color>
@@ -249,6 +274,9 @@
     <color name="kamcordModalDimBackground">#A000</color>
     <color name="kamcordDimButton">#2000</color>
     <color name="kamcordLegalBackground">#555</color>
+    
+    <!-- View color -->
+    <color name="kamcordItemClickedBackground">#EEE</color>
     
     <!-- Tab bar. -->
     <color name="kamcordTabbarBackground">#FFF</color>
@@ -361,8 +389,12 @@
     
     <!-- Tab bar. -->
     <dimen name="kamcordTabbarHeight">52dp</dimen>
+    <dimen name="kamcordSubTabbarHeight">40dp</dimen>
+    <dimen name="kamcordFeedVerticalSpacing">15dp</dimen>
     <dimen name="kamcordTabbarItemSeparation">0dp</dimen>
     <dimen name="kamcordTabItemTextSize">18sp</dimen>
+    <dimen name="kamcordSubTabItemTextSize">14sp</dimen>
+    <dimen name="kamcordTabItemPadding">16dp</dimen>
     <dimen name="kamcordTabbarBackPadding">18dp</dimen>
     <dimen name="kamcordTabbarBackSize">25dp</dimen>
     <dimen name="kamcordTabbarProgressSize">3.5dp</dimen>
@@ -405,6 +437,8 @@
     <dimen name="kamcordMediaControlsIconSize">20dp</dimen>
     <dimen name="kamcordMediaControlsSeekbarHeight">4dp</dimen>
     
+    
+    <integer name="kamcordVideoFeedColumns">1</integer>
     
     
     <!-- ********** Styles ********** -->

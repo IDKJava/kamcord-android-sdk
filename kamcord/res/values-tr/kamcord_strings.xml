@@ -7,6 +7,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">Facebook Çıkışını Onayla</string>
 	<string name="kamcordNoVideoAvailable">Geçerli Video Bulunamadı</string>
+	<string name="kamcordYouHaveNotUploadedVideos">Henüz hiçbir video yüklemediniz. </string>
 	<string name="kamcordTryAgainLater">Lütfen daha sonra tekrar dene.</string>
 	<string name="kamcordWeveEmailedYou">Şifreni sıfırlaman için sana email ile bir link yolladık!</string>
 	<string name="kamcordErrorRetrievingUserList">Kullanıcıların listesi alınırken bir hata oluştu. İnternet bağlantınızı kontrol edin.</string>
@@ -36,8 +37,9 @@
 	</plurals>
 	<plurals name="kamcordVideosSansCount">
 		<item quantity="one">Video</item>
-		<item quantity="other">Video</item>
+		<item quantity="other">Videolar</item>
 	</plurals>
+	<string name="kamcordNoNotifications"> Herhangi bir bildiriminiz yok. Fark edilmek için birkaç video paylaşın. </string>
 	<string name="kamcordYouCanEnableVoiceOverlay">Profil -&gt; Ayarlar\' kısmına girerek veya aşağıdaki Aç tuşuna basarak Ses Kaydını açabilirsin.</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="one">%d yıl önce</item>
@@ -52,6 +54,7 @@
 	<string name="kamcordProfileErrorMessage">Profil oluşturulamadı, lütfen daha sonra tekrar deneyin.</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">Email 65 karakterden az olmalı</string>
+	<string name="kamcordCopyToClipboard">Yorum panoya kopyalandı.</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Bu cihazda Ses Kaydı kapalıdır.</string>
 	<string name="kamcordEmailInUse">Bu email kullanılıyor</string>
 	<string name="kamcordInvalidPassword">Geçersiz şifre</string>
@@ -71,6 +74,7 @@
 	<string name="kamcordLINENotFound">LINE App Not Found</string>
 	<string name="kamcordUsernameInUse">Bu kullanıcı adı kullanılıyor</string>
 	<string name="kamcordDelete">Sil</string>
+	<string name="kamcordSearchHint">Ara…</string>
 	<string name="kamcordWriteATitle">Başlık yaz</string>
 	<string name="kamcordNewEmailsDoNotMatch">Yeni emailler eşleşmiyor</string>
 	<string name="kamcordUsernameMinCharacters">Kullanıcı adı en az 5 karakter olmalıdır</string>
@@ -103,7 +107,9 @@
 	<string name="kamcordNotifications">Bildirimler</string>
 	<string name="kamcordJustNow">Hemen şimdi</string>
 	<string name="kamcordWatchVideo">Video\'yu Ýzle</string>
+	<string name="kamcordErrorGettingFeeds"> Yayınların listesi alınırken hata oluştu. İnternet bağlantınızı kontrol edin.</string>
 	<string name="kamcordUnfollow">Takibi býrak</string>
+	<string name="kamcordNoSearchResults">Arama sonucu bulunamadı.</string>
 	<string name="kamcordAddComment">Bir yorum ekle</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Şifre girmelisin</string>
@@ -138,18 +144,21 @@
 	<string name="kamcordNoInternet">İnternet Bağlantısı Yok</string>
 	<string name="kamcordNewPasswordAgain">Yeni şifre (tekrar)</string>
 	<string name="kamcordMostViewed">En Çok İzlenen</string>
+	<string name="kamcordTryAgain">Tekrar Deneyin</string>
 	<string name="kamcordNewEmailAgain">Yeni email (tekrar)</string>
 	<string name="kamcordMakePublic">Umumi Yap</string>
 	<string name="kamcordCurrentPassword">Geçerli şifre</string>
 	<string name="kamcordUsernameEnter">Lütfen geçerli bir kullanıcı adı gir</string>
 	<string name="kamcordCheckInternetConnection">İnternet bağlantınızı kontrol edin.</string>
 	<string name="kamcordUnclaimedVideos">Sahipsiz Videolar</string>
+	<string name="kamcordShareButton">Paylaş</string>
 	<string name="kamcordYouTube">Youtube</string>
 	<string name="kamcordEmailInvalid">Geçersiz email</string>
 	<string name="kamcordOn">Açık</string>
 	<string name="kamcordOk">Tamam</string>
 	<string name="kamcordUploading">Yükleniyor...</string>
 	<string name="kamcordSuccessfullyChangedPassword">Emailiniz başarılı bir şekilde değiştirildi.</string>
+	<string name="kamcordFollowSomePlayers">Yayınınız boş. Videolarını yayınınızda görmek için birkaç oynatıcıyı takip edin! </string>
 	<string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
 	<string name="kamcordShare">Paylaş</string>
 	<string name="kamcordEnableVoiceOverlay">Ses Kaydını Aç</string>

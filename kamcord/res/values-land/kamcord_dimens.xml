@@ -6,5 +6,7 @@
 
     <dimen name="kamcordWatchRecentThumbnailHeight">141dp</dimen>
     <dimen name="kamcordWatchRecentThumbnailWidth">250dp</dimen>
+    
+    <integer name="kamcordVideoFeedColumns">2</integer>
 
 </resources>

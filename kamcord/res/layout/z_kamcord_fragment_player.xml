@@ -21,7 +21,7 @@
         android:paddingBottom="@dimen/kamcordWatchPadding"
         android:clipToPadding="false"
         android:divider="@null"
-        android:listSelector="@android:color/transparent"
+        android:listSelector="@drawable/kamcord_default_gridlayout_selector"
         android:background="#fff"
         android:numColumns="1" />
 

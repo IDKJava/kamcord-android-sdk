@@ -11,6 +11,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">تأكيد تسجيل الخروج من Facebook</string>
 	<string name="kamcordNoVideoAvailable">لا توجد فيديوهات متوفرة</string>
+	<string name="kamcordYouHaveNotUploadedVideos">لم تقم بتحميل أي مقاطع فيديو بعد</string>
 	<string name="kamcordTryAgainLater">الرجاء إعادة المحاولة لاحقًا.</string>
 	<string name="kamcordWeveEmailedYou">أرسلنا لك بريدًا إلكترونيًا يحتوي على رابط لاستعادة كلمة المرور الخاصة بك!</string>
 	<string name="kamcordErrorRetrievingUserList">ظهر خطأ أثناء استرداد قائمة المستخدمين. تحقق من اتصال الإنترنت الخاص بك.</string>
@@ -58,6 +59,7 @@
 		<item quantity="many">فيديو</item>
 		<item quantity="other">فيديو</item>
 	</plurals>
+	<string name="kamcordNoNotifications">لا يوجد لديك أية اشعارات. قم بمشاركة بعض مقاطع الفيديو حتى يتم تنبيهك!</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">يمكنك تمكين تراكب الصوت بالذهاب إلى \'الحساب -&gt; الإعدادات\' أو الضغط على تمكين بالأدنى.</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="zero">%d منذ سنوات</item>
@@ -76,6 +78,7 @@
 	<string name="kamcordProfileErrorMessage">لم ينجح إنشاء الملف الشخصي، يرجى إعادة المحاولة في وقت لاحق.</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">يجب ألا يتجاوز البريد الإلكتروني 65 حرفًا</string>
+	<string name="kamcordCopyToClipboard">تم نسخ التعليق إلى لوحة المقاطع</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">تم تعطيل تراكب الصوت على هذا الجهاز.</string>
 	<string name="kamcordEmailInUse">البريد الإلكتروني مستخدم بالفعل</string>
 	<string name="kamcordInvalidPassword">كلمة مرور غير صالحة</string>
@@ -99,6 +102,7 @@
 	<string name="kamcordLINENotFound">LINE App Not Found</string>
 	<string name="kamcordUsernameInUse">اسم المستخدم مستخدم بالفعل</string>
 	<string name="kamcordDelete">حذف</string>
+	<string name="kamcordSearchHint">بحث...</string>
 	<string name="kamcordWriteATitle">اكتب عنوان...</string>
 	<string name="kamcordNewEmailsDoNotMatch">عنواني البريد الإلكتروني الجديدين غير متطابقين</string>
 	<string name="kamcordUsernameMinCharacters">اسم المستخدم يجب ألا يقل عن 5 أحرف</string>
@@ -135,7 +139,9 @@
 	<string name="kamcordNotifications">الإخطارات</string>
 	<string name="kamcordJustNow">الآن</string>
 	<string name="kamcordWatchVideo">مشاهدة الفيديو</string>
+	<string name="kamcordErrorGettingFeeds">حدث خطأ اثناء محاولة استرجاع قائمة التحديثات. تحقق من اتصالك بالانترنت.</string>
 	<string name="kamcordUnfollow">إلغاء المتابعة</string>
+	<string name="kamcordNoSearchResults">لم يتم العثور على أي نتائج بحث</string>
 	<string name="kamcordAddComment">إضافة تعليق</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">يجب إدخال كلمة سر</string>
@@ -174,18 +180,21 @@
 	<string name="kamcordNoInternet">لا يوجد اتصال بالانترنت</string>
 	<string name="kamcordNewPasswordAgain">كلمة السر الجديدة (مرة أخرى)</string>
 	<string name="kamcordMostViewed">الأكثر مشاهدة</string>
+	<string name="kamcordTryAgain">حاول مرة أخرى</string>
 	<string name="kamcordNewEmailAgain">(البريد الإلكتروني الجديد (مرة أخرى</string>
 	<string name="kamcordMakePublic">تعيين عام</string>
 	<string name="kamcordCurrentPassword">كلمة السر الحالية</string>
 	<string name="kamcordUsernameEnter">الرجاء إدخال اسم مستخدم صحيح</string>
 	<string name="kamcordCheckInternetConnection">تحقق من اتصال الإنترنت الخاص بك.</string>
 	<string name="kamcordUnclaimedVideos">فيديوهات غير مربوطة</string>
+	<string name="kamcordShareButton">مشاركة</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">بريد إلكتروني غير صحيح</string>
 	<string name="kamcordOn">On</string>
 	<string name="kamcordOk">Ok</string>
 	<string name="kamcordUploading">جار التحميل...</string>
 	<string name="kamcordSuccessfullyChangedPassword">تم تغيير كلمة المرور بنجاح.</string>
+	<string name="kamcordFollowSomePlayers">صفحتك خالية. تابع بعض اللاعبين لتشاهد مقاطع الفيديو الخاصة بهم في صفحتك </string>
 	<string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
 	<string name="kamcordShare">مشاركة</string>
 	<string name="kamcordEnableVoiceOverlay">تمكين تراكب الصوت</string>

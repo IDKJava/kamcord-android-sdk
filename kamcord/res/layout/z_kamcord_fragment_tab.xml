@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/kamcordActivityBackground" >
-    
+
     <include layout="@layout/z_kamcord_tabbar" />
 
     <com.kamcord.android.ui.views.CustomViewPager
@@ -28,5 +28,5 @@
         android:layout_height="3dp"
         android:layout_below="@+id/tabbar"
         android:background="@drawable/kamcord_drop_shadow_bottom" />
-    
+
 </RelativeLayout>

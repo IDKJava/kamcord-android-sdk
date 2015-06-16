@@ -291,81 +291,6 @@ void Kamcord_SetVideoTitle(const char* title);
 
 /*
  *
- * Set the level and score for the recorded video.
- * This metadata is used to rank videos in the watch view.
- *
- * @param   level   The level for the last recorded video.
- * @param   score   The score the user just achieved on the given level.
- *
- */
-void Kamcord_SetLevelAndScore(
-    const char* level,
-    double score);
-
-/*
- *
- * Set a key/value pair for the metadata attached to the current video.
- *
- * @param   metadataType            The type of value for the metadata.
- * @param   key                     The key for the metadata.
- * @param   value                   The value for the metadata.
- *
- */
-void Kamcord_SetDeveloperMetadata(
-    KC_METADATA_TYPE metadataType,
-    const char* key,
-    const char* value);
-
-/*
- *
- * Set a key/value pair for the metadata attached to the current video.
- *
- * @param   metadataType            The type of value for the metadata.
- * @param   key                     The key for the metadata.
- * @param   value                   The value for the metadata.
- * @param   numericValue            The numeric value for the metadata, used for sorting.
- *
- */
-void Kamcord_SetDeveloperMetadataWithNumericValueDouble(
-    KC_METADATA_TYPE metadataType,
-    const char* key,
-    const char* value,
-    double numericValue);
-
-/*
- *
- * Set a key/value pair for the metadata attached to the current video.
- *
- * @param   metadataType            The type of value for the metadata.
- * @param   key                     The key for the metadata.
- * @param   value                   The value for the metadata.
- * @param   numericValue            The numeric value for the metadata, used for sorting.
- *
- */
-void Kamcord_SetDeveloperMetadataWithNumericValueFloat(
-    KC_METADATA_TYPE metadataType,
-    const char* key,
-    const char* value,
-    float numericValue);
-
-/*
- *
- * Set a key/value pair for the metadata attached to the current video.
- *
- * @param   metadataType            The type of value for the metadata.
- * @param   key                     The key for the metadata.
- * @param   value                   The value for the metadata.
- * @param   numericValue            The numeric value for the metadata, used for sorting.
- *
- */
-void Kamcord_SetDeveloperMetadataWithNumericValueInt(
-    KC_METADATA_TYPE metadataType,
-    const char* key,
-    const char* value,
-    int numericValue);
-
-/*
- *
  * Show the Kamcord view, which will let the user share the most
  * recently recorded video.
  *
@@ -478,7 +403,7 @@ void Kamcord_SetUsingFmod(
  */
 bool Kamcord_SetAppRenderingFramebuffer(int framebufferID);
 
-/**
+ /**
  * Sets the currently bound framebuffer to be the "app rendering" framebuffer
  * 
  * @return true if the setting of the framebuffer was successful, false otherwise.

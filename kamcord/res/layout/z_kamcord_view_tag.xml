@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ToggleButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:textSize="18sp"
+    android:textColor="@color/kamcord_like_button_text_color"
+    android:background="@drawable/kamcord_like_button_background" />

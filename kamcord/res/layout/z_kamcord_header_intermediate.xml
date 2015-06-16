@@ -26,14 +26,54 @@
             android:maxLines="3"
             android:textColor="#000"
             android:textSize="22sp" />
+        
+        <TextView 
+            android:id="@+id/uploaded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginBottom="6dp"
+            android:textColor="#aaa"
+            android:textSize="14sp" />
+        
+        <TextView 
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/uploaded"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="#808080"
+            android:textSize="18sp" />
+        
+        <com.kamcord.android.ui.views.FlowLayout
+            android:id="@+id/tagCloud"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/description"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="6dp" />
 
         <com.kamcord.android.ui.views.LikeUnlikeButton
             android:id="@+id/likeUnlike"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/title"
+            android:layout_below="@id/tagCloud"
             android:layout_marginLeft="12dp"
+            android:layout_marginTop="6dp"
             android:background="@drawable/kamcord_like_button_background"
             android:drawableLeft="@drawable/kamcord_like_button_icon"
             android:paddingLeft="12dp"
@@ -46,9 +86,10 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/title"
+            android:layout_below="@id/tagCloud"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="12dp"
+            android:layout_marginTop="6dp"
             android:background="@drawable/kamcord_count_background"
             android:drawableLeft="@drawable/kamcord_views_gray"
             android:gravity="center"
@@ -61,8 +102,9 @@
             android:id="@+id/comments"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
-            android:layout_below="@id/title"
+            android:layout_below="@id/tagCloud"
             android:layout_toLeftOf="@id/views"
+            android:layout_marginTop="6dp"
             android:background="@drawable/kamcord_count_background"
             android:drawableLeft="@drawable/kamcord_comments_gray"
             android:gravity="center"

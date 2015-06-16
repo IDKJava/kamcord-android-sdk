@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/kamcordActivityBackground"
+    android:orientation="vertical" >
+
+    <com.kamcord.android.ui.views.PullToRefreshGridView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="15dp"
+        android:clipToPadding="false"
+        android:divider="@null"
+        android:horizontalSpacing="15dp"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="@integer/kamcordVideoFeedColumns"
+        android:scrollbars="none"
+        android:verticalSpacing="15dp" />
+
+    <include
+        android:id="@+id/sortFilterView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header"
+        layout="@layout/z_kamcord_view_sort_filter"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:clickable="true" >
+
+        <ImageView
+            android:id="@+id/header_back"
+            android:layout_width="@dimen/kamcordTabbarHeight"
+            android:layout_height="@dimen/kamcordTabbarHeight"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:adjustViewBounds="true"
+            android:background="@drawable/kamcord_tabbar_back_selector"
+            android:padding="@dimen/kamcordTabbarBackPadding"
+            android:src="@drawable/kamcord_back_icon" />
+        
+        <ImageView 
+            android:id="@+id/header_close"
+            android:layout_width="@dimen/kamcordTabbarHeight"
+            android:layout_height="@dimen/kamcordTabbarHeight"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:adjustViewBounds="true"
+            android:background="@drawable/kamcord_tabbar_back_selector"
+            android:padding="@dimen/kamcordTabbarBackPadding"
+            android:src="@drawable/kamcord_close_icon" />
+
+        <EditText
+            android:id="@+id/query_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/kamcordTabbarHeight"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="8dp"
+            android:layout_toRightOf="@id/header_back"
+            android:background="@null"
+            android:ems="10"
+            android:gravity="center|left"
+            android:hint="@string/kamcordSearchHint"
+            android:imeOptions="actionDone"
+            android:inputType="textNoSuggestions"
+            android:maxLines="1"
+            android:paddingLeft="8dp"
+            android:textColor="@color/kamcordTabbarTextColor"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/header_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/kamcordTabbarHeight"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center"
+            android:textColor="@color/kamcordTabbarTextColor"
+            android:textSize="24sp"
+            android:visibility="gone" />
+
+        <ImageView
+        	android:id="@+id/kamcord_header"
+        	android:layout_width="wrap_content"
+        	android:layout_height="@dimen/kamcordTabbarHeight"
+        	android:layout_alignParentTop="true"
+        	android:layout_toRightOf="@id/header_close"
+        	android:paddingLeft="8dp"
+        	android:gravity="center"
+        	android:scaleType="center"
+        	android:src="@drawable/kamcord_tabbar_text"
+        	android:visibility="gone" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/headerDropShadow"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_below="@id/header"
+        android:background="@drawable/kamcord_drop_shadow_bottom" />
+
+</RelativeLayout>

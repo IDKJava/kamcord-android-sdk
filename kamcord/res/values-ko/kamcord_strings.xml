@@ -6,6 +6,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">Facebook 로그아웃 확인</string>
 	<string name="kamcordNoVideoAvailable">이용 가능한 비디오 없음</string>
+	<string name="kamcordYouHaveNotUploadedVideos">아직 비디오를 하나도 업로드하지 않았습니다.</string>
 	<string name="kamcordTryAgainLater">잠시 후 다시 시도하세요</string>
 	<string name="kamcordWeveEmailedYou">비밀번호 초기화 링크가 이메일로 전송되었습니다</string>
 	<string name="kamcordErrorRetrievingUserList">사용자 목록을 검색하는 동안 오류가 발생했습니다. 인터넷 연결을 확인하세요.</string>
@@ -33,6 +34,7 @@
 	<plurals name="kamcordVideosSansCount">
 		<item quantity="other">비디오</item>
 	</plurals>
+	<string name="kamcordNoNotifications">알림이 하나도 없습니다. 비디오를 공유해서 사람들의 주목을 끌어 보세요!</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">프로필 =&gt; 설정으로 이동하거나, 아래의 켜기를 눌러서 음성 오버레이를 켤 수 있습니다.</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="other">%d 년 전</item>
@@ -46,6 +48,7 @@
 	<string name="kamcordProfileErrorMessage">프로파일 작성이 작동하지 않았습니다, 나중에 다시 시도하십시오.</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">이메일 주소는 65자 미만이어야 합니다</string>
+	<string name="kamcordCopyToClipboard">코멘트가 클립보드로 복사됨</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">이 기기에서 음성 오버레이가 비활성화되었습니다.</string>
 	<string name="kamcordEmailInUse">이메일 주소가 이미 사용 중입니다</string>
 	<string name="kamcordInvalidPassword">잘못된 비밀번호</string>
@@ -64,6 +67,7 @@
 	<string name="kamcordLINENotFound">LINE App Not Found</string>
 	<string name="kamcordUsernameInUse">사용자 이름이 이미 사용 중입니다</string>
 	<string name="kamcordDelete">삭제</string>
+	<string name="kamcordSearchHint">검색…</string>
 	<string name="kamcordWriteATitle">제목을 입력하세요...</string>
 	<string name="kamcordNewEmailsDoNotMatch">새로운 이메일 주소가 일치하지 않습니다</string>
 	<string name="kamcordUsernameMinCharacters">사용자 이름은 적어도 5 자 이상이어야합니다</string>
@@ -95,7 +99,9 @@
 	<string name="kamcordNotifications">알림</string>
 	<string name="kamcordJustNow">지금 바로</string>
 	<string name="kamcordWatchVideo">비디오 보기</string>
+	<string name="kamcordErrorGettingFeeds">피드 목록을 검색하는 동안 오류가 발생했습니다. 인터넷 연결을 확인해 주세요.</string>
 	<string name="kamcordUnfollow">언팔로우</string>
+	<string name="kamcordNoSearchResults">검색 결과가 없습니다.</string>
 	<string name="kamcordAddComment">댓글 추가</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">비밀번호를 입력해야 합니다</string>
@@ -129,18 +135,21 @@
 	<string name="kamcordNoInternet">인터넷 연결이 없음</string>
 	<string name="kamcordNewPasswordAgain">새로운 비밀번호(재입력)</string>
 	<string name="kamcordMostViewed">많이 본 동영상</string>
+	<string name="kamcordTryAgain">다시 시도하기</string>
 	<string name="kamcordNewEmailAgain">새로운 이메일 (확인)</string>
 	<string name="kamcordMakePublic">공개하기</string>
 	<string name="kamcordCurrentPassword">현재 비밀번호</string>
 	<string name="kamcordUsernameEnter">유효한 사용자 이름을 입력하세요</string>
 	<string name="kamcordCheckInternetConnection">인터넷 연결을 확인하세요.</string>
 	<string name="kamcordUnclaimedVideos">소유자가 없는 비디오</string>
+	<string name="kamcordShareButton">공유</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">유효하지 않은 이메일</string>
 	<string name="kamcordOn">켜기</string>
 	<string name="kamcordOk">확인</string>
 	<string name="kamcordUploading">업로드 중 ...</string>
 	<string name="kamcordSuccessfullyChangedPassword">비밀번호가 성공적으로 변경되었습니다.</string>
+	<string name="kamcordFollowSomePlayers">피드가 비어 있습니다. 다른 플레이어를 팔로우하면 피드에 그들의 비디오가 표시됩니다!</string>
 	<string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
 	<string name="kamcordShare">공유</string>
 	<string name="kamcordEnableVoiceOverlay">목소리 오버레이 활성화</string>

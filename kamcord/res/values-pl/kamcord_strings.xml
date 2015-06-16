@@ -9,6 +9,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">Potwierdź wylogowanie z Facebooka</string>
 	<string name="kamcordNoVideoAvailable">Nie Wideo Dostępny</string>
+	<string name="kamcordYouHaveNotUploadedVideos">Nie przesłałeś jeszcze żadnych filmów.</string>
 	<string name="kamcordTryAgainLater">Spróbuj ponownie później</string>
 	<string name="kamcordWeveEmailedYou">Wysłaliśmy do ciebie e-mail z linkiem do zresetowania hasła</string>
 	<string name="kamcordErrorRetrievingUserList">Wystąpił błąd podczas pobierania listy użytkowników. Sprawdź swoje połączenie internetowe.</string>
@@ -48,6 +49,7 @@
 		<item quantity="many">Filmy</item>
 		<item quantity="other">Filmy</item>
 	</plurals>
+	<string name="kamcordNoNotifications">Nie masz żadnych powiadomień. Udostępnij filmy, aby Cię zauważono!</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">Możesz włączyć nakładanie głosu przechodząc do zakładki Profil =&gt; Ustawienia lub naciskając poniżej.</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="one">%d rok temu</item>
@@ -64,6 +66,7 @@
 	<string name="kamcordProfileErrorMessage">Utworzenie profilu nie powiodło się. Spróbuj ponownie później.</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">E-mail może być mniejsza niż 65 znaków</string>
+	<string name="kamcordCopyToClipboard">Komentarz skopiowany do schowka</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Funkcja nakładania głosu jest wyłączona w tym urządzeniu.</string>
 	<string name="kamcordEmailInUse">Adres e-mail jest już w użyciu</string>
 	<string name="kamcordInvalidPassword">Nieprawidłowe hasło</string>
@@ -85,6 +88,7 @@
 	<string name="kamcordLINENotFound">Nie znaleziono aplikacji LINE</string>
 	<string name="kamcordUsernameInUse">Nazwa użytkownika jest już używana</string>
 	<string name="kamcordDelete">Usunąć</string>
+	<string name="kamcordSearchHint">Szukaj</string>
 	<string name="kamcordWriteATitle">Wpisz tytuł...</string>
 	<string name="kamcordNewEmailsDoNotMatch">Nowe wiadomości e-mail nie pasują do siebie</string>
 	<string name="kamcordUsernameMinCharacters">Nazwa użytkownika musi mieć przynajmniej 5 znaków</string>
@@ -119,7 +123,9 @@
 	<string name="kamcordNotifications">Powiadomienia</string>
 	<string name="kamcordJustNow">Przed Chwilą</string>
 	<string name="kamcordWatchVideo">Oglądaj film</string>
+	<string name="kamcordErrorGettingFeeds">Wystąpił błąd przy odzyskiwaniu listy źródeł. Spawdź połączenie z Internetem.</string>
 	<string name="kamcordUnfollow">Przestań obserwować</string>
+	<string name="kamcordNoSearchResults">Nie znaleziono wyników wyszukiwania.</string>
 	<string name="kamcordAddComment">Dodaj komentarz</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Wprowadź hasło</string>
@@ -156,18 +162,21 @@
 	<string name="kamcordNoInternet">Brak połączenia z Internetem</string>
 	<string name="kamcordNewPasswordAgain">Nowe hasło (ponownie)</string>
 	<string name="kamcordMostViewed">Najczęściej oglądane</string>
+	<string name="kamcordTryAgain">Spróbuj ponownie</string>
 	<string name="kamcordNewEmailAgain">Nowy e-mail (jeszcze raz)</string>
 	<string name="kamcordMakePublic">Zmień status na publiczny</string>
 	<string name="kamcordCurrentPassword">Aktualne hasło</string>
 	<string name="kamcordUsernameEnter">Wprowadź poprawną nazwę użytkownika</string>
 	<string name="kamcordCheckInternetConnection">Sprawdź swoje połączenie internetowe.</string>
 	<string name="kamcordUnclaimedVideos">Nieodebrane filmy</string>
+	<string name="kamcordShareButton">Udostępnij</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">Niepoprawny e-mail</string>
 	<string name="kamcordOn">Wł.</string>
 	<string name="kamcordOk">OK</string>
 	<string name="kamcordUploading">Wysyłam...</string>
 	<string name="kamcordSuccessfullyChangedPassword">Twoje hasło zostało zmienione.</string>
+	<string name="kamcordFollowSomePlayers">Twoje źródło jest puste. Śledź graczy, aby zobaczyć ich filmy w swoim źródle!</string>
 	<string name="kamcordInstallLINE">Musisz zainstalować aplikację LINE, jeśli chcesz udostępniać w aplikacji LINE.</string>
 	<string name="kamcordShare">Udostępnij</string>
 	<string name="kamcordEnableVoiceOverlay">Włącz nakładanie głosu</string>

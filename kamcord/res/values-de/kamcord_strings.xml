@@ -7,6 +7,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">Facebook-Abmeldung bestätigen</string>
 	<string name="kamcordNoVideoAvailable">Kein Video verfügbar</string>
+	<string name="kamcordYouHaveNotUploadedVideos">Sie haben noch keine Videos hochgeladen.</string>
 	<string name="kamcordTryAgainLater">Bitte versuche es später noch einmal.</string>
 	<string name="kamcordWeveEmailedYou">Wir haben dir per Email einen Link geschickt, um dein Passwort zurückzusetzen!</string>
 	<string name="kamcordErrorRetrievingUserList">Es gab einen Fehler beim Abrufen der Liste der Benutzer. Überprüfen Sie Ihre Internetverbindung.</string>
@@ -36,8 +37,9 @@
 	</plurals>
 	<plurals name="kamcordVideosSansCount">
 		<item quantity="one">Video</item>
-		<item quantity="other">Video</item>
+		<item quantity="other">Videos</item>
 	</plurals>
+	<string name="kamcordNoNotifications">Sie haben keine Benachrichtigungen. Teilen Sie einige Videos, um auf sich aufmerksam zu machen!</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">Du kannst die Vertonung aktivieren, indem du auf \'Profil -&gt; Einstellungen\' gehst oder unten auf Aktivieren drückst.</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="one">Vor %d Jahr</item>
@@ -52,6 +54,7 @@
 	<string name="kamcordProfileErrorMessage">Profilerstellung fehlgeschlagen, versuchen Sie es später noch einmal.</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">E-Mail muss weniger als 65 Zeichen haben</string>
+	<string name="kamcordCopyToClipboard">Kommentar wurde in die Zwischenablage kopiert.</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Auf diesem Gerät ist die Vertonung deaktiviert.</string>
 	<string name="kamcordEmailInUse">Die E-Mail wird bereits verwendet</string>
 	<string name="kamcordInvalidPassword">Ungültiges Passwort</string>
@@ -71,6 +74,7 @@
 	<string name="kamcordLINENotFound">LINE App Not Found</string>
 	<string name="kamcordUsernameInUse">Der Benutzername wird bereits verwendet</string>
 	<string name="kamcordDelete">Löschen</string>
+	<string name="kamcordSearchHint">Suche …</string>
 	<string name="kamcordWriteATitle">Schreibe einen Titel...</string>
 	<string name="kamcordNewEmailsDoNotMatch">Die neuen E-Mails stimmen nicht überein</string>
 	<string name="kamcordUsernameMinCharacters">Benutzername muss mindestens 5 Zeichen lang sein.</string>
@@ -103,7 +107,9 @@
 	<string name="kamcordNotifications">Benachrichtigungen</string>
 	<string name="kamcordJustNow">Augenblicklich</string>
 	<string name="kamcordWatchVideo">Video Ansehen</string>
+	<string name="kamcordErrorGettingFeeds">Beim Abrufen der Feed-Liste ist ein Fehler aufgetreten. Überprüfen Sie Ihre Internetverbindung.</string>
 	<string name="kamcordUnfollow">Nicht mehr folgen</string>
+	<string name="kamcordNoSearchResults">Keine Suchergebnisse gefunden.</string>
 	<string name="kamcordAddComment">Einen Kommentar hinzufügen</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Du musst ein Passwort eingeben</string>
@@ -138,18 +144,21 @@
 	<string name="kamcordNoInternet">Keine Internetverbindung</string>
 	<string name="kamcordNewPasswordAgain">Neues Passwort (wiederholen)</string>
 	<string name="kamcordMostViewed">Am häufigsten aufgerufen</string>
+	<string name="kamcordTryAgain">Erneut versuchen</string>
 	<string name="kamcordNewEmailAgain">Neue E-Mail (wiederholen)</string>
 	<string name="kamcordMakePublic">Öffentlich machen</string>
 	<string name="kamcordCurrentPassword">Aktuelles Passwort</string>
 	<string name="kamcordUsernameEnter">Bitte gib einen gültigen Benutzernamen ein</string>
 	<string name="kamcordCheckInternetConnection">Überprüfen Sie Ihre Internetverbindung.</string>
 	<string name="kamcordUnclaimedVideos">Nicht abgerufene Videos</string>
+	<string name="kamcordShareButton">Teilen</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">Ungültige Email</string>
 	<string name="kamcordOn">Ein</string>
 	<string name="kamcordOk">Ok</string>
 	<string name="kamcordUploading">Hochladen...</string>
 	<string name="kamcordSuccessfullyChangedPassword">Ihr Passwort wurde erfolgreich geändert.</string>
+	<string name="kamcordFollowSomePlayers">Ihr Feed ist leer. Folgen Sie einigen Spielern, um sich ihre Videos in Ihrem Feed anzeigen zu lassen!</string>
 	<string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
 	<string name="kamcordShare">Teilen</string>
 	<string name="kamcordEnableVoiceOverlay">Vertonung aktivieren</string>

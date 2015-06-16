@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:padding="8dp" >
+    
+    <TextView
+        android:id="@+id/sortText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/sortSpinner"
+        android:paddingRight="16dp"
+        android:text="@string/kamcordSort"
+        android:textColor="#808080"
+        android:textSize="20sp"
+        android:gravity="center" />
+
+    <Spinner 
+        android:id="@+id/sortSpinner"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/sortText"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/kamcord_card_background"
+        android:popupBackground="@drawable/kamcord_card_background"
+        android:spinnerMode="dropdown" />
+    
+    <ImageView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/sortSpinner"
+        android:layout_alignRight="@id/sortSpinner"
+        android:layout_alignBottom="@id/sortSpinner"
+        android:layout_marginRight="12dp"
+        android:src="@drawable/kamcord_views_gray"
+        android:scaleType="fitCenter"
+        android:rotation="90"/>
+    
+    <TextView 
+        android:id="@+id/filterText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sortText"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/kamcordFilterSearch"
+        android:textColor="#808080"
+        android:textSize="20sp" />
+    
+    <com.kamcord.android.ui.views.FlowLayout
+        android:id="@+id/tagCloud"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filterText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true" />
+
+</RelativeLayout>

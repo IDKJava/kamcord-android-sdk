@@ -16,7 +16,7 @@
         android:background="@drawable/kamcord_tabbar_back_selector"
         android:padding="@dimen/kamcordTabbarBackPadding"
         android:src="@drawable/kamcord_back_icon" />
-    
+
     <TextView 
         android:id="@+id/header_text"
         android:layout_width="match_parent"

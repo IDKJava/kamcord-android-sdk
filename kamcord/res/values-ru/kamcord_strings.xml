@@ -9,6 +9,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">Подтвердить выход из Facebook</string>
 	<string name="kamcordNoVideoAvailable">Видео недоступно</string>
+	<string name="kamcordYouHaveNotUploadedVideos">Вы еще не загрузили видео.</string>
 	<string name="kamcordTryAgainLater">Повтори попытку позднее.</string>
 	<string name="kamcordWeveEmailedYou">Мы выслали тебе по эл.почте ссылку для восстановления твоего пароля.</string>
 	<string name="kamcordErrorRetrievingUserList">Произошла ошибка при поиске списка пользователей. Проверьте подключение к Интернету.</string>
@@ -48,6 +49,7 @@
 		<item quantity="many">Видео</item>
 		<item quantity="other">Видео</item>
 	</plurals>
+	<string name="kamcordNoNotifications">У вас нет уведомлений. Поделитесь несколькими видео, чтобы вас заметили!</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">Ты можешь включить Наложение голоса, перейдя в \'Профиль -&gt; Настройки\' или нажав \'Включить\' ниже.</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="one">%d год назад</item>
@@ -64,6 +66,7 @@
 	<string name="kamcordProfileErrorMessage">Создать профиль не удалось. Повторите попытку позже.</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">Эл. почта не должна превышать 65 символов </string>
+	<string name="kamcordCopyToClipboard">Комментарий скопирован в буфер обмена</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">На этом устройстве отключено наложение голоса.</string>
 	<string name="kamcordEmailInUse">Адрес Эл. почты уже используется</string>
 	<string name="kamcordInvalidPassword">Неверный пароль</string>
@@ -85,6 +88,7 @@
 	<string name="kamcordLINENotFound">LINE App Not Found</string>
 	<string name="kamcordUsernameInUse">Имя пользователя уже используется</string>
 	<string name="kamcordDelete">Удалить</string>
+	<string name="kamcordSearchHint">Искать...</string>
 	<string name="kamcordWriteATitle">Введи заголовок...</string>
 	<string name="kamcordNewEmailsDoNotMatch">Адреса Эл. почты не совпадают</string>
 	<string name="kamcordUsernameMinCharacters">Имя пользователя должно содержать не менее 5 символов</string>
@@ -119,7 +123,9 @@
 	<string name="kamcordNotifications">Уведомления</string>
 	<string name="kamcordJustNow">Только что</string>
 	<string name="kamcordWatchVideo">Просмотреть видео</string>
+	<string name="kamcordErrorGettingFeeds">Произошла ошибка с отображением списка каналов. Проверьте ваше интернет-соединение.</string>
 	<string name="kamcordUnfollow">Отписаться</string>
+	<string name="kamcordNoSearchResults">Поиск не дал результатов.</string>
 	<string name="kamcordAddComment">Написать комментарий</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Ты должен ввести пароль</string>
@@ -156,18 +162,21 @@
 	<string name="kamcordNoInternet">Нет подключения к Интернету</string>
 	<string name="kamcordNewPasswordAgain">Новый пароль (повторно)</string>
 	<string name="kamcordMostViewed">Самые популярные</string>
+	<string name="kamcordTryAgain">Повторите попытку</string>
 	<string name="kamcordNewEmailAgain">Новый адрес Эл. почты (еще раз)</string>
 	<string name="kamcordMakePublic">Открыть для всех</string>
 	<string name="kamcordCurrentPassword">Текущий пароль </string>
 	<string name="kamcordUsernameEnter">Введи действительное имя пользователя</string>
 	<string name="kamcordCheckInternetConnection">Проверьте подключение к Интернету.</string>
 	<string name="kamcordUnclaimedVideos">Невостребованные видео</string>
+	<string name="kamcordShareButton">Поделиться</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">Неверная эл.почта</string>
 	<string name="kamcordOn">Вкл</string>
 	<string name="kamcordOk">OK</string>
 	<string name="kamcordUploading">Идет загрузка в систему ...</string>
 	<string name="kamcordSuccessfullyChangedPassword">Ваш пароль был успешно изменен.</string>
+	<string name="kamcordFollowSomePlayers">Ваш канал пуст. Подпишитесь на несколько игроков, чтобы видеть их видео на вашем канале!</string>
 	<string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
 	<string name="kamcordShare">Поделиться</string>
 	<string name="kamcordEnableVoiceOverlay">Включи наложение голоса</string>

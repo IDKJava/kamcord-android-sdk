@@ -6,6 +6,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">确认退出 Facebook</string>
 	<string name="kamcordNoVideoAvailable">无可用视频</string>
+	<string name="kamcordYouHaveNotUploadedVideos">你还未上传任何视频。</string>
 	<string name="kamcordTryAgainLater">请稍后再试。</string>
 	<string name="kamcordWeveEmailedYou">我们已经通过电子邮件发送给您一个链接来重置您的密码！</string>
 	<string name="kamcordErrorRetrievingUserList">检索用户列表时发生错误。请检查您的网络连接。</string>
@@ -33,6 +34,7 @@
 	<plurals name="kamcordVideosSansCount">
 		<item quantity="other">视频</item>
 	</plurals>
+	<string name="kamcordNoNotifications">你没有任何通知。分享一些视频来引起关注！</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">您可以在个人资料＝&gt;设置或以下的启用按钮来启用声音叠加。</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="other">%d年前</item>
@@ -46,6 +48,7 @@
 	<string name="kamcordProfileErrorMessage">创建配置文件失败，请稍后再试。</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">电子邮件地址必须少于 65 个字符</string>
+	<string name="kamcordCopyToClipboard">已复制评论到剪贴板</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">当前设备禁用声音叠加</string>
 	<string name="kamcordEmailInUse">电子邮件已被使用</string>
 	<string name="kamcordInvalidPassword">密码无效</string>
@@ -64,6 +67,7 @@
 	<string name="kamcordLINENotFound">LINE App Not Found</string>
 	<string name="kamcordUsernameInUse">用户名已被使用</string>
 	<string name="kamcordDelete">删除</string>
+	<string name="kamcordSearchHint">搜索</string>
 	<string name="kamcordWriteATitle">写一个标题...</string>
 	<string name="kamcordNewEmailsDoNotMatch">新电子邮件不匹配</string>
 	<string name="kamcordUsernameMinCharacters">用户名必须至少5个字符</string>
@@ -95,7 +99,9 @@
 	<string name="kamcordNotifications">通知</string>
 	<string name="kamcordJustNow">刚才</string>
 	<string name="kamcordWatchVideo">观看视频</string>
+	<string name="kamcordErrorGettingFeeds">获取feeds列表时发生错误。检查你的网络连接。</string>
 	<string name="kamcordUnfollow">取消关注</string>
+	<string name="kamcordNoSearchResults">未找到搜索结果。</string>
 	<string name="kamcordAddComment">添加评论</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">您必须输入一个密码</string>
@@ -129,18 +135,21 @@
 	<string name="kamcordNoInternet">无互联网连接</string>
 	<string name="kamcordNewPasswordAgain">新密码（重复）</string>
 	<string name="kamcordMostViewed">被查看最多的</string>
+	<string name="kamcordTryAgain">再试一次</string>
 	<string name="kamcordNewEmailAgain">新电子邮件（再次输入）</string>
 	<string name="kamcordMakePublic">设为公开</string>
 	<string name="kamcordCurrentPassword">目前的密码</string>
 	<string name="kamcordUsernameEnter">请输入一个有效的用户名</string>
 	<string name="kamcordCheckInternetConnection">请检查您的网络连接。</string>
 	<string name="kamcordUnclaimedVideos">无人认领的视频</string>
+	<string name="kamcordShareButton">分享</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">无效电子邮件</string>
 	<string name="kamcordOn">开</string>
 	<string name="kamcordOk">确定</string>
 	<string name="kamcordUploading">上传中 ...</string>
 	<string name="kamcordSuccessfullyChangedPassword">您的密码已成功更改。</string>
+	<string name="kamcordFollowSomePlayers">你的feed是空的。关注一些用户来在你的Feed中观看他们的视频！</string>
 	<string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
 	<string name="kamcordShare">分享</string>
 	<string name="kamcordEnableVoiceOverlay">启用声音叠加</string>

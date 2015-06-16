@@ -6,6 +6,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">ยืนยันการลงชื่อออกจาก Facebook </string>
 	<string name="kamcordNoVideoAvailable">พร้อมวีดีโอไม่มี</string>
+	<string name="kamcordYouHaveNotUploadedVideos">คุณยังไม่ได้อัพโหลดวิดีโอใดๆ</string>
 	<string name="kamcordTryAgainLater">กรุณาลองอีกครั้งภายหลัง</string>
 	<string name="kamcordWeveEmailedYou">เราส่งอีเมลลิงค์ตั้งค่ารหัสผ่านใหม่ถึงคุณ</string>
 	<string name="kamcordErrorRetrievingUserList">มีข้อผิดพลาดในการเรียกรายชื่อของผู้ใช้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
@@ -33,6 +34,7 @@
 	<plurals name="kamcordVideosSansCount">
 		<item quantity="other">วิดีโอ</item>
 	</plurals>
+	<string name="kamcordNoNotifications">คุณไม่มีการแจ้งเตือนใดๆ แบ่งปันวิดีโอเพื่อให้มีผู้เห็น!</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">คุณสามารถเปิดใช้งานการใส่เสียงได้ที่ โปรไฟล์ =&gt; การตั้งค่า หรือกดเปิดใช้งานด้านล่าง</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="other">%d ปีที่ผ่านมา</item>
@@ -46,6 +48,7 @@
 	<string name="kamcordProfileErrorMessage">การสร้างข้อมูลส่วนตัวไม่สามารถใช้งานได้ โปรดลองอีกครั้งในภายหลัง</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">อีเมล์ต้องน้อยกว่า 65 ตัวอักษร</string>
+	<string name="kamcordCopyToClipboard">ทำสำเนาความคิดเห็นลงในคลิปบอร์ดแล้ว</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">ฟังก์ชั่นการใส่เสียงประกอบถูกปิดบนอุปกรณ์นี้</string>
 	<string name="kamcordEmailInUse">อีเมล์ที่มีอยู่แล้วในการใช้งาน</string>
 	<string name="kamcordInvalidPassword">รหัสผ่านไม่ถูกต้อง</string>
@@ -64,6 +67,7 @@
 	<string name="kamcordLINENotFound">ไม่พบแอป Line</string>
 	<string name="kamcordUsernameInUse">ชื่อผู้ใช้ที่มีอยู่แล้วในการใช้งาน</string>
 	<string name="kamcordDelete">ลบ</string>
+	<string name="kamcordSearchHint">ค้นหา…</string>
 	<string name="kamcordWriteATitle">ตั้งชื่อ...</string>
 	<string name="kamcordNewEmailsDoNotMatch">อีเมลใหม่ไม่ตรงกับ</string>
 	<string name="kamcordUsernameMinCharacters">ชื่อผู้ใช้ต้องมีความยาวไม่น้อยกว่า 5 ตัวอักษร</string>
@@ -95,7 +99,9 @@
 	<string name="kamcordNotifications">การแจ้งเตือน</string>
 	<string name="kamcordJustNow">ในขณะนี้</string>
 	<string name="kamcordWatchVideo">ดูวิดีโอ</string>
+	<string name="kamcordErrorGettingFeeds">มีข้อผิดพลาดในการดึงรายการฟีด ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
 	<string name="kamcordUnfollow">เลิกติดตาม</string>
+	<string name="kamcordNoSearchResults">ไม่พบผลการค้นหา</string>
 	<string name="kamcordAddComment">แสดงความคิดเห็น</string>
 	<string name="kamcordLINE">Line</string>
 	<string name="kamcordPasswordEnter">คุณต้องกรอกรหัสผ่าน</string>
@@ -129,18 +135,21 @@
 	<string name="kamcordNoInternet">ไม่พบสัญญาณอินเทอร์เน็ต</string>
 	<string name="kamcordNewPasswordAgain">รหัสผ่านใหม่ (อีกครั้ง)</string>
 	<string name="kamcordMostViewed">เข้าชมมากที่สุด</string>
+	<string name="kamcordTryAgain">ลองอีกครั้ง</string>
 	<string name="kamcordNewEmailAgain">อีเมลใหม่ (อีกครั้ง)</string>
 	<string name="kamcordMakePublic">ทำให้เป็นสาธารณะ</string>
 	<string name="kamcordCurrentPassword">รหัสผ่านปัจจุบัน</string>
 	<string name="kamcordUsernameEnter">กรุณาใส่ชื่อผู้ใช้ที่ถูกต้อง</string>
 	<string name="kamcordCheckInternetConnection">ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ</string>
 	<string name="kamcordUnclaimedVideos">วิดีโอที่ไม่ปรากฏเจ้าของ</string>
+	<string name="kamcordShareButton">แบ่งปัน</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">ไม่พบที่อยู่อีเมลนี้</string>
 	<string name="kamcordOn">เปิด</string>
 	<string name="kamcordOk">ตกลง</string>
 	<string name="kamcordUploading">กำลังอัพโหลด...</string>
 	<string name="kamcordSuccessfullyChangedPassword">รหัสผ่านของคุณมีการเปลี่ยนแปลงที่ประสบความสำเร็จ</string>
+	<string name="kamcordFollowSomePlayers">ฟีดของคุณว่างเปล่า ติดตามผู้เล่นเพื่อดูวิดีโอของพวกเขาในฟีดของคุณ!</string>
 	<string name="kamcordInstallLINE">คุณต้องติดตั้งแอป Line ก่อนแบ่งปันบน Line</string>
 	<string name="kamcordShare">แบ่งปัน</string>
 	<string name="kamcordEnableVoiceOverlay">เปิดใช้งานการใส่เสียง</string>

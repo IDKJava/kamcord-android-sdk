@@ -7,6 +7,7 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">Confirma que quieres salir de Facebook</string>
 	<string name="kamcordNoVideoAvailable">No hay vídeo disponible</string>
+	<string name="kamcordYouHaveNotUploadedVideos">No has subido ningún vídeo.</string>
 	<string name="kamcordTryAgainLater">Por favor, inténtalo de nuevo más tarde.</string>
 	<string name="kamcordWeveEmailedYou">¡Te hemos enviado un enlace para restablecer tu contraseña!</string>
 	<string name="kamcordErrorRetrievingUserList">Se ha producido un error al recuperar la lista de usuarios. Verifique su conexión a Internet.</string>
@@ -38,6 +39,7 @@
 		<item quantity="one">Vídeo</item>
 		<item quantity="other">Vídeos</item>
 	</plurals>
+	<string name="kamcordNoNotifications">No tienes ninguna notificación. ¡Comparte algún vídeo para llamar la atención!</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">Puedes activar los Comentarios de Voz yendo a \'Perfil -&gt; Ajustes\' o pulsando Activar abajo.</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="one">Hace %d año</item>
@@ -52,6 +54,7 @@
 	<string name="kamcordProfileErrorMessage">No se pudo crear el perfil, intente de nuevo más tarde.</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">El correo debe tener menos de 65 caracteres</string>
+	<string name="kamcordCopyToClipboard">Comentario copiado al portapapeles</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">Los comentarios de voz están desactivados en este dispositivo</string>
 	<string name="kamcordEmailInUse">Este correo ya está en uso</string>
 	<string name="kamcordInvalidPassword">Contraseña no válida</string>
@@ -71,6 +74,7 @@
 	<string name="kamcordLINENotFound">LINE App Not Found</string>
 	<string name="kamcordUsernameInUse">Este nombre de usuario ya está en uso</string>
 	<string name="kamcordDelete">Borrar</string>
+	<string name="kamcordSearchHint">Buscar…</string>
 	<string name="kamcordWriteATitle">Escribe un título...</string>
 	<string name="kamcordNewEmailsDoNotMatch">Los correos nuevos no coinciden</string>
 	<string name="kamcordUsernameMinCharacters">El nombre de usuario debe tener al menos 5 caracteres</string>
@@ -103,7 +107,9 @@
 	<string name="kamcordNotifications">Notificaciones</string>
 	<string name="kamcordJustNow">Justo Ahora</string>
 	<string name="kamcordWatchVideo">Ver Video</string>
+	<string name="kamcordErrorGettingFeeds">Se ha producido un error al recuperar la lista de feeds. Comprueba tu conexión a Internet.</string>
 	<string name="kamcordUnfollow">Dejar de seguir</string>
+	<string name="kamcordNoSearchResults">No se encontraron resultados.</string>
 	<string name="kamcordAddComment">Añadir un comentario</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">Tienes que introducir una contraseña</string>
@@ -138,18 +144,21 @@
 	<string name="kamcordNoInternet">Sin conexión a Internet</string>
 	<string name="kamcordNewPasswordAgain">Nueva contraseña (repetir)</string>
 	<string name="kamcordMostViewed">Mas vistos</string>
+	<string name="kamcordTryAgain">Vuelve a intentarlo</string>
 	<string name="kamcordNewEmailAgain">Correo nuevo (otra vez)</string>
 	<string name="kamcordMakePublic">Hacerlo público</string>
 	<string name="kamcordCurrentPassword">Contraseña actual</string>
 	<string name="kamcordUsernameEnter">Por favor, introduce un nombre de usuario válido</string>
 	<string name="kamcordCheckInternetConnection">Verifique su conexión a Internet.</string>
 	<string name="kamcordUnclaimedVideos">Vídeos no reclamados</string>
+	<string name="kamcordShareButton">Compartir</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">Correo electrónico no válido</string>
 	<string name="kamcordOn">On</string>
 	<string name="kamcordOk">Ok</string>
 	<string name="kamcordUploading">Subiendo...</string>
 	<string name="kamcordSuccessfullyChangedPassword">Tu contraseña se ha cambiado con éxito.</string>
+	<string name="kamcordFollowSomePlayers">Tu feed de vídeos está vacío. ¡Sigue a algunos jugadores para ver sus vídeos en tu feed!</string>
 	<string name="kamcordInstallLINE">You must install the LINE App before you can share to LINE.</string>
 	<string name="kamcordShare">Compartir</string>
 	<string name="kamcordEnableVoiceOverlay">Activa Comentarios de voz</string>

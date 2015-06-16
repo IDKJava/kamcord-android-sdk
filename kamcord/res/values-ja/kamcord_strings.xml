@@ -6,10 +6,12 @@
 	</plurals>
 	<string name="kamcordConfirmFacebookSignOut">Facebookログアウトの確認</string>
 	<string name="kamcordNoVideoAvailable">閲覧できる動画はありません</string>
+	<string name="kamcordYouHaveNotUploadedVideos">あなたはまだビデオをアップロードしていません。</string>
 	<string name="kamcordTryAgainLater">後で再度お試し下さい</string>
 	<string name="kamcordWeveEmailedYou">パスワードをリセットするためのリンクをメールしました!</string>
 	<string name="kamcordErrorRetrievingUserList">ユーザーのリストを取得できませんでした。インターネット接続を確認してください。</string>
 	<string name="kamcordEmailNotSent">メールは送信されませんでした</string>
+	<string name="kamcordNoVideosLiked">「いいね！」をしていないので表示する動画がありません。</string>
 	<string name="kamcordConfirmKamcordSignOut">Kamcordログアウトの確認</string>
 	<string name="kamcordCouldntChangeTagline">タグラインを変更できません</string>
 	<string name="kamcordChangePassword">パスワード変更</string>
@@ -19,6 +21,7 @@
 	<plurals name="kamcordUploadTimeMonths">
 		<item quantity="other">%dか月前</item>
 	</plurals>
+	<string name="kamcordTrendingNow">トレンド順</string>
 	<string name="kamcordEmailCorrect">メールアドレスは正しいですか？</string>
 	<string name="kamcordCouldntChangeEmail">メールアドレスを変更できませんでした</string>
 	<string name="kamcordRecent">最近の</string>
@@ -33,6 +36,7 @@
 	<plurals name="kamcordVideosSansCount">
 		<item quantity="other">ビデオ</item>
 	</plurals>
+	<string name="kamcordNoNotifications">あなたへの通知はありません。通知を受け取るためにビデオを共有しましょう!</string>
 	<string name="kamcordYouCanEnableVoiceOverlay">ボイスオーバーを有効にするには、「プロフィール」-&gt;「設定」から、または下の「有効にする」ボタンを押してください。</string>
 	<plurals name="kamcordUploadTimeYears">
 		<item quantity="other">%d年前</item>
@@ -46,6 +50,7 @@
 	<string name="kamcordProfileErrorMessage">プロフィールを作成できませんでした。後でもう一度お試しください。</string>
 	<string name="kamcordAgeMonthsShort">%dmo</string>
 	<string name="kamcordEmailMaxCharacters">Eメールは65文字未満でなければなりません</string>
+	<string name="kamcordCopyToClipboard">コメントをクリップボードにコピーしました</string>
 	<string name="kamcordVoiceOverlayDisabledDevice">ボイスオーバーは無効になっています</string>
 	<string name="kamcordEmailInUse">Eメールは既に使用されています</string>
 	<string name="kamcordInvalidPassword">無効なパスワード</string>
@@ -64,6 +69,8 @@
 	<string name="kamcordLINENotFound">LINEアプリが見つかりません</string>
 	<string name="kamcordUsernameInUse">ユーザー名は既に使用されています</string>
 	<string name="kamcordDelete">削除する</string>
+	<string name="kamcordSearchHint">…を検索する</string>
+	<string name="kamcordSort">ソート</string>
 	<string name="kamcordWriteATitle">タイトルを書いて下さい...</string>
 	<string name="kamcordNewEmailsDoNotMatch">新しいEメールが一致しません</string>
 	<string name="kamcordUsernameMinCharacters">ユーザー名は半角5文字以上にして下さい。</string>
@@ -89,13 +96,17 @@
 	<string name="kamcordRecentVideos">動画を削除する</string>
 	<string name="kamcordTrending">トレンド</string>
 	<string name="kamcordComments">コメント</string>
+	<string name="kamcordMostLiked">いいね！の数順</string>
 	<string name="kamcordChangeTagline">タグラインの変更</string>
 	<string name="kamcordSuccess">成功!</string>
 	<string name="kamcordEnableVoiceOverlayQuestion">ボイスオーバーを有効にしますか?</string>
 	<string name="kamcordNotifications">通知</string>
+	<string name="kamcordWriteADescription">説明を書いて下さい...</string>
 	<string name="kamcordJustNow">たった今</string>
 	<string name="kamcordWatchVideo">ビデオを見る</string>
+	<string name="kamcordErrorGettingFeeds">フィードのリストを検索する際にエラーが生じました。インターネット接続を確認してください。</string>
 	<string name="kamcordUnfollow">アンフォロー</string>
+	<string name="kamcordNoSearchResults">検索結果がみつかりませんでした。</string>
 	<string name="kamcordAddComment">コメントを加える</string>
 	<string name="kamcordLINE">LINE</string>
 	<string name="kamcordPasswordEnter">パスワードを入力して下さい</string>
@@ -114,6 +125,7 @@
 	<string name="kamcordReallyDelete">本当に削除しますか?</string>
 	<string name="kamcordNewEmail">新しいEメール</string>
 	<string name="kamcordForgotYourPassword">パスワードをお忘れですか？</string>
+	<string name="kamcordMostPopular">人気順</string>
 	<string name="kamcordErrorComment">コメントを投稿できませんでした</string>
 	<string name="kamcordFeaturedVideos">優先プレイリスト</string>
 	<string name="kamcordNoAccountLinked">リンクされたアカウントはありません</string>
@@ -129,20 +141,23 @@
 	<string name="kamcordNoInternet">インターネットに接続されていません</string>
 	<string name="kamcordNewPasswordAgain">新しいパスワード（確認）</string>
 	<string name="kamcordMostViewed">人気の動画</string>
+	<string name="kamcordTryAgain">もう一度お試しください</string>
 	<string name="kamcordNewEmailAgain">新しいEメール(もう一度)</string>
 	<string name="kamcordMakePublic">公開する</string>
 	<string name="kamcordCurrentPassword">現在のパスワード</string>
 	<string name="kamcordUsernameEnter">有効なユーザー名を入力して下さい</string>
 	<string name="kamcordCheckInternetConnection">インターネット接続を確認してください。</string>
 	<string name="kamcordUnclaimedVideos">持ち主の不明なビデオ</string>
+	<string name="kamcordShareButton">動画をシェア</string>
 	<string name="kamcordYouTube">YouTube</string>
 	<string name="kamcordEmailInvalid">無効なメールアドレス</string>
 	<string name="kamcordOn">有効</string>
 	<string name="kamcordOk">OK</string>
 	<string name="kamcordUploading">アップロード中 ...</string>
 	<string name="kamcordSuccessfullyChangedPassword">パスワードの変更が完了しました。</string>
+	<string name="kamcordFollowSomePlayers">誰もフォローしていないのでフィードが存在していません。フォローを増やしてフィードを作りましょう！</string>
 	<string name="kamcordInstallLINE">LINEへ共有するためにはLINEアプリのインストールが必要です</string>
-	<string name="kamcordShare">共有</string>
+	<string name="kamcordShare">シェア</string>
 	<string name="kamcordEnableVoiceOverlay">ボイスオーバーを有効にする</string>
 	<string name="kamcordEmailEnter">メールアドレスの入力が必要です</string>
 	<string name="kamcordEmail">メール</string>
@@ -174,12 +189,13 @@
 	<string name="kamcordCouldntDeleteVideo">動画を削除できませんでした</string>
 	<string name="kamcordEmailSent">メールが送信されました</string>
 	<string name="kamcordPassword">パスワード</string>
+	<string name="kamcordFilterSearch">絞り込み検索</string>
 	<string name="kamcordEmailDoesNotExist">Eメールまたはユーザー名が存在しません</string>
 	<string name="kamcordVoiceOverlayEnabledExclamation">ボイスオーバーは有効になりました!</string>
 	<string name="kamcordAgeHoursShort">%dh</string>
 	<string name="kamcordAgeMinutesShort">%dm</string>
 	<string name="kamcordAgeSecondsShort">%ds</string>
 	<string name="kamcordMakeVideoPublicError">動画を公開にできませんでした</string>
-	<string name="kamcordShareReplay">リプレイを共有する</string>
+	<string name="kamcordShareReplay">動画をシェア</string>
 	<string name="kamcordPrivate">非公開</string>
 </resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/kamcordActivityBackground" >
+
+    <com.kamcord.android.ui.views.CustomViewPager
+        android:id="@+id/videos_fragment_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        custom:allowPageSwipe="true" >
+    </com.kamcord.android.ui.views.CustomViewPager>
+
+    <com.kamcord.android.ui.views.SlidingTabLayout
+        android:id="@+id/videos_fragment_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/kamcordSubTabbarHeight"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/kamcordTabbarBackground" >
+    </com.kamcord.android.ui.views.SlidingTabLayout>
+
+    <LinearLayout
+        android:id="@+id/feed_list_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/feed_list_error_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textColor="#000" />
+
+        <Button
+            android:id="@+id/try_again_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/kamcord_card_background_green"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/kamcordTryAgain"
+            android:textColor="#fff"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</RelativeLayout>
