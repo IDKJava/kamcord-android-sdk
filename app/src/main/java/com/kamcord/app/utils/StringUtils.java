@@ -15,6 +15,8 @@ import android.view.View;
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Locale;
 
 /**
@@ -95,6 +97,11 @@ public class StringUtils {
         } else {
             return String.format(Locale.ENGLISH, "%.1fB", ((double) count) / 1e9);
         }
+    }
+
+    public static String commatizedCount(long count) {
+        NumberFormat commas = new DecimalFormat("#,###");
+        return commas.format(count);
     }
 
     private static final String ELLIPSIS = "...";

@@ -62,3 +62,4 @@
 -keepclasseswithmembers class * {
     @retrofit.http.* <methods>;
 }
+

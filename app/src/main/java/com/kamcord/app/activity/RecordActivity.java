@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -90,9 +92,18 @@ public class RecordActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if( onBackPressedListener != null ) {
-            onBackPressedListener.onBackPressed();
+        boolean fragmentHandled = false;
+
+        FragmentManager manager = getSupportFragmentManager();
+        for( Fragment fragment : manager.getFragments() ) {
+            if( fragment instanceof OnBackPressedListener ) {
+                fragmentHandled |= ((OnBackPressedListener) fragment).onBackPressed();
+            }
+        }
+
+        // We only forward the back click to super if none of our fragments handled it.
+        if( !fragmentHandled ) {
+            super.onBackPressed();
         }
     }
 
