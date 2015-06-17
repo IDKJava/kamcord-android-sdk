@@ -230,6 +230,9 @@ public class SlidingTabLayout extends HorizontalScrollView {
             if (i == mViewPager.getCurrentItem()) {
                 tabView.setSelected(true);
             }
+
+            //setting the description for the tab for UI automation.
+            tabView.setContentDescription(adapter.getPageTitle(i));
         }
 
 

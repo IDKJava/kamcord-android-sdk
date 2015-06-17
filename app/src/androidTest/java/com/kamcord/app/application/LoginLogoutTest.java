@@ -14,16 +14,16 @@ public class LoginLogoutTest extends TestBase {
     @Test
     public void testLogin() {
         assertFalse("Already logged in!", isLoggedIn());
-        assertTrue("Login timed out or wrong password!", doLogin());
+        doLogin();
         assertTrue("Login failed!", isLoggedIn());
     }
 
     @Test
     public void testLogout() {
         assertFalse("Already logged in!", isLoggedIn());
-        assertTrue("Login timed out or wrong password!", doLogin());
+        doLogin();
         assertTrue("Login failed!", isLoggedIn());
-        assertTrue("Logout timed out!", doLogout());
+        doLogout();
         assertFalse("Still logged in!", isLoggedIn());
     }
 }

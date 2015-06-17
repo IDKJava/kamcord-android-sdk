@@ -11,6 +11,8 @@ import com.kamcord.app.fragment.RecordFragment;
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
+    public static final int RECORD_FRAGMENT_POSITION = 0;
+    public static final int PROFILE_FRAGMENT_POSITION = 1;
     private int numberOfTabs;
     private CharSequence tabTitles[];
 
@@ -28,11 +30,11 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         Fragment fragment;
         switch (position) {
-            case 0:
+            case RECORD_FRAGMENT_POSITION:
                 fragment = new RecordFragment();
                 break;
 
-            case 1:
+            case PROFILE_FRAGMENT_POSITION:
                 fragment = new ProfileFragment();
                 break;
 

@@ -86,6 +86,7 @@
                     android:drawableStart="@drawable/likes_icon_selector" />
             </FrameLayout>
 
+            <!--- I'll be back!
             <Button
                 android:id="@+id/video_comments"
                 android:layout_width="wrap_content"
@@ -94,7 +95,7 @@
                 android:text="@string/defaultNumber"
                 style="@style/KamcordVideoCardCountButton"
                 android:drawableStart="@drawable/comments_gray"
-                android:enabled="false" />
+                android:enabled="false" /> -->
 
             <Space
                 android:layout_width="0dp"
