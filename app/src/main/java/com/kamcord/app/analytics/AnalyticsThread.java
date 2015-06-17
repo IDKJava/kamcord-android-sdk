@@ -34,6 +34,9 @@ public class AnalyticsThread extends HandlerThread implements
     private static final int SEND_EVERY_MS = 300000;
     private static final int MAX_UNSENT_EVENTS = 100;
     private static final String WHEN_KEY = "when";
+    private static final String NAME_KEY = "name";
+
+    private static final String EXTRAS_KEY = "extras";
 
     private Handler handler;
 
@@ -51,6 +54,21 @@ public class AnalyticsThread extends HandlerThread implements
         this.handler = handler;
     }
 
+    public void sendStartSession(Object who, Event.Name name) {
+        Message msg = newMessage(who, What.SESSION_STARTED, name);
+        handler.sendMessage(msg);
+    }
+
+    public void sendEndSession(Object who, Event.Name name, Bundle extras) {
+        Message msg = newMessage(who, What.SESSION_ENDED, name, extras);
+        handler.sendMessage(msg);
+    }
+
+    public void sendFireEvent(Event.Name name, Bundle extras) {
+        Message msg = newMessage(null, What.FIRE_EVENT, name, extras);
+        handler.sendMessage(msg);
+    }
+
     @Override
     public boolean handleMessage(Message message) {
 
@@ -62,10 +80,10 @@ public class AnalyticsThread extends HandlerThread implements
         } catch (IndexOutOfBoundsException e) {
         }
 
-        if( what == What.RESTORE_AFTER_FAILED_SEND ) {
-            if( who instanceof Set ) {
-                for( Object o : (Set) who ) {
-                    if( o instanceof Event ) {
+        if (what == What.RESTORE_AFTER_FAILED_SEND) {
+            if (who instanceof Set) {
+                for (Object o : (Set) who) {
+                    if (o instanceof Event) {
                         KamcordAnalytics.addUnsentEvent((Event) o);
                     }
                 }
@@ -86,29 +104,53 @@ public class AnalyticsThread extends HandlerThread implements
         boolean appForegrounded = false;
         boolean appBackgrounded = false;
         switch (what) {
-            case ACTIVITY_STARTED:
+            case ACTIVITY_STARTED: {
                 if (foregroundActivityCount == 0) {
                     appForegrounded = true;
                     foregroundMarker = new Object();
-                    pendingEvents.put(foregroundMarker, new Event(Event.Name.KAMCORD_APP_LAUNCH, whenMs, appSessionId));
+                    pendingEvents.put(foregroundMarker, newEventFromData(data));
                 }
                 foregroundActivityCount++;
-                break;
+            }
+            break;
 
-            case ACTIVITY_STOPPED:
+            case ACTIVITY_STOPPED: {
                 if (foregroundActivityCount == 1) {
                     appBackgrounded = true;
                     if (pendingEvents.containsKey(foregroundMarker)) {
                         Event launchEvent = pendingEvents.remove(foregroundMarker);
                         foregroundMarker = null;
-                        launchEvent.setDurationFromStopTime(whenMs);
+                        completeEventFromSessionEnd(launchEvent, data);
                         KamcordAnalytics.addUnsentEvent(launchEvent);
                     } else {
                         Log.w(KamcordAnalytics.TAG, "No start session corresponding to Object " + who + "!");
                     }
                 }
                 foregroundActivityCount--;
-                break;
+            }
+            break;
+
+            case SESSION_STARTED: {
+                Event event = newEventFromData(data);
+                pendingEvents.put(who, event);
+            }
+            break;
+
+            case SESSION_ENDED: {
+                if (pendingEvents.containsKey(who)) {
+                    Event event = pendingEvents.remove(who);
+                    completeEventFromSessionEnd(event, data);
+                    KamcordAnalytics.addUnsentEvent(event);
+                } else {
+                    Log.w(KamcordAnalytics.TAG, "No start session corresponding to Object " + who + "!");
+                }
+            }
+            break;
+
+            case FIRE_EVENT: {
+                KamcordAnalytics.addUnsentEvent(newEventFromData(data));
+            }
+            break;
 
             case UNKNOWN:
             default:
@@ -123,7 +165,7 @@ public class AnalyticsThread extends HandlerThread implements
         if ((System.currentTimeMillis() - KamcordAnalytics.getLastSendTime() > SEND_EVERY_MS
                 || KamcordAnalytics.unsentEventCount() > MAX_UNSENT_EVENTS
                 || appForegrounded || appBackgrounded)
-                && !sendingEvents && KamcordAnalytics.unsentEventCount() > 0 ) {
+                && !sendingEvents && KamcordAnalytics.unsentEventCount() > 0) {
             sendEvents();
         }
 
@@ -138,7 +180,7 @@ public class AnalyticsThread extends HandlerThread implements
         sendingEvents = true;
         String userRegistrationId = null;
         Account myAccount = AccountManager.getStoredAccount();
-        if( myAccount != null ) {
+        if (myAccount != null) {
             userRegistrationId = myAccount.id;
         }
 
@@ -146,7 +188,7 @@ public class AnalyticsThread extends HandlerThread implements
                 .setAppDeviceId(DeviceManager.getDeviceToken())
                 .setUserRegistrationId(userRegistrationId);
         Set<Event> unsentEvents = KamcordAnalytics.getUnsentEvents();
-        for( Event event : unsentEvents ) {
+        for (Event event : unsentEvents) {
             builder.addEvent(event);
         }
 
@@ -155,24 +197,81 @@ public class AnalyticsThread extends HandlerThread implements
     }
 
     private Message newMessage(Object who, What what) {
+        return newMessage(who, what, null);
+    }
+
+    private Message newMessage(Object who, What what, Event.Name name) {
+        return newMessage(who, what, name, null);
+    }
+
+    private Message newMessage(Object who, What what, Event.Name name, Bundle extras) {
         Message msg = Message.obtain(handler, what.ordinal(), who);
         Bundle data = new Bundle();
         long when = System.currentTimeMillis();
         data.putLong(WHEN_KEY, when);
+        if (name != null) {
+            data.putString(NAME_KEY, name.name());
+        }
+        if (extras != null) {
+            data.putBundle(EXTRAS_KEY, extras);
+        }
         msg.setData(data);
         return msg;
+    }
+
+    private Event newEventFromData(Bundle data) {
+        Event event = null;
+        if (data.containsKey(NAME_KEY) && data.containsKey(WHEN_KEY)) {
+            try {
+                Event.Name name = Event.Name.valueOf(data.getString(NAME_KEY));
+                long when = data.getLong(WHEN_KEY, 0);
+                event = new Event(name, when, appSessionId);
+            } catch (IllegalArgumentException e) {
+                event = null;
+            }
+        }
+        return event;
+    }
+
+    private void completeEventFromSessionEnd(Event event, Bundle data) throws IllegalArgumentException {
+        if (data.containsKey(NAME_KEY)
+                && data.containsKey(WHEN_KEY)) {
+
+            Event.Name name = Event.Name.valueOf(data.getString(NAME_KEY));
+            long when = data.getLong(WHEN_KEY, 0);
+            if (name != event.name) {
+                throw new IllegalArgumentException("Mismatched event names when attempting to end session!");
+            }
+
+            switch (name) {
+                case UPLOAD_VIDEO:
+                    event.setRequestTimeFromStopTime(when);
+                    Bundle extras = data.getBundle(EXTRAS_KEY);
+                    if (extras != null) {
+                        event.is_success = data.getBoolean(KamcordAnalytics.SUCCESS_KEY);
+                        event.failure_reason = Event.UploadFailureReason.valueOf(data.getString(KamcordAnalytics.FAILURE_REASON_KEY));
+                        event.video_global_id = data.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
+                        event.was_replayed = data.getBoolean(KamcordAnalytics.WAS_REPLAYED_KEY, false);
+                    }
+                    break;
+                case KAMCORD_APP_LAUNCH:
+                    event.setDurationFromStopTime(when);
+                    break;
+            }
+        }
     }
 
     private class TrackEventCallback implements Callback<WrappedResponse<?>> {
 
         private Set<Event> events;
+
         public TrackEventCallback(Set<Event> events) {
             this.events = events;
         }
 
         @Override
         public void success(WrappedResponse<?> wrappedResponse, Response response) {
-            if( wrappedResponse == null || wrappedResponse.status_code != WrappedResponse.StatusCode.OK ) {
+            if (wrappedResponse == null || wrappedResponse.status_code != WrappedResponse.StatusCode.OK) {
                 handler.sendMessage(newMessage(events, What.RESTORE_AFTER_FAILED_SEND));
             } else {
                 KamcordAnalytics.clearUnsentEvents();
@@ -191,6 +290,9 @@ public class AnalyticsThread extends HandlerThread implements
     private enum What {
         ACTIVITY_STOPPED,
         ACTIVITY_STARTED,
+        SESSION_STARTED,
+        SESSION_ENDED,
+        FIRE_EVENT,
         RESTORE_AFTER_FAILED_SEND,
         UNKNOWN,
     }

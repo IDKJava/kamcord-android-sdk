@@ -9,6 +9,12 @@ import java.util.UUID;
  * Created by pplunkett on 6/15/15.
  */
 public class Event {
+    public enum Name {
+        KAMCORD_APP_LAUNCH,
+        FIRST_KAMCORD_APP_LAUNCH,
+        UPLOAD_VIDEO,
+        EXTERNAL_SHARE,
+    }
 
     public Event(Name name, long whenMs, String appSessionId) {
         this.name = name;
@@ -29,7 +35,11 @@ public class Event {
         this.eventDurationMs = stopTimeMs - startTimeMs;
     }
 
-    public void setTimes() {
+    public void setRequestTimeFromStopTime(long stopTimeMs) {
+        this.requestDurationMs = stopTimeMs - startTimeMs;
+    }
+
+    public void convertTimes() {
         this.start_time = startTimeMs / 1000;
         if( this.eventDurationMs != null ) {
             this.event_duration = ((eventDurationMs / 1000f) * 10) / 10f;
@@ -48,13 +58,6 @@ public class Event {
     public String event_id;
     public ConnectionType connection_type;
 
-    public enum Name {
-        KAMCORD_APP_LAUNCH,
-        FIRST_KAMCORD_APP_LAUNCH,
-        UPLOAD,
-        EXTERNAL_SHARE,
-    }
-
     public enum ConnectionType {
         @SerializedName("wifi")
         WIFI,
@@ -66,15 +69,25 @@ public class Event {
     public Float event_duration = null;
     public transient Long eventDurationMs = null;
     public SourceView source_view = null;
-
     public enum SourceView {
-
     }
 
     // For server events.
     public Float request_duration = null;
-    public transient Float requestDurationMs = null;
+    public transient Long requestDurationMs = null;
     public Boolean is_success = null;
+
+
+    // For UPLOAD events.
+    public String video_global_id = null;
+    public UploadFailureReason failure_reason = null;
+    public Boolean was_replayed = null;
+    public enum UploadFailureReason {
+        RESERVE_VIDEO,
+        UPLOAD_TO_S3,
+        UPLOAD_COMPLETION,
+    }
+
 
     @Override
     public int hashCode() {

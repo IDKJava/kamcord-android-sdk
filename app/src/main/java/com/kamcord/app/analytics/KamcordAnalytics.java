@@ -3,6 +3,7 @@ package com.kamcord.app.analytics;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 
 import com.google.gson.Gson;
@@ -16,6 +17,12 @@ import java.util.Set;
  */
 public class KamcordAnalytics {
     static final String TAG = KamcordAnalytics.class.getSimpleName();
+    public static final String SUCCESS_KEY = "success";
+    public static final String VIDEO_ID_KEY = "video_id";
+    public static final String FAILURE_REASON_KEY = "failure_reason";
+    public static final String WAS_REPLAYED_KEY = "was_replayed";
+
+
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";
 
     private static final String LAST_SEND_TIME_KEY = "LAST_SEND_TIME";
@@ -36,6 +43,25 @@ public class KamcordAnalytics {
         if( analyticsThread == null ) {
             startAnalyticsThread(context);
         }
+    }
+
+    public static void startSession(Object who, Event.Name name) {
+        analyticsThread.sendStartSession(who, name);
+    }
+    public static void endSession(Object who, Event.Name name) {
+        endSession(who, name, null);
+    }
+
+    public static void endSession(Object who, Event.Name name, Bundle extras) {
+        analyticsThread.sendEndSession(who, name, extras);
+    }
+
+    public static void fireEvent(Event.Name name) {
+        fireEvent(name, null);
+    }
+
+    public static void fireEvent(Event.Name name, Bundle extras) {
+        analyticsThread.sendFireEvent(name, extras);
     }
 
     private static void startAnalyticsThread(Context context) {
@@ -61,7 +87,7 @@ public class KamcordAnalytics {
     }
 
     static void addUnsentEvent(Event event) {
-        event.setTimes();
+        event.convertTimes();
         boolean added = unsentEvents.add(event);
         if( added ) {
             saveEventSet(UNSENT_EVENTS, unsentEvents);
