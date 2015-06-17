@@ -292,6 +292,9 @@ public class ShareFragment extends Fragment {
         Intent intent = new Intent(getActivity().getApplicationContext(), VideoPreviewActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+
+        recordingSession.setWasReplayed(true);
+        ActiveRecordingSessionManager.updateActiveSession(recordingSession);
     }
 
     private void videoPrepared(File videoFile) {

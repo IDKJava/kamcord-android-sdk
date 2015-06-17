@@ -1,24 +1,24 @@
 package com.kamcord.app.thread;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 
-import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
-import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
 import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.VideoUploadedEntity;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.server.model.builder.ReserveVideoEntityBuilder;
 import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
-import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
@@ -138,38 +138,37 @@ public class Uploader extends Thread {
 
     @Override
     public void run() {
-        AccountManager accountManager = new AccountManager();
-        Account account = accountManager.getStoredAccount();
-        Map<String, String> videoParams = new HashMap<>();
-        videoParams.put(mContext.getResources().getString(R.string.flurryGameName), mRecordingSession.getGamePackageName());
-        videoParams.put(mContext.getResources().getString(R.string.flurryGameID), mRecordingSession.getGameServerID());
-        videoParams.put(mContext.getResources().getString(R.string.flurryUserName), account.username);
-        videoParams.put(mContext.getResources().getString(R.string.flurryUserID), account.id);
+        KamcordAnalytics.startSession(this, Event.Name.UPLOAD_VIDEO);
 
+        Event.UploadFailureReason reason = Event.UploadFailureReason.RESERVE_VIDEO;
         try {
-            long start = System.currentTimeMillis();
-
             notifyUploadStart(mRecordingSession);
             reserveVideoUpload();
+
+            reason = Event.UploadFailureReason.UPLOAD_TO_S3;
+
             startUploadToS3(UploadType.VIDEO);
             for (int part = 0; part < mTotalParts; part++) {
                 uploadPartToS3(part, UploadType.VIDEO);
                 notifyUploadProgressed(mRecordingSession, (float) (part+1) / (float) mTotalParts);
             }
             finishUploadToS3(UploadType.VIDEO);
+
+            reason = Event.UploadFailureReason.UPLOAD_COMPLETION;
+
             informKamcordUploadFinished();
 
             mRecordingSession.setState(RecordingSession.State.UPLOADED);
             mRecordingSession.setGlobalId(mServerVideoId);
             ActiveRecordingSessionManager.updateActiveSession(mRecordingSession);
 
-            notifyUploadFinished(mRecordingSession, true);
+            Bundle extras = new Bundle();
+            extras.putBoolean(KamcordAnalytics.SUCCESS_KEY, true);
+            extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+            extras.putBoolean(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed());
+            KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, extras);
 
-            long end = System.currentTimeMillis();
-            videoParams.put(mContext.getResources().getString(R.string.flurryVideoID), mServerVideoId);
-            videoParams.put(mContext.getResources().getString(R.string.flurryDuration), Long.toString(end - start));
-            videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "true");
-            FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
+            notifyUploadFinished(mRecordingSession, true);
             return;
 
         } catch (Throwable e) {
@@ -177,9 +176,15 @@ public class Uploader extends Thread {
             e.printStackTrace();
         }
 
+        Bundle extras = new Bundle();
+        extras.putBoolean(KamcordAnalytics.SUCCESS_KEY, false);
+        extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+        extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, reason.name());
+        extras.putBoolean(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed());
+        KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, extras);
+
         notifyUploadFinished(mRecordingSession, false);
-        videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "false");
-        FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
+
         Log.e(TAG, "Unable to upload video, giving up.");
     }
 
