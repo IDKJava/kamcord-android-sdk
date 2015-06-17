@@ -28,6 +28,7 @@ import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoPreviewActivity;
+import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.StitchClipsThread;
@@ -230,6 +231,9 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
             KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
             getActivity().startService(uploadIntent);
+            if (getActivity() instanceof  RecordActivity) {
+                ((RecordActivity) getActivity()).setCurrentItem(MainViewPagerAdapter.PROFILE_FRAGMENT_POSITION);
+            }
             showDeleteDialogOnBack = false;
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {

@@ -168,6 +168,11 @@ public class RecordActivity extends AppCompatActivity implements
     }
     }
 
+    public void setCurrentItem(int i)
+    {
+        mViewPager.setCurrentItem(i);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
