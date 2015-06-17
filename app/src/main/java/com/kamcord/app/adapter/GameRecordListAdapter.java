@@ -167,7 +167,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         if( game.isInstalled ) {
             if (game.isRecording) {
                 gameActionImageButton.setBackgroundResource(R.drawable.hollow_red_circle_background);
-
+                gameActionImageButton
+                    .setContentDescription(mContext.getResources().getString(R.string.recording));
                 gameActionImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
                 gameActionImageButton.setColorFilter(mContext.getResources().getColor(R.color.stopRecordingRed), PorterDuff.Mode.MULTIPLY);
 
@@ -178,7 +179,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                 gameActionImageButton.startAnimation(animation);
             } else {
                 gameActionImageButton.setBackgroundResource(R.drawable.hollow_circle_background);
-
+                gameActionImageButton
+                    .setContentDescription(mContext.getResources().getString(R.string.idle));
                 gameActionImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
                 gameActionImageButton.setColorFilter(mContext.getResources().getColor(R.color.kamcordGreen), PorterDuff.Mode.MULTIPLY);
 

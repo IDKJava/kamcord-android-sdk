@@ -1,8 +1,13 @@
 package com.kamcord.app.application;
 
+
+
+import com.kamcord.app.R;
+
 import org.junit.Test;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static com.kamcord.app.testutils.UiUtilities.*;
+import static com.kamcord.app.testutils.SystemUtilities.*;
 
 /**
  * Created by Mehmet on 5/28/15.
@@ -10,27 +15,44 @@ import static org.junit.Assert.assertTrue;
 // Will work in Junit 4.11
 // @FixMethodOrder
 public class CacheTest extends RecordAndPostTestBase {
-    protected static final String KAMCORD_CACHE_FOLDER = "Kamcord_Android";
-    protected static final String NOMEDIA_TAG = ".nomedia";
-    protected static final String SDCARD_ROOT = "/storage/sdcard0/";
 
-    public void clearCacheTest(){
-        //enable line below when we update the test and detach from checkCacheNoMediaTest
-        //skipLogin();
-        clearCache();
-        sleep(100);
-        String files = executeShellCommand(String.format("ls -al %s", SDCARD_ROOT));
-        assertFalse("Kamcord_Android folder is present!", files.contains(KAMCORD_CACHE_FOLDER));
-    }
-    @Test
+
+
+    //@Test
+    //TODO: Enable when AA-40 is resolved.
     public void checkCacheNoMediaTest(){
-        //Run post test video
-        skipLogin();
+        doLogin();
+        //create short baseline
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
-        String files = executeShellCommand(String.format("ls -al %s/%s", SDCARD_ROOT, KAMCORD_CACHE_FOLDER));
-        assertTrue(".nodmedia tag is not present!", files.contains(NOMEDIA_TAG));
-        //clear cache.
+        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
+        //get baseline with short video
+        //cacheSizeBefore is 1x video size. System cleans up before record.
+        int cacheSizeBefore = getCacheSize();
+        sleep(UI_INTERACTION_DELAY_MS);
         mDevice.pressBack();
-        clearCacheTest();
+        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
+        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
+        //cacheSize  is 3x video size  by the same logic.
+        int cacheSize = getCacheSize();
+        //by the same logic
+        assertTrue("Cache didn't increase!", cacheSizeBefore < cacheSize);
+        assertTrue("Nomedia tag is missing!", isNoMediaTagPresent());
+        mDevice.pressBack();
+        //We need stitching to be over.
+        assertTrue("Cache didn't reduce!", cacheSize < cacheSizeBefore * 4);
+
     }
+
+    protected int getCacheSize(){
+        String cacheFullPath = String.format("%s%s", SDCARD_ROOT, KAMCORD_CACHE_FOLDER);
+        return getFolderSize(cacheFullPath);
+    }
+
+    protected boolean isNoMediaTagPresent(){
+        String cacheFullPath = String.format("%s%s", SDCARD_ROOT, KAMCORD_CACHE_FOLDER);
+        String list = executeShellCommand(String.format("ls -al %s/.nomedia", cacheFullPath));
+        return list.contains(".nomedia");
+    }
+
+
 }
