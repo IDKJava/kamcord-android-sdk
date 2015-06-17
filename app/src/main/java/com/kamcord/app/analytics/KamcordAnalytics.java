@@ -21,6 +21,8 @@ public class KamcordAnalytics {
     public static final String VIDEO_ID_KEY = "video_id";
     public static final String FAILURE_REASON_KEY = "failure_reason";
     public static final String WAS_REPLAYED_KEY = "was_replayed";
+    public static final String EXTERNAL_NETWORK_KEY = "external_network";
+    public static final String APP_SESSION_ID_KEY = "app_session_id";
 
 
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";
@@ -62,6 +64,13 @@ public class KamcordAnalytics {
 
     public static void fireEvent(Event.Name name, Bundle extras) {
         analyticsThread.sendFireEvent(name, extras);
+    }
+
+    public static String getCurrentAppSessionId() {
+        if( analyticsThread != null ) {
+            return analyticsThread.getCurrentAppSessionId();
+        }
+        return null;
     }
 
     private static void startAnalyticsThread(Context context) {

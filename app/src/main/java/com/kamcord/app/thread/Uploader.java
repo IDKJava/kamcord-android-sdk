@@ -163,9 +163,10 @@ public class Uploader extends Thread {
             ActiveRecordingSessionManager.updateActiveSession(mRecordingSession);
 
             Bundle extras = new Bundle();
-            extras.putBoolean(KamcordAnalytics.SUCCESS_KEY, true);
+            extras.putInt(KamcordAnalytics.SUCCESS_KEY, 1);
             extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
-            extras.putBoolean(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed());
+            extras.putInt(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed() ? 1 : 0);
+            extras.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
             KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, extras);
 
             notifyUploadFinished(mRecordingSession, true);
@@ -177,10 +178,11 @@ public class Uploader extends Thread {
         }
 
         Bundle extras = new Bundle();
-        extras.putBoolean(KamcordAnalytics.SUCCESS_KEY, false);
+        extras.putInt(KamcordAnalytics.SUCCESS_KEY, 0);
         extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
         extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, reason.name());
-        extras.putBoolean(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed());
+        extras.putInt(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed() ? 1 : 0);
+        extras.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
         KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, extras);
 
         notifyUploadFinished(mRecordingSession, false);
@@ -450,6 +452,12 @@ public class Uploader extends Thread {
                     share.source = VideoUploadedEntity.ShareSource.TWITTER;
                     share.access_token = session.getAuthToken().token;
                     videoUploadedEntityBuilder.addShare(share);
+
+                    // When we add YouTube, analytics will look something like this.
+                    Bundle extras = new Bundle();
+                    extras.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.TWITTER.name());
+                    extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+                    KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_SHARE, extras);
 
                     if (session != null) {
                         TwitterApiClient client = Twitter.getApiClient(session);

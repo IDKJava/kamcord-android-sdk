@@ -97,16 +97,13 @@ public class AnalyticsThread extends HandlerThread implements
             whenMs = data.getLong(WHEN_KEY, 0);
         }
 
-        if (appSessionId == null) {
-            appSessionId = UUID.randomUUID().toString();
-        }
-
         boolean appForegrounded = false;
         boolean appBackgrounded = false;
         switch (what) {
             case ACTIVITY_STARTED: {
                 if (foregroundActivityCount == 0) {
                     appForegrounded = true;
+                    appSessionId = UUID.randomUUID().toString();
                     foregroundMarker = new Object();
                     pendingEvents.put(foregroundMarker, newEventFromData(data));
                 }
@@ -120,7 +117,7 @@ public class AnalyticsThread extends HandlerThread implements
                     if (pendingEvents.containsKey(foregroundMarker)) {
                         Event launchEvent = pendingEvents.remove(foregroundMarker);
                         foregroundMarker = null;
-                        completeEventFromSessionEnd(launchEvent, data);
+                        completeEventFromData(launchEvent, data);
                         KamcordAnalytics.addUnsentEvent(launchEvent);
                     } else {
                         Log.w(KamcordAnalytics.TAG, "No start session corresponding to Object " + who + "!");
@@ -139,7 +136,7 @@ public class AnalyticsThread extends HandlerThread implements
             case SESSION_ENDED: {
                 if (pendingEvents.containsKey(who)) {
                     Event event = pendingEvents.remove(who);
-                    completeEventFromSessionEnd(event, data);
+                    completeEventFromData(event, data);
                     KamcordAnalytics.addUnsentEvent(event);
                 } else {
                     Log.w(KamcordAnalytics.TAG, "No start session corresponding to Object " + who + "!");
@@ -148,7 +145,9 @@ public class AnalyticsThread extends HandlerThread implements
             break;
 
             case FIRE_EVENT: {
-                KamcordAnalytics.addUnsentEvent(newEventFromData(data));
+                Event event = newEventFromData(data);
+                completeEventFromData(event, data);
+                KamcordAnalytics.addUnsentEvent(event);
             }
             break;
 
@@ -174,6 +173,10 @@ public class AnalyticsThread extends HandlerThread implements
         }
 
         return false;
+    }
+
+    public String getCurrentAppSessionId() {
+        return appSessionId;
     }
 
     private void sendEvents() {
@@ -233,7 +236,7 @@ public class AnalyticsThread extends HandlerThread implements
         return event;
     }
 
-    private void completeEventFromSessionEnd(Event event, Bundle data) throws IllegalArgumentException {
+    private void completeEventFromData(Event event, Bundle data) throws IllegalArgumentException {
         if (data.containsKey(NAME_KEY)
                 && data.containsKey(WHEN_KEY)) {
 
@@ -242,23 +245,46 @@ public class AnalyticsThread extends HandlerThread implements
             if (name != event.name) {
                 throw new IllegalArgumentException("Mismatched event names when attempting to end session!");
             }
+            Bundle extras = data.getBundle(EXTRAS_KEY);
 
             switch (name) {
-                case UPLOAD_VIDEO:
+                case UPLOAD_VIDEO: {
                     event.setRequestTimeFromStopTime(when);
-                    Bundle extras = data.getBundle(EXTRAS_KEY);
                     if (extras != null) {
-                        event.is_success = extras.getBoolean(KamcordAnalytics.SUCCESS_KEY, false);
-                        if( extras.containsKey(KamcordAnalytics.FAILURE_REASON_KEY) ) {
+                        event.is_success = extras.getInt(KamcordAnalytics.SUCCESS_KEY, 0);
+                        if (extras.containsKey(KamcordAnalytics.FAILURE_REASON_KEY)) {
                             event.failure_reason = Event.UploadFailureReason.valueOf(extras.getString(KamcordAnalytics.FAILURE_REASON_KEY));
                         }
                         event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
-                        event.was_replayed = extras.getBoolean(KamcordAnalytics.WAS_REPLAYED_KEY, false);
+                        event.was_replayed = extras.getInt(KamcordAnalytics.WAS_REPLAYED_KEY, 0);
                     }
-                    break;
-                case KAMCORD_APP_LAUNCH:
+                }
+                break;
+
+                case KAMCORD_APP_LAUNCH: {
                     event.setDurationFromStopTime(when);
-                    break;
+                }
+                break;
+
+                case EXTERNAL_SHARE: {
+                    if (extras != null) {
+                        if( extras.containsKey(KamcordAnalytics.EXTERNAL_NETWORK_KEY) ) {
+                            event.external_network = Event.ExternalNetwork.valueOf(extras.getString(KamcordAnalytics.EXTERNAL_NETWORK_KEY));
+                        }
+                        event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
+                    }
+                }
+                break;
+
+                case RECORD_VIDEO: {
+                    event.setDurationFromStopTime(when);
+                }
+                break;
+            }
+
+            // If they put the app_session_id in themselves, we assume that they know what they're doing.
+            if( extras != null && extras.containsKey(KamcordAnalytics.APP_SESSION_ID_KEY) ) {
+                event.app_session_id = extras.getString(KamcordAnalytics.APP_SESSION_ID_KEY);
             }
         }
     }

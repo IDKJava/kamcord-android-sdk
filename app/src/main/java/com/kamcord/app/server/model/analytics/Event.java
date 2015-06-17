@@ -14,6 +14,7 @@ public class Event {
         FIRST_KAMCORD_APP_LAUNCH,
         UPLOAD_VIDEO,
         EXTERNAL_SHARE,
+        RECORD_VIDEO,
     }
 
     public Event(Name name, long whenMs, String appSessionId) {
@@ -65,6 +66,7 @@ public class Event {
         MOBILE,
     }
 
+
     // For navigational events.
     public Float event_duration = null;
     public transient Long eventDurationMs = null;
@@ -72,22 +74,36 @@ public class Event {
     public enum SourceView {
     }
 
+
     // For server events.
     public Float request_duration = null;
     public transient Long requestDurationMs = null;
-    public Boolean is_success = null;
+    public Integer is_success = null;
 
 
     // For UPLOAD events.
     public String video_global_id = null;
     public UploadFailureReason failure_reason = null;
-    public Boolean was_replayed = null;
+    public Integer was_replayed = null;
     public enum UploadFailureReason {
         RESERVE_VIDEO,
         UPLOAD_TO_S3,
         UPLOAD_COMPLETION,
     }
 
+
+    // For EXTERNAL_SHARE events.
+    public ExternalNetwork external_network = null;
+    public enum ExternalNetwork {
+        EMAIL,
+        FACEBOOK,
+        KAKAO,
+        LINE,
+        NICONICO,
+        TWITTER,
+        WECHAT,
+        YOUTUBE,
+    }
 
     @Override
     public int hashCode() {

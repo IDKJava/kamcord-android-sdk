@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +27,7 @@ import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoPreviewActivity;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.StitchClipsThread;
@@ -219,12 +221,14 @@ public class ShareFragment extends Fragment {
                 recordingSession.setShareSources(shareSourceHashMap);
             }
 
-            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
-
             recordingSession.setState(RecordingSession.State.SHARED);
+            String currentAppSessionId = KamcordAnalytics.getCurrentAppSessionId();
+            Log.v("FindMe", "setting current app_session_id on upload session to " + currentAppSessionId);
+            recordingSession.setShareAppSessionId(currentAppSessionId);
             ActiveRecordingSessionManager.updateActiveSession(recordingSession);
 
+            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
+            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
             getActivity().startService(uploadIntent);
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
