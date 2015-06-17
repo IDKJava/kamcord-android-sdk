@@ -38,7 +38,7 @@ import com.kamcord.app.testutils.testrules.RetryRule;
 public abstract class TestBase {
 
     @Rule
-    public RetryRule mTestRetryRule = new RetryRule(3);
+    public RetryRule mTestRetryRule = new RetryRule(1);
     @Rule
     public FailureRule mTestFailureRule = new FailureRule();
 

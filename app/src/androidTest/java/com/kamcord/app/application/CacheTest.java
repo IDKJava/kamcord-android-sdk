@@ -18,21 +18,26 @@ public class CacheTest extends RecordAndPostTestBase {
 
 
 
-    //@Test
-    //TODO: Enable when AA-40 is resolved.
+    @Test
     public void checkCacheNoMediaTest(){
+        int recordindDuration1X = RECORDING_DURATION_MS;
+        int recordindDuration3X = RECORDING_DURATION_MS * 3;
+        //int sizeMultiplier =
         doLogin();
         //create short baseline
-        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
-        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
+        recordGameVideo(RIPPLE_TEST_APP_NAME, recordindDuration1X);
+        findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, recordindDuration1X);
         //get baseline with short video
         //cacheSizeBefore is 1x video size. System cleans up before record.
-        int cacheSizeBefore = getCacheSize();
+
         sleep(UI_INTERACTION_DELAY_MS);
+        int cacheSizeBefore = getCacheSize();
+
         mDevice.pressBack();
-        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
-        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
+        recordGameVideo(RIPPLE_TEST_APP_NAME, recordindDuration3X);
+        findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, recordindDuration3X);
         //cacheSize  is 3x video size  by the same logic.
+        sleep(UI_INTERACTION_DELAY_MS);
         int cacheSize = getCacheSize();
         //by the same logic
         assertTrue("Cache didn't increase!", cacheSizeBefore < cacheSize);

@@ -186,7 +186,7 @@ public class UiUtilities {
         BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = mDevice.wait(Until.gone(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut);
+        assertTrue("UI Object failed to disappear!", notTimedOut);
     }
 
     public static UiObject2 findUiObj(String text, UiObjSelType selType) {
@@ -290,7 +290,7 @@ public class UiUtilities {
                     = new UiScrollable(new UiSelector()
                     .resourceId(getResByID(id)));
 
-            assertTrue("Not scrollable!", scrollableObject.isScrollable());
+            //assertTrue("Not scrollable!", scrollableObject.isScrollable());
 
             //larger number for max swipes.
             scrollableObject.flingToBeginning(100);
