@@ -19,7 +19,7 @@ public class KamcordAnalytics {
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";
 
     private static final String LAST_SEND_TIME_KEY = "LAST_SEND_TIME";
-    private static final String FIRST_LAUNCH_KEY = "FIRST_APP_LAUNCH";
+    private static final String FIRST_LAUNCH_KEY = "FIRST_KAMCORD_APP_LAUNCH";
     private static final String UNSENT_EVENTS = "UNSENT_EVENTS";
 
     private static SharedPreferences preferences = null;
@@ -50,7 +50,7 @@ public class KamcordAnalytics {
         preferences.edit().putBoolean(FIRST_LAUNCH_KEY, false).commit();
     }
     static boolean isFirstLaunch() {
-        return preferences.getBoolean(FIRST_LAUNCH_KEY, false);
+        return preferences.getBoolean(FIRST_LAUNCH_KEY, true);
     }
 
     static void setLastSendTime(long lastSendTime) {
@@ -61,6 +61,7 @@ public class KamcordAnalytics {
     }
 
     static void addUnsentEvent(Event event) {
+        event.setTimes();
         boolean added = unsentEvents.add(event);
         if( added ) {
             saveEventSet(UNSENT_EVENTS, unsentEvents);

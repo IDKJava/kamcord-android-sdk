@@ -15,7 +15,7 @@ public class Event {
         this.event_id = UUID.randomUUID().toString();
         this.app_session_id = appSessionId;
 
-        this.start_time = whenMs / 1000;
+        this.startTimeMs = whenMs;
         if(Connectivity.isConnected()) {
             if( Connectivity.isConnectedWifi()) {
                 connection_type = ConnectionType.WIFI;
@@ -26,12 +26,22 @@ public class Event {
     }
 
     public void setDurationFromStopTime(long stopTimeMs) {
-        float stopTimeS = ((float) stopTimeMs) / 1000f;
-        this.event_duration = Math.max(((float) start_time) - stopTimeS, 0f);
+        this.eventDurationMs = stopTimeMs - startTimeMs;
+    }
+
+    public void setTimes() {
+        this.start_time = startTimeMs / 1000;
+        if( this.eventDurationMs != null ) {
+            this.event_duration = ((eventDurationMs / 1000f) * 10) / 10f;
+        }
+        if( this.requestDurationMs != null ) {
+            this.request_duration = ((requestDurationMs / 1000f) * 10) / 10f;
+        }
     }
 
     public Name name;
     public long start_time;
+    public transient long startTimeMs;
 
     public String app_session_id;
     public String ui_session_id;
@@ -40,7 +50,7 @@ public class Event {
 
     public enum Name {
         KAMCORD_APP_LAUNCH,
-        FIRST_APP_LAUNCH,
+        FIRST_KAMCORD_APP_LAUNCH,
         UPLOAD,
         EXTERNAL_SHARE,
     }
@@ -54,6 +64,7 @@ public class Event {
 
     // For navigational events.
     public Float event_duration = null;
+    public transient Long eventDurationMs = null;
     public SourceView source_view = null;
 
     public enum SourceView {
@@ -61,7 +72,8 @@ public class Event {
     }
 
     // For server events.
-    public Long request_duration = null;
+    public Float request_duration = null;
+    public transient Float requestDurationMs = null;
     public Boolean is_success = null;
 
     @Override

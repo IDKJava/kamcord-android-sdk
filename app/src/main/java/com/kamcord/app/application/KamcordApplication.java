@@ -29,7 +29,6 @@ public class KamcordApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.v("FindMe", "KamcordApplication.onCreate()");
 
         if (!BuildConfig.DEBUG) {
             Fabric.with(

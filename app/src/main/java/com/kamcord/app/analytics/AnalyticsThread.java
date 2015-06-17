@@ -39,6 +39,7 @@ public class AnalyticsThread extends HandlerThread implements
 
     private String appSessionId = null;
     private int foregroundActivityCount = 0;
+    private Object foregroundMarker = null;
     Map<Object, Event> pendingEvents = new WeakHashMap<>();
     private boolean sendingEvents = false;
 
@@ -88,7 +89,8 @@ public class AnalyticsThread extends HandlerThread implements
             case ACTIVITY_STARTED:
                 if (foregroundActivityCount == 0) {
                     appForegrounded = true;
-                    pendingEvents.put(who, new Event(Event.Name.KAMCORD_APP_LAUNCH, whenMs, appSessionId));
+                    foregroundMarker = new Object();
+                    pendingEvents.put(foregroundMarker, new Event(Event.Name.KAMCORD_APP_LAUNCH, whenMs, appSessionId));
                 }
                 foregroundActivityCount++;
                 break;
@@ -96,8 +98,9 @@ public class AnalyticsThread extends HandlerThread implements
             case ACTIVITY_STOPPED:
                 if (foregroundActivityCount == 1) {
                     appBackgrounded = true;
-                    if (pendingEvents.containsKey(who)) {
-                        Event launchEvent = pendingEvents.get(who);
+                    if (pendingEvents.containsKey(foregroundMarker)) {
+                        Event launchEvent = pendingEvents.remove(foregroundMarker);
+                        foregroundMarker = null;
                         launchEvent.setDurationFromStopTime(whenMs);
                         KamcordAnalytics.addUnsentEvent(launchEvent);
                     } else {
@@ -114,7 +117,7 @@ public class AnalyticsThread extends HandlerThread implements
 
         if (appForegrounded && KamcordAnalytics.isFirstLaunch()) {
             KamcordAnalytics.writeFirstLaunch();
-            KamcordAnalytics.addUnsentEvent(new Event(Event.Name.FIRST_APP_LAUNCH, whenMs, appSessionId));
+            KamcordAnalytics.addUnsentEvent(new Event(Event.Name.FIRST_KAMCORD_APP_LAUNCH, whenMs, appSessionId));
         }
 
         if ((System.currentTimeMillis() - KamcordAnalytics.getLastSendTime() > SEND_EVERY_MS
@@ -154,7 +157,8 @@ public class AnalyticsThread extends HandlerThread implements
     private Message newMessage(Object who, What what) {
         Message msg = Message.obtain(handler, what.ordinal(), who);
         Bundle data = new Bundle();
-        data.putLong(WHEN_KEY, System.currentTimeMillis());
+        long when = System.currentTimeMillis();
+        data.putLong(WHEN_KEY, when);
         msg.setData(data);
         return msg;
     }
@@ -170,6 +174,9 @@ public class AnalyticsThread extends HandlerThread implements
         public void success(WrappedResponse<?> wrappedResponse, Response response) {
             if( wrappedResponse == null || wrappedResponse.status_code != WrappedResponse.StatusCode.OK ) {
                 handler.sendMessage(newMessage(events, What.RESTORE_AFTER_FAILED_SEND));
+            } else {
+                KamcordAnalytics.clearUnsentEvents();
+                KamcordAnalytics.setLastSendTime(System.currentTimeMillis());
             }
             sendingEvents = false;
         }
