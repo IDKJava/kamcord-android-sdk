@@ -1,7 +1,6 @@
 package com.kamcord.app.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +16,7 @@ import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
@@ -290,17 +289,10 @@ public class RecordFragment extends Fragment implements
         return appIsInstalled;
     }
 
-    private Toast startRecordingToast = null;
-
     @Override
-    public void onBackPressed() {
+    public boolean onBackPressed() {
         handleServiceRunning();
-    }
-
-    public interface RecyclerViewScrollListener {
-        void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
-
-        void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy);
+        return false;
     }
 
     public void obtainMediaProjection() {

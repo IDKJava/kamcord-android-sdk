@@ -1,5 +1,6 @@
 package com.kamcord.app.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +38,7 @@ import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
+import com.kamcord.app.view.utils.OnBackPressedListener;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -58,7 +61,7 @@ import rx.android.widget.WidgetObservable;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
-public class ShareFragment extends Fragment {
+public class ShareFragment extends Fragment implements OnBackPressedListener {
     public static final String TAG = ShareFragment.class.getSimpleName();
     public static final String ARG_RECORDING_SESSION = "recording_session";
 
@@ -227,6 +230,7 @@ public class ShareFragment extends Fragment {
 
             KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
             getActivity().startService(uploadIntent);
+            showDeleteDialogOnBack = false;
             getActivity().onBackPressed();
         } else if (AccountManager.isLoggedIn()) {
             if (videoTitleToast == null) {
@@ -340,4 +344,31 @@ public class ShareFragment extends Fragment {
         twitterLoginButton.onActivityResult(requestCode, resultCode, data);
     }
 
+    private boolean showDeleteDialogOnBack = true;
+    @Override
+    public boolean onBackPressed() {
+        if( showDeleteDialogOnBack ) {
+            showDeleteDialogOnBack = false;
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.areYouSure)
+                    .setMessage(R.string.youWillLoseMonster)
+                    .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            FileSystemManager.cleanRecordingSessionCacheDirectory(recordingSession);
+                            getActivity().onBackPressed();
+                            showDeleteDialogOnBack = true;
+                        }
+                    })
+                    .setNeutralButton(android.R.string.cancel, null)
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            showDeleteDialogOnBack = true;
+                        }
+                    }).show();
+            return true;
+        }
+        return false;
+    }
 }
