@@ -248,10 +248,12 @@ public class AnalyticsThread extends HandlerThread implements
                     event.setRequestTimeFromStopTime(when);
                     Bundle extras = data.getBundle(EXTRAS_KEY);
                     if (extras != null) {
-                        event.is_success = data.getBoolean(KamcordAnalytics.SUCCESS_KEY);
-                        event.failure_reason = Event.UploadFailureReason.valueOf(data.getString(KamcordAnalytics.FAILURE_REASON_KEY));
-                        event.video_global_id = data.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
-                        event.was_replayed = data.getBoolean(KamcordAnalytics.WAS_REPLAYED_KEY, false);
+                        event.is_success = extras.getBoolean(KamcordAnalytics.SUCCESS_KEY, false);
+                        if( extras.containsKey(KamcordAnalytics.FAILURE_REASON_KEY) ) {
+                            event.failure_reason = Event.UploadFailureReason.valueOf(extras.getString(KamcordAnalytics.FAILURE_REASON_KEY));
+                        }
+                        event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
+                        event.was_replayed = extras.getBoolean(KamcordAnalytics.WAS_REPLAYED_KEY, false);
                     }
                     break;
                 case KAMCORD_APP_LAUNCH:
@@ -303,7 +305,7 @@ public class AnalyticsThread extends HandlerThread implements
 
     @Override
     public void onActivityStarted(Activity activity) {
-        handler.sendMessage(newMessage(activity, What.ACTIVITY_STARTED));
+        handler.sendMessage(newMessage(activity, What.ACTIVITY_STARTED, Event.Name.KAMCORD_APP_LAUNCH));
     }
 
     @Override
@@ -316,7 +318,7 @@ public class AnalyticsThread extends HandlerThread implements
 
     @Override
     public void onActivityStopped(Activity activity) {
-        handler.sendMessage(newMessage(activity, What.ACTIVITY_STOPPED));
+        handler.sendMessage(newMessage(activity, What.ACTIVITY_STOPPED, Event.Name.KAMCORD_APP_LAUNCH));
     }
 
     @Override

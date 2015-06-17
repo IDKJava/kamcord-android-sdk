@@ -204,9 +204,8 @@ public class Uploader extends Thread {
                 e.printStackTrace();
             }
 
-            if (genericResponse == null || genericResponse.response == null) {
-                // TODO: notify *someone* that were weren't able to reserve the video.
-                return;
+            if (genericResponse == null || genericResponse.status == null || !genericResponse.status.equals(StatusCode.OK) ) {
+                throw new Exception("Unable to reserve a video id!");
             }
 
             mServerVideoId = genericResponse.response.video_id;
