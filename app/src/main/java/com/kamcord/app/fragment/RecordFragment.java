@@ -118,7 +118,7 @@ public class RecordFragment extends Fragment implements
         myActivity.unbindService(recordingServiceConnection);
         if (myActivity instanceof RecordActivity) {
             ((RecordActivity) myActivity).setOnBackPressedListener(null);
-    }
+        }
     }
 
     @Override
