@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -222,9 +221,7 @@ public class ShareFragment extends Fragment {
             }
 
             recordingSession.setState(RecordingSession.State.SHARED);
-            String currentAppSessionId = KamcordAnalytics.getCurrentAppSessionId();
-            Log.v("FindMe", "setting current app_session_id on upload session to " + currentAppSessionId);
-            recordingSession.setShareAppSessionId(currentAppSessionId);
+            recordingSession.setShareAppSessionId(KamcordAnalytics.getCurrentAppSessionId());
             ActiveRecordingSessionManager.updateActiveSession(recordingSession);
 
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
