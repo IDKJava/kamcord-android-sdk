@@ -18,7 +18,8 @@ public class CacheTest extends RecordAndPostTestBase {
 
 
 
-    @Test
+    //@Test
+    //TODO: Enable when AA-40 is resolved.
     public void checkCacheNoMediaTest(){
         doLogin();
         //create short baseline
