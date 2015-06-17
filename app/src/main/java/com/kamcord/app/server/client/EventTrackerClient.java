@@ -13,10 +13,10 @@ import retrofit.http.POST;
  * Created by pplunkett on 6/15/15.
  */
 public class EventTrackerClient {
-    private static final String BASE_URL = BuildConfig.DEBUG ? "foo" : "https://curry.kamcord.com";
+    private static final String BASE_URL = "https://curry.kamcord.com";
 
     public interface EventTracker {
-        @POST("v1/trackevent")
+        @POST("/v1/trackevent")
         void trackEvent(@Body TrackEventEntity body, Callback<WrappedResponse<?>> cb);
     }
 

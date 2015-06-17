@@ -66,6 +66,9 @@ public class KamcordAnalytics {
             saveEventSet(UNSENT_EVENTS, unsentEvents);
         }
     }
+    static Set<Event> getUnsentEvents() {
+        return unsentEvents;
+    }
     static void clearUnsentEvents() {
         unsentEvents.clear();
         saveEventSet(UNSENT_EVENTS, unsentEvents);
