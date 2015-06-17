@@ -106,6 +106,10 @@
         <item quantity="one">%s Follower</item>
         <item quantity="other">%s Followers</item>
     </plurals>
+    <plurals name="videosWithCount">
+        <item quantity="one">%s Video</item>
+        <item quantity="other">%s Videos</item>
+    </plurals>
 
     <string name="alreadyRecording">Already Recording!</string>
     <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>
