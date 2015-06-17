@@ -3,6 +3,7 @@ package com.kamcord.app.testutils.testrules;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
+import static com.kamcord.app.testutils.SystemUtilities.clearSharedPreferences;
 import static com.kamcord.app.testutils.SystemUtilities.stopService;
 
 /**
@@ -18,6 +19,7 @@ public class FailureRule extends TestWatcher {
     protected void failed(Throwable e, Description description) {
         stopService(com.kamcord.app.service.RecordingService.class);
         stopService(com.kamcord.app.service.UploadService.class);
+        clearSharedPreferences();
         //stopActivity(com.kamcord.app.activity.LoginActivity.class);
         //stopActivity(com.kamcord.app.activity.ProfileVideoViewActivity.class);
         //stopActivity(com.kamcord.app.activity.RecordActivity.class);

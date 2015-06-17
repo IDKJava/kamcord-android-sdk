@@ -2,11 +2,14 @@ package com.kamcord.app.testutils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.uiautomator.By;
 import android.support.test.uiautomator.Until;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,6 +26,9 @@ public class SystemUtilities {
     public static final String KAMCORD_CACHE_FOLDER = "Kamcord_Android";
     public static final String NOMEDIA_TAG = ".nomedia";
     public static final String SDCARD_ROOT = "/sdcard/";
+    public static final String SHARED_PREF_ROOT = "/data/data/";
+    private static final String ACTIVE_SESSION_PREFS = "active_sessions_prefs";
+    private static final String ACTIVE_SESSIONS_KEY = "active_sessions";
 
     public static String executeShellCommand(String cmd) {
         try {
@@ -119,6 +125,14 @@ public class SystemUtilities {
             timeOutCtr++;
         }
         assertTrue("Network toggle timed out!", timeOutCtr < timeOut);
+    }
+
+    public static void clearSharedPreferences(){
+        String sharedAppPrefs = String.format("%s%s/shared_prefs/%s.xml",
+                SHARED_PREF_ROOT,
+                KAMCORD_APP_PACKAGE,
+                ACTIVE_SESSION_PREFS);
+        executeShellCommand(String.format("su -c rm %s",sharedAppPrefs));
     }
 
 }

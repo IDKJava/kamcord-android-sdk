@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
 import static com.kamcord.app.testutils.UiUtilities.*;
-import static com.kamcord.app.testutils.SystemUtilities.*;
 
 /**
  * Created by Mehmet on 5/29/15.
@@ -22,7 +21,8 @@ public class RecordingTests extends RecordAndPostTestBase {
         handleShareViewNotificationCheck(recordingDuration);
     }
 
-    @Test
+    //@Test
+    //TODO: enable after AA-40 is resolved.
     public void recordRippleTestNTimesLoggedIn() {
         doLogin();
         int N = 5;
@@ -30,6 +30,7 @@ public class RecordingTests extends RecordAndPostTestBase {
         for (int i = 0; i < N - 1; i++) {
             recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, recDuration);
             handleShareViewNotificationCheck(recDuration, true, false);
+            sleep(UI_TIMEOUT_MS);
         }
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, recDuration);
         handleShareViewNotificationCheck(recDuration, true, true);
@@ -102,7 +103,7 @@ public class RecordingTests extends RecordAndPostTestBase {
     public void recordRippleTestLoginFirstRetryUploadInterrupted() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
-        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.Interrupted);
+        handleShareFlowQueueCheck(RECORDING_DURATION_MS, UploadTestVariant.Interrupted);
 
 
     }
@@ -110,20 +111,20 @@ public class RecordingTests extends RecordAndPostTestBase {
     public void recordRippleTestLoginFirstRetryUploadNoNetwork() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
-        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.NoNetwork);
+        handleShareFlowQueueCheck(RECORDING_DURATION_MS, UploadTestVariant.NoNetwork);
     }
 
     @Test
     public void recordRippleTestLoginUploadCompleteFlowChecks() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
-        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.Normal);
+        handleShareFlowQueueCheck(RECORDING_DURATION_MS, UploadTestVariant.Normal);
     }
     @Test
     public void recordRippleTestLoginFirstRetryUploadDelete() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
-        handleShareViewQueueCheck(RECORDING_DURATION_MS, true, UploadTestVariant.Delete);
+        handleShareFlowQueueCheck(RECORDING_DURATION_MS, UploadTestVariant.Delete);
     }
 
 }

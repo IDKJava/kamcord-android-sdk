@@ -27,14 +27,14 @@ public class CacheTest extends RecordAndPostTestBase {
         //get baseline with short video
         //cacheSizeBefore is 1x video size. System cleans up before record.
         int cacheSizeBefore = getCacheSize();
+        sleep(UI_INTERACTION_DELAY_MS);
         mDevice.pressBack();
-
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
         findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
         //cacheSize  is 3x video size  by the same logic.
         int cacheSize = getCacheSize();
         //by the same logic
-        assertTrue("Cache didn't increase!", cacheSizeBefore < cacheSize );
+        assertTrue("Cache didn't increase!", cacheSizeBefore < cacheSize);
         assertTrue("Nomedia tag is missing!", isNoMediaTagPresent());
         mDevice.pressBack();
         //We need stitching to be over.

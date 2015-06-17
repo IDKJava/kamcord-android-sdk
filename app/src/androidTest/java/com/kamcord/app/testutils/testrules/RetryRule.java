@@ -39,7 +39,7 @@ public class RetryRule implements TestRule {
                     } catch (Throwable t) {
                         caughtThrowable = t;
                         System.err.println(String.format("%s run %d failed", description.getDisplayName(), (i + 1)));
-                        if(t instanceof NullPointerException){
+                        if(!(t instanceof AssertionError)){
                             throw t;
                         }
                     }

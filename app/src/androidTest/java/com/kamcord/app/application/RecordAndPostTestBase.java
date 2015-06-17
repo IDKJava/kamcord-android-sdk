@@ -44,87 +44,104 @@ public abstract class RecordAndPostTestBase extends TestBase {
                                    String gameTitle,
                                    int durationInMs,
                                    boolean pauseAfterGesture,
-                                   boolean doNotUseRecentAppsToSwitchToKamcord) {
-        mDevice.waitForIdle();
-        waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
-        //find ripples app logo and click
-        //wait for load!!!!
-        findGame(gameName);
+                                   boolean useRecentAppsToSwitchToKamcord) {
+            mDevice.waitForIdle();
+            waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
+            //find ripples app logo and click
+            //wait for load!!!!
+            findGame(gameName);
 
-        getStartRecordingButtonForGame(gameName).click();
-        UiObject2 obj =  findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS, false);
-        int clickTrials = 0;
-
-        while(obj == null && clickTrials < MAX_CLICK_TRIALS){
-            sleep(UI_INTERACTION_DELAY_MS);
             getStartRecordingButtonForGame(gameName).click();
-            obj = findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS);
-            clickTrials++;
-        }
-        obj.click();
-        //test app loads?
-        findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, UI_TIMEOUT_MS, false);
+            UiObject2 obj = findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS, false);
+            int clickTrials = 0;
 
-        //pattern exec time hardcoded for now.
-        int miniSleepInMs = 2000;
-        int sleepStep = durationInMs /  miniSleepInMs;
+            while (obj == null && clickTrials < MAX_CLICK_TRIALS) {
+                sleep(UI_INTERACTION_DELAY_MS);
+                getStartRecordingButtonForGame(gameName).click();
+                obj = findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS);
+                clickTrials++;
+            }
+            obj.click();
+            //test app loads?
+            findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, UI_TIMEOUT_MS, false);
 
-        for (int i = 0; i < sleepStep; i++) {
-            //long time = System.currentTimeMillis();
-            if ((i % 2) == 0){
-                executeRectPattern();
-                sleep(400);
-            } else {
-                if (pauseAfterGesture){
-                    //get running task list
-                    try {
-                        mDevice.pressRecentApps();
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                        assertFalse("Press recent apps failed!", true);
-                    }
-                    //check if it's recording
-                    mDevice.openNotification();
+            //pattern exec time hardcoded for now.
+            int miniSleepInMs = 2000;
+            int sleepStep = durationInMs / miniSleepInMs;
 
-                    //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
-
-                    findUiObj(R.string.paused, UiObjIdType.Str,  UiObjSelType.Txt, APP_TIMEOUT_MS);
-
-                    mDevice.pressBack();
-
-                    findUiObj(gameTitle, UiObjSelType.Txt, APP_TIMEOUT_MS).click();
-
-                    findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, APP_TIMEOUT_MS);
-
+            for (int i = 0; i < sleepStep; i++) {
+                //long time = System.currentTimeMillis();
+                if ((i % 2) == 0) {
+                    executeRectPattern();
+                    sleep(400);
                 } else {
-                    sleep(miniSleepInMs);
+                    if (pauseAfterGesture) {
+                        //get running task list
+                        try {
+                            mDevice.pressRecentApps();
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                            assertFalse("Press recent apps failed!", true);
+                        }
+                        //check if it's recording
+                        mDevice.openNotification();
+
+                        //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
+
+                        findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
+
+                        mDevice.pressBack();
+
+                        findUiObj(gameTitle, UiObjSelType.Txt, APP_TIMEOUT_MS).click();
+
+                        findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, APP_TIMEOUT_MS);
+
+                    } else {
+                        sleep(miniSleepInMs);
+                    }
                 }
+
             }
 
-        }
+            //get running task list
+            try {
+                mDevice.pressRecentApps();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                assertFalse("Press recent apps failed!", true);
+            }
+            //check if it's recording
+            mDevice.openNotification();
+            //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
-        //get running task list
-        try {
-            mDevice.pressRecentApps();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-            assertFalse("Press recent apps failed!", true);
-        }
-        //check if it's recording
-        mDevice.openNotification();
-        //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
+            findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
+            if (useRecentAppsToSwitchToKamcord) {
+                //closes notifications so we can pick from recent apps.
+                mDevice.pressBack();
+            }
+            //click on notification to resume app.
+            findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
+            sleep(UI_INTERACTION_DELAY_MS);
+            //find stop recording button.
+            UiObject2 stopButton = findUiObj(R.id.stopRecordingImageButton,
+                    UiObjIdType.Res,
+                    UiObjSelType.Res,
+                    UI_TIMEOUT_MS,
+                    false);
+            int reTries = 0;
+            while (reTries < MAX_CLICK_TRIALS && stopButton == null) {
+                stopButton = findUiObj(R.id.stopRecordingImageButton,
+                        UiObjIdType.Res,
+                        UiObjSelType.Res,
+                        UI_TIMEOUT_MS,
+                        false);
+                reTries++;
+            }
+            findUiObj(R.id.stopRecordingTakeoverContainer, UiObjIdType.Res, UiObjSelType.Res);
+            findUiObj(R.id.stopRecordingImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
+            findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
 
-        findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
-        if(!doNotUseRecentAppsToSwitchToKamcord){
-            //closes notifications so we can pick from recent apps.
-            mDevice.pressBack();
         }
-        //click on notification to resume app.
-        findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
-        //find stop recording button.
-        findUiObj(R.id.stopRecordingImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
-
-    }
 
     protected void handleShareViewNotificationCheck(int durationInMs) {
         handleShareViewNotificationCheck(durationInMs, true, true);
@@ -181,13 +198,11 @@ public abstract class RecordAndPostTestBase extends TestBase {
         findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des).click();
         findUiObj(R.string.recordAndShare, UiObjIdType.Str, UiObjSelType.Txt);
     }
-    protected void handleShareViewQueueCheck(int durationInMs,
-                                             boolean failIfNotLoggedIn) {
-        handleShareViewQueueCheck(durationInMs, failIfNotLoggedIn, UploadTestVariant.Normal);
+    protected void handleShareFlowQueueCheck(int durationInMs) {
+        handleShareFlowQueueCheck(durationInMs, UploadTestVariant.Normal);
     }
 
-    protected void handleShareViewQueueCheck(int durationInMs,
-                                             boolean failIfNotLoggedIn,
+    protected void handleShareFlowQueueCheck(int durationInMs,
                                              UploadTestVariant uploadTestType) {
         String videoTitle = UUID.randomUUID().toString();
         String currentlyUploading = getStrByID(R.string.currentlyUploadingPercent).split("\\(")[0];
@@ -234,8 +249,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
             case NoNetwork:
             case Delete:
                 //sleep(50);
-                findUiObj(R.string.uploadFailed, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
-                //check if it's recording, we seem not to be fast enough to check this.
+                findUiObj(R.string.uploadFailed,
+                        UiObjIdType.Str,
+                        UiObjSelType.Txt,
+                        DEFAULT_UPLOAD_TIMEOUT);
                 //turning on the Internets
                 toggleNetwork(true);
                 break;
@@ -244,11 +261,13 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 break;
             case Interrupted:
                 //let it start
-                findUiObj(currentlyUploading, UiObjSelType.TxtContains, APP_TIMEOUT_MS);
+                findUiObj(currentlyUploading, UiObjSelType.TxtContains, DEFAULT_UPLOAD_TIMEOUT);
                 //interrupt
                 toggleNetwork(false);
-                findUiObj(R.string.uploadFailed, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
-                //check if it's recording, we seem not to be fast enough to check this.
+                findUiObj(R.string.uploadFailed,
+                        UiObjIdType.Str,
+                        UiObjSelType.Txt,
+                        DEFAULT_UPLOAD_TIMEOUT);
                 //turning on the Internets
                 toggleNetwork(true);
                 break;
@@ -261,8 +280,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 //let it run.
             case Normal:
                 //Successful Completion Ending.
-                findUiObj(currentlyUploading, UiObjSelType.TxtContains, APP_TIMEOUT_MS);
-                //check if it's recording, we seem not to be fast enough to check this.
+                findUiObj(currentlyUploading, UiObjSelType.TxtContains, DEFAULT_UPLOAD_TIMEOUT);
                 mDevice.openNotification();
                 //We're not fast enough to check both before the upload finishes. :(
                 //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
