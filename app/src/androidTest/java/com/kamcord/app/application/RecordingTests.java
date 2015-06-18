@@ -76,7 +76,7 @@ public class RecordingTests extends RecordAndPostTestBase {
 
     //TODO: Enable after resolution of AA-23
     //Works on occasion, but not stable.
-    @Test
+    //@Test
     public void recordRippleTestLoginFirstSwitchWithNotificationClick() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME,
