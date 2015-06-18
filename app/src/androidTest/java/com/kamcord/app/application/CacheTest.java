@@ -46,7 +46,7 @@ public class CacheTest extends RecordAndPostTestBase {
         assertTrue("Nomedia tag is missing!", isNoMediaTagPresent());
         mDevice.pressBack();
         //We need stitching to be over.
-        assertTrue("Cache didn't reduce!", cacheSize < cacheSizeBefore * 4);
+        assertTrue("Cache didn't reduce!", cacheSize < cacheSizeBefore * sizeMultiplier);
 
     }
 

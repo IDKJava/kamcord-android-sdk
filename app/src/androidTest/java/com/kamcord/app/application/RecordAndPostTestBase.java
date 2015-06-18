@@ -198,7 +198,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         mDevice.waitForIdle(UI_TIMEOUT_MS);
         sleep(UI_TIMEOUT_MS);
         //We're not fast enough to check both before the upload finishes. :(
-        findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
+        //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
         findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
 
         if(waitForUpload) {
