@@ -29,6 +29,7 @@ import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoPreviewActivity;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.StitchClipsThread;
@@ -223,13 +224,13 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                 recordingSession.setShareSources(shareSourceHashMap);
             }
 
-            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
-
             recordingSession.setState(RecordingSession.State.SHARED);
+            recordingSession.setShareAppSessionId(KamcordAnalytics.getCurrentAppSessionId());
             ActiveRecordingSessionManager.updateActiveSession(recordingSession);
 
             KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
+            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
+            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
             getActivity().startService(uploadIntent);
             if (getActivity() instanceof  RecordActivity) {
                 ((RecordActivity) getActivity()).setCurrentItem(MainViewPagerAdapter.PROFILE_FRAGMENT_POSITION);
@@ -301,6 +302,9 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         Intent intent = new Intent(getActivity().getApplicationContext(), VideoPreviewActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+
+        recordingSession.setWasReplayed(true);
+        ActiveRecordingSessionManager.updateActiveSession(recordingSession);
     }
 
     private void videoPrepared(File videoFile) {
