@@ -18,6 +18,7 @@ import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
+import com.kamcord.app.view.DisableableViewPager;
 import com.kamcord.app.view.SlidingTabLayout;
 import com.kamcord.app.view.utils.OnBackPressedListener;
 
@@ -31,7 +32,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class RecordActivity extends AppCompatActivity implements
         Uploader.UploadStatusListener {
 
-    @InjectView(R.id.main_pager) ViewPager mViewPager;
+    @InjectView(R.id.main_pager) DisableableViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
     @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
 
@@ -124,7 +125,7 @@ public class RecordActivity extends AppCompatActivity implements
                 uploadProgress.setProgress(0);
             }
         });
-    }
+        }
     }
 
     @Override
@@ -143,7 +144,7 @@ public class RecordActivity extends AppCompatActivity implements
                 progressBarAnimator.start();
             }
         });
-    }
+        }
     }
 
     @Override
@@ -165,12 +166,16 @@ public class RecordActivity extends AppCompatActivity implements
                 }).start();
             }
         });
-    }
+        }
     }
 
     public void setCurrentItem(int i)
     {
         mViewPager.setCurrentItem(i);
+    }
+
+    public void setPagingEnabled(boolean enabled) {
+        mViewPager.setEnabled(enabled);
     }
 
     @Override

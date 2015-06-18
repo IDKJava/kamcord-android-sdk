@@ -199,6 +199,9 @@ public class RecordFragment extends Fragment implements
 
     private void handleServiceRunning() {
         stopRecordingTakeoverContainer.setVisibility(View.GONE);
+        if (getActivity() instanceof RecordActivity) {
+            ((RecordActivity) getActivity()).setPagingEnabled(true);
+        }
 
         if (recordingServiceConnection.isServiceRecording()) {
             final RecordingSession recordingSession = recordingServiceConnection.getRecordingSession();
@@ -212,6 +215,9 @@ public class RecordFragment extends Fragment implements
                 }
                 if (game != null) {
                     stopRecordingTakeoverContainer.setVisibility(View.VISIBLE);
+                    if (getActivity() instanceof RecordActivity) {
+                        ((RecordActivity) getActivity()).setPagingEnabled(false);
+                    }
 
                     if (game.icons != null && game.icons.regular != null) {
                         Picasso.with(getActivity())
@@ -258,6 +264,9 @@ public class RecordFragment extends Fragment implements
                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                 stopRecording();
                                                 stopRecordingTakeoverContainer.setVisibility(View.GONE);
+                                                if (getActivity() instanceof RecordActivity) {
+                                                    ((RecordActivity) getActivity()).setPagingEnabled(true);
+                                                }
                                             }
                                         })
                                         .show();
