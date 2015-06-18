@@ -22,7 +22,9 @@ public class CacheTest extends RecordAndPostTestBase {
     public void checkCacheNoMediaTest(){
         int recordindDuration1X = RECORDING_DURATION_MS;
         int recordindDuration3X = RECORDING_DURATION_MS * 3;
-        //int sizeMultiplier =
+        //magic number due to the removed 3 seconds from the beginning
+        //1st rec ~3 sec 2nd rec ~18sec
+        double sizeMultiplier =  6;
         doLogin();
         //create short baseline
         recordGameVideo(RIPPLE_TEST_APP_NAME, recordindDuration1X);
