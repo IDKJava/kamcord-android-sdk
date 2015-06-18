@@ -105,8 +105,10 @@ public class KamcordAnalytics {
     static Set<Event> getUnsentEvents() {
         return unsentEvents;
     }
-    static void clearUnsentEvents() {
-        unsentEvents.clear();
+    static void clearSentEvents(Set<Event> sentEvents) {
+        for( Event sentEvent : sentEvents ) {
+            unsentEvents.remove(sentEvent);
+        }
         saveEventSet(UNSENT_EVENTS, unsentEvents);
     }
     static int unsentEventCount() {

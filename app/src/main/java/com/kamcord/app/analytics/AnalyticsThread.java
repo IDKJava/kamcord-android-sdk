@@ -302,8 +302,13 @@ public class AnalyticsThread extends HandlerThread implements
             if (wrappedResponse == null || wrappedResponse.status_code != WrappedResponse.StatusCode.OK) {
                 handler.sendMessage(newMessage(events, What.RESTORE_AFTER_FAILED_SEND));
             } else {
-                KamcordAnalytics.clearUnsentEvents();
-                KamcordAnalytics.setLastSendTime(System.currentTimeMillis());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        KamcordAnalytics.clearSentEvents(events);
+                        KamcordAnalytics.setLastSendTime(System.currentTimeMillis());
+                    }
+                });
             }
             sendingEvents = false;
         }
