@@ -161,9 +161,11 @@ public class AnalyticsThread extends HandlerThread implements
             KamcordAnalytics.addUnsentEvent(new Event(Event.Name.FIRST_KAMCORD_APP_LAUNCH, whenMs, appSessionId));
         }
 
-        if ((System.currentTimeMillis() - KamcordAnalytics.getLastSendTime() > SEND_EVERY_MS
-                || KamcordAnalytics.unsentEventCount() > MAX_UNSENT_EVENTS
-                || appForegrounded || appBackgrounded)
+        // Only send if we're foregrounding or backgrounding and we haven't sent in some time
+        // OR there are a lot of unsent events.
+        // AND only if we're not in the middle of sending events and there are events to actually send.
+        if ( (((appForegrounded || appBackgrounded) && System.currentTimeMillis() - KamcordAnalytics.getLastSendTime() > SEND_EVERY_MS)
+                || KamcordAnalytics.unsentEventCount() > MAX_UNSENT_EVENTS)
                 && !sendingEvents && KamcordAnalytics.unsentEventCount() > 0) {
             sendEvents();
         }
