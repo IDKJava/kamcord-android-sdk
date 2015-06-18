@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context="com.kamcord.app.activity.RecordActivity">
 
-    <android.support.v4.view.ViewPager
+    <com.kamcord.app.view.DisableableViewPager
         android:id="@+id/main_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
