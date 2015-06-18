@@ -47,6 +47,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                                        boolean useNotificationsToSwitchToKamcord,
                                        boolean shortVideo) {
             mDevice.waitForIdle(UI_TIMEOUT_MS);
+            sleep(UI_TIMEOUT_MS);
             waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
             //find ripples app logo and click
             //wait for load!!!!
@@ -88,12 +89,14 @@ public abstract class RecordAndPostTestBase extends TestBase {
                         //check if it's recording
                         mDevice.openNotification();
                         mDevice.waitForIdle(UI_TIMEOUT_MS);
+                        sleep(UI_TIMEOUT_MS);
                         //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
                         findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
 
                         mDevice.pressBack();
                         mDevice.waitForIdle(UI_TIMEOUT_MS);
+                        sleep(UI_TIMEOUT_MS);
                         findUiObj(gameTitle, UiObjSelType.Txt, APP_TIMEOUT_MS).click();
 
                         findUiObj(RIPPLE_TEST_MAIN_RES, UiObjSelType.Res, APP_TIMEOUT_MS);
@@ -115,6 +118,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
             //check if it's recording
             mDevice.openNotification();
             mDevice.waitForIdle(UI_TIMEOUT_MS);
+            sleep(UI_TIMEOUT_MS);
             //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
             findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
@@ -122,11 +126,12 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 //closes notifications so we can pick from recent apps.
                 mDevice.pressBack();
                 mDevice.waitForIdle(UI_TIMEOUT_MS);
+                sleep(UI_TIMEOUT_MS);
             }
 
             //click on notification to resume app.
             findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
-            sleep(UI_INTERACTION_DELAY_MS);
+            sleep(UI_TIMEOUT_MS);
             //find stop recording button.
             UiObject2 stopButton = findUiObj(R.id.stopRecordingImageButton,
                     UiObjIdType.Res,
@@ -166,7 +171,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //TODO: Adjust the "1" divider to something reasonable as stitching perf. improves.
         int processingTimeout = Math.max((durationInMs / 1), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
         int uploadTimeout = Math.max((durationInMs / 1), DEFAULT_UPLOAD_TIMEOUT);
-        mDevice.waitForIdle(UI_TIMEOUT_MS);
+
         findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, processingTimeout);
 
         UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);
@@ -176,6 +181,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //close soft keyboard
         mDevice.pressBack();
         mDevice.waitForIdle(UI_TIMEOUT_MS);
+        sleep(UI_TIMEOUT_MS);
         findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
 
 
@@ -187,9 +193,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
             findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
         }
 
-        //check if it's recording, we seem not to be fast enough to check this.
+        //check if it's uploading, we seem not to be fast enough to check this.
         mDevice.openNotification();
         mDevice.waitForIdle(UI_TIMEOUT_MS);
+        sleep(UI_TIMEOUT_MS);
         //We're not fast enough to check both before the upload finishes. :(
         findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
         findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
@@ -200,6 +207,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //close notifications
         mDevice.pressBack();
         mDevice.waitForIdle(UI_TIMEOUT_MS);
+        sleep(UI_TIMEOUT_MS);
         //check if profile page works.
 
         findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
@@ -219,7 +227,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //TODO: Adjust the "1" divider to something reasonable as stitching perf. improves.
         int processingTimeout = Math.max((durationInMs / 1), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
         int uploadTimeout = Math.max((durationInMs / 1), DEFAULT_UPLOAD_TIMEOUT);
-        mDevice.waitForIdle(UI_TIMEOUT_MS);
+
         findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, processingTimeout);
 
         UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);
@@ -231,6 +239,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //close soft keyboard
         mDevice.pressBack();
         mDevice.waitForIdle(UI_TIMEOUT_MS);
+        sleep(UI_TIMEOUT_MS);
         UiObject2 procVidObj;
         int maxReTries;
         int reTries;
@@ -293,11 +302,13 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 findUiObj(currentlyUploading, UiObjSelType.TxtContains, DEFAULT_UPLOAD_TIMEOUT);
                 mDevice.openNotification();
                 mDevice.waitForIdle(UI_TIMEOUT_MS);
+                sleep(UI_TIMEOUT_MS);
                 //We're not fast enough to check both before the upload finishes. :(
                 //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
                 findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
                 mDevice.pressBack();
                 mDevice.waitForIdle(UI_TIMEOUT_MS);
+                sleep(UI_TIMEOUT_MS);
                 //go to profile
                 findUiObj(R.string.processingPullToRefresh,
                         UiObjIdType.Str,
