@@ -47,6 +47,7 @@ public class UiUtilities {
     public static final String RIPPLE_TEST_MAIN_RES = "com.kamcord.ripples:id/mainlayout";
     public static final String ANDROID_DISMISS_TASK = "com.android.systemui:id/dismiss_task";
     public static final String ANDROID_SYSTEM_BUTTON1 = "android:id/button1";
+    public static final String ANDROID_SYSTEM_BUTTON3 = "android:id/button3";
     public static final String ANDROID_SETTINGS_L_BUTTON = "com.android.settings:id/left_button";
     public static final String ANDROID_NOTIFICATION_HEADER = "com.android.systemui:id/header";
     public static final String ANDROID_APP_ICON  = "com.android.systemui:id/application_icon";
@@ -186,7 +187,7 @@ public class UiUtilities {
         BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = mDevice.wait(Until.gone(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut);
+        assertTrue("UI Object failed to disappear!", notTimedOut);
     }
 
     public static UiObject2 findUiObj(String text, UiObjSelType selType) {
@@ -290,7 +291,7 @@ public class UiUtilities {
                     = new UiScrollable(new UiSelector()
                     .resourceId(getResByID(id)));
 
-            assertTrue("Not scrollable!", scrollableObject.isScrollable());
+            //assertTrue("Not scrollable!", scrollableObject.isScrollable());
 
             //larger number for max swipes.
             scrollableObject.flingToBeginning(100);
