@@ -1,11 +1,14 @@
 package com.kamcord.app.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.gson.Gson;
 import com.kamcord.app.server.model.Account;
 
@@ -115,6 +118,8 @@ public class AccountManager {
     public static class YouTube {
         private static final String YOUTUBE_NAME_KEY = "youtube_name";
         private static final String YOUTUBE_TYPE_KEY = "youtube_type";
+        private static final String YOUTUBE_AUTH_CODE_KEY = "youtube_auth_code";
+
         public static android.accounts.Account getStoredAccount() {
             android.accounts.Account youTubeAccount = null;
             if( preferences.contains(YOUTUBE_NAME_KEY) && preferences.contains(YOUTUBE_TYPE_KEY) ) {
@@ -140,14 +145,44 @@ public class AccountManager {
                     .commit();
         }
 
-        public static String getAuthorizationCode(Context context) throws GoogleAuthException, IOException {
+        public static String getStoredAuthorizationCode() {
             String auth_code = null;
-            android.accounts.Account youTubeAccount = YouTube.getStoredAccount();
-            if (youTubeAccount != null) {
-                auth_code = GoogleAuthUtil.getToken(context, youTubeAccount,
-                        "oauth2:server:client_id:1003397135098-vhs5iocngq6re8mrd30id78rffuq31dt.apps.googleusercontent.com:api_scope:https://gdata.youtube.com https://www.googleapis.com/auth/userinfo.profile");
+
+            if (YouTube.getStoredAccount() != null && preferences.contains(YOUTUBE_AUTH_CODE_KEY)) {
+                auth_code = preferences.getString(YOUTUBE_AUTH_CODE_KEY, null);
             }
+
             return auth_code;
+        }
+
+        public static void fetchAuthorizationCode(final Activity activity, final int requestCode) {
+            final android.accounts.Account youTubeAccount = YouTube.getStoredAccount();
+            if (youTubeAccount != null) {
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        try {
+                            String auth_code = GoogleAuthUtil.getToken(activity.getApplicationContext(), youTubeAccount,
+                                    "oauth2:server:client_id:"
+                                            + "1003397135098-vhs5iocngq6re8mrd30id78rffuq31dt.apps.googleusercontent.com:"
+                                            + "api_scope:https://gdata.youtube.com https://www.googleapis.com/auth/userinfo.profile");
+                            preferences.edit()
+                                    .putString(YOUTUBE_AUTH_CODE_KEY, auth_code)
+                                    .commit();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (UserRecoverableAuthException e) {
+                            if( requestCode >= 0 ) {
+                                activity.startActivityForResult(e.getIntent(), requestCode);
+                            }
+                        } catch (GoogleAuthException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                }.execute();
+
+            }
         }
     }
 }
