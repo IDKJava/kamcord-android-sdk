@@ -56,6 +56,8 @@ public class RecordingTests extends RecordAndPostTestBase {
     public void recordRippleTestLoginFirstShort() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, 1000, false, false, true);
+        //hit the delete button
+        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS).click();
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
@@ -63,7 +65,9 @@ public class RecordingTests extends RecordAndPostTestBase {
     public void recordRippleTestSkipLoginShort() {
         skipLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, 1000, false, false, true);
-        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res).click();
+        //hit the delete button
+        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS).click();
+        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
     @Test

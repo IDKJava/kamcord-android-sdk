@@ -36,6 +36,8 @@ public class CacheTest extends RecordAndPostTestBase {
         int cacheSizeBefore = getCacheSize();
 
         mDevice.pressBack();
+        //hit the delete button
+        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS).click();
         recordGameVideo(RIPPLE_TEST_APP_NAME, recordindDuration3X);
         findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, recordindDuration3X);
         //cacheSize  is 3x video size  by the same logic.
