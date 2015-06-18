@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.gson.Gson;
 import com.kamcord.app.server.model.Account;
 
+import java.io.IOException;
 import java.util.HashSet;
 
 /**
@@ -106,6 +109,45 @@ public class AccountManager {
                 currentLoginState = isLoggedIn();
                 notifyLoginStateChanged(currentLoginState);
             }
+        }
+    }
+
+    public static class YouTube {
+        private static final String YOUTUBE_NAME_KEY = "youtube_name";
+        private static final String YOUTUBE_TYPE_KEY = "youtube_type";
+        public static android.accounts.Account getStoredAccount() {
+            android.accounts.Account youTubeAccount = null;
+            if( preferences.contains(YOUTUBE_NAME_KEY) && preferences.contains(YOUTUBE_TYPE_KEY) ) {
+                youTubeAccount = new android.accounts.Account(
+                        preferences.getString(YOUTUBE_NAME_KEY, null),
+                        preferences.getString(YOUTUBE_TYPE_KEY, null)
+                );
+            }
+            return youTubeAccount;
+        }
+
+        public static void setStoredAccount(android.accounts.Account youTubeAccount) {
+            preferences.edit()
+                    .putString(YOUTUBE_NAME_KEY, youTubeAccount.name)
+                    .putString(YOUTUBE_TYPE_KEY, youTubeAccount.type)
+                    .commit();
+        }
+
+        public static void clearStoredAccount() {
+            preferences.edit()
+                    .remove(YOUTUBE_NAME_KEY)
+                    .remove(YOUTUBE_TYPE_KEY)
+                    .commit();
+        }
+
+        public static String getAuthorizationCode(Context context) throws GoogleAuthException, IOException {
+            String auth_code = null;
+            android.accounts.Account youTubeAccount = YouTube.getStoredAccount();
+            if (youTubeAccount != null) {
+                auth_code = GoogleAuthUtil.getToken(context, youTubeAccount,
+                        "oauth2:server:client_id:1003397135098-vhs5iocngq6re8mrd30id78rffuq31dt.apps.googleusercontent.com:api_scope:https://gdata.youtube.com https://www.googleapis.com/auth/userinfo.profile");
+            }
+            return auth_code;
         }
     }
 }

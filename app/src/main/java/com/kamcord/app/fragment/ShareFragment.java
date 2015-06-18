@@ -24,6 +24,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.GoogleAuthException;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
@@ -49,6 +50,7 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -255,11 +257,26 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
     @OnClick({R.id.share_twitterbutton, R.id.share_youtubebutton})
     public void onClick(FrameLayout button) {
+
+        if( button.isActivated() ) {
+            button.setActivated(false);
+            shareSourceHashMap.put(button.getId(), false);
+
+        } else {
+            if( isLoggedInToExternalNetwork(button.getId()) ) {
+                button.setActivated(true);
+                shareSourceHashMap.put(button.getId(), true);
+
+            } else {
+
+            }
+        }
         switch (button.getId()) {
             case R.id.share_twitterbutton: {
                 if (button.isActivated()) {
                     button.setActivated(false);
                 } else {
+
                     TwitterSession twitterSession = Twitter.getSessionManager().getActiveSession();
                     if (twitterSession != null) {
                         shareSourceHashMap.put(shareSourceButtonViews.get(TWITTER_INDEX).getId(), true);
@@ -275,6 +292,40 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
             case R.id.share_youtubebutton: {
                 break;
             }
+        }
+    }
+
+    private boolean isLoggedInToExternalNetwork(int networkId) {
+        boolean isLoggedIn = false;
+
+        switch( networkId ) {
+            case R.id.share_twitterbutton:
+                isLoggedIn = Twitter.getSessionManager().getActiveSession() != null;
+                break;
+
+            case R.id.share_youtubebutton:
+                try {
+                    isLoggedIn = AccountManager.YouTube.getAuthorizationCode(getActivity().getApplicationContext()) != null;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (GoogleAuthException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+
+        return isLoggedIn;
+    }
+
+    private void logInToExternalNetwork(int networkId) {
+        switch( networkId ) {
+            case R.id.share_twitterbutton:
+
+                break;
+
+            case R.id.share_youtubebutton:
+
+                break;
         }
     }
 
