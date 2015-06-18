@@ -286,7 +286,8 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                 break;
 
             case R.id.share_youtubebutton:
-                isLoggedIn = AccountManager.YouTube.getStoredAuthorizationCode() != null;
+                isLoggedIn = AccountManager.YouTube.getStoredAuthorizationCode() != null
+                        && AccountManager.YouTube.getStoredRefreshToken() != null;
                 break;
         }
 

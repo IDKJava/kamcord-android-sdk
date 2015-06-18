@@ -17,6 +17,7 @@ public class VideoUploadedEntity {
         public String title;
         public String access_token;
         public String refresh_token;
+        public String authorization_code;
     }
 
     public enum ShareSource

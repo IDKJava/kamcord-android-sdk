@@ -12,8 +12,20 @@ import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.gson.Gson;
 import com.kamcord.app.server.model.Account;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashSet;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by pplunkett on 5/13/15.
@@ -119,6 +131,8 @@ public class AccountManager {
         private static final String YOUTUBE_NAME_KEY = "youtube_name";
         private static final String YOUTUBE_TYPE_KEY = "youtube_type";
         private static final String YOUTUBE_AUTH_CODE_KEY = "youtube_auth_code";
+        private static final String YOUTUBE_ACCESS_TOKEN_KEY = "youtube_access_token";
+        private static final String YOUTUBE_REFRESH_TOKEN_KEY = "youtube_refresh_token";
 
         public static android.accounts.Account getStoredAccount() {
             android.accounts.Account youTubeAccount = null;
@@ -155,28 +169,127 @@ public class AccountManager {
             return auth_code;
         }
 
+        public static String getStoredAccessToken() {
+            return preferences.getString(YOUTUBE_ACCESS_TOKEN_KEY, null);
+        }
+
+        public static String getStoredRefreshToken() {
+            return preferences.getString(YOUTUBE_REFRESH_TOKEN_KEY, null);
+        }
+
+        private static final String CLIENT_ID = "1003397135098-vhs5iocngq6re8mrd30id78rffuq31dt.apps.googleusercontent.com";
+        private static final String CLIENT_SECRET = "6SonhMps5tW_e3VYrZekh76S"; // TODO: We really shouldn't be storing this on the client...
         public static void fetchAuthorizationCode(final Activity activity, final int requestCode) {
             final android.accounts.Account youTubeAccount = YouTube.getStoredAccount();
             if (youTubeAccount != null) {
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
+                        String auth_code = null;
+                        boolean errored = false;
+
                         try {
-                            String auth_code = GoogleAuthUtil.getToken(activity.getApplicationContext(), youTubeAccount,
+                            auth_code = GoogleAuthUtil.getToken(activity.getApplicationContext(), youTubeAccount,
                                     "oauth2:server:client_id:"
-                                            + "1003397135098-vhs5iocngq6re8mrd30id78rffuq31dt.apps.googleusercontent.com:"
+                                            + CLIENT_ID + ":"
                                             + "api_scope:https://gdata.youtube.com https://www.googleapis.com/auth/userinfo.profile");
                             preferences.edit()
                                     .putString(YOUTUBE_AUTH_CODE_KEY, auth_code)
                                     .commit();
+
+                            // TODO: Ideally, we'd just stop here and send the authorization code to server only,
+                            // but for now, we're just going to get the tokens ourselves.
+                            URL url = new URL("https://accounts.google.com/o/oauth2/token");
+                            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+                            conn.setReadTimeout(10000);
+                            conn.setConnectTimeout(15000);
+                            conn.setRequestMethod("POST");
+                            conn.setDoInput(true);
+                            conn.setDoOutput(true);
+
+                            String[] names = new String[]{
+                                    "grant_type",
+                                    "code",
+                                    "client_id",
+                                    "client_secret"};
+                            String[] values = new String[]{
+                                    "authorization_code",
+                                    auth_code,
+                                    CLIENT_ID,
+                                    CLIENT_SECRET};
+
+                            StringBuilder queryBuilder = new StringBuilder();
+                            for( int i=0; i<names.length; i++ ) {
+                                if( i > 0 ) {
+                                    queryBuilder.append("&");
+                                }
+                                queryBuilder.append(URLEncoder.encode(names[i], "UTF-8"))
+                                        .append("=")
+                                        .append(URLEncoder.encode(values[i], "UTF-8"));
+                            }
+
+                            OutputStream os = conn.getOutputStream();
+                            BufferedWriter writer = new BufferedWriter(
+                                    new OutputStreamWriter(os, "UTF-8"));
+                            writer.write(queryBuilder.toString());
+                            writer.flush();
+                            writer.close();
+                            os.close();
+
+                            conn.connect();
+                            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                            StringBuilder sb = new StringBuilder();
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                sb.append(line).append("\n");
+                            }
+                            br.close();
+                            String responseString = sb.toString();
+
+                            int responseCode = conn.getResponseCode();
+                            if( responseCode == 200 || responseCode == 201 ) {
+
+                                JSONObject jsonResponse = new JSONObject(responseString);
+                                if( jsonResponse.has("access_token") && jsonResponse.has("refresh_token") ) {
+                                    String accessToken = jsonResponse.getString("access_token");
+                                    String refreshToken = jsonResponse.getString("refresh_token");
+                                    preferences.edit()
+                                            .putString(YOUTUBE_ACCESS_TOKEN_KEY, accessToken)
+                                            .putString(YOUTUBE_REFRESH_TOKEN_KEY, refreshToken)
+                                            .commit();
+                                } else {
+                                    errored = true;
+                                }
+
+                            } else {
+                                Log.e("Kamcord", "Non-200 when attempting to fetch tokens!");
+                                Log.e("Kamcord", "Message: " + responseString);
+                                errored = true;
+                            }
+
                         } catch (IOException e) {
                             e.printStackTrace();
+                            errored = true;
                         } catch (UserRecoverableAuthException e) {
                             if( requestCode >= 0 ) {
                                 activity.startActivityForResult(e.getIntent(), requestCode);
                             }
                         } catch (GoogleAuthException e) {
                             e.printStackTrace();
+                            errored = true;
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            errored = true;
+                        } catch( Exception e ) {
+                            e.printStackTrace();
+                        }
+
+                        // If anything goes wrong, we clear the authorization so the user can try again next time.
+                        if( errored && auth_code != null ) {
+                            try {
+                                GoogleAuthUtil.clearToken(activity.getApplicationContext(), auth_code);
+                            } catch( Exception e ) {
+                            }
                         }
                         return null;
                     }

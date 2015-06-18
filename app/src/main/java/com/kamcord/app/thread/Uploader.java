@@ -73,7 +73,6 @@ public class Uploader extends Thread {
     }
 
     private RecordingSession mRecordingSession;
-    private VideoUploadedEntity.Share share;
     private HashMap<Integer, Boolean> mShareSourceHashMap;
 
     private int mTotalParts = 0;
@@ -439,6 +438,7 @@ public class Uploader extends Thread {
         videoUploadedEntityBuilder.setVideoId(mServerVideoId);
 
         if( mShareSourceHashMap != null ) {
+            VideoUploadedEntity.Share share;
             for (Map.Entry<Integer, Boolean> entry : mShareSourceHashMap.entrySet()) {
                 if (entry.getKey() == R.id.share_twitterbutton && entry.getValue() == true) {
                     TwitterSession session = Twitter.getSessionManager().getActiveSession();
@@ -463,6 +463,20 @@ public class Uploader extends Thread {
                                 });
                     } else {
                         Log.v(TAG, "Twitter session was null!");
+                    }
+                }
+
+                if( entry.getKey() == R.id.share_youtubebutton && entry.getValue() ) {
+                    String accessToken = AccountManager.YouTube.getStoredAccessToken();
+                    String refreshToken = AccountManager.YouTube.getStoredRefreshToken();
+                    if (accessToken != null && refreshToken != null) {
+                        share = new VideoUploadedEntity.Share();
+                        share.source = VideoUploadedEntity.ShareSource.YOUTUBE;
+                        share.access_token = accessToken;
+                        share.refresh_token = refreshToken;
+                        share.title = mRecordingSession.getVideoTitle();
+                        share.description = "Recorded by Kamcord on Android";
+                        videoUploadedEntityBuilder.addShare(share);
                     }
                 }
             }
