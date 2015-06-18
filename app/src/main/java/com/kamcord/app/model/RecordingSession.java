@@ -31,6 +31,9 @@ public class RecordingSession {
     private String globalId = null;
     private HashMap<Integer, Boolean> shareSources = null;
 
+    private boolean wasReplayed = false;
+    private String shareAppSessionId = null;
+
     private transient boolean recordedFrames = false;
     private transient float uploadProgress = -1f;
     private transient long durationUs = 0;
@@ -125,6 +128,20 @@ public class RecordingSession {
 
     public void setShareSources(HashMap<Integer, Boolean> shareSources) {
         this.shareSources = shareSources;
+    }
+
+    public boolean wasReplayed() {
+        return wasReplayed;
+    }
+    public void setWasReplayed(boolean wasReplayed) {
+        this.wasReplayed = wasReplayed;
+    }
+
+    public String getShareAppSessionId() {
+        return shareAppSessionId;
+    }
+    public void setShareAppSessionId(String shareAppSessionId) {
+        this.shareAppSessionId = shareAppSessionId;
     }
 
     @Override

@@ -38,7 +38,7 @@ import com.kamcord.app.testutils.testrules.RetryRule;
 public abstract class TestBase {
 
     @Rule
-    public RetryRule mTestRetryRule = new RetryRule(3);
+    public RetryRule mTestRetryRule = new RetryRule(5);
     @Rule
     public FailureRule mTestFailureRule = new FailureRule();
 
@@ -177,6 +177,7 @@ public abstract class TestBase {
 
             //larger number for max swipes.
             gameTiles.flingToBeginning(100);
+            mDevice.waitForIdle(UI_TIMEOUT_MS);
             sleep(UI_INTERACTION_DELAY_MS);
             waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 

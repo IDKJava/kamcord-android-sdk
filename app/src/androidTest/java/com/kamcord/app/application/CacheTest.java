@@ -18,28 +18,37 @@ public class CacheTest extends RecordAndPostTestBase {
 
 
 
-    //@Test
-    //TODO: Enable when AA-40 is resolved.
+    @Test
     public void checkCacheNoMediaTest(){
+        int recordindDuration1X = RECORDING_DURATION_MS;
+        int recordindDuration3X = RECORDING_DURATION_MS * 3;
+        //magic number due to the removed 3 seconds from the beginning
+        //1st rec ~3 sec 2nd rec ~18sec
+        double sizeMultiplier =  6;
         doLogin();
         //create short baseline
-        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
-        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
+        recordGameVideo(RIPPLE_TEST_APP_NAME, recordindDuration1X);
+        findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, recordindDuration1X);
         //get baseline with short video
         //cacheSizeBefore is 1x video size. System cleans up before record.
-        int cacheSizeBefore = getCacheSize();
+
         sleep(UI_INTERACTION_DELAY_MS);
+        int cacheSizeBefore = getCacheSize();
+
         mDevice.pressBack();
-        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
-        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
+        //hit the delete button
+        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS).click();
+        recordGameVideo(RIPPLE_TEST_APP_NAME, recordindDuration3X);
+        findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, recordindDuration3X);
         //cacheSize  is 3x video size  by the same logic.
+        sleep(UI_INTERACTION_DELAY_MS);
         int cacheSize = getCacheSize();
         //by the same logic
         assertTrue("Cache didn't increase!", cacheSizeBefore < cacheSize);
         assertTrue("Nomedia tag is missing!", isNoMediaTagPresent());
         mDevice.pressBack();
         //We need stitching to be over.
-        assertTrue("Cache didn't reduce!", cacheSize < cacheSizeBefore * 4);
+        assertTrue("Cache didn't reduce!", cacheSize < cacheSizeBefore * sizeMultiplier);
 
     }
 
