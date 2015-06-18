@@ -138,32 +138,49 @@
                 android:layout_marginLeft="@dimen/card_margin"
                 android:layout_marginRight="@dimen/card_margin"
                 android:layout_marginTop="@dimen/card_margin"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@drawable/external_share_group_background">
 
-
-                <Button
+                <FrameLayout
                     android:id="@+id/share_youtubebutton"
                     style="@style/ExternalShareButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/shareButtonHeight"
-                    android:layout_marginRight="@dimen/button_gap"
-                    android:layout_weight="1"
-                    android:background="@color/ColorPrimary"
-                    android:drawableLeft="@drawable/button_youtube_selector"
-                    android:text="@string/youtubeShare"
-                    android:textColor="@color/button_youtube_text" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/shareButtonHeight"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:drawableStart="@drawable/button_youtube_selector"
+                        android:drawablePadding="8dp"
+                        android:text="@string/youtubeShare"
+                        android:textColor="@color/button_youtube_text"/>
+                </FrameLayout>
 
-                <Button
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/ColorPrimaryDark"
+                    android:visibility="gone"/>  <!-- We'll be back when we're ready to do this. -->
+
+                <FrameLayout
                     android:id="@+id/share_twitterbutton"
                     style="@style/ExternalShareButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/shareButtonHeight"
-                    android:layout_marginLeft="@dimen/button_gap"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:background="@color/ColorPrimary"
-                    android:drawableStart="@drawable/button_twitter_selector"
-                    android:text="@string/twitterShare"
-                    android:textColor="@color/button_twitter_text" />
+                    android:visibility="gone"> <!-- We'll be back when we're ready to do this. -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/shareButtonHeight"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:drawableStart="@drawable/button_twitter_selector"
+                        android:drawablePadding="8dp"
+                        android:text="@string/twitterShare"
+                        android:textColor="@color/button_twitter_text" />
+                </FrameLayout>
 
                 <com.twitter.sdk.android.core.identity.TwitterLoginButton
                     android:id="@+id/twitterLoginButton"

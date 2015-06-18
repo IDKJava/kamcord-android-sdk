@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -83,7 +84,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     @InjectView(R.id.share_button)
     Button shareButton;
     @InjectViews({R.id.share_twitterbutton, R.id.share_youtubebutton})
-    List<Button> shareSourceButtonViews;
+    List<FrameLayout> shareSourceButtonViews;
     @InjectView(R.id.twitterLoginButton)
     TwitterLoginButton twitterLoginButton;
 
@@ -253,19 +254,19 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     }
 
     @OnClick({R.id.share_twitterbutton, R.id.share_youtubebutton})
-    public void onClick(Button button) {
+    public void onClick(FrameLayout button) {
         switch (button.getId()) {
             case R.id.share_twitterbutton: {
-                if (button.isSelected()) {
-                    button.setSelected(false);
+                if (button.isActivated()) {
+                    button.setActivated(false);
                 } else {
                     TwitterSession twitterSession = Twitter.getSessionManager().getActiveSession();
                     if (twitterSession != null) {
                         shareSourceHashMap.put(shareSourceButtonViews.get(TWITTER_INDEX).getId(), true);
-                        button.setSelected(true);
+                        button.setActivated(true);
                     } else {
                         shareSourceHashMap.put(shareSourceButtonViews.get(TWITTER_INDEX).getId(), false);
-                        button.setSelected(false);
+                        button.setActivated(false);
                         twitterLoginButton.callOnClick();
                     }
                 }
@@ -278,7 +279,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     }
 
     public void initShareSourceHashMap() {
-        for (Button shareSourceButton : shareSourceButtonViews) {
+        for (FrameLayout shareSourceButton : shareSourceButtonViews) {
             shareSourceHashMap.put(shareSourceButton.getId(), false);
         }
     }

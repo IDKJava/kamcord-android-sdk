@@ -86,7 +86,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         super.onDestroyView();
         ButterKnife.reset(this);
         AccountManager.removeListener(this);
-        }
+    }
 
     @Override
     public void onResume() {
