@@ -1,7 +1,6 @@
 package com.kamcord.app.fragment;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +16,7 @@ import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
@@ -118,7 +117,7 @@ public class RecordFragment extends Fragment implements
         myActivity.unbindService(recordingServiceConnection);
         if (myActivity instanceof RecordActivity) {
             ((RecordActivity) myActivity).setOnBackPressedListener(null);
-    }
+        }
     }
 
     @Override
@@ -200,6 +199,9 @@ public class RecordFragment extends Fragment implements
 
     private void handleServiceRunning() {
         stopRecordingTakeoverContainer.setVisibility(View.GONE);
+        if (getActivity() instanceof RecordActivity) {
+            ((RecordActivity) getActivity()).setPagingEnabled(true);
+        }
 
         if (recordingServiceConnection.isServiceRecording()) {
             final RecordingSession recordingSession = recordingServiceConnection.getRecordingSession();
@@ -213,6 +215,9 @@ public class RecordFragment extends Fragment implements
                 }
                 if (game != null) {
                     stopRecordingTakeoverContainer.setVisibility(View.VISIBLE);
+                    if (getActivity() instanceof RecordActivity) {
+                        ((RecordActivity) getActivity()).setPagingEnabled(false);
+                    }
 
                     if (game.icons != null && game.icons.regular != null) {
                         Picasso.with(getActivity())
@@ -259,6 +264,9 @@ public class RecordFragment extends Fragment implements
                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                 stopRecording();
                                                 stopRecordingTakeoverContainer.setVisibility(View.GONE);
+                                                if (getActivity() instanceof RecordActivity) {
+                                                    ((RecordActivity) getActivity()).setPagingEnabled(true);
+                                                }
                                             }
                                         })
                                         .show();
@@ -290,17 +298,10 @@ public class RecordFragment extends Fragment implements
         return appIsInstalled;
     }
 
-    private Toast startRecordingToast = null;
-
     @Override
-    public void onBackPressed() {
+    public boolean onBackPressed() {
         handleServiceRunning();
-    }
-
-    public interface RecyclerViewScrollListener {
-        void onRecyclerViewScrollStateChanged(RecyclerView recyclerView, int state);
-
-        void onRecyclerViewScrolled(RecyclerView recyclerView, int dx, int dy);
+        return false;
     }
 
     public void obtainMediaProjection() {

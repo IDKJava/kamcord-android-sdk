@@ -20,8 +20,8 @@ public class GameItemViewHolder extends RecyclerView.ViewHolder {
     public ImageView gameThumbnailImageView;
     @InjectView(R.id.gameNameTextView)
     public TextView gameNameTextView;
-    @InjectView(R.id.gameFollowerCountTextView)
-    public TextView gameFollowerCountTextView;
+    @InjectView(R.id.gameVideoCountTextView)
+    public TextView gameVideoCountTextView;
     @InjectView(R.id.gameActionImageButton)
     public ImageButton gameActionImageButton;
 

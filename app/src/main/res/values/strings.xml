@@ -106,6 +106,10 @@
         <item quantity="one">%s Follower</item>
         <item quantity="other">%s Followers</item>
     </plurals>
+    <plurals name="videosWithCount">
+        <item quantity="one">%s Video</item>
+        <item quantity="other">%s Videos</item>
+    </plurals>
 
     <string name="alreadyRecording">Already Recording!</string>
     <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>
@@ -137,4 +141,6 @@
     <string name="ifYouDeleteThis">If you delete this video, the world will never see it again! :( Delete your awesome vid?</string>
     <string name="deleteVideo">Delete Video</string>
     <string name="failedToDelete">Failed to delete video. Check your network connection.</string>
+
+    <string name="youWillLoseMonster">You will lose your video forever to the video monster!</string>
 </resources>

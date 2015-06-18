@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,6 +18,7 @@ import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
+import com.kamcord.app.view.DisableableViewPager;
 import com.kamcord.app.view.SlidingTabLayout;
 import com.kamcord.app.view.utils.OnBackPressedListener;
 
@@ -29,7 +32,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class RecordActivity extends AppCompatActivity implements
         Uploader.UploadStatusListener {
 
-    @InjectView(R.id.main_pager) ViewPager mViewPager;
+    @InjectView(R.id.main_pager) DisableableViewPager mViewPager;
     @InjectView(R.id.tabs) SlidingTabLayout mTabs;
     @InjectView(R.id.uploadProgressBar) ProgressBar uploadProgress;
 
@@ -90,9 +93,18 @@ public class RecordActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if( onBackPressedListener != null ) {
-            onBackPressedListener.onBackPressed();
+        boolean fragmentHandled = false;
+
+        FragmentManager manager = getSupportFragmentManager();
+        for( Fragment fragment : manager.getFragments() ) {
+            if( fragment instanceof OnBackPressedListener ) {
+                fragmentHandled |= ((OnBackPressedListener) fragment).onBackPressed();
+            }
+        }
+
+        // We only forward the back click to super if none of our fragments handled it.
+        if( !fragmentHandled ) {
+            super.onBackPressed();
         }
     }
 
@@ -113,7 +125,7 @@ public class RecordActivity extends AppCompatActivity implements
                 uploadProgress.setProgress(0);
             }
         });
-    }
+        }
     }
 
     @Override
@@ -132,7 +144,7 @@ public class RecordActivity extends AppCompatActivity implements
                 progressBarAnimator.start();
             }
         });
-    }
+        }
     }
 
     @Override
@@ -154,7 +166,16 @@ public class RecordActivity extends AppCompatActivity implements
                 }).start();
             }
         });
+        }
     }
+
+    public void setCurrentItem(int i)
+    {
+        mViewPager.setCurrentItem(i);
+    }
+
+    public void setPagingEnabled(boolean enabled) {
+        mViewPager.setEnabled(enabled);
     }
 
     @Override
