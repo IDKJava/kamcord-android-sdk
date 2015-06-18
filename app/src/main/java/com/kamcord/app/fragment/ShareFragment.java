@@ -1,5 +1,6 @@
 package com.kamcord.app.fragment;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
@@ -68,6 +70,7 @@ import rx.functions.Func1;
 public class ShareFragment extends Fragment implements OnBackPressedListener {
     public static final String TAG = ShareFragment.class.getSimpleName();
     public static final String ARG_RECORDING_SESSION = "recording_session";
+    public static final int YOUTUBE_REQUEST_AUTHORIZATION_CODE = 0x0000fafa;
 
     @InjectView(R.id.share_scrollview)
     ScrollView scrollView;
@@ -268,6 +271,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                 shareSourceHashMap.put(button.getId(), true);
 
             } else {
+                logInToExternalNetwork(button.getId());
 
             }
         }
@@ -320,11 +324,22 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     private void logInToExternalNetwork(int networkId) {
         switch( networkId ) {
             case R.id.share_twitterbutton:
-
+                twitterLoginButton.callOnClick();
                 break;
 
             case R.id.share_youtubebutton:
-
+                android.accounts.Account youTubeAccount = AccountManager.YouTube.getStoredAccount();
+                if( youTubeAccount != null ) {
+                    try {
+                        AccountManager.YouTube.getAuthorizationCode(getActivity());
+                    } catch (UserRecoverableAuthException e) {
+                        startActivityForResult(e.getIntent(), YOUTUBE_REQUEST_AUTHORIZATION_CODE);
+                    } catch (GoogleAuthException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
         }
     }
@@ -397,7 +412,21 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+
+        if( requestCode == YOUTUBE_REQUEST_AUTHORIZATION_CODE ) {
+            if (shareSourceButtonViews != null && shareSourceButtonViews.get(YOUTUBE_INDEX) != null) {
+                View youTubeButton = shareSourceButtonViews.get(YOUTUBE_INDEX);
+                if (resultCode == Activity.RESULT_OK) {
+                    youTubeButton.setActivated(true);
+                    shareSourceHashMap.put(youTubeButton.getId(), true);
+                } else {
+                    youTubeButton.setActivated(false);
+                    shareSourceHashMap.put(youTubeButton.getId(), false);
+                }
+            }
+        }
     }
 
     private boolean showDeleteDialogOnBack = true;
