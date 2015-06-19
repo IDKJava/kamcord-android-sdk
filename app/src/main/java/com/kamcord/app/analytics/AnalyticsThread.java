@@ -280,8 +280,8 @@ public class AnalyticsThread extends HandlerThread implements
                 break;
 
                 case RECORD_VIDEO: {
-                    event.setDurationFromStopTime(when);
                     if( extras != null ) {
+                        event.event_duration = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
                         event.game_id = extras.getString(KamcordAnalytics.GAME_ID_KEY, null);
                     }
                 }
