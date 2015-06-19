@@ -1,5 +1,7 @@
 package com.kamcord.app.fragment;
 
+import android.accounts.Account;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -18,11 +20,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.AccountPicker;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
@@ -66,6 +70,8 @@ import rx.functions.Func1;
 public class ShareFragment extends Fragment implements OnBackPressedListener {
     public static final String TAG = ShareFragment.class.getSimpleName();
     public static final String ARG_RECORDING_SESSION = "recording_session";
+    public static final int YOUTUBE_REQUEST_AUTHORIZATION_CODE = 0x0000fafa;
+    public static final int YOUTUBE_CHOOSE_ACCOUNT_CODE = 0x0000fefe;
 
     @InjectView(R.id.share_scrollview)
     ScrollView scrollView;
@@ -84,7 +90,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     @InjectView(R.id.share_button)
     Button shareButton;
     @InjectViews({R.id.share_twitterbutton, R.id.share_youtubebutton})
-    List<Button> shareSourceButtonViews;
+    List<FrameLayout> shareSourceButtonViews;
     @InjectView(R.id.twitterLoginButton)
     TwitterLoginButton twitterLoginButton;
 
@@ -254,32 +260,61 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     }
 
     @OnClick({R.id.share_twitterbutton, R.id.share_youtubebutton})
-    public void onClick(Button button) {
-        switch (button.getId()) {
-            case R.id.share_twitterbutton: {
-                if (button.isSelected()) {
-                    button.setSelected(false);
-                } else {
-                    TwitterSession twitterSession = Twitter.getSessionManager().getActiveSession();
-                    if (twitterSession != null) {
-                        shareSourceHashMap.put(shareSourceButtonViews.get(TWITTER_INDEX).getId(), true);
-                        button.setSelected(true);
-                    } else {
-                        shareSourceHashMap.put(shareSourceButtonViews.get(TWITTER_INDEX).getId(), false);
-                        button.setSelected(false);
-                        twitterLoginButton.callOnClick();
-                    }
-                }
-                break;
-            }
-            case R.id.share_youtubebutton: {
-                break;
+    public void onClick(FrameLayout button) {
+
+        if( button.isActivated() ) {
+            button.setActivated(false);
+            shareSourceHashMap.put(button.getId(), false);
+
+        } else {
+            if( isLoggedInToExternalNetwork(button.getId()) ) {
+                button.setActivated(true);
+                shareSourceHashMap.put(button.getId(), true);
+
+            } else {
+                logInToExternalNetwork(button.getId());
+
             }
         }
     }
 
+    private boolean isLoggedInToExternalNetwork(int networkId) {
+        boolean isLoggedIn = false;
+
+        switch( networkId ) {
+            case R.id.share_twitterbutton:
+                isLoggedIn = Twitter.getSessionManager().getActiveSession() != null;
+                break;
+
+            case R.id.share_youtubebutton:
+                isLoggedIn = AccountManager.YouTube.getStoredAuthorizationCode() != null
+                        && AccountManager.YouTube.getStoredRefreshToken() != null;
+                break;
+        }
+
+        return isLoggedIn;
+    }
+
+    private void logInToExternalNetwork(int networkId) {
+        switch( networkId ) {
+            case R.id.share_twitterbutton:
+                twitterLoginButton.callOnClick();
+                break;
+
+            case R.id.share_youtubebutton:
+                android.accounts.Account youTubeAccount = AccountManager.YouTube.getStoredAccount();
+                if( youTubeAccount != null ) {
+                    AccountManager.YouTube.fetchAuthorizationCode(getActivity(), YOUTUBE_REQUEST_AUTHORIZATION_CODE);
+                } else {
+                    Intent chooseAccountIntent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"}, false, null, null, null, null);
+                    startActivityForResult(chooseAccountIntent, YOUTUBE_CHOOSE_ACCOUNT_CODE);
+                }
+                break;
+        }
+    }
+
     public void initShareSourceHashMap() {
-        for (Button shareSourceButton : shareSourceButtonViews) {
+        for (FrameLayout shareSourceButton : shareSourceButtonViews) {
             shareSourceHashMap.put(shareSourceButton.getId(), false);
         }
     }
@@ -349,7 +384,40 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+
+        if( requestCode == YOUTUBE_REQUEST_AUTHORIZATION_CODE ) {
+            if (shareSourceButtonViews != null && shareSourceButtonViews.get(YOUTUBE_INDEX) != null) {
+                View youTubeButton = shareSourceButtonViews.get(YOUTUBE_INDEX);
+                if (resultCode == Activity.RESULT_OK) {
+                    youTubeButton.setActivated(true);
+                    shareSourceHashMap.put(youTubeButton.getId(), true);
+                    AccountManager.YouTube.fetchAuthorizationCode(getActivity(), -1);
+                } else {
+                    youTubeButton.setActivated(false);
+                    shareSourceHashMap.put(youTubeButton.getId(), false);
+                    AccountManager.YouTube.clearStoredAccount();
+                }
+            }
+        }
+
+        if( requestCode == YOUTUBE_CHOOSE_ACCOUNT_CODE ) {
+            if( shareSourceButtonViews != null && shareSourceButtonViews.get(YOUTUBE_INDEX) != null) {
+                View youTubeButton = shareSourceButtonViews.get(YOUTUBE_INDEX);
+                if (resultCode == Activity.RESULT_OK) {
+                    String accountName = data.getStringExtra(android.accounts.AccountManager.KEY_ACCOUNT_NAME);
+                    if( accountName != null && !accountName.isEmpty() ) {
+                        Account youTubeAccount = new Account(accountName, "com.google");
+                        AccountManager.YouTube.setStoredAccount(youTubeAccount);
+                        logInToExternalNetwork(youTubeButton.getId());
+                    }
+                } else {
+                    youTubeButton.setActivated(false);
+                    shareSourceHashMap.put(youTubeButton.getId(), false);
+                }
+            }
+        }
     }
 
     private boolean showDeleteDialogOnBack = true;
