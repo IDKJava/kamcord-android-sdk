@@ -195,13 +195,11 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     && !queuedSessions.contains(session)
                     && !session.equals(currentSession)) {
                 session.setUploadProgress(RecordingSession.UPLOAD_FAILED_PROGRESS);
-                Log.v("FindMe", "adding active session " + session.getUUID() + " with UPLOAD_FAILED_PROGRESS");
                 addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
                 modified = true;
 
             } else if (session.getState() == RecordingSession.State.UPLOADED) {
                 session.setUploadProgress(RecordingSession.UPLOAD_PROCESSING_PROGRESS);
-                Log.v("FindMe", "adding active session " + session.getUUID() + " with UPLOAD_PROCESSING_PROGRESS");
                 addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, session));
                 modified = true;
             }
@@ -210,12 +208,10 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         if (uploadService != null) {
             for (RecordingSession queuedSession : uploadService.getQueuedSessions()) {
                 queuedSession.setUploadProgress(-1f);
-                Log.v("FindMe", "adding queued session " + queuedSession.getUUID() + " with UPLOAD_PROCESSING_PROGRESS");
                 addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, queuedSession));
                 modified = true;
             }
             if( currentSession != null ) {
-                Log.v("FindMe", "adding current session " + currentSession.getUUID() + " with UPLOAD_PROCESSING_PROGRESS");
                 addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, uploadService.getCurrentlyUploadingSession()));
             }
         }
