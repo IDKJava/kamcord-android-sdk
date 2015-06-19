@@ -45,7 +45,7 @@
     <string name="youMustEnterEmail">You must enter an email address.</string>
     <string name="emailTooLong">Email address too long.</string>
     <string name="emailTaken">Email address already taken.</string>
-    <string name="createProfileErrorMessage">Unable to create profile. Try a different password, or try again later.</string>
+    <string name="createProfileErrorMessage">Unable to create profile. Please fix the errors or try again later.</string>
 
     <!-- Notification -->
     <string name="idle">Idle</string>
