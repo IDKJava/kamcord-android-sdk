@@ -298,6 +298,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 public void onClick(View v) {
                     Intent uploadIntent = new Intent(mContext, UploadService.class);
                     session.setShareAppSessionId(KamcordAnalytics.getCurrentAppSessionId());
+                    session.setIsUploadRetry(true);
                     uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(session));
                     mContext.startService(uploadIntent);
                 }

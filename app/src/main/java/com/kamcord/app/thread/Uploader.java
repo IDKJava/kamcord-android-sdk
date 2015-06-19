@@ -183,6 +183,7 @@ public class Uploader extends Thread {
         extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, reason.name());
         extras.putInt(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed() ? 1 : 0);
         extras.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
+        extras.putInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, mRecordingSession.isUploadRetry() ? 1 : 0);
         KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, extras);
 
         notifyUploadFinished(mRecordingSession, false);

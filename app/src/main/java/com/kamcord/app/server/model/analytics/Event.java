@@ -85,6 +85,7 @@ public class Event {
     public String video_global_id = null;
     public UploadFailureReason failure_reason = null;
     public Integer was_replayed = null;
+    public Integer is_retry = null;
     public enum UploadFailureReason {
         RESERVE_VIDEO,
         UPLOAD_TO_S3,

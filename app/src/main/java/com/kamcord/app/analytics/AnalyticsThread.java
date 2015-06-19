@@ -259,6 +259,7 @@ public class AnalyticsThread extends HandlerThread implements
                         }
                         event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
                         event.was_replayed = extras.getInt(KamcordAnalytics.WAS_REPLAYED_KEY, 0);
+                        event.is_retry = extras.getInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, 0);
                     }
                 }
                 break;
