@@ -139,6 +139,10 @@ public class Uploader extends Thread {
     @Override
     public void run() {
         KamcordAnalytics.startSession(this, Event.Name.UPLOAD_VIDEO);
+        Bundle eventExtras = new Bundle();
+        eventExtras.putInt(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed() ? 1 : 0);
+        eventExtras.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
+        eventExtras.putInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, mRecordingSession.isUploadRetry() ? 1 : 0);
 
         Event.UploadFailureReason reason = Event.UploadFailureReason.RESERVE_VIDEO;
         try {
@@ -162,12 +166,9 @@ public class Uploader extends Thread {
             mRecordingSession.setGlobalId(mServerVideoId);
             ActiveRecordingSessionManager.updateActiveSession(mRecordingSession);
 
-            Bundle extras = new Bundle();
-            extras.putInt(KamcordAnalytics.SUCCESS_KEY, 1);
-            extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
-            extras.putInt(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed() ? 1 : 0);
-            extras.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
-            KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, extras);
+            eventExtras.putInt(KamcordAnalytics.SUCCESS_KEY, 1);
+            eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+            KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, eventExtras);
 
             notifyUploadFinished(mRecordingSession, true);
             return;
@@ -177,14 +178,10 @@ public class Uploader extends Thread {
             e.printStackTrace();
         }
 
-        Bundle extras = new Bundle();
-        extras.putInt(KamcordAnalytics.SUCCESS_KEY, 0);
-        extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
-        extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, reason.name());
-        extras.putInt(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed() ? 1 : 0);
-        extras.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
-        extras.putInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, mRecordingSession.isUploadRetry() ? 1 : 0);
-        KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, extras);
+        eventExtras.putInt(KamcordAnalytics.SUCCESS_KEY, 0);
+        eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+        eventExtras.putString(KamcordAnalytics.FAILURE_REASON_KEY, reason.name());
+        KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, eventExtras);
 
         notifyUploadFinished(mRecordingSession, false);
 
