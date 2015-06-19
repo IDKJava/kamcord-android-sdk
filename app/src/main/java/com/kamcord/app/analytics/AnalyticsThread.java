@@ -289,6 +289,10 @@ public class AnalyticsThread extends HandlerThread implements
             if( extras != null && extras.containsKey(KamcordAnalytics.APP_SESSION_ID_KEY) ) {
                 event.app_session_id = extras.getString(KamcordAnalytics.APP_SESSION_ID_KEY);
             }
+            Account myAccount = AccountManager.getStoredAccount();
+            if( myAccount != null ) {
+                event.user_registration_id = myAccount.id;
+            }
         }
     }
 

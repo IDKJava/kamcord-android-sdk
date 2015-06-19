@@ -56,6 +56,7 @@ public class Event {
 
     public String app_session_id;
     public String ui_session_id;
+    public String user_registration_id;
     public String event_id;
     public ConnectionType connection_type;
 
