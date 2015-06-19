@@ -107,6 +107,10 @@ public class Event {
         YOUTUBE,
     }
 
+
+    // For RECORD_VIDEO events.
+    public String game_id = null;
+
     @Override
     public int hashCode() {
         return event_id != null ? event_id.hashCode() : 0;

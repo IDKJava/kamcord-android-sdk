@@ -24,6 +24,7 @@ public class KamcordAnalytics {
     public static final String EXTERNAL_NETWORK_KEY = "external_network";
     public static final String APP_SESSION_ID_KEY = "app_session_id";
     public static final String IS_UPLOAD_RETRY_KEY = "is_upload_retry";
+    public static final String GAME_ID_KEY = "game_id";
 
 
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";

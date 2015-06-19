@@ -281,6 +281,9 @@ public class AnalyticsThread extends HandlerThread implements
 
                 case RECORD_VIDEO: {
                     event.setDurationFromStopTime(when);
+                    if( extras != null ) {
+                        event.game_id = extras.getString(KamcordAnalytics.GAME_ID_KEY, null);
+                    }
                 }
                 break;
             }
