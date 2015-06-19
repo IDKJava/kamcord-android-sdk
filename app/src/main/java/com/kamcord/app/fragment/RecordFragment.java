@@ -365,7 +365,10 @@ public class RecordFragment extends Fragment implements
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
-            if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
+            if (gamesListWrapper != null
+                    && gamesListWrapper.response != null
+                    && gamesListWrapper.response.game_list != null
+                    && isResumed()) {
                 mGameList.clear();
                 if (BuildConfig.DEBUG) {
                     Game ripples = new Game();
@@ -401,8 +404,10 @@ public class RecordFragment extends Fragment implements
         public void failure(RetrofitError retrofitError) {
             Log.e(TAG, "Unable to get list of KCP games.");
             Log.e(TAG, "  " + retrofitError.toString());
-            mSwipeRefreshLayout.setRefreshing(false);
-            // TODO: show the user something about this.
+            if( isResumed() ) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                // TODO: show the user something about this.
+            }
         }
     }
 

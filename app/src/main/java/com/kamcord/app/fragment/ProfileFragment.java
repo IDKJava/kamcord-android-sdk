@@ -272,7 +272,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     private class GetUserInfoCallBack implements Callback<GenericResponse<User>> {
         @Override
         public void success(GenericResponse<User> userResponse, Response response) {
-            if (userResponse != null && userResponse.response != null && userHeader != null) {
+            if (userResponse != null && userResponse.response != null && userHeader != null && isResumed()) {
                 userHeader.setUser(userResponse.response);
                 if (userHeader.getUser() != null) {
                 totalItems = userHeader.getUser().video_count;
@@ -287,7 +287,9 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            videoFeedRefreshLayout.setRefreshing(false);
+            if( isResumed() ) {
+                videoFeedRefreshLayout.setRefreshing(false);
+            }
         }
     }
 
@@ -296,18 +298,19 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
-                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                    && paginatedVideoListGenericResponse.response.video_list != null
+                    && isResumed()) {
                 Iterator<ProfileItem> iterator = mProfileList.iterator();
                 while (iterator.hasNext()) {
                     if (iterator.next().getType() == ProfileItem.Type.VIDEO) {
                         iterator.remove();
                     }
                 }
-                    nextPage = paginatedVideoListGenericResponse.response.next_page;
-                    for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                    ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
-                        mProfileList.add(profileViewModel);
-                    }
+                nextPage = paginatedVideoListGenericResponse.response.next_page;
+                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
+                    mProfileList.add(profileViewModel);
+                }
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
                 videoFeedRefreshLayout.setRefreshing(false);
@@ -317,7 +320,9 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            videoFeedRefreshLayout.setRefreshing(false);
+            if( isResumed() ) {
+                videoFeedRefreshLayout.setRefreshing(false);
+            }
         }
     }
 
@@ -326,7 +331,8 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
-                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                    && paginatedVideoListGenericResponse.response.video_list != null
+                    && isResumed() ) {
                 nextPage = paginatedVideoListGenericResponse.response.next_page;
                 if (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == ProfileItem.Type.FOOTER) {
                     mProfileList.remove(mProfileAdapter.getItemCount() - 1);
@@ -344,7 +350,9 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            videoFeedRefreshLayout.setRefreshing(false);
+            if( isResumed() ) {
+                videoFeedRefreshLayout.setRefreshing(false);
+            }
         }
     }
 
@@ -356,15 +364,16 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             this.session = session;
         }
 
-    @Override
+        @Override
         public void success(GenericResponse<Video> responseWrapper, Response response) {
             if (responseWrapper != null && responseWrapper.response != null
-                    && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK)) {
+                    && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK)
+                    && isResumed()) {
                 if (responseWrapper.response.video_state == Video.State.PROCESSED) {
                     session.setState(RecordingSession.State.PROCESSED);
                     ActiveRecordingSessionManager.updateActiveSession(session);
                     removeProcessedSession(session);
-    }
+                }
             }
         }
 

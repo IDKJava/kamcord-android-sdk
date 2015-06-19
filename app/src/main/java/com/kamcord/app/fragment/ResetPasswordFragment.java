@@ -60,6 +60,9 @@ public class ResetPasswordFragment extends Fragment {
                 new Callback<GenericResponse<?>>() {
                     @Override
                     public void success(GenericResponse<?> responseWrapper, Response response) {
+                        if( !isResumed() ) {
+                            return;
+                        }
                         if( responseWrapper != null && responseWrapper.status != null
                                 && responseWrapper.status.equals(StatusCode.OK) )
                         {
@@ -75,6 +78,9 @@ public class ResetPasswordFragment extends Fragment {
 
                     @Override
                     public void failure(RetrofitError error) {
+                        if( !isResumed() ) {
+                            return;
+                        }
                         handleResetPasswordFailure(null);
                     }
                 });
