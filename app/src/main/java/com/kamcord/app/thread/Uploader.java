@@ -19,6 +19,7 @@ import com.kamcord.app.server.model.VideoUploadedEntity;
 import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.server.model.builder.ReserveVideoEntityBuilder;
 import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
+import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
