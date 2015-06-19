@@ -272,6 +272,9 @@ public class RecordFragment extends Fragment implements
                                         .show();
                     } else {
                                 stopRecording();
+                                if (getActivity() instanceof RecordActivity) {
+                                    ((RecordActivity) getActivity()).setPagingEnabled(true);
+                                }
                                 shareRecording(recordingSession);
                     }
                 }
