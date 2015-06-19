@@ -86,12 +86,14 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         super.onDestroyView();
         ButterKnife.reset(this);
         AccountManager.removeListener(this);
-        }
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-        marshalActiveSessions();
+        if( AccountManager.isLoggedIn() ) {
+            marshalActiveSessions();
+        }
         Uploader.subscribe(this);
     }
 
@@ -112,6 +114,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
         } else {
             signInPromptContainer.setVisibility(View.VISIBLE);
+            videoFeedRefreshLayout.setEnabled(false);
         }
 
         mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
@@ -401,20 +404,22 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     }
 
     private void updateUploadingSessionProgress(RecordingSession session, float progress) {
-        boolean updated = false;
-        int index = 0;
-        for (ProfileItem item : mProfileList) {
-            if (item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
-                    && session.equals(item.getSession())) {
-                item.getSession().setUploadProgress(progress);
-                mProfileAdapter.notifyItemChanged(index);
-                updated = true;
-                break;
+        if( AccountManager.isLoggedIn() ) {
+            boolean updated = false;
+            int index = 0;
+            for (ProfileItem item : mProfileList) {
+                if (item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
+                        && session.equals(item.getSession())) {
+                    item.getSession().setUploadProgress(progress);
+                    mProfileAdapter.notifyItemChanged(index);
+                    updated = true;
+                    break;
+                }
+                index++;
             }
-            index++;
-        }
-        if (!updated) {
-            marshalActiveSessions();
+            if (!updated) {
+                marshalActiveSessions();
+            }
         }
     }
 }
