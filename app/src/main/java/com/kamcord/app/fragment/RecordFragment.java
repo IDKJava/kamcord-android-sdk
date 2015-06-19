@@ -349,6 +349,12 @@ public class RecordFragment extends Fragment implements
         });
         mRecordItemList.clear();
         boolean lastGameInstalled = false;
+        if( mGameList.size() > 0 && !mGameList.get(0).isInstalled )
+        {
+            mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
+            mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
+            mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
+        }
         for( Game game : mGameList ) {
             if( game.isInstalled && !lastGameInstalled ) {
                 mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
