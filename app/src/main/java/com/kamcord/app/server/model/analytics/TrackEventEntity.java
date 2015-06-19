@@ -16,7 +16,6 @@ public class TrackEventEntity {
     private static transient final int MAX_FIELD_CHARACTERS = 50;
 
     public String app_device_id;
-    public String user_registration_id;
     public Set<Event> event = new HashSet<>();
     public long sent_time;
 
@@ -35,11 +34,6 @@ public class TrackEventEntity {
 
         public Builder setAppDeviceId(String appDeviceId) {
             entity.app_device_id = appDeviceId;
-            return this;
-        }
-
-        public Builder setUserRegistrationId(String userRegistrationId) {
-            entity.user_registration_id = userRegistrationId;
             return this;
         }
 

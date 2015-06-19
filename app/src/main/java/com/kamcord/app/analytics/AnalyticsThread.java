@@ -190,8 +190,7 @@ public class AnalyticsThread extends HandlerThread implements
         }
 
         TrackEventEntity.Builder builder = new TrackEventEntity.Builder()
-                .setAppDeviceId(DeviceManager.getDeviceToken())
-                .setUserRegistrationId(userRegistrationId);
+                .setAppDeviceId(DeviceManager.getDeviceToken());
         Set<Event> unsentEvents = KamcordAnalytics.getUnsentEvents();
         for (Event event : unsentEvents) {
             builder.addEvent(event);

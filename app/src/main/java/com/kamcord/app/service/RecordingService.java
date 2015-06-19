@@ -113,7 +113,7 @@ public class RecordingService extends Service {
             Bundle extras = new Bundle();
             extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, ((float) mRecordingSession.getDurationUs()) / 1000f);
             extras.putString(KamcordAnalytics.GAME_ID_KEY, mRecordingSession.getGameServerID());
-            KamcordAnalytics.endSession(this, Event.Name.RECORD_VIDEO);
+            KamcordAnalytics.endSession(this, Event.Name.RECORD_VIDEO, extras);
         } else {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }
