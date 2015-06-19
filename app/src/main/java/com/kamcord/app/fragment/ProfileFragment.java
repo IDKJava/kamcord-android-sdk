@@ -70,12 +70,16 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     private String nextPage;
     private int totalItems = 0;
     private boolean footerVisible = false;
+    private boolean viewsAreValid = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.profile_tab, container, false);
-        AccountManager.addListener(this);
+
         ButterKnife.inject(this, root);
+        viewsAreValid = true;
+
+        AccountManager.addListener(this);
         initKamcordProfileFragment();
 
         return root;
@@ -84,9 +88,10 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        viewsAreValid = false;
         ButterKnife.reset(this);
         AccountManager.removeListener(this);
-        }
+    }
 
     @Override
     public void onResume() {
@@ -257,22 +262,24 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
 
     @Override
     public void onLoggedInChanged(boolean state) {
-        if (state) {
-            userHeader = new ProfileItem<User>(ProfileItem.Type.HEADER, null);
-            mProfileList.add(userHeader);
-            signInPromptContainer.setVisibility(View.GONE);
-            Account myAccount = AccountManager.getStoredAccount();
-            AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
-        } else {
-            signInPromptContainer.setVisibility(View.VISIBLE);
+        if( viewsAreValid ) {
+            if (state) {
+                userHeader = new ProfileItem<User>(ProfileItem.Type.HEADER, null);
+                mProfileList.add(userHeader);
+                signInPromptContainer.setVisibility(View.GONE);
+                Account myAccount = AccountManager.getStoredAccount();
+                AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+                AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+            } else {
+                signInPromptContainer.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     private class GetUserInfoCallBack implements Callback<GenericResponse<User>> {
         @Override
         public void success(GenericResponse<User> userResponse, Response response) {
-            if (userResponse != null && userResponse.response != null && userHeader != null && isResumed()) {
+            if (userResponse != null && userResponse.response != null && userHeader != null && viewsAreValid) {
                 userHeader.setUser(userResponse.response);
                 if (userHeader.getUser() != null) {
                 totalItems = userHeader.getUser().video_count;
@@ -287,7 +294,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 videoFeedRefreshLayout.setRefreshing(false);
             }
         }
@@ -299,7 +306,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
                     && paginatedVideoListGenericResponse.response.video_list != null
-                    && isResumed()) {
+                    && viewsAreValid) {
                 Iterator<ProfileItem> iterator = mProfileList.iterator();
                 while (iterator.hasNext()) {
                     if (iterator.next().getType() == ProfileItem.Type.VIDEO) {
@@ -320,7 +327,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 videoFeedRefreshLayout.setRefreshing(false);
             }
         }
@@ -332,7 +339,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
                     && paginatedVideoListGenericResponse.response.video_list != null
-                    && isResumed() ) {
+                    && viewsAreValid ) {
                 nextPage = paginatedVideoListGenericResponse.response.next_page;
                 if (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == ProfileItem.Type.FOOTER) {
                     mProfileList.remove(mProfileAdapter.getItemCount() - 1);
@@ -350,7 +357,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 videoFeedRefreshLayout.setRefreshing(false);
             }
         }
@@ -368,7 +375,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         public void success(GenericResponse<Video> responseWrapper, Response response) {
             if (responseWrapper != null && responseWrapper.response != null
                     && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK)
-                    && isResumed()) {
+                    && viewsAreValid) {
                 if (responseWrapper.response.video_state == Video.State.PROCESSED) {
                     session.setState(RecordingSession.State.PROCESSED);
                     ActiveRecordingSessionManager.updateActiveSession(session);

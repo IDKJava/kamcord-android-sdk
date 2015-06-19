@@ -36,11 +36,14 @@ public class LoginFragment extends Fragment {
     @InjectView(R.id.loginButton) Button loginButton;
     @InjectView(R.id.forgotPasswordTextView) TextView forgotPasswordTextView;
 
+    private boolean viewsAreValid = true;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.inject(this, root);
+        viewsAreValid = true;
         return root;
     }
 
@@ -48,6 +51,7 @@ public class LoginFragment extends Fragment {
     public void onDestroyView()
     {
         super.onDestroyView();
+        viewsAreValid = false;
         ButterKnife.reset(this);
     }
 
@@ -101,7 +105,7 @@ public class LoginFragment extends Fragment {
         @Override
         public void success(GenericResponse<Account> accountWrapper, Response response)
         {
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 if (accountWrapper != null
                         && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
                         && accountWrapper.response != null) {
@@ -120,7 +124,7 @@ public class LoginFragment extends Fragment {
         @Override
         public void failure(RetrofitError error)
         {
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 handleLoginFailure(null);
             }
         }

@@ -91,11 +91,15 @@ public class RecordFragment extends Fragment implements
 
     private List<RecordItem> mRecordItemList = new ArrayList<>();
     private List<Game> mGameList = new ArrayList<>();
+    private boolean viewsAreValid = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.record_tab, container, false);
+
         ButterKnife.inject(this, v);
+        viewsAreValid = true;
+
         initKamcordRecordFragment(v);
 
         Activity myActivity = getActivity();
@@ -105,12 +109,14 @@ public class RecordFragment extends Fragment implements
         if (myActivity instanceof RecordActivity) {
             ((RecordActivity) myActivity).setOnBackPressedListener(this);
         }
+
         return v;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        viewsAreValid = false;
         ButterKnife.reset(this);
 
         Activity myActivity = getActivity();
@@ -367,8 +373,7 @@ public class RecordFragment extends Fragment implements
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
             if (gamesListWrapper != null
                     && gamesListWrapper.response != null
-                    && gamesListWrapper.response.game_list != null
-                    && isResumed()) {
+                    && gamesListWrapper.response.game_list != null) {
                 mGameList.clear();
                 if (BuildConfig.DEBUG) {
                     Game ripples = new Game();
@@ -390,13 +395,16 @@ public class RecordFragment extends Fragment implements
                         mGameList.add(game);
                     }
                 }
-                if (refreshRecordTab.getVisibility() == View.VISIBLE) {
-                    refreshRecordTab.setVisibility(View.INVISIBLE);
-                }
                 GameListUtils.saveGameList(mGameList);
-                updateRecordItemList();
-                mRecyclerAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
+
+                if(viewsAreValid) {
+                    if (refreshRecordTab.getVisibility() == View.VISIBLE) {
+                        refreshRecordTab.setVisibility(View.INVISIBLE);
+                    }
+                    updateRecordItemList();
+                    mRecyclerAdapter.notifyDataSetChanged();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         }
 
@@ -404,7 +412,7 @@ public class RecordFragment extends Fragment implements
         public void failure(RetrofitError retrofitError) {
             Log.e(TAG, "Unable to get list of KCP games.");
             Log.e(TAG, "  " + retrofitError.toString());
-            if( isResumed() ) {
+            if(viewsAreValid) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 // TODO: show the user something about this.
             }

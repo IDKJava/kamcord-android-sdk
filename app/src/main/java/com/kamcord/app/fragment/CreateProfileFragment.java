@@ -42,6 +42,8 @@ public class CreateProfileFragment extends Fragment {
     @InjectView(R.id.createProfileButton) Button createProfileButton;
     @InjectView(R.id.termsAndPolicyTextView) TextView termsAndPolicyTextView;
 
+    private boolean viewsAreValid = false;
+
     private static final HashMap<UserErrorCode, Integer> ERROR_CODE_STRING_MAP = new HashMap<UserErrorCode, Integer>()
         {{
             put(UserErrorCode.INVALID_CHARACTERS, R.string.invalidCharacters);
@@ -61,6 +63,7 @@ public class CreateProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_create_profile, container, false);
 
         ButterKnife.inject(this, root);
+        viewsAreValid = true;
         initializeTermsAndPolicyString();
 
         return root;
@@ -70,6 +73,7 @@ public class CreateProfileFragment extends Fragment {
     public void onDestroyView()
     {
         super.onDestroyView();
+        viewsAreValid = false;
         ButterKnife.reset(this);
     }
 
@@ -164,7 +168,7 @@ public class CreateProfileFragment extends Fragment {
     {
         @Override
         public void success(GenericResponse<Account> accountWrapper, Response response) {
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 if( accountWrapper != null
                         && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
                         && accountWrapper.response != null
@@ -186,7 +190,7 @@ public class CreateProfileFragment extends Fragment {
 
         @Override
         public void failure(RetrofitError error) {
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 handleLoginFailure(null);
             }
         }
@@ -195,7 +199,7 @@ public class CreateProfileFragment extends Fragment {
     Callback<GenericResponse<UserErrorCode>> validateUsernameCallback = new Callback<GenericResponse<UserErrorCode>>() {
         @Override
         public void success(GenericResponse<UserErrorCode> responseWrapper, Response response) {
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 if (responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
                         && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
                         && isResumed()) {
@@ -208,7 +212,7 @@ public class CreateProfileFragment extends Fragment {
 
         @Override
         public void failure(RetrofitError error) {
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 usernameEditText.setError(null);
             }
         }
@@ -217,7 +221,7 @@ public class CreateProfileFragment extends Fragment {
     Callback<GenericResponse<UserErrorCode>> validateEmailCallback = new Callback<GenericResponse<UserErrorCode>>() {
         @Override
         public void success(GenericResponse<UserErrorCode> responseWrapper, Response response) {
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 if (responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
                         && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
                         && isResumed()) {
@@ -230,7 +234,7 @@ public class CreateProfileFragment extends Fragment {
 
         @Override
         public void failure(RetrofitError error) {
-            if( isResumed() ) {
+            if( viewsAreValid ) {
                 emailEditText.setError(null);
             }
         }
