@@ -129,7 +129,7 @@ public class CreateProfileFragment extends Fragment {
         AccountManager.clearStoredAccount();
         new AlertDialog.Builder(getActivity())
                 .setMessage(R.string.createProfileErrorMessage)
-                .setNeutralButton(android.R.string.ok, null)
+                .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
 
