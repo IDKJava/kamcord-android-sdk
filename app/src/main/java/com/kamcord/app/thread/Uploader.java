@@ -452,7 +452,6 @@ public class Uploader extends Thread {
                     share.access_token = session.getAuthToken().token;
                     videoUploadedEntityBuilder.addShare(share);
 
-                    // When we add YouTube, analytics will look something like this.
                     Bundle extras = new Bundle();
                     extras.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.TWITTER.name());
                     extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
@@ -488,6 +487,11 @@ public class Uploader extends Thread {
                         share.title = mRecordingSession.getVideoTitle();
                         share.description = "Recorded by Kamcord on Android";
                         videoUploadedEntityBuilder.addShare(share);
+
+                        Bundle extras = new Bundle();
+                        extras.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.YOUTUBE.name());
+                        extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+                        KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_SHARE, extras);
                     }
                 }
             }
