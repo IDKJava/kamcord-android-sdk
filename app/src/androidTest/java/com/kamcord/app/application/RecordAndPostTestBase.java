@@ -115,11 +115,15 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 e.printStackTrace();
                 assertFalse("Press recent apps failed!", true);
             }
+            //Flaky
             //check if it's recording
+            /*
             mDevice.openNotification();
+            //openNotifications();
+
             mDevice.waitForIdle(UI_TIMEOUT_MS);
             sleep(UI_TIMEOUT_MS);
-            //findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
+            findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
 
             findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
             if (!useNotificationsToSwitchToKamcord) {
@@ -128,6 +132,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 mDevice.waitForIdle(UI_TIMEOUT_MS);
                 sleep(UI_TIMEOUT_MS);
             }
+            */
 
             //click on notification to resume app.
             findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();

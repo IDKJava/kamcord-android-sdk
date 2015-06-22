@@ -241,12 +241,14 @@ public class UiUtilities {
     }
 
     public static Point[] validateSwipe(Point[] swipePoints) {
-        //TODO: works for vertical only.
+        //TODO: works fine except when the device is a tablet
+        /*
         int bottomBar = 200;
         int topBar = 100;
         int height = mDevice.getDisplayHeight();
         int width = mDevice.getDisplayWidth();
         int orientation = mDevice.getDisplayRotation();
+        String name = mDevice.getProductName();
         switch (orientation) {
             case Surface.ROTATION_90:
                 //TODO: handle swipe by processing swapping coordinates and proportionallly
@@ -275,7 +277,7 @@ public class UiUtilities {
                 break;
         }
 
-
+        */
         return swipePoints;
     }
 
@@ -430,5 +432,14 @@ public class UiUtilities {
         }
         return appObj;
     }
+    public static void setOrientationNatural(){
+        try{
+            mDevice.setOrientationNatural();
+        } catch (RemoteException e){
+            e.printStackTrace();
+            assertTrue("Failed setting device orientation!", false);
+        }
+    }
+
 }
 
