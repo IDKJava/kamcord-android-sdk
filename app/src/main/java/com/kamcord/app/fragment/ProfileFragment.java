@@ -321,8 +321,10 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                 }
                 nextPage = paginatedVideoListGenericResponse.response.next_page;
                 for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
-                    mProfileList.add(profileViewModel);
+                    if (!video.is_user_resharing) {
+                        ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
+                        mProfileList.add(profileViewModel);
+                    }
                 }
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
@@ -351,8 +353,10 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     mProfileList.remove(mProfileAdapter.getItemCount() - 1);
                 }
                 for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                    ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
-                    mProfileList.add(profileViewModel);
+                    if (!video.is_user_resharing) {
+                        ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
+                        mProfileList.add(profileViewModel);
+                    }
                 }
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
