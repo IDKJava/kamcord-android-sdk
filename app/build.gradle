@@ -45,6 +45,7 @@ android {
     }
     testOptions {
         reportDir project.hasProperty('reportDir') ? project.reportDir : 'default'
+
     }
 }
 
@@ -93,3 +94,13 @@ dependencies {
     androidTestCompile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.1'
 
 }
+
+tasks.withType( Test ) {
+    useJUnit(){
+        includeCategories 'com.kamcord.app.interfaces.BasicTest'
+        excludeCategories 'com.kamcord.app.interfaces.CharacterizationTest'
+        excludeCategories 'com.kamcord.app.interfaces.MediumDurationTest'
+        excludeCategories 'com.kamcord.app.interfaces.LongDurationTest'
+    }
+}
+

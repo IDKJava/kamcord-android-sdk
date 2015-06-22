@@ -6,6 +6,8 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
+import android.test.suitebuilder.annotation.SmallTest;
+import android.test.suitebuilder.annotation.Smoke;
 
 import com.kamcord.app.R;
 
@@ -19,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Mehmet on 5/27/15.
  */
+
 public class GameListTest extends RecordAndPostTestBase {
 
     @Test

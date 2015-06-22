@@ -1,5 +1,9 @@
 package com.kamcord.app.application;
 
+import android.test.suitebuilder.annotation.LargeTest;
+import android.test.suitebuilder.annotation.MediumTest;
+import android.test.suitebuilder.annotation.SmallTest;
+
 import com.kamcord.app.R;
 
 import org.junit.Test;
@@ -22,7 +26,6 @@ public class RecordingTests extends RecordAndPostTestBase {
     }
 
     @Test
-    //TODO: enable after AA-40 is resolved.
     public void recordRippleTestNTimesLoggedIn() {
         doLogin();
         int N = 5;
@@ -44,7 +47,7 @@ public class RecordingTests extends RecordAndPostTestBase {
 
     }
 
-    //TODO: Enable when test conditions are clear!
+    //Do not run fails by design!
     //@Test
     public void recordAndPostLoggedInWithPause() {
         doLogin();
@@ -62,20 +65,20 @@ public class RecordingTests extends RecordAndPostTestBase {
     }
 
     @Test
+    public void recordRippleTestLoginFirst() {
+        doLogin();
+        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
+        handleShareViewNotificationCheck(RECORDING_DURATION_MS);
+
+    }
+
+    @Test
     public void recordRippleTestSkipLoginShort() {
         skipLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, 1000, false, false, true);
         //hit the delete button
         findUiObj(ANDROID_SYSTEM_BUTTON3, UiObjSelType.Res, UI_TIMEOUT_MS).click();
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
-    }
-
-    @Test
-    public void recordRippleTestLoginFirst() {
-        doLogin();
-        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
-        handleShareViewNotificationCheck(RECORDING_DURATION_MS);
-
     }
 
     //TODO: Enable after resolution of AA-23
@@ -113,6 +116,7 @@ public class RecordingTests extends RecordAndPostTestBase {
 
 
     }
+
     @Test
     public void recordRippleTestLoginFirstRetryUploadNoNetwork() {
         doLogin();
@@ -126,6 +130,7 @@ public class RecordingTests extends RecordAndPostTestBase {
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS * 3);
         handleShareFlowQueueCheck(RECORDING_DURATION_MS, UploadTestVariant.Normal);
     }
+
     @Test
     public void recordRippleTestLoginFirstRetryUploadDelete() {
         doLogin();

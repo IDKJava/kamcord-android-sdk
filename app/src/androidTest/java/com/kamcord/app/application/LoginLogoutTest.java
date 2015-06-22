@@ -1,6 +1,9 @@
 package com.kamcord.app.application;
 
+import com.kamcord.app.testutils.interfaces.BasicTest;
+
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -12,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class LoginLogoutTest extends TestBase {
 
     @Test
+    @Category(BasicTest.class)
     public void testLogin() {
         assertFalse("Already logged in!", isLoggedIn());
         doLogin();
@@ -19,6 +23,7 @@ public class LoginLogoutTest extends TestBase {
     }
 
     @Test
+    @Category(BasicTest.class)
     public void testLogout() {
         assertFalse("Already logged in!", isLoggedIn());
         doLogin();

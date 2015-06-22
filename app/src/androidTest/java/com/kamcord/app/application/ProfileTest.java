@@ -4,6 +4,7 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import com.kamcord.app.R;
 import org.junit.Test;
