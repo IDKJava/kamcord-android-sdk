@@ -1,5 +1,6 @@
 package com.kamcord.app.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -72,8 +73,15 @@ public class ResetPasswordFragment extends Fragment {
                         {
                             new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.checkYourEmail)
-                                    .setNeutralButton(android.R.string.ok, null)
+                                    .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int which) {
+                                            getActivity().getSupportFragmentManager().popBackStack();
+                                        }
+                                    })
                                     .show();
+
+
                         }
                         else {
                             handleResetPasswordFailure(responseWrapper);
