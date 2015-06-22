@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import butterknife.ButterKnife;
@@ -215,7 +216,9 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                 addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, queuedSession));
                 modified = true;
             }
-            addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, uploadService.getCurrentlyUploadingSession()));
+            if( currentSession != null ) {
+                addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, uploadService.getCurrentlyUploadingSession()));
+            }
         }
 
         if (modified) {
@@ -246,7 +249,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         while (iterator.hasNext()) {
             ProfileItem item = iterator.next();
             if (item.getType() == ProfileItem.Type.UPLOAD_PROGRESS
-                    && item.getSession().equals(session)) {
+                    && Objects.equals(item.getSession(), session)) {
                 iterator.remove();
                 mProfileAdapter.notifyItemRemoved(index);
                 break;

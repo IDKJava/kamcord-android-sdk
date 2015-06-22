@@ -190,8 +190,7 @@ public class AnalyticsThread extends HandlerThread implements
         }
 
         TrackEventEntity.Builder builder = new TrackEventEntity.Builder()
-                .setAppDeviceId(DeviceManager.getDeviceToken())
-                .setUserRegistrationId(userRegistrationId);
+                .setAppDeviceId(DeviceManager.getDeviceToken());
         Set<Event> unsentEvents = KamcordAnalytics.getUnsentEvents();
         for (Event event : unsentEvents) {
             builder.addEvent(event);
@@ -259,6 +258,7 @@ public class AnalyticsThread extends HandlerThread implements
                         }
                         event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
                         event.was_replayed = extras.getInt(KamcordAnalytics.WAS_REPLAYED_KEY, 0);
+                        event.is_retry = extras.getInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, 0);
                     }
                 }
                 break;
@@ -279,7 +279,10 @@ public class AnalyticsThread extends HandlerThread implements
                 break;
 
                 case RECORD_VIDEO: {
-                    event.setDurationFromStopTime(when);
+                    if( extras != null ) {
+                        event.event_duration = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
+                        event.game_id = extras.getString(KamcordAnalytics.GAME_ID_KEY, null);
+                    }
                 }
                 break;
             }
@@ -287,6 +290,10 @@ public class AnalyticsThread extends HandlerThread implements
             // If they put the app_session_id in themselves, we assume that they know what they're doing.
             if( extras != null && extras.containsKey(KamcordAnalytics.APP_SESSION_ID_KEY) ) {
                 event.app_session_id = extras.getString(KamcordAnalytics.APP_SESSION_ID_KEY);
+            }
+            Account myAccount = AccountManager.getStoredAccount();
+            if( myAccount != null ) {
+                event.user_registration_id = myAccount.id;
             }
         }
     }

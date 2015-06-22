@@ -56,6 +56,7 @@ public class Event {
 
     public String app_session_id;
     public String ui_session_id;
+    public String user_registration_id;
     public String event_id;
     public ConnectionType connection_type;
 
@@ -85,6 +86,7 @@ public class Event {
     public String video_global_id = null;
     public UploadFailureReason failure_reason = null;
     public Integer was_replayed = null;
+    public Integer is_retry = null;
     public enum UploadFailureReason {
         RESERVE_VIDEO,
         UPLOAD_TO_S3,
@@ -104,6 +106,10 @@ public class Event {
         WECHAT,
         YOUTUBE,
     }
+
+
+    // For RECORD_VIDEO events.
+    public String game_id = null;
 
     @Override
     public int hashCode() {

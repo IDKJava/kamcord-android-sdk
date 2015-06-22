@@ -70,12 +70,7 @@ public class UploadService extends IntentService {
         startForeground(NOTIFICATION_ID, notification);
 
         Uploader uploader = new Uploader(currentlyUploadingSession, getApplicationContext(), serviceShareSourceHashMap);
-        uploader.start();
-        try {
-            uploader.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        uploader.run();
 
         stopForeground(true);
         currentlyUploadingSession = null;

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjection;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -109,7 +110,10 @@ public class RecordingService extends Service {
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
             mAudioRecordThread.quitSafely();
 
-            KamcordAnalytics.endSession(this, Event.Name.RECORD_VIDEO);
+            Bundle extras = new Bundle();
+            extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, ((float) mRecordingSession.getDurationUs()) / 1000f);
+            extras.putString(KamcordAnalytics.GAME_ID_KEY, mRecordingSession.getGameServerID());
+            KamcordAnalytics.endSession(this, Event.Name.RECORD_VIDEO, extras);
         } else {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }

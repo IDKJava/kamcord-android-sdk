@@ -33,6 +33,7 @@ public class RecordingSession {
 
     private boolean wasReplayed = false;
     private String shareAppSessionId = null;
+    private boolean isUploadRetry = false;
 
     private transient boolean recordedFrames = false;
     private transient float uploadProgress = -1f;
@@ -142,6 +143,13 @@ public class RecordingSession {
     }
     public void setShareAppSessionId(String shareAppSessionId) {
         this.shareAppSessionId = shareAppSessionId;
+    }
+
+    public boolean isUploadRetry() {
+        return isUploadRetry;
+    }
+    public void setIsUploadRetry(boolean isUploadRetry) {
+        this.isUploadRetry = isUploadRetry;
     }
 
     @Override
