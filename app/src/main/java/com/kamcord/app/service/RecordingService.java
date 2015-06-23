@@ -111,7 +111,7 @@ public class RecordingService extends Service {
             mAudioRecordThread.quitSafely();
 
             Bundle extras = new Bundle();
-            extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, ((float) mRecordingSession.getDurationUs()) / 1000f);
+            extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, ((float) mRecordingSession.getDurationUs()) / 1000000f);
             extras.putString(KamcordAnalytics.GAME_ID_KEY, mRecordingSession.getGameServerID());
             KamcordAnalytics.endSession(this, Event.Name.RECORD_VIDEO, extras);
         } else {

@@ -75,6 +75,7 @@ public class Uploader extends Thread {
 
     private RecordingSession mRecordingSession;
     private HashMap<Integer, Boolean> mShareSourceHashMap;
+    private HashMap<Integer, Bundle> externalShareExtras = new HashMap<>();
 
     private int mTotalParts = 0;
     private FileInputStream mPartInputStream;
@@ -144,6 +145,22 @@ public class Uploader extends Thread {
         eventExtras.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
         eventExtras.putInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, mRecordingSession.isUploadRetry() ? 1 : 0);
 
+        for( Integer i : mShareSourceHashMap.keySet() ) {
+            if( !mShareSourceHashMap.get(i) ) {
+                continue;
+            }
+            Bundle extra = new Bundle();
+            switch( i ) {
+                case R.id.share_twitterbutton:
+                    extra.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, VideoUploadedEntity.ShareSource.TWITTER.name());
+                    break;
+                case R.id.share_youtubebutton:
+                    extra.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, VideoUploadedEntity.ShareSource.YOUTUBE.name());
+                    break;
+            }
+            externalShareExtras.put(i, extra);
+        }
+
         Event.UploadFailureReason reason = Event.UploadFailureReason.RESERVE_VIDEO;
         try {
             notifyUploadStart(mRecordingSession);
@@ -170,6 +187,10 @@ public class Uploader extends Thread {
             eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
             KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, eventExtras);
 
+            for( Bundle extra : externalShareExtras.values() ) {
+                KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_SHARE, extra);
+            }
+
             notifyUploadFinished(mRecordingSession, true);
             return;
 
@@ -179,9 +200,13 @@ public class Uploader extends Thread {
         }
 
         eventExtras.putInt(KamcordAnalytics.SUCCESS_KEY, 0);
-        eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+        eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, StringUtils.compare("", mServerVideoId) ? null : mServerVideoId);
         eventExtras.putString(KamcordAnalytics.FAILURE_REASON_KEY, reason.name());
         KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, eventExtras);
+
+        for( Bundle extra : externalShareExtras.values() ) {
+            KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_SHARE, extra);
+        }
 
         notifyUploadFinished(mRecordingSession, false);
 
@@ -219,6 +244,10 @@ public class Uploader extends Thread {
             mS3AccessKey = genericResponse.response.credentials.access_key_id;
             mS3SecretKey = genericResponse.response.credentials.secret_access_key;
             mS3SessionToken = genericResponse.response.credentials.session_token;
+
+            for( Bundle extra : externalShareExtras.values() ) {
+                extra.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+            }
 
             // Once we have the video id, we can share to the specified social networks.
             // TODO: handle this when we start sharing to external networks.
@@ -452,11 +481,6 @@ public class Uploader extends Thread {
                     share.access_token = session.getAuthToken().token;
                     videoUploadedEntityBuilder.addShare(share);
 
-                    Bundle extras = new Bundle();
-                    extras.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.TWITTER.name());
-                    extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
-                    KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_SHARE, extras);
-
                     if (session != null) {
                         TwitterApiClient client = Twitter.getApiClient(session);
                         client.getStatusesService().update(mRecordingSession.getVideoTitle() + " www.kamcord.com/v/" + mServerVideoId,
@@ -487,11 +511,6 @@ public class Uploader extends Thread {
                         share.title = mRecordingSession.getVideoTitle();
                         share.description = "Recorded by Kamcord on Android";
                         videoUploadedEntityBuilder.addShare(share);
-
-                        Bundle extras = new Bundle();
-                        extras.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.YOUTUBE.name());
-                        extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
-                        KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_SHARE, extras);
                     }
                 }
             }

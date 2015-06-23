@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.kamcord.app.server.model.analytics.Event;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -31,8 +32,10 @@ public class KamcordAnalytics {
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";
 
     private static final String LAST_SEND_TIME_KEY = "LAST_SEND_TIME";
+    private static final String FAILED_ATTEMPTS_IN_ROW_KEY = "FAILED_ATTEMPTS_IN_ROW";
     private static final String FIRST_LAUNCH_KEY = "FIRST_KAMCORD_APP_LAUNCH";
     private static final String UNSENT_EVENTS = "UNSENT_EVENTS";
+    private static final int MAX_UNSENT_EVENT_COUNT = 1000;
 
     private static SharedPreferences preferences = null;
     private static AnalyticsThread analyticsThread;
@@ -98,8 +101,27 @@ public class KamcordAnalytics {
         return preferences.getLong(LAST_SEND_TIME_KEY, 0);
     }
 
+    static void setFailedAttemptsInRow(int failedAttemptsInRow) {
+        preferences.edit().putInt(FAILED_ATTEMPTS_IN_ROW_KEY, failedAttemptsInRow).commit();
+    }
+    static int getFailedAttemptsInRow() {
+        return preferences.getInt(FAILED_ATTEMPTS_IN_ROW_KEY, 0);
+    }
+
+
     static void addUnsentEvent(Event event) {
         event.convertTimes();
+        if( unsentEventCount() > MAX_UNSENT_EVENT_COUNT ) {
+            Iterator<Event> iterator = unsentEvents.iterator();
+            Event minStartTimeEvent = null;
+            while( iterator.hasNext() ) {
+                Event e = iterator.next();
+                if( minStartTimeEvent == null || e.start_time < minStartTimeEvent.start_time ) {
+                    minStartTimeEvent = e;
+                }
+            }
+            unsentEvents.remove(minStartTimeEvent);
+        }
         boolean added = unsentEvents.add(event);
         if( added ) {
             saveEventSet(UNSENT_EVENTS, unsentEvents);
