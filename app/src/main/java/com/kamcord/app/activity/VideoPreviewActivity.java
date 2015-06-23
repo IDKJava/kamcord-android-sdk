@@ -6,16 +6,16 @@ import android.content.pm.ActivityInfo;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
 import android.widget.MediaController;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.utils.StringUtils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
@@ -24,11 +24,15 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class VideoPreviewActivity extends Activity {
     public static final String ARG_VIDEO_PATH = "video_path";
 
-    @InjectView(R.id.videoview_preview) VideoView mVideoView;
-    @InjectView(R.id.replayButton) ImageButton replayImageBtn;
+    @InjectView(R.id.videoview_preview)
+    VideoView mVideoView;
     private MediaController mediaController;
     private int videoHeight;
     private int videoWidth;
+    private int seekBarId;
+    private int currentPlayTimeId;
+    private SeekBar seekBar;
+    private TextView currentPlayTime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,8 +42,7 @@ public class VideoPreviewActivity extends Activity {
     }
 
     @Override
-    protected void attachBaseContext(Context newBase)
-    {
+    protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
@@ -50,7 +53,7 @@ public class VideoPreviewActivity extends Activity {
         // Determine videoview orientation
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         if (videoPath != null) {
-            try{
+            try {
                 mediaMetadataRetriever.setDataSource(videoPath);
                 videoHeight = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
                 videoWidth = Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
@@ -59,7 +62,7 @@ public class VideoPreviewActivity extends Activity {
                 } else {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -74,24 +77,38 @@ public class VideoPreviewActivity extends Activity {
             }
         }
 
-        if(videoPath != null) {
+        if (videoPath != null) {
             mVideoView.setVideoPath(videoPath);
+            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    seekBarId = getResources().getIdentifier("mediacontroller_progress", "id", "android");
+                    currentPlayTimeId = getResources().getIdentifier("time_current", "id", "android");
+                    seekBar = (SeekBar) mediaController.findViewById(seekBarId);
+                    currentPlayTime = (TextView) mediaController.findViewById(currentPlayTimeId);
+                }
+            });
             mVideoView.start();
             mVideoView.requestFocus();
+
         }
 
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                replayImageBtn.setVisibility(View.VISIBLE);
+//                seekBar.setProgress(0);
+//                seekBar.setMax(mVideoView.getDuration() / 1000);
+//                seekBar.setProgress(mVideoView.getDuration() / 1000);
+                currentPlayTime.setText(StringUtils.stringForTime(mVideoView.getDuration()));
+                seekBar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        seekBar.setProgress(mVideoView.getDuration() / 1000);
+                    }
+                });
+                mediaController.show(0);
             }
         });
-    }
-
-    @OnClick(R.id.replayButton)
-    public void replayVideo() {
-        replayImageBtn.setVisibility(View.INVISIBLE);
-        mVideoView.start();
     }
 
     @Override
