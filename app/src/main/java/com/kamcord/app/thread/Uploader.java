@@ -158,6 +158,7 @@ public class Uploader extends Thread {
                     extra.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, VideoUploadedEntity.ShareSource.YOUTUBE.name());
                     break;
             }
+            extra.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
             externalShareExtras.put(i, extra);
         }
 

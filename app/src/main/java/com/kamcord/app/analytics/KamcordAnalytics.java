@@ -48,7 +48,7 @@ public class KamcordAnalytics {
 
         loadEventSet(UNSENT_EVENTS, unsentEvents);
 
-        if( analyticsThread == null ) {
+        if (analyticsThread == null) {
             startAnalyticsThread(context);
         }
     }
@@ -56,6 +56,7 @@ public class KamcordAnalytics {
     public static void startSession(Object who, Event.Name name) {
         analyticsThread.sendStartSession(who, name);
     }
+
     public static void endSession(Object who, Event.Name name) {
         endSession(who, name, null);
     }
@@ -73,7 +74,7 @@ public class KamcordAnalytics {
     }
 
     public static String getCurrentAppSessionId() {
-        if( analyticsThread != null ) {
+        if (analyticsThread != null) {
             return analyticsThread.getCurrentAppSessionId();
         }
         return null;
@@ -90,6 +91,7 @@ public class KamcordAnalytics {
     static void writeFirstLaunch() {
         preferences.edit().putBoolean(FIRST_LAUNCH_KEY, false).commit();
     }
+
     static boolean isFirstLaunch() {
         return preferences.getBoolean(FIRST_LAUNCH_KEY, true);
     }
@@ -97,6 +99,7 @@ public class KamcordAnalytics {
     static void setLastSendTime(long lastSendTime) {
         preferences.edit().putLong(LAST_SEND_TIME_KEY, lastSendTime).commit();
     }
+
     static long getLastSendTime() {
         return preferences.getLong(LAST_SEND_TIME_KEY, 0);
     }
@@ -104,6 +107,7 @@ public class KamcordAnalytics {
     static void setFailedAttemptsInRow(int failedAttemptsInRow) {
         preferences.edit().putInt(FAILED_ATTEMPTS_IN_ROW_KEY, failedAttemptsInRow).commit();
     }
+
     static int getFailedAttemptsInRow() {
         return preferences.getInt(FAILED_ATTEMPTS_IN_ROW_KEY, 0);
     }
@@ -111,38 +115,41 @@ public class KamcordAnalytics {
 
     static void addUnsentEvent(Event event) {
         event.convertTimes();
-        if( unsentEventCount() > MAX_UNSENT_EVENT_COUNT ) {
+        if (unsentEventCount() > MAX_UNSENT_EVENT_COUNT) {
             Iterator<Event> iterator = unsentEvents.iterator();
             Event minStartTimeEvent = null;
-            while( iterator.hasNext() ) {
+            while (iterator.hasNext()) {
                 Event e = iterator.next();
-                if( minStartTimeEvent == null || e.start_time < minStartTimeEvent.start_time ) {
+                if (minStartTimeEvent == null || e.start_time < minStartTimeEvent.start_time) {
                     minStartTimeEvent = e;
                 }
             }
             unsentEvents.remove(minStartTimeEvent);
         }
         boolean added = unsentEvents.add(event);
-        if( added ) {
+        if (added) {
             saveEventSet(UNSENT_EVENTS, unsentEvents);
         }
     }
+
     static Set<Event> getUnsentEvents() {
         return unsentEvents;
     }
+
     static void clearSentEvents(Set<Event> sentEvents) {
-        for( Event sentEvent : sentEvents ) {
+        for (Event sentEvent : sentEvents) {
             unsentEvents.remove(sentEvent);
         }
         saveEventSet(UNSENT_EVENTS, unsentEvents);
     }
+
     static int unsentEventCount() {
         return unsentEvents.size();
     }
 
     private static void saveEventSet(String key, Set<Event> eventSet) {
         Set<String> serializedEventSet = new HashSet<>();
-        for( Event event : eventSet ) {
+        for (Event event : eventSet) {
             serializedEventSet.add(new Gson().toJson(event));
         }
         preferences.edit().putStringSet(key, serializedEventSet).commit();
@@ -151,7 +158,7 @@ public class KamcordAnalytics {
     private static void loadEventSet(String key, Set<Event> eventSet) {
         Set<String> serializedEventSet = preferences.getStringSet(key, new HashSet<String>());
         eventSet.clear();
-        for( String serializedEvent : serializedEventSet ) {
+        for (String serializedEvent : serializedEventSet) {
             eventSet.add(new Gson().fromJson(serializedEvent, Event.class));
         }
     }
