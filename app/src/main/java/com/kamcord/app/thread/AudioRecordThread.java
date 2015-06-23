@@ -148,11 +148,15 @@ public class AudioRecordThread extends HandlerThread implements Handler.Callback
     }
 
     private void queueEncoder() {
-        int bufferIndex = mAudioCodec.dequeueInputBuffer(1000);
-        if (bufferIndex >= 0) {
-            ByteBuffer buffer = mAudioCodec.getInputBuffer(bufferIndex);
-            int numBytesRead = mAudioRecord.read(buffer, buffer.capacity());
-            mAudioCodec.queueInputBuffer(bufferIndex, 0, numBytesRead, System.nanoTime() / 1000, 0);
+        try {
+            int bufferIndex = mAudioCodec.dequeueInputBuffer(1000);
+            if (bufferIndex >= 0) {
+                ByteBuffer buffer = mAudioCodec.getInputBuffer(bufferIndex);
+                int numBytesRead = mAudioRecord.read(buffer, buffer.capacity());
+                mAudioCodec.queueInputBuffer(bufferIndex, 0, numBytesRead, System.nanoTime() / 1000, 0);
+            }
+        } catch (MediaCodec.CodecException e)
+        {
         }
     }
 
