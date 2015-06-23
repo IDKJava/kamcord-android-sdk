@@ -1,14 +1,18 @@
 package com.kamcord.app.application;
 
-
-
 import com.kamcord.app.R;
-import com.kamcord.app.testutils.interfaces.CharacterizationTest;
-import com.kamcord.app.testutils.interfaces.MediumDurationTest;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import android.provider.Settings;
+
+import com.kamcord.app.R;
+import com.kamcord.app.testutils.SystemUtilities;
+
+import org.junit.Test;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
@@ -23,7 +27,6 @@ import static com.kamcord.app.testutils.SystemUtilities.*;
 public class MemoryTest extends RecordAndPostTestBase {
 
     @Test
-    @Category(MediumDurationTest.class)
     public void checkCacheNoMediaTest(){
         int recordindDuration1X = RECORDING_DURATION_MS;
         int recordindDuration3X = RECORDING_DURATION_MS * 3;
@@ -58,7 +61,6 @@ public class MemoryTest extends RecordAndPostTestBase {
     }
 
     @Test
-    @Category(CharacterizationTest.class)
     public void checkHeapUsage() {
         int recordingTrials = 20;
         int recordingBase  = 4000;
@@ -90,7 +92,6 @@ public class MemoryTest extends RecordAndPostTestBase {
     }
 
     @Test
-    @Category(CharacterizationTest.class)
     public void checkHeapUsageShortRecording() {
         int recordingTrials = 20;
         int recordingBase  = 100;

@@ -38,12 +38,13 @@ import com.kamcord.app.testutils.testrules.RetryRule;
 public abstract class TestBase {
 
     @Rule
-    public RetryRule mTestRetryRule = new RetryRule(5);
+    public RetryRule mTestRetryRule = new RetryRule(1);
     @Rule
     public FailureRule mTestFailureRule = new FailureRule();
 
     @Before
     public void setUp(){
+        setOrientationNatural();
         toggleNetwork(true);
         startKamcordApp();
         doLogout();
@@ -92,7 +93,7 @@ public abstract class TestBase {
         // only works from login screen.
         handleWelcomeLoginView();
         //Welcome screen of sorts
-        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
+        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res,APP_TIMEOUT_MS);
     }
 
     protected void handleWelcomeLoginView(){
