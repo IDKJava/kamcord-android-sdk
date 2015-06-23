@@ -14,6 +14,7 @@ import com.kamcord.app.utils.ApplicationStateUtils;
 import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.utils.DeviceManager;
 import com.kamcord.app.utils.GameListUtils;
+import com.kamcord.app.utils.ProfileListUtils;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 
@@ -42,6 +43,7 @@ public class KamcordApplication extends Application {
         AccountManager.initializeWith(this);
         DeviceManager.initialize();
         GameListUtils.initializeWith(this);
+        ProfileListUtils.initializeWith(this);
         ApplicationStateUtils.initializeWith(this);
         ActiveRecordingSessionManager.initializeWith(this);
         Connectivity.initializeWith(this);

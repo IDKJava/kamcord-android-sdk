@@ -84,6 +84,8 @@
 
 
     <string name="defaultNumber">0</string>
+
+    <!-- Profile Fragment -->
     <plurals name="headerVideos">
         <item quantity="one">Video</item>
         <item quantity="other">Videos</item>
@@ -92,12 +94,16 @@
         <item quantity="one">Follower</item>
         <item quantity="other">Followers</item>
     </plurals>
-    <string name="headerFollowing">Following</string>
+    <plurals name="headerFollowings">
+        <item quantity="one">Following</item>
+        <item quantity="other">Followings</item>
+    </plurals>
     <plurals name="videoLikes">
         <item quantity="one">Like</item>
         <item quantity="other">Likes</item>
     </plurals>
     <string name="byAuthorGame">By %1$s &#183; %2$s</string>
+
     <string name="recordAndShare">Record &amp; Share</string>
     <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
