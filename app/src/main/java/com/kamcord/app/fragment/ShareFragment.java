@@ -194,6 +194,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
     @OnTouch(R.id.titleEditText)
     public boolean scrollToBottom() {
+        titleEditText.setHint("");
         scrollView.smoothScrollTo(0, scrollView.getBottom());
         KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
 
@@ -209,9 +210,8 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                     @Override
                     public void call(Integer textLength) {
                         if (textLength > 0) {
-                            shareButton.setBackgroundColor(getResources().getColor(R.color.kamcordGreen));
                         } else {
-                            shareButton.setBackgroundColor(getResources().getColor(R.color.ButtonNotActivated));
+                            titleEditText.setHint(StringUtils.defaultVideoTitle(getActivity(), recordingSession));
                         }
                     }
                 });
@@ -221,8 +221,12 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
     @OnClick(R.id.share_button)
     public void click(View v) {
-        if (AccountManager.isLoggedIn() && titleEditText.getText().toString().length() != 0) {
-            recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+        if (AccountManager.isLoggedIn()) {
+            if (titleEditText.getEditableText().length() > 0) {
+                recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+            } else {
+                recordingSession.setVideoTitle(StringUtils.defaultVideoTitle(getActivity(), recordingSession));
+            }
             if (shareSourceHashMap.size() > 0) {
                 recordingSession.setShareSources(shareSourceHashMap);
             }
@@ -240,14 +244,6 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
             }
             showDeleteDialogOnBack = false;
             getActivity().onBackPressed();
-        } else if (AccountManager.isLoggedIn()) {
-            if (videoTitleToast == null) {
-                videoTitleToast = Toast.makeText(getActivity(), getResources().getString(R.string.writeYourTitle), Toast.LENGTH_SHORT);
-                videoTitleToast.show();
-            } else {
-                videoTitleToast.cancel();
-                videoTitleToast = null;
-            }
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
