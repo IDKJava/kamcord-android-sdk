@@ -20,6 +20,7 @@
 -keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**
 -keep class **$$ViewInjector { *; }
+-keep class com.kamcord.app.model.** { *; }
 
 -keepclasseswithmembernames class * {
     @butterknife.* <fields>;

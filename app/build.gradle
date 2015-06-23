@@ -102,6 +102,9 @@ dependencies {
     androidTestCompile 'com.amazonaws:aws-android-sdk-ddb:2.2.1'
     androidTestCompile 'com.amazonaws:aws-android-sdk-ddb-mapper:2.2.1'
 
+    //Sharding support through Spoon
+    androidTestCompile 'com.squareup.spoon:spoon-client:1.1.9'
+
 }
 
 /* Test Sharding Related Code */
@@ -112,9 +115,11 @@ spoon{
     debug = true
     if (project.hasProperty('spoonClassName')) {
         className = project.spoonClassName
-    } else {
-        className = 'meh!'
     }
+    if(project.hasProperty('targetDeviceId')) {
+        devices = [project.targetDeviceID]
+    }
+
     logger.info(className)
 
 }
