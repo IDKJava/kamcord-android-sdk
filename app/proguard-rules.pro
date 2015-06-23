@@ -48,6 +48,7 @@
 
 # Kamcord
 -keep class com.kamcord.app.server.model.** { *; }
+-keep class com.kamcord.app.model.** { *; }
 
 # Twitter
 -dontwarn com.squareup.okhttp.**
