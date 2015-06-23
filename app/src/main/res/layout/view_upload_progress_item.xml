@@ -72,4 +72,11 @@
         android:layout_margin="0dp"
         android:padding="0dp"
         android:progressDrawable="@drawable/upload_progressbar" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#4000"
+        android:visibility="gone" />
 </LinearLayout>

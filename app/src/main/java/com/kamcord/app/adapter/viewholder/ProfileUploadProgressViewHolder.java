@@ -30,6 +30,9 @@ public class ProfileUploadProgressViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.retryUploadImageButton)
     public ImageButton retryUploadImageButton;
 
+    @InjectView(R.id.divider)
+    public View divider;
+
     public ProfileUploadProgressViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
