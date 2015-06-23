@@ -78,9 +78,9 @@
     <string name="yourVideoFinishedUploadingNoTitle">Your video finished uploading!</string>
 
     <string name="gameRequestEmail">game-requests@kamcord.com</string>
-    <string name="canIRecord">Can I record this game?</string>
-    <string name="iWantToRecord">I want to record this game: &lt; game name &gt;</string>
-    <string name="sincerely">Sincerely, %s</string>
+    <string name="canIRecord">Kamcord Game Request</string>
+    <string name="iWantToRecord">Hi Kamcord,\n\nPlease let me record &lt;Add your favorite game name here!&gt;</string>
+    <string name="sincerely">; )\n %s</string>
 
 
     <string name="defaultNumber">0</string>
