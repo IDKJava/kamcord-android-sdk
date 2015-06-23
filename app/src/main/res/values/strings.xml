@@ -4,8 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_request_game">Don\'t see your game?</string>
     <string name="oneOfYourGamesNotListed">One of your games not listed? Let us know!</string>
-    <string name="action_cleancache">Clean Cache</string>
-    <string name="action_signout">Sign Out</string>
+    <string name="action_signout">Log Out</string>
 
     <!-- UI String-->
     <string name="toolbarTitle">Kamcord</string>
@@ -14,11 +13,11 @@
     <string name="recordingPaused">Recording Paused</string>
 
     <!-- Login -->
-    <string name="termsAndPolicy">By creating a profile, you are agreeing to Kamcord\'s Terms of Service and Privacy Policy</string>
+    <string name="termsAndPolicy">By creating a profile, you are agreeing to Kamcord\'s Terms of Service and Privacy Policy.</string>
     <string name="termsOfService">Terms of Service</string>
     <string name="privacyPolicy">Privacy Policy</string>
     <string name="forgotPassword">Forgot Password?</string>
-    <string name="socialNetworkForGamers">A Social Network For Gamers</string>
+    <string name="socialNetworkForGamers">A Social Network for Gamers</string>
     <string name="gamers">Gamers</string>
     <string name="createProfile">Create Profile</string>
     <string name="logIn">Log In</string>
@@ -27,24 +26,24 @@
     <string name="password">Password</string>
     <string name="email">Email</string>
 
-    <string name="loginFailed">Login Failed</string>
-    <string name="loginFailureMessage">Either that username doesn\'t exist, or the username and password do not match.</string>
+    <string name="loginFailed">Login failed</string>
+    <string name="loginFailureMessage">Please check your username and password</string>
     <string name="resetPassword">Reset Password</string>
 
     <string name="enterEmailForReset">Enter the email address you used to sign up for Kamcord. We\'ll email you a link to reset your password.</string>
     <string name="checkYourEmail">We just sent you an email with a link to reset your password.</string>
-    <string name="resetPasswordProblem">There was a problem resetting your password. Please make sure you entered the email address you signed up with.</string>
+    <string name="resetPasswordProblem">There was a problem resetting your password. Please make sure you entered the email address you signed up for Kamcord with.</string>
 
-    <string name="invalidUsername">Invalid username.</string>
-    <string name="youMustEnterUsername">You must enter a username.</string>
-    <string name="usernameTooShort">Username too short.</string>
-    <string name="usernameTooLong">Username too long.</string>
-    <string name="invalidCharacters">Invalid characters.</string>
-    <string name="usernameTaken">Username already taken.</string>
-    <string name="invalidEmail">Invalid email.</string>
-    <string name="youMustEnterEmail">You must enter an email address.</string>
-    <string name="emailTooLong">Email address too long.</string>
-    <string name="emailTaken">Email address already taken.</string>
+    <string name="invalidUsername">Username is invalid</string>
+    <string name="youMustEnterUsername">Username is required</string>
+    <string name="usernameTooShort">Username is too short</string>
+    <string name="usernameTooLong">Username is too long</string>
+    <string name="usernameTaken">Username is already taken</string>
+    <string name="invalidCharacters">Invalid characters</string>
+    <string name="invalidEmail">Email is invalid</string>
+    <string name="youMustEnterEmail">Email is required</string>
+    <string name="emailTooLong">Email is too long</string>
+    <string name="emailTaken">Email is already taken</string>
     <string name="createProfileErrorMessage">Unable to create profile. Please fix the errors or try again later.</string>
 
     <!-- Notification -->
@@ -53,6 +52,7 @@
     <string name="paused">Paused</string>
 
     <!-- Activity -->
+    <!-- Not used? -->
     <string name="selectAGame">Please select a game to record.</string>
     <string name="pressTheButton">Press the green button to start recording %s!</string>
     <string name="kamcordRecordTab">Record</string>
@@ -62,14 +62,17 @@
     <string name="install">Install</string>
     <string name="shareThisVideo">Share This Video</string>
 
+    <!-- Not used? -->
     <string name="writeADescription">Write a description&#8230;</string>
     <string name="processing">Processing&#8230;</string>
+    <!-- Not used? -->
     <string name="writeATitle">Write a title&#8230;</string>
 
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
-    <string name="signInProfilePrompt">You must sign in to Kamcord to view your profile page.</string>
+    <string name="signInProfilePrompt">You must log in to Kamcord to view your profile page.</string>
+    <!-- Not used? -->
     <string name="signIn">Sign In</string>
-    <string name="swipeToRefreshRecord">Oops! Swipe down to refresh your game list when your network is ready.</string>
+    <string name="swipeToRefreshRecord">Oops! Swipe down to refresh games when your network is ready.</string>
 
     <string name="uploading">Uploading&#8230;</string>
     <string name="yourVideoIsUploading">Your video \"%s\" is uploading!</string>
@@ -79,9 +82,7 @@
 
     <string name="gameRequestEmail">game-requests@kamcord.com</string>
     <string name="canIRecord">Kamcord Game Request</string>
-    <string name="iWantToRecord">Hi Kamcord,\n\nPlease let me record &lt;Add your favorite game name here!&gt;</string>
-    <string name="sincerely">; )\n %s</string>
-
+    <string name="iWantToRecord">Hey Kamcord, please let me record from this cool game: </string>
 
     <string name="defaultNumber">0</string>
     <plurals name="headerVideos">
@@ -97,8 +98,9 @@
         <item quantity="one">Like</item>
         <item quantity="other">Likes</item>
     </plurals>
-    <string name="byAuthorGame">By %1$s &#183; %2$s</string>
+    <string name="byAuthorGame">by %1$s &#183; %2$s</string>
     <string name="recordAndShare">Record &amp; Share</string>
+    <!-- We should just have My Games and Popular Games -->
     <string name="gamesCurrentlyInstalled">Games currently installed</string>
     <string name="alsoRecordThese">Also Record These Great Games</string>
     <string name="theMostPopularGames">The most popular games on Kamcord</string>
@@ -111,9 +113,13 @@
         <item quantity="other">%s Videos</item>
     </plurals>
 
+    <!-- Not used? -->
     <string name="alreadyRecording">Already Recording!</string>
+    <!-- Not used? -->
     <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>
+    <!-- Not used? -->
     <string name="nothingRecordedYet">Nothing Recorded Yet!</string>
+    <!-- Not used? -->
     <string name="kamcordHasntRecorded">Kamcord hasn\'t recorded anything from %1$s yet! Do you want to go back to %1$s?</string>
 
     <string name="currentlyUploadingPercent">Currently Uploading (%1$d%%)</string>
@@ -128,6 +134,7 @@
     <string name="youTubeShare">YouTube</string>
     <string name="twitterShare">Twitter</string>
     <string name="alsoShare">Also share on</string>
+    <!-- Not used? -->
     <string name="writeYourTitle">Please write a title for your video.</string>
     <string name="myLatestVideo">My latest %1$s video</string>
 
