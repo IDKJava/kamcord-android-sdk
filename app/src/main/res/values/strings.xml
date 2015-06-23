@@ -31,9 +31,9 @@
     <string name="loginFailureMessage">Either that username doesn\'t exist, or the username and password do not match.</string>
     <string name="resetPassword">Reset Password</string>
 
-    <string name="enterEmailForReset">Enter the email associated with your account. We\'ll email you a link to reset your password.</string>
-    <string name="checkYourEmail">Check your email for a link to reset your password.</string>
-    <string name="resetPasswordProblem">There was a problem resetting your password. Try again later.</string>
+    <string name="enterEmailForReset">Enter the email address you used to sign up for Kamcord. We\'ll email you a link to reset your password.</string>
+    <string name="checkYourEmail">We just sent you an email with a link to reset your password.</string>
+    <string name="resetPasswordProblem">There was a problem resetting your password. Please make sure you entered the email address you signed up with.</string>
 
     <string name="invalidUsername">Invalid username.</string>
     <string name="youMustEnterUsername">You must enter a username.</string>
@@ -78,9 +78,9 @@
     <string name="yourVideoFinishedUploadingNoTitle">Your video finished uploading!</string>
 
     <string name="gameRequestEmail">game-requests@kamcord.com</string>
-    <string name="canIRecord">Can I record this game?</string>
-    <string name="iWantToRecord">I want to record this game: &lt; game name &gt;</string>
-    <string name="sincerely">Sincerely, %s</string>
+    <string name="canIRecord">Kamcord Game Request</string>
+    <string name="iWantToRecord">Hi Kamcord,\n\nPlease let me record &lt;Add your favorite game name here!&gt;</string>
+    <string name="sincerely">; )\n %s</string>
 
 
     <string name="defaultNumber">0</string>
