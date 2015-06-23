@@ -3,16 +3,6 @@ package com.kamcord.app.application;
 import com.kamcord.app.R;
 
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import android.provider.Settings;
-
-import com.kamcord.app.R;
-import com.kamcord.app.testutils.SystemUtilities;
-
-import org.junit.Test;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
@@ -55,12 +45,14 @@ public class MemoryTest extends RecordAndPostTestBase {
         assertTrue("Cache didn't increase!", cacheSizeBefore < cacheSize);
         assertTrue("Nomedia tag is missing!", isNoMediaTagPresent());
         mDevice.pressBack();
+        findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, UI_TIMEOUT_MS).click();
         //We need stitching to be over.
         assertTrue("Cache didn't reduce!", cacheSize < cacheSizeBefore * sizeMultiplier);
 
     }
 
-    @Test
+    //@Test
+    //Char only for now
     public void checkHeapUsage() {
         int recordingTrials = 20;
         int recordingBase  = 4000;
@@ -91,7 +83,8 @@ public class MemoryTest extends RecordAndPostTestBase {
                 (Math.abs(endOfTest.get(1) - baseline.get(1)) / baseline.get(1)) < 0.1);
     }
 
-    @Test
+    //@Test
+    //Char only for now
     public void checkHeapUsageShortRecording() {
         int recordingTrials = 20;
         int recordingBase  = 100;
@@ -106,7 +99,8 @@ public class MemoryTest extends RecordAndPostTestBase {
                     recordingBase + 100 * i,
                     false,
                     false,
-                    true);
+                    true,
+                    false);
             findUiObj(ANDROID_SYSTEM_BUTTON3, UiObjSelType.Res, 1000).click();
             mDevice.waitForIdle(UI_TIMEOUT_MS);
             sleep(APP_TIMEOUT_MS);

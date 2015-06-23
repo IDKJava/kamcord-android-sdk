@@ -28,16 +28,16 @@ public abstract class RecordAndPostTestBase extends TestBase {
     }
 
     protected void recordGameVideo(String gameName, int durationInMs){
-        recordGameVideo(gameName, gameName, durationInMs, false, false, false);
+        recordGameVideo(gameName, gameName, durationInMs, false, false, false, false);
     }
     protected void recordGameVideo(String gameName, String gameTitle, int durationInMs){
-        recordGameVideo(gameName, gameTitle, durationInMs, false, false, false);
+        recordGameVideo(gameName, gameTitle, durationInMs, false, false, false, false);
     }
     protected void recordGameVideo(String gameName,
                                    String gameTitle,
                                    int durationInMs,
                                    boolean pauseAfterGesture) {
-        recordGameVideo(gameName, gameTitle, durationInMs, pauseAfterGesture, false, false);
+        recordGameVideo(gameName, gameTitle, durationInMs, pauseAfterGesture, false, false, false);
     }
 
         protected void recordGameVideo(String gameName,
@@ -45,7 +45,8 @@ public abstract class RecordAndPostTestBase extends TestBase {
                                        int durationInMs,
                                        boolean pauseAfterGesture,
                                        boolean useNotificationsToSwitchToKamcord,
-                                       boolean shortVideo) {
+                                       boolean shortVideo,
+                                       boolean checkNotificationStatus) {
             mDevice.waitForIdle(UI_TIMEOUT_MS);
             sleep(UI_TIMEOUT_MS);
             waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
@@ -117,22 +118,22 @@ public abstract class RecordAndPostTestBase extends TestBase {
             }
             //Flaky
             //check if it's recording
-            /*
-            mDevice.openNotification();
-            //openNotifications();
+            if(checkNotificationStatus) {
+                mDevice.openNotification();
+                //openNotifications();
 
-            mDevice.waitForIdle(UI_TIMEOUT_MS);
-            sleep(UI_TIMEOUT_MS);
-            findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
-
-            findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
-            if (!useNotificationsToSwitchToKamcord) {
-                //closes notifications so we can pick from recent apps.
-                mDevice.pressBack();
                 mDevice.waitForIdle(UI_TIMEOUT_MS);
                 sleep(UI_TIMEOUT_MS);
+                findUiObj(ANDROID_NOTIFICATION_HEADER, UiObjSelType.Res, APP_TIMEOUT_MS);
+
+                findUiObj(R.string.paused, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
+                if (!useNotificationsToSwitchToKamcord) {
+                    //closes notifications so we can pick from recent apps.
+                    mDevice.pressBack();
+                    mDevice.waitForIdle(UI_TIMEOUT_MS);
+                    sleep(UI_TIMEOUT_MS);
+                }
             }
-            */
 
             //click on notification to resume app.
             findUiObj(R.string.toolbarTitle, UiObjIdType.Str, UiObjSelType.Txt).click();
@@ -155,9 +156,8 @@ public abstract class RecordAndPostTestBase extends TestBase {
             findUiObj(R.id.stopRecordingTakeoverContainer, UiObjIdType.Res, UiObjSelType.Res);
             findUiObj(R.id.stopRecordingImageButton, UiObjIdType.Res, UiObjSelType.Res).click();
             if(!shortVideo) {
-                findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res);
+                findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, durationInMs);
             }
-
         }
 
     protected void handleShareViewNotificationCheck(int durationInMs) {

@@ -109,12 +109,13 @@ dependencies {
 apply plugin: 'spoon'
 
 spoon{
-    debug = true
+    debug = false
     if (project.hasProperty('spoonClassName')) {
         className = project.spoonClassName
     } else {
-        className = 'com.kamcord.app.application.GameListTest'
+        className = 'meh!'
     }
+    logger.info(className)
 
 }
 

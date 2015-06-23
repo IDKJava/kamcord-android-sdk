@@ -62,7 +62,7 @@ public class GameListTest extends RecordAndPostTestBase {
         }
 
         mDevice.swipe(validateSwipe(new Point[]{new Point(380, 400), new Point(380, 1150)}), 40);
-        assertTrue("Has no games listed!", gameTitles.size() > 2);
+        assertTrue("Has no games listed!", gameTitles.size() >= 1);
     }
 
     @Test
