@@ -125,7 +125,7 @@
 
     <!-- Share -->
     <string name="fragmentShare">Share</string>
-    <string name="youtubeShare">Youtube</string>
+    <string name="youTubeShare">YouTube</string>
     <string name="twitterShare">Twitter</string>
     <string name="alsoShare">Also share on</string>
     <string name="writeYourTitle">Please write a title for your video.</string>

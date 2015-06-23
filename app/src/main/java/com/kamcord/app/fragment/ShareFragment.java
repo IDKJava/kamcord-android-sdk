@@ -9,13 +9,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -141,17 +137,18 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         View root = inflater.inflate(R.layout.fragment_share, container, false);
         ButterKnife.inject(this, root);
         initShareSourceHashMap();
-        RecordActivity activity = ((RecordActivity) getActivity());
-        setHasOptionsMenu(true);
-        activity.setSupportActionBar(mToolbar);
-        ActionBar actionbar = activity.getSupportActionBar();
-        actionbar.setTitle(getResources().getString(R.string.fragmentShare));
-        actionbar.setDisplayHomeAsUpEnabled(true);
+
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha, null);
         upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
-        actionbar.setHomeAsUpIndicator(upArrow);
-
-        setHasOptionsMenu(true);
+        mToolbar.setNavigationIcon(upArrow);
+        mToolbar.setTitle(R.string.fragmentShare);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
+                getActivity().onBackPressed();
+            }
+        });
 
         recordingSession = new Gson().fromJson(getArguments().getString(ARG_RECORDING_SESSION), RecordingSession.class);
 
@@ -318,6 +315,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mToolbar.setNavigationOnClickListener(null);
         ButterKnife.reset(this);
         if (stitchClipsThread != null) {
             stitchClipsThread.cancelStitching();
@@ -361,27 +359,12 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_share, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
-                getActivity().onBackPressed();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+        if (twitterLoginButton != null) {
+            twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+        }
 
         if (requestCode == YOUTUBE_REQUEST_AUTHORIZATION_CODE) {
             if (shareSourceButtonViews != null && shareSourceButtonViews.get(YOUTUBE_INDEX) != null) {
@@ -429,7 +412,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             FileSystemManager.cleanRecordingSessionCacheDirectory(recordingSession);
-                            getActivity().onBackPressed();
+                            getActivity().getSupportFragmentManager().popBackStack();
                             showDeleteDialogOnBack = true;
                         }
                     })

@@ -112,9 +112,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/edittext_extraspace"
                         android:layout_marginTop="@dimen/edittext_extraspace"
-                        android:paddingBottom="30dp"
                         android:background="@null"
                         android:ellipsize="end"
+                        android:paddingBottom="30dp"
                         android:textColorHint="@color/kamcordHintText" />
 
                 </LinearLayout>
@@ -154,8 +154,9 @@
                         android:drawablePadding="8dp"
                         android:drawableStart="@drawable/button_youtube_selector"
                         android:gravity="center"
-                        android:text="@string/youtubeShare"
+                        android:text="@string/youTubeShare"
                         android:textColor="@color/button_youtube_text" />
+
                 </FrameLayout>
 
                 <View
