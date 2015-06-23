@@ -7,12 +7,9 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.MediaController;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.kamcord.app.R;
-import com.kamcord.app.utils.StringUtils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -29,10 +26,6 @@ public class VideoPreviewActivity extends Activity {
     private MediaController mediaController;
     private int videoHeight;
     private int videoWidth;
-    private int seekBarId;
-    private int currentPlayTimeId;
-    private SeekBar seekBar;
-    private TextView currentPlayTime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,15 +72,6 @@ public class VideoPreviewActivity extends Activity {
 
         if (videoPath != null) {
             mVideoView.setVideoPath(videoPath);
-            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    seekBarId = getResources().getIdentifier("mediacontroller_progress", "id", "android");
-                    currentPlayTimeId = getResources().getIdentifier("time_current", "id", "android");
-                    seekBar = (SeekBar) mediaController.findViewById(seekBarId);
-                    currentPlayTime = (TextView) mediaController.findViewById(currentPlayTimeId);
-                }
-            });
             mVideoView.start();
             mVideoView.requestFocus();
 
@@ -96,16 +80,7 @@ public class VideoPreviewActivity extends Activity {
         mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-//                seekBar.setProgress(0);
-//                seekBar.setMax(mVideoView.getDuration() / 1000);
-//                seekBar.setProgress(mVideoView.getDuration() / 1000);
-                currentPlayTime.setText(StringUtils.stringForTime(mVideoView.getDuration()));
-                seekBar.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        seekBar.setProgress(mVideoView.getDuration() / 1000);
-                    }
-                });
+                mVideoView.seekTo(0);
                 mediaController.show(0);
             }
         });
