@@ -9,13 +9,9 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -141,17 +137,18 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         View root = inflater.inflate(R.layout.fragment_share, container, false);
         ButterKnife.inject(this, root);
         initShareSourceHashMap();
-        RecordActivity activity = ((RecordActivity) getActivity());
-        setHasOptionsMenu(true);
-        activity.setSupportActionBar(mToolbar);
-        ActionBar actionbar = activity.getSupportActionBar();
-        actionbar.setTitle(getResources().getString(R.string.fragmentShare));
-        actionbar.setDisplayHomeAsUpEnabled(true);
+
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_mtrl_am_alpha, null);
         upArrow.setColorFilter(getResources().getColor(R.color.ColorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
-        actionbar.setHomeAsUpIndicator(upArrow);
-
-        setHasOptionsMenu(true);
+        mToolbar.setNavigationIcon(upArrow);
+        mToolbar.setTitle(R.string.fragmentShare);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
+                getActivity().onBackPressed();
+            }
+        });
 
         recordingSession = new Gson().fromJson(getArguments().getString(ARG_RECORDING_SESSION), RecordingSession.class);
 
@@ -238,7 +235,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
             Intent uploadIntent = new Intent(getActivity(), UploadService.class);
             uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
             getActivity().startService(uploadIntent);
-            if (getActivity() instanceof  RecordActivity) {
+            if (getActivity() instanceof RecordActivity) {
                 ((RecordActivity) getActivity()).setCurrentItem(MainViewPagerAdapter.PROFILE_FRAGMENT_POSITION);
             }
             showDeleteDialogOnBack = false;
@@ -262,12 +259,12 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     @OnClick({R.id.share_twitterbutton, R.id.share_youtubebutton})
     public void onClick(FrameLayout button) {
 
-        if( button.isActivated() ) {
+        if (button.isActivated()) {
             button.setActivated(false);
             shareSourceHashMap.put(button.getId(), false);
 
         } else {
-            if( isLoggedInToExternalNetwork(button.getId()) ) {
+            if (isLoggedInToExternalNetwork(button.getId())) {
                 button.setActivated(true);
                 shareSourceHashMap.put(button.getId(), true);
 
@@ -281,7 +278,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     private boolean isLoggedInToExternalNetwork(int networkId) {
         boolean isLoggedIn = false;
 
-        switch( networkId ) {
+        switch (networkId) {
             case R.id.share_twitterbutton:
                 isLoggedIn = Twitter.getSessionManager().getActiveSession() != null;
                 break;
@@ -296,14 +293,14 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     }
 
     private void logInToExternalNetwork(int networkId) {
-        switch( networkId ) {
+        switch (networkId) {
             case R.id.share_twitterbutton:
                 twitterLoginButton.callOnClick();
                 break;
 
             case R.id.share_youtubebutton:
                 android.accounts.Account youTubeAccount = AccountManager.YouTube.getStoredAccount();
-                if( youTubeAccount != null ) {
+                if (youTubeAccount != null) {
                     AccountManager.YouTube.fetchAuthorizationCode(getActivity(), YOUTUBE_REQUEST_AUTHORIZATION_CODE);
                 } else {
                     Intent chooseAccountIntent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"}, false, null, null, null, null);
@@ -322,6 +319,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mToolbar.setNavigationOnClickListener(null);
         ButterKnife.reset(this);
         if (stitchClipsThread != null) {
             stitchClipsThread.cancelStitching();
@@ -365,29 +363,14 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_share, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
-                getActivity().onBackPressed();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+        if (twitterLoginButton != null) {
+            twitterLoginButton.onActivityResult(requestCode, resultCode, data);
+        }
 
-        if( requestCode == YOUTUBE_REQUEST_AUTHORIZATION_CODE ) {
+        if (requestCode == YOUTUBE_REQUEST_AUTHORIZATION_CODE) {
             if (shareSourceButtonViews != null && shareSourceButtonViews.get(YOUTUBE_INDEX) != null) {
                 View youTubeButton = shareSourceButtonViews.get(YOUTUBE_INDEX);
                 if (resultCode == Activity.RESULT_OK) {
@@ -402,12 +385,12 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
             }
         }
 
-        if( requestCode == YOUTUBE_CHOOSE_ACCOUNT_CODE ) {
-            if( shareSourceButtonViews != null && shareSourceButtonViews.get(YOUTUBE_INDEX) != null) {
+        if (requestCode == YOUTUBE_CHOOSE_ACCOUNT_CODE) {
+            if (shareSourceButtonViews != null && shareSourceButtonViews.get(YOUTUBE_INDEX) != null) {
                 View youTubeButton = shareSourceButtonViews.get(YOUTUBE_INDEX);
                 if (resultCode == Activity.RESULT_OK) {
                     String accountName = data.getStringExtra(android.accounts.AccountManager.KEY_ACCOUNT_NAME);
-                    if( accountName != null && !accountName.isEmpty() ) {
+                    if (accountName != null && !accountName.isEmpty()) {
                         Account youTubeAccount = new Account(accountName, "com.google");
                         AccountManager.YouTube.setStoredAccount(youTubeAccount);
                         logInToExternalNetwork(youTubeButton.getId());
@@ -421,9 +404,10 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     }
 
     private boolean showDeleteDialogOnBack = true;
+
     @Override
     public boolean onBackPressed() {
-        if( showDeleteDialogOnBack ) {
+        if (showDeleteDialogOnBack) {
             showDeleteDialogOnBack = false;
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.areYouSure)
@@ -432,7 +416,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             FileSystemManager.cleanRecordingSessionCacheDirectory(recordingSession);
-                            getActivity().onBackPressed();
+                            getActivity().getSupportFragmentManager().popBackStack();
                             showDeleteDialogOnBack = true;
                         }
                     })

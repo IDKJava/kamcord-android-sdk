@@ -154,7 +154,7 @@
                         android:gravity="center"
                         android:drawableStart="@drawable/button_youtube_selector"
                         android:drawablePadding="8dp"
-                        android:text="@string/youtubeShare"
+                        android:text="@string/youTubeShare"
                         android:textColor="@color/button_youtube_text"/>
                 </FrameLayout>
 
