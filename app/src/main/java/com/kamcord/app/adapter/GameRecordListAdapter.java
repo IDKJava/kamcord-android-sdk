@@ -2,15 +2,12 @@ package com.kamcord.app.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.ImageButton;
 
 import com.kamcord.app.R;
@@ -103,18 +100,15 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
     }
 
-    private void bindInstalledHeaderViewHolder(InstalledHeaderViewHolder viewHolder)
-    {
+    private void bindInstalledHeaderViewHolder(InstalledHeaderViewHolder viewHolder) {
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.recordAndShareTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindNotInstalledHeaderViewHolder(NotInstalledHeaderViewHolder viewHolder)
-    {
+    private void bindNotInstalledHeaderViewHolder(NotInstalledHeaderViewHolder viewHolder) {
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.alsoRecordTheseTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindRequestGameViewHolder(RequestGameViewHolder viewHolder)
-    {
+    private void bindRequestGameViewHolder(RequestGameViewHolder viewHolder) {
         viewHolder.requestGameImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,9 +128,8 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         });
     }
 
-    private void bindGameItemViewHolder(GameItemViewHolder viewHolder, final Game game)
-    {
-        if( game.icons != null && game.icons.regular != null ) {
+    private void bindGameItemViewHolder(GameItemViewHolder viewHolder, final Game game) {
+        if (game.icons != null && game.icons.regular != null) {
             Picasso.with(mContext)
                     .load(game.icons.regular)
                     .tag(game.play_store_id)
@@ -159,35 +152,18 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
             }
         });
 
-        if( game.isInstalled ) {
-            if (game.isRecording) {
-                gameActionImageButton.setBackgroundResource(R.drawable.hollow_red_circle_background);
-                gameActionImageButton
-                    .setContentDescription(mContext.getResources().getString(R.string.recording));
-                gameActionImageButton.setImageResource(R.drawable.ic_videocam_off_white_48dp);
-                gameActionImageButton.setColorFilter(mContext.getResources().getColor(R.color.stopRecordingRed), PorterDuff.Mode.MULTIPLY);
-
-                Animation animation = new AlphaAnimation(1f, 0.5f);
-                animation.setDuration(500);
-                animation.setRepeatCount(Animation.INFINITE);
-                animation.setRepeatMode(Animation.REVERSE);
-                gameActionImageButton.startAnimation(animation);
-            } else {
+        if (game.isInstalled) {
+            if (!game.isRecording) {
                 gameActionImageButton.setBackgroundResource(R.drawable.hollow_circle_background);
-                gameActionImageButton
-                    .setContentDescription(mContext.getResources().getString(R.string.idle));
-                gameActionImageButton.setImageResource(R.drawable.ic_videocam_white_48dp);
-                gameActionImageButton.setColorFilter(mContext.getResources().getColor(R.color.kamcordGreen), PorterDuff.Mode.MULTIPLY);
-
+                gameActionImageButton.setContentDescription(mContext.getResources().getString(R.string.idle));
+                gameActionImageButton.setImageResource(R.drawable.button_record_selector);
                 gameActionImageButton.clearAnimation();
             }
         } else {
             gameActionImageButton.setBackgroundResource(R.drawable.hollow_blue_circle_background);
-            gameActionImageButton.setImageResource(R.drawable.install_icon);
-            gameActionImageButton.setColorFilter(mContext.getResources().getColor(R.color.kamcordBlue), PorterDuff.Mode.MULTIPLY);
+            gameActionImageButton.setImageResource(R.drawable.button_download_selector);
         }
     }
-
 
 
     @Override
