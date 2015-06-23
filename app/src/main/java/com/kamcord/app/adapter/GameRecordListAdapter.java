@@ -121,12 +121,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
                 intent.putExtra(Intent.EXTRA_EMAIL, new String[]{mContext.getResources().getString(R.string.gameRequestEmail),});
                 intent.putExtra(Intent.EXTRA_SUBJECT, mContext.getResources().getString(R.string.canIRecord));
-                String body = mContext.getResources().getString(R.string.iWantToRecord) + " \n"
-                        + "\n";
-                if (AccountManager.isLoggedIn()) {
-                    Account account = AccountManager.getStoredAccount();
-                    body += String.format(Locale.ENGLISH, mContext.getResources().getString(R.string.sincerely), account.username);
-                }
+                String body = mContext.getResources().getString(R.string.iWantToRecord);
                 intent.putExtra(Intent.EXTRA_TEXT, body);
                 intent.setType("*/*");
                 intent.setData(Uri.parse("mailto:"));
