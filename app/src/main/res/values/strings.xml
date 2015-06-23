@@ -80,7 +80,7 @@
     <string name="gameRequestEmail">game-requests@kamcord.com</string>
     <string name="canIRecord">Kamcord Game Request</string>
     <string name="iWantToRecord">Hi Kamcord,\n\nPlease let me record &lt;Add your favorite game name here!&gt;</string>
-    <string name="sincerely">;)\n %s</string>
+    <string name="sincerely">; )\n %s</string>
 
 
     <string name="defaultNumber">0</string>
