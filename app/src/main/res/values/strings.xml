@@ -72,7 +72,7 @@
     <string name="signInProfilePrompt">You must log in to Kamcord to view your profile page.</string>
     <!-- Not used? -->
     <string name="signIn">Sign In</string>
-    <string name="swipeToRefreshRecord">Oops! Swipe down to refresh games when your network is ready.</string>
+    <string name="swipeToRefreshRecord">Oops! Pull down to refresh games when your network is ready.</string>
 
     <string name="uploading">Uploading&#8230;</string>
     <string name="yourVideoIsUploading">Your video \"%s\" is uploading!</string>
