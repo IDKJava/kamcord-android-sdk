@@ -109,7 +109,7 @@ dependencies {
 apply plugin: 'spoon'
 
 spoon{
-    debug = false
+    debug = true
     if (project.hasProperty('spoonClassName')) {
         className = project.spoonClassName
     } else {
