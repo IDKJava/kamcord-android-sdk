@@ -124,4 +124,8 @@ public class StringUtils {
                 context.getString(R.string.myLatestVideo),
                 session.getGameServerName());
     }
+
+    public static String truncate(String theString, int length) {
+        return theString.substring(0, Math.min(length, theString.length()));
+    }
 }

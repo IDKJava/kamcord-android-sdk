@@ -69,7 +69,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.jakewharton:butterknife:6.1.0'
-    // compile 'com.kamcord:app-server-models:1.0.1'
+
     compile files('libs/FlurryAnalytics-5.5.0.jar')
     compile('com.crashlytics.sdk.android:crashlytics:2.3.0@aar') {
         transitive = true;
@@ -81,8 +81,14 @@ dependencies {
     }
 
     compile 'uk.co.chrisjenx:calligraphy:2.1.0'
+
      // Rx Java
     compile 'io.reactivex:rxandroid:0.24.0'
+
+    // Using this for YouTube auth stuff.
+    compile 'com.google.android.gms:play-services-base:7.3.0'
+
+
     // Testing-only dependencies
     androidTestCompile 'com.android.support.test:runner:0.2'
     // UiAutomator Testing

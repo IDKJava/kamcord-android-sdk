@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjection;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.thread.AudioRecordThread;
 import com.kamcord.app.thread.RecordHandlerThread;
 import com.kamcord.app.utils.NotificationUtils;
@@ -80,6 +83,8 @@ public class RecordingService extends Service {
 
             CyclicBarrier clipStartBarrier = new CyclicBarrier(2);
 
+            KamcordAnalytics.startSession(this, Event.Name.RECORD_VIDEO);
+
             mRecordHandlerThread = new RecordHandlerThread(mMediaProjection, getApplicationContext(), mRecordingSession, clipStartBarrier);
             mRecordHandlerThread.start();
             mHandler = new Handler(mRecordHandlerThread.getLooper(), mRecordHandlerThread);
@@ -104,6 +109,11 @@ public class RecordingService extends Service {
             mRecordHandlerThread.quitSafely();
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
             mAudioRecordThread.quitSafely();
+
+            Bundle extras = new Bundle();
+            extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, ((float) mRecordingSession.getDurationUs()) / 1000f);
+            extras.putString(KamcordAnalytics.GAME_ID_KEY, mRecordingSession.getGameServerID());
+            KamcordAnalytics.endSession(this, Event.Name.RECORD_VIDEO, extras);
         } else {
             Log.e(TAG, "Unable to stop recording session! There is no currently running recording session.");
         }

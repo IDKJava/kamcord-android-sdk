@@ -31,10 +31,13 @@ public class ResetPasswordFragment extends Fragment {
     @InjectView(R.id.resetPasswordButton)
     Button resetPasswordButton;
 
+    private boolean viewsAreValid = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_reset_password, container, false);
         ButterKnife.inject(this, root);
+        viewsAreValid = true;
         return root;
     }
 
@@ -42,6 +45,7 @@ public class ResetPasswordFragment extends Fragment {
     public void onDestroyView()
     {
         super.onDestroyView();
+        viewsAreValid = false;
         ButterKnife.reset(this);
     }
 
@@ -60,6 +64,9 @@ public class ResetPasswordFragment extends Fragment {
                 new Callback<GenericResponse<?>>() {
                     @Override
                     public void success(GenericResponse<?> responseWrapper, Response response) {
+                        if( !viewsAreValid ) {
+                            return;
+                        }
                         if( responseWrapper != null && responseWrapper.status != null
                                 && responseWrapper.status.equals(StatusCode.OK) )
                         {
@@ -75,6 +82,9 @@ public class ResetPasswordFragment extends Fragment {
 
                     @Override
                     public void failure(RetrofitError error) {
+                        if( !viewsAreValid ) {
+                            return;
+                        }
                         handleResetPasswordFailure(null);
                     }
                 });

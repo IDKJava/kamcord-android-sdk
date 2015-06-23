@@ -91,11 +91,15 @@ public class RecordFragment extends Fragment implements
 
     private List<RecordItem> mRecordItemList = new ArrayList<>();
     private List<Game> mGameList = new ArrayList<>();
+    private boolean viewsAreValid = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.record_tab, container, false);
+
         ButterKnife.inject(this, v);
+        viewsAreValid = true;
+
         initKamcordRecordFragment(v);
 
         Activity myActivity = getActivity();
@@ -105,12 +109,14 @@ public class RecordFragment extends Fragment implements
         if (myActivity instanceof RecordActivity) {
             ((RecordActivity) myActivity).setOnBackPressedListener(this);
         }
+
         return v;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        viewsAreValid = false;
         ButterKnife.reset(this);
 
         Activity myActivity = getActivity();
@@ -272,6 +278,9 @@ public class RecordFragment extends Fragment implements
                                         .show();
                     } else {
                                 stopRecording();
+                                if (getActivity() instanceof RecordActivity) {
+                                    ((RecordActivity) getActivity()).setPagingEnabled(true);
+                                }
                                 shareRecording(recordingSession);
                     }
                 }
@@ -349,6 +358,12 @@ public class RecordFragment extends Fragment implements
         });
         mRecordItemList.clear();
         boolean lastGameInstalled = false;
+        if( mGameList.size() > 0 && !mGameList.get(0).isInstalled )
+        {
+            mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
+            mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
+            mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
+        }
         for( Game game : mGameList ) {
             if( game.isInstalled && !lastGameInstalled ) {
                 mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
@@ -365,7 +380,9 @@ public class RecordFragment extends Fragment implements
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
         @Override
         public void success(GenericResponse<PaginatedGameList> gamesListWrapper, Response response) {
-            if (gamesListWrapper != null && gamesListWrapper.response != null && gamesListWrapper.response.game_list != null) {
+            if (gamesListWrapper != null
+                    && gamesListWrapper.response != null
+                    && gamesListWrapper.response.game_list != null) {
                 mGameList.clear();
                 if (BuildConfig.DEBUG) {
                     Game ripples = new Game();
@@ -387,13 +404,16 @@ public class RecordFragment extends Fragment implements
                         mGameList.add(game);
                     }
                 }
-                if (refreshRecordTab.getVisibility() == View.VISIBLE) {
-                    refreshRecordTab.setVisibility(View.INVISIBLE);
-                }
                 GameListUtils.saveGameList(mGameList);
-                updateRecordItemList();
-                mRecyclerAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
+
+                if(viewsAreValid) {
+                    if (refreshRecordTab.getVisibility() == View.VISIBLE) {
+                        refreshRecordTab.setVisibility(View.INVISIBLE);
+                    }
+                    updateRecordItemList();
+                    mRecyclerAdapter.notifyDataSetChanged();
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
             }
         }
 
@@ -401,8 +421,10 @@ public class RecordFragment extends Fragment implements
         public void failure(RetrofitError retrofitError) {
             Log.e(TAG, "Unable to get list of KCP games.");
             Log.e(TAG, "  " + retrofitError.toString());
-            mSwipeRefreshLayout.setRefreshing(false);
-            // TODO: show the user something about this.
+            if(viewsAreValid) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                // TODO: show the user something about this.
+            }
         }
     }
 

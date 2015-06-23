@@ -1,21 +1,22 @@
 package com.kamcord.app.thread;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 
-import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
-import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
 import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.VideoUploadedEntity;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.server.model.builder.ReserveVideoEntityBuilder;
 import com.kamcord.app.server.model.builder.VideoUploadedEntityBuilder;
 import com.kamcord.app.utils.AccountManager;
@@ -73,7 +74,6 @@ public class Uploader extends Thread {
     }
 
     private RecordingSession mRecordingSession;
-    private VideoUploadedEntity.Share share;
     private HashMap<Integer, Boolean> mShareSourceHashMap;
 
     private int mTotalParts = 0;
@@ -138,38 +138,39 @@ public class Uploader extends Thread {
 
     @Override
     public void run() {
-        AccountManager accountManager = new AccountManager();
-        Account account = accountManager.getStoredAccount();
-        Map<String, String> videoParams = new HashMap<>();
-        videoParams.put(mContext.getResources().getString(R.string.flurryGameName), mRecordingSession.getGamePackageName());
-        videoParams.put(mContext.getResources().getString(R.string.flurryGameID), mRecordingSession.getGameServerID());
-        videoParams.put(mContext.getResources().getString(R.string.flurryUserName), account.username);
-        videoParams.put(mContext.getResources().getString(R.string.flurryUserID), account.id);
+        KamcordAnalytics.startSession(this, Event.Name.UPLOAD_VIDEO);
+        Bundle eventExtras = new Bundle();
+        eventExtras.putInt(KamcordAnalytics.WAS_REPLAYED_KEY, mRecordingSession.wasReplayed() ? 1 : 0);
+        eventExtras.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());
+        eventExtras.putInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, mRecordingSession.isUploadRetry() ? 1 : 0);
 
+        Event.UploadFailureReason reason = Event.UploadFailureReason.RESERVE_VIDEO;
         try {
-            long start = System.currentTimeMillis();
-
             notifyUploadStart(mRecordingSession);
             reserveVideoUpload();
+
+            reason = Event.UploadFailureReason.UPLOAD_TO_S3;
+
             startUploadToS3(UploadType.VIDEO);
             for (int part = 0; part < mTotalParts; part++) {
                 uploadPartToS3(part, UploadType.VIDEO);
                 notifyUploadProgressed(mRecordingSession, (float) (part+1) / (float) mTotalParts);
             }
             finishUploadToS3(UploadType.VIDEO);
+
+            reason = Event.UploadFailureReason.UPLOAD_COMPLETION;
+
             informKamcordUploadFinished();
 
             mRecordingSession.setState(RecordingSession.State.UPLOADED);
             mRecordingSession.setGlobalId(mServerVideoId);
             ActiveRecordingSessionManager.updateActiveSession(mRecordingSession);
 
-            notifyUploadFinished(mRecordingSession, true);
+            eventExtras.putInt(KamcordAnalytics.SUCCESS_KEY, 1);
+            eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+            KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, eventExtras);
 
-            long end = System.currentTimeMillis();
-            videoParams.put(mContext.getResources().getString(R.string.flurryVideoID), mServerVideoId);
-            videoParams.put(mContext.getResources().getString(R.string.flurryDuration), Long.toString(end - start));
-            videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "true");
-            FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
+            notifyUploadFinished(mRecordingSession, true);
             return;
 
         } catch (Throwable e) {
@@ -177,9 +178,13 @@ public class Uploader extends Thread {
             e.printStackTrace();
         }
 
+        eventExtras.putInt(KamcordAnalytics.SUCCESS_KEY, 0);
+        eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+        eventExtras.putString(KamcordAnalytics.FAILURE_REASON_KEY, reason.name());
+        KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, eventExtras);
+
         notifyUploadFinished(mRecordingSession, false);
-        videoParams.put(mContext.getResources().getString(R.string.flurrySuccess), "false");
-        FlurryAgent.logEvent(mContext.getResources().getString(R.string.flurryVideoShare), videoParams);
+
         Log.e(TAG, "Unable to upload video, giving up.");
     }
 
@@ -199,9 +204,8 @@ public class Uploader extends Thread {
                 e.printStackTrace();
             }
 
-            if (genericResponse == null || genericResponse.response == null) {
-                // TODO: notify *someone* that were weren't able to reserve the video.
-                return;
+            if (genericResponse == null || genericResponse.status == null || !genericResponse.status.equals(StatusCode.OK) ) {
+                throw new Exception("Unable to reserve a video id!");
             }
 
             mServerVideoId = genericResponse.response.video_id;
@@ -439,6 +443,7 @@ public class Uploader extends Thread {
         videoUploadedEntityBuilder.setVideoId(mServerVideoId);
 
         if( mShareSourceHashMap != null ) {
+            VideoUploadedEntity.Share share;
             for (Map.Entry<Integer, Boolean> entry : mShareSourceHashMap.entrySet()) {
                 if (entry.getKey() == R.id.share_twitterbutton && entry.getValue() == true) {
                     TwitterSession session = Twitter.getSessionManager().getActiveSession();
@@ -446,6 +451,11 @@ public class Uploader extends Thread {
                     share.source = VideoUploadedEntity.ShareSource.TWITTER;
                     share.access_token = session.getAuthToken().token;
                     videoUploadedEntityBuilder.addShare(share);
+
+                    Bundle extras = new Bundle();
+                    extras.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.TWITTER.name());
+                    extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+                    KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_SHARE, extras);
 
                     if (session != null) {
                         TwitterApiClient client = Twitter.getApiClient(session);
@@ -463,6 +473,25 @@ public class Uploader extends Thread {
                                 });
                     } else {
                         Log.v(TAG, "Twitter session was null!");
+                    }
+                }
+
+                if( entry.getKey() == R.id.share_youtubebutton && entry.getValue() ) {
+                    String accessToken = AccountManager.YouTube.getStoredAccessToken();
+                    String refreshToken = AccountManager.YouTube.getStoredRefreshToken();
+                    if (accessToken != null && refreshToken != null) {
+                        share = new VideoUploadedEntity.Share();
+                        share.source = VideoUploadedEntity.ShareSource.YOUTUBE;
+                        share.access_token = accessToken;
+                        share.refresh_token = refreshToken;
+                        share.title = mRecordingSession.getVideoTitle();
+                        share.description = "Recorded by Kamcord on Android";
+                        videoUploadedEntityBuilder.addShare(share);
+
+                        Bundle extras = new Bundle();
+                        extras.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.YOUTUBE.name());
+                        extras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
+                        KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_SHARE, extras);
                     }
                 }
             }

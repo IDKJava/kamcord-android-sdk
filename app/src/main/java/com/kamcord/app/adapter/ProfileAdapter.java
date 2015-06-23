@@ -31,6 +31,7 @@ import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.ProfileItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
@@ -296,9 +297,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 @Override
                 public void onClick(View v) {
                     Intent uploadIntent = new Intent(mContext, UploadService.class);
+                    session.setShareAppSessionId(KamcordAnalytics.getCurrentAppSessionId());
+                    session.setIsUploadRetry(true);
                     uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(session));
                     mContext.startService(uploadIntent);
-                    }
+                }
             });
         }
 
