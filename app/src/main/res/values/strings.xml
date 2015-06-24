@@ -21,6 +21,7 @@
     <string name="gamers">Gamers</string>
     <string name="createProfile">Create Profile</string>
     <string name="logIn">Log In</string>
+    <string name="skip">Skip</string>
 
     <string name="username">Username</string>
     <string name="password">Password</string>
