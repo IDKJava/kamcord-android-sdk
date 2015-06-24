@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
@@ -29,7 +30,7 @@ import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountListener;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
-import com.kamcord.app.utils.NetworkUtils;
+import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.utils.ProfileListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
@@ -115,7 +116,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
 
         if (AccountManager.isLoggedIn()) {
 
-            if (ProfileListUtils.getCachedProfileInfo() != null && !NetworkUtils.isNetworkOnline(getActivity().getApplicationContext())) {
+            if (ProfileListUtils.getCachedProfileInfo() != null && !Connectivity.isConnected()) {
                 userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, (ProfileListUtils.getCachedProfileInfo()));
                 mProfileList.add(userHeader);
             } else {
@@ -142,7 +143,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (AccountManager.isLoggedIn()) {
+                if (AccountManager.isLoggedIn() && Connectivity.isConnected()) {
                     videoFeedRefreshLayout.setRefreshing(true);
                     marshalActiveSessions();
                     Account myAccount = AccountManager.getStoredAccount();
@@ -150,6 +151,9 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     client.getUserInfo(myAccount.id, new GetUserInfoCallBack());
                     client.getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
                     checkProcessingSessions();
+                } else if (AccountManager.isLoggedIn()) {
+                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_SHORT).show();
+                    videoFeedRefreshLayout.setRefreshing(false);
                 } else {
                     videoFeedRefreshLayout.setRefreshing(false);
                 }
