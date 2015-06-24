@@ -128,7 +128,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:gravity="center|top"
-                    android:text="@string/headerFollowing"
                     android:textSize="16sp"
                     android:textColor="@color/ColorPrimary" />
             </LinearLayout>

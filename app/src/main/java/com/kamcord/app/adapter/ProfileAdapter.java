@@ -57,7 +57,8 @@ import retrofit.client.Response;
 /**
  * Created by donliang1 on 5/28/15.
  */
-public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class
+        ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<ProfileItem> mProfileList;
@@ -135,7 +136,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             viewHolder.getFollowersText().setText(mContext.getResources().getQuantityString(R.plurals.headerFollowers, count));
             viewHolder.getFollowersCount().setText(StringUtils.abbreviatedCount(count));
 
-            viewHolder.getFollowingCount().setText(StringUtils.abbreviatedCount(user.following_count != null ? user.following_count : 0));
+            count = user.following_count != null ? user.following_count : 0;
+            viewHolder.getFollowingText().setText(mContext.getResources().getQuantityString(R.plurals.headerFollowings, count));
+            viewHolder.getFollowingCount().setText(StringUtils.abbreviatedCount(count));
 
             int profileColor = mContext.getResources().getColor(R.color.defaultProfileColor);
             try {
