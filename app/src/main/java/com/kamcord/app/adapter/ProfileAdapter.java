@@ -232,7 +232,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
+    private void bindProfileUploadProgressViewHolder(final ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
         Picasso picasso = new Picasso.Builder(mContext)
                 .addRequestHandler(new ThumbnailRequestHandler())
                 .build();
@@ -292,9 +292,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
             viewHolder.retryUploadImageButton.setVisibility(View.VISIBLE);
+            viewHolder.retryUploadImageButton.setEnabled(true);
             viewHolder.retryUploadImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    v.setEnabled(false);
+                    mProfileList.remove(position);
+                    notifyItemRemoved(position);
+
                     Intent uploadIntent = new Intent(mContext, UploadService.class);
                     session.setShareAppSessionId(KamcordAnalytics.getCurrentAppSessionId());
                     session.setIsUploadRetry(true);
