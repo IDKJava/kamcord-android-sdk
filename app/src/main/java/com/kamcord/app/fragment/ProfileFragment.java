@@ -29,6 +29,7 @@ import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountListener;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
+import com.kamcord.app.utils.NetworkUtils;
 import com.kamcord.app.utils.ProfileListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
@@ -114,17 +115,18 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
 
         if (AccountManager.isLoggedIn()) {
 
-            userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, (User) null);
-            mProfileList.add(userHeader);
-            signInPromptContainer.setVisibility(View.GONE);
-            Account myAccount = AccountManager.getStoredAccount();
-            AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-            AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
-
-            mProfileList = ProfileListUtils.getCachedProfileList();
-            if (mProfileList == null) {
-                mProfileList = new ArrayList<>();
+            if (ProfileListUtils.getCachedProfileInfo() != null && !NetworkUtils.isNetworkOnline(getActivity().getApplicationContext())) {
+                userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, (ProfileListUtils.getCachedProfileInfo()));
+                mProfileList.add(userHeader);
+            } else {
+                userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, (User) null);
+                mProfileList.add(userHeader);
+                signInPromptContainer.setVisibility(View.GONE);
+                Account myAccount = AccountManager.getStoredAccount();
+                AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
+                AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
             }
+
         } else {
             signInPromptContainer.setVisibility(View.VISIBLE);
             videoFeedRefreshLayout.setEnabled(false);
@@ -298,6 +300,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                 } else {
                     totalItems = 0;
                 }
+                ProfileListUtils.saveProfileInfo(userHeader.getUser());
                 mProfileAdapter.notifyItemChanged(0);
                 videoFeedRefreshLayout.setRefreshing(false);
             }
@@ -364,7 +367,6 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                         mProfileList.add(profileViewModel);
                     }
                 }
-                ProfileListUtils.saveProfileList(mProfileList);
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
                 videoFeedRefreshLayout.setRefreshing(false);

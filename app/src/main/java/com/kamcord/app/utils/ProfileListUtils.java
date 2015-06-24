@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.server.model.User;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 public class ProfileListUtils {
     private static final String CACHE_PREFS = "CACHE_PREFS";
+    private static final String PROFILE_INFO = "PROFILE_USER_INFO";
     private static final String PROFILE_LIST = "PROFILE_LIST";
     private static SharedPreferences preferences = null;
 
@@ -40,6 +42,28 @@ public class ProfileListUtils {
         try {
             preferences.edit()
                     .putString(PROFILE_LIST, new Gson().toJson(profileItemList))
+                    .apply();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static User getCachedProfileInfo() {
+        User cachedProfileInfo = new User();
+        try {
+            String jsonProfileInfo = preferences.getString(PROFILE_INFO, "[]");
+            Type type = new TypeToken<User>() {}.getType();
+            cachedProfileInfo = new Gson().fromJson(jsonProfileInfo, type);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cachedProfileInfo;
+    }
+
+    public static void saveProfileInfo(User userProfile) {
+        try {
+            preferences.edit()
+                    .putString(PROFILE_INFO, new Gson().toJson(userProfile))
                     .apply();
         } catch (Exception e) {
             e.printStackTrace();
