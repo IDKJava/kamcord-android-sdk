@@ -25,13 +25,17 @@
 
     <Button
         android:id="@+id/skipButton"
+        style="@style/KamcordButton.HollowGray"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp"
-        style="@style/KamcordButton"
-        android:text="Skip" />
+        android:paddingBottom="8dp"
+        android:paddingLeft="28dp"
+        android:paddingRight="28dp"
+        android:paddingTop="8dp"
+        android:text="@string/skip" />
 
     <View
         android:id="@+id/spacer"
@@ -41,27 +45,30 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/createProfileButton"
-        android:layout_width="wrap_content"
+        android:id="@+id/loginButton"
+        style="@style/KamcordButton.SolidGray"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_toLeftOf="@id/spacer"
-        style="@style/KamcordButton"
-        android:text="@string/createProfile" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="8dp"
+        android:padding="16dp"
+        android:text="@string/logIn" />
 
     <Button
-        android:id="@+id/loginButton"
-        android:layout_width="0dp"
+        android:id="@+id/createProfileButton"
+        style="@style/KamcordButton.SolidGreen"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_toRightOf="@id/spacer"
-        style="@style/KamcordButton"
-        android:text="@string/logIn" />
+        android:layout_above="@id/loginButton"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:padding="16dp"
+        android:text="@string/createProfile" />
+
 
 </RelativeLayout>
