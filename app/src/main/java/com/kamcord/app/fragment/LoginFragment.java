@@ -65,7 +65,7 @@ public class LoginFragment extends Fragment {
     @OnClick(R.id.loginButton)
     public void login()
     {
-        String username = userNameEditText.getEditableText().toString();
+        String username = userNameEditText.getEditableText().toString().trim();
         String password = passwordEditText.getEditableText().toString();
         AppServerClient.getInstance().login(username, password, loginCallback);
     }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
@@ -58,7 +57,8 @@ import retrofit.client.Response;
 /**
  * Created by donliang1 on 5/28/15.
  */
-public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class
+        ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<ProfileItem> mProfileList;
@@ -136,7 +136,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             viewHolder.getFollowersText().setText(mContext.getResources().getQuantityString(R.plurals.headerFollowers, count));
             viewHolder.getFollowersCount().setText(StringUtils.abbreviatedCount(count));
 
-            viewHolder.getFollowingCount().setText(StringUtils.abbreviatedCount(user.following_count != null ? user.following_count : 0));
+            count = user.following_count != null ? user.following_count : 0;
+            viewHolder.getFollowingText().setText(mContext.getResources().getQuantityString(R.plurals.headerFollowings, count));
+            viewHolder.getFollowingCount().setText(StringUtils.abbreviatedCount(count));
 
             int profileColor = mContext.getResources().getColor(R.color.defaultProfileColor);
             try {
@@ -233,7 +235,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    private void bindProfileUploadProgressViewHolder(ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
+    private void bindProfileUploadProgressViewHolder(final ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
         Picasso picasso = new Picasso.Builder(mContext)
                 .addRequestHandler(new ThumbnailRequestHandler())
                 .build();
@@ -256,8 +258,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             int progressBarProgress = (int) (viewHolder.uploadProgressBar.getMax() * session.getUploadProgress());
             uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), percentProgress);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
-            viewHolder.uploadProgressBar.setProgressTintList(
-                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordBlue)}));
+            viewHolder.uploadProgressBar.setProgressDrawable(mContext.getDrawable(R.drawable.upload_progressbar_blue));
             viewHolder.uploadProgressBar.setProgress(progressBarProgress);
 
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_PROCESSING_PROGRESS ) {
@@ -267,8 +268,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
             uploadStatus = mContext.getString(R.string.uploadFailed);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
-            viewHolder.uploadProgressBar.setProgressTintList(
-                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordRed)}));
+            viewHolder.uploadProgressBar.setProgressDrawable(mContext.getDrawable(R.drawable.upload_progressbar_red));
             viewHolder.uploadProgressBar.setProgress(viewHolder.uploadProgressBar.getMax());
 
             viewHolder.uploadFailedImageButton.setVisibility(View.VISIBLE);
@@ -295,9 +295,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
             viewHolder.retryUploadImageButton.setVisibility(View.VISIBLE);
+            viewHolder.retryUploadImageButton.setEnabled(true);
             viewHolder.retryUploadImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    v.setEnabled(false);
+                    mProfileList.remove(position);
+                    notifyItemRemoved(position);
+
                     Intent uploadIntent = new Intent(mContext, UploadService.class);
                     session.setShareAppSessionId(KamcordAnalytics.getCurrentAppSessionId());
                     session.setIsUploadRetry(true);

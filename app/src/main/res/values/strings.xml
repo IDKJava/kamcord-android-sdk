@@ -21,6 +21,7 @@
     <string name="gamers">Gamers</string>
     <string name="createProfile">Create Profile</string>
     <string name="logIn">Log In</string>
+    <string name="skip">Skip</string>
 
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -85,6 +86,8 @@
     <string name="iWantToRecord">Hey Kamcord, please let me record from this cool game: </string>
 
     <string name="defaultNumber">0</string>
+
+    <!-- Profile Fragment -->
     <plurals name="headerVideos">
         <item quantity="one">Video</item>
         <item quantity="other">Videos</item>
@@ -93,14 +96,19 @@
         <item quantity="one">Follower</item>
         <item quantity="other">Followers</item>
     </plurals>
-    <string name="headerFollowing">Following</string>
+    <plurals name="headerFollowings">
+        <item quantity="one">Following</item>
+        <item quantity="other">Following</item>
+    </plurals>
     <plurals name="videoLikes">
         <item quantity="one">Like</item>
         <item quantity="other">Likes</item>
     </plurals>
+
     <string name="byAuthorGame">by %1$s &#183; %2$s</string>
     <string name="recordAndShare">My Games</string>
     <string name="alsoRecordThese">Popular Games</string>
+
     <plurals name="followersWithCount">
         <item quantity="one">%s Follower</item>
         <item quantity="other">%s Followers</item>
@@ -145,6 +153,7 @@
     <string name="ifYouDeleteThis">If you delete this video, the world will never see it again! :( Delete your awesome vid?</string>
     <string name="deleteVideo">Delete Video</string>
     <string name="failedToDelete">Failed to delete video. Check your network connection.</string>
+    <string name="failedToConnect">Failed to connect. Check your network connection.</string>
 
     <string name="youWillLoseMonster">You will lose your video forever to the video monster!</string>
 </resources>

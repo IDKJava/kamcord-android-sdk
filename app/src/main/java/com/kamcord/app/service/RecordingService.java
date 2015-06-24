@@ -105,10 +105,17 @@ public class RecordingService extends Service {
 
     public synchronized void stopRecording() {
         if (mRecordHandlerThread != null && mRecordHandlerThread.isAlive()) {
+            mHandler.removeMessages(RecordHandlerThread.Message.POLL);
+            mHandler.removeMessages(RecordHandlerThread.Message.RECORD_CLIP);
             mHandler.sendEmptyMessage(RecordHandlerThread.Message.STOP_RECORDING);
             mRecordHandlerThread.quitSafely();
+            mRecordHandlerThread = null;
+
+            mAudioRecordHandler.removeMessages(AudioRecordThread.Message.POLL);
+            mAudioRecordHandler.removeMessages(AudioRecordThread.Message.RECORD_CLIP);
             mAudioRecordHandler.sendEmptyMessage(AudioRecordThread.Message.STOP_RECORDING);
             mAudioRecordThread.quitSafely();
+            mAudioRecordThread = null;
 
             Bundle extras = new Bundle();
             extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, ((float) mRecordingSession.getDurationUs()) / 1000000f);
