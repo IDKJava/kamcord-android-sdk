@@ -276,14 +276,14 @@ public class RecordFragment extends Fragment implements
                                             }
                                         })
                                         .show();
-                    } else {
+                            } else {
                                 stopRecording();
                                 if (getActivity() instanceof RecordActivity) {
                                     ((RecordActivity) getActivity()).setPagingEnabled(true);
                                 }
                                 shareRecording(recordingSession);
-                    }
-                }
+                            }
+                        }
                     });
                 }
             } else {

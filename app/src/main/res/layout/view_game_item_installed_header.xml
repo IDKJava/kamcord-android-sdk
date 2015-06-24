@@ -16,14 +16,4 @@
         android:textColor="@color/kamcordDarkText"
         android:textSize="20sp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="left|center"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="@string/gamesCurrentlyInstalled"
-        android:textColor="@color/kamcordDarkText"
-        android:textSize="18sp" />
-
 </LinearLayout>

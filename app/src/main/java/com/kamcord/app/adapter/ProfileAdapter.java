@@ -378,7 +378,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         new AlertDialog.Builder(mContext)
                 .setTitle(R.string.areYouSure)
                 .setMessage(R.string.ifYouDeleteThis)
-                .setNeutralButton(android.R.string.cancel, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
