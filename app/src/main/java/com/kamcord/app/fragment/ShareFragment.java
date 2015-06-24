@@ -416,7 +416,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                             showDeleteDialogOnBack = true;
                         }
                     })
-                    .setNeutralButton(android.R.string.cancel, null)
+                    .setNegativeButton(android.R.string.cancel, null)
                     .setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialogInterface) {
