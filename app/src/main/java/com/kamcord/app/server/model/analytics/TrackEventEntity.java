@@ -2,6 +2,7 @@ package com.kamcord.app.server.model.analytics;
 
 import android.os.Build;
 
+import com.google.gson.Gson;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.utils.StringUtils;
 
@@ -38,7 +39,9 @@ public class TrackEventEntity {
         }
 
         public Builder addEvent(Event e) {
-            entity.event.add(e);
+            // Make sure we have a brand new event.
+            String serializedEvent = new Gson().toJson(e);
+            entity.event.add(new Gson().fromJson(serializedEvent, Event.class));
             return this;
         }
 

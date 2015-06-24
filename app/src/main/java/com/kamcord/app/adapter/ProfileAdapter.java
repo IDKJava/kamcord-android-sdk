@@ -247,6 +247,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         viewHolder.retryUploadImageButton.setVisibility(View.GONE);
         viewHolder.uploadFailedImageButton.setVisibility(View.GONE);
         viewHolder.uploadProgressBar.setVisibility(View.GONE);
+        viewHolder.divider.setVisibility(View.GONE);
         String uploadStatus = null;
         if( session.getUploadProgress() < 0f ) {
             uploadStatus = mContext.getString(R.string.queuedForUpload);
@@ -261,6 +262,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_PROCESSING_PROGRESS ) {
             uploadStatus = mContext.getString(R.string.processingPullToRefresh);
+            viewHolder.divider.setVisibility(View.VISIBLE);
 
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
             uploadStatus = mContext.getString(R.string.uploadFailed);
