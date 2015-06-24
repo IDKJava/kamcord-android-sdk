@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
@@ -256,8 +255,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             int progressBarProgress = (int) (viewHolder.uploadProgressBar.getMax() * session.getUploadProgress());
             uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), percentProgress);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
-            viewHolder.uploadProgressBar.setProgressTintList(
-                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordBlue)}));
+            viewHolder.uploadProgressBar.setProgressDrawable(mContext.getDrawable(R.drawable.upload_progressbar_blue));
             viewHolder.uploadProgressBar.setProgress(progressBarProgress);
 
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_PROCESSING_PROGRESS ) {
@@ -267,8 +265,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
             uploadStatus = mContext.getString(R.string.uploadFailed);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
-            viewHolder.uploadProgressBar.setProgressTintList(
-                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordRed)}));
+            viewHolder.uploadProgressBar.setProgressDrawable(mContext.getDrawable(R.drawable.upload_progressbar_red));
             viewHolder.uploadProgressBar.setProgress(viewHolder.uploadProgressBar.getMax());
 
             viewHolder.uploadFailedImageButton.setVisibility(View.VISIBLE);
