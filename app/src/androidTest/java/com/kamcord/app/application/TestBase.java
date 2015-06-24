@@ -141,16 +141,7 @@ public abstract class TestBase {
         findUiObj(R.id.skipButton, UiObjIdType.Res, UiObjSelType.Res).click();
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
-
-    protected void clearCache() {
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
-                .click();
-        findUiObj(R.id.profile_action_menu, UiObjIdType.Res, UiObjSelType.Res, APP_TIMEOUT_MS)
-                .click();
-        findUiObj(R.string.action_cleancache, UiObjIdType.Str, UiObjSelType.Txt).click();
-        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
-    }
-
+    
     public void findGame(String gameName) {
         findGame(gameName, true);
     }
