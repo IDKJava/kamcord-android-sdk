@@ -47,12 +47,14 @@
 
         <Button
             android:id="@+id/signInPromptButton"
+            style="@style/KamcordButton.HollowGreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/login_btnstyle"
             android:text="@string/signIn"
-            android:textAllCaps="false"
-            android:textColor="@color/ButtonTextColor" />
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:paddingRight="24dp"
+            android:paddingLeft="24dp"/>
     </LinearLayout>
 
 </RelativeLayout>

@@ -33,6 +33,7 @@ public class AnalyticsThread extends HandlerThread implements
         Application.ActivityLifecycleCallbacks {
     private static final int SEND_EVERY_MS = 300000;
     private static final int MAX_UNSENT_EVENTS = 100;
+    private static final int MAX_FAILED_SENDS = 4;
     private static final String WHEN_KEY = "when";
     private static final String NAME_KEY = "name";
 
@@ -88,6 +89,18 @@ public class AnalyticsThread extends HandlerThread implements
                     }
                 }
             }
+
+            // Increment the failed count, and cap at MAX_FAILED_SENDS.
+            int failedSendsInARow = KamcordAnalytics.getFailedAttemptsInRow();
+            failedSendsInARow = Math.min(failedSendsInARow + 1, MAX_FAILED_SENDS);
+            KamcordAnalytics.setFailedAttemptsInRow(failedSendsInARow);
+
+            // If there are n failed send attempts in a row, we make sure the next time we send is
+            // at least 2^(4*(n-1) + 6) seconds in the future, by setting the last send time appropriately.
+            long delayMs = (long) Math.pow(2.0, 4 * (failedSendsInARow - 1) + 6) * 1000;
+            long newLastSendTime = System.currentTimeMillis() + delayMs - SEND_EVERY_MS;
+            KamcordAnalytics.setLastSendTime(newLastSendTime);
+
             return false;
         }
 
@@ -162,10 +175,10 @@ public class AnalyticsThread extends HandlerThread implements
         }
 
         // Only send if we're foregrounding or backgrounding and we haven't sent in some time
-        // OR there are a lot of unsent events.
+        // OR there are a lot of unsent events and we haven't failed any sends lately.
         // AND only if we're not in the middle of sending events and there are events to actually send.
         if ( (((appForegrounded || appBackgrounded) && System.currentTimeMillis() - KamcordAnalytics.getLastSendTime() > SEND_EVERY_MS)
-                || KamcordAnalytics.unsentEventCount() > MAX_UNSENT_EVENTS)
+                || (KamcordAnalytics.unsentEventCount() > MAX_UNSENT_EVENTS && KamcordAnalytics.getFailedAttemptsInRow() == 0) )
                 && !sendingEvents && KamcordAnalytics.unsentEventCount() > 0) {
             sendEvents();
         }
@@ -309,11 +322,12 @@ public class AnalyticsThread extends HandlerThread implements
         @Override
         public void success(WrappedResponse<?> wrappedResponse, Response response) {
             if (wrappedResponse == null || wrappedResponse.status_code != WrappedResponse.StatusCode.OK) {
-                handler.sendMessage(newMessage(events, What.RESTORE_AFTER_FAILED_SEND));
+                handler.sendMessageAtFrontOfQueue(newMessage(events, What.RESTORE_AFTER_FAILED_SEND));
             } else {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        KamcordAnalytics.setFailedAttemptsInRow(0);
                         KamcordAnalytics.clearSentEvents(events);
                         KamcordAnalytics.setLastSendTime(System.currentTimeMillis());
                     }
@@ -324,7 +338,7 @@ public class AnalyticsThread extends HandlerThread implements
 
         @Override
         public void failure(RetrofitError error) {
-            handler.sendMessage(newMessage(events, What.RESTORE_AFTER_FAILED_SEND));
+            handler.sendMessageAtFrontOfQueue(newMessage(events, What.RESTORE_AFTER_FAILED_SEND));
             sendingEvents = false;
         }
     }

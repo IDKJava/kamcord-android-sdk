@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
@@ -250,6 +249,7 @@ public class
         viewHolder.retryUploadImageButton.setVisibility(View.GONE);
         viewHolder.uploadFailedImageButton.setVisibility(View.GONE);
         viewHolder.uploadProgressBar.setVisibility(View.GONE);
+        viewHolder.divider.setVisibility(View.GONE);
         String uploadStatus = null;
         if( session.getUploadProgress() < 0f ) {
             uploadStatus = mContext.getString(R.string.queuedForUpload);
@@ -258,18 +258,17 @@ public class
             int progressBarProgress = (int) (viewHolder.uploadProgressBar.getMax() * session.getUploadProgress());
             uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), percentProgress);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
-            viewHolder.uploadProgressBar.setProgressTintList(
-                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordBlue)}));
+            viewHolder.uploadProgressBar.setProgressDrawable(mContext.getDrawable(R.drawable.upload_progressbar_blue));
             viewHolder.uploadProgressBar.setProgress(progressBarProgress);
 
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_PROCESSING_PROGRESS ) {
             uploadStatus = mContext.getString(R.string.processingPullToRefresh);
+            viewHolder.divider.setVisibility(View.VISIBLE);
 
         } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
             uploadStatus = mContext.getString(R.string.uploadFailed);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
-            viewHolder.uploadProgressBar.setProgressTintList(
-                    new ColorStateList(new int[][]{new int[]{}}, new int[]{mContext.getResources().getColor(R.color.kamcordRed)}));
+            viewHolder.uploadProgressBar.setProgressDrawable(mContext.getDrawable(R.drawable.upload_progressbar_red));
             viewHolder.uploadProgressBar.setProgress(viewHolder.uploadProgressBar.getMax());
 
             viewHolder.uploadFailedImageButton.setVisibility(View.VISIBLE);
@@ -381,7 +380,7 @@ public class
         new AlertDialog.Builder(mContext)
                 .setTitle(R.string.areYouSure)
                 .setMessage(R.string.ifYouDeleteThis)
-                .setNeutralButton(android.R.string.cancel, null)
+                .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

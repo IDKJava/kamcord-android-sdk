@@ -128,4 +128,5 @@ public class StringUtils {
     public static String truncate(String theString, int length) {
         return theString.substring(0, Math.min(length, theString.length()));
     }
+
 }

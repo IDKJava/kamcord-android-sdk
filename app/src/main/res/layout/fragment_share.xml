@@ -19,7 +19,7 @@
             android:layout_width="@dimen/actionbutton_width"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:background="@color/ButtonNotActivated"
+            android:background="@color/kamcordGreen"
             android:text="@string/fragmentShare"
             android:textColor="@color/ColorPrimary"
             android:textSize="16sp" />
@@ -113,11 +113,10 @@
                         android:layout_marginLeft="@dimen/edittext_extraspace"
                         android:layout_marginTop="@dimen/edittext_extraspace"
                         android:background="@null"
-                        android:ellipsize="end" />
+                        android:ellipsize="end"
+                        android:paddingBottom="30dp"
+                        android:textColorHint="@color/kamcordHintText" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_extraspace" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -138,8 +137,8 @@
                 android:layout_marginLeft="@dimen/card_margin"
                 android:layout_marginRight="@dimen/card_margin"
                 android:layout_marginTop="@dimen/card_margin"
-                android:orientation="horizontal"
-                android:background="@drawable/external_share_group_background">
+                android:background="@drawable/external_share_group_background"
+                android:orientation="horizontal">
 
                 <FrameLayout
                     android:id="@+id/share_youtubebutton"
@@ -147,22 +146,25 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/shareButtonHeight"
                         android:layout_gravity="center"
-                        android:gravity="center"
-                        android:drawableStart="@drawable/button_youtube_selector"
                         android:drawablePadding="8dp"
+                        android:drawableStart="@drawable/button_youtube_selector"
+                        android:gravity="center"
                         android:text="@string/youTubeShare"
-                        android:textColor="@color/button_youtube_text"/>
+                        android:textColor="@color/button_youtube_text" />
+
                 </FrameLayout>
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="@color/ColorPrimaryDark"
-                    android:visibility="gone"/>  <!-- We'll be back when we're ready to do this. -->
+                    android:visibility="gone" />
+                <!-- We'll be back when we're ready to do this. -->
 
                 <FrameLayout
                     android:id="@+id/share_twitterbutton"
@@ -175,9 +177,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/shareButtonHeight"
                         android:layout_gravity="center"
-                        android:gravity="center"
-                        android:drawableStart="@drawable/button_twitter_selector"
                         android:drawablePadding="8dp"
+                        android:drawableStart="@drawable/button_twitter_selector"
+                        android:gravity="center"
                         android:text="@string/twitterShare"
                         android:textColor="@color/button_twitter_text" />
                 </FrameLayout>
