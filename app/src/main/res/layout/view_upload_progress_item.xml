@@ -71,7 +71,7 @@
         android:layout_height="@dimen/uploadProgressSize"
         android:layout_margin="0dp"
         android:padding="0dp"
-        android:progressDrawable="@drawable/upload_progressbar" />
+        android:progressDrawable="@drawable/upload_progressbar_blue" />
 
     <View
         android:id="@+id/divider"

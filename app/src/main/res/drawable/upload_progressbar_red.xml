@@ -10,7 +10,7 @@
         <clip android:clipOrientation="horizontal"
             android:gravity="left" >
             <shape>
-                <solid android:color="@android:color/white" />
+                <solid android:color="@color/kamcordRed" />
             </shape>
         </clip>
     </item>

@@ -49,6 +49,7 @@ import com.kamcord.app.view.utils.OnBackPressedListener;
 import com.kamcord.app.view.utils.RecordLayoutSpanSizeLookup;
 import com.squareup.picasso.Picasso;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -103,7 +104,7 @@ public class RecordFragment extends Fragment implements
         initKamcordRecordFragment(v);
 
         Activity myActivity = getActivity();
-        if( !recordingServiceConnection.isBound() ) {
+        if (!recordingServiceConnection.isBound()) {
             myActivity.bindService(new Intent(myActivity, RecordingService.class), recordingServiceConnection, Context.BIND_AUTO_CREATE);
         }
         if (myActivity instanceof RecordActivity) {
@@ -133,7 +134,7 @@ public class RecordFragment extends Fragment implements
         boolean gameListChanged = false;
         for (RecordItem item : mRecordItemList) {
             Game game = item.getGame();
-            if (game != null ) {
+            if (game != null) {
                 boolean isNowInstalled = isAppInstalled(game.play_store_id);
                 if (isNowInstalled && !game.isInstalled) {
                     game.isInstalled = true;
@@ -187,7 +188,7 @@ public class RecordFragment extends Fragment implements
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
-                }
+            }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -199,7 +200,7 @@ public class RecordFragment extends Fragment implements
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
                 }
-                }
+            }
         });
     }
 
@@ -289,8 +290,8 @@ public class RecordFragment extends Fragment implements
             } else {
                 Log.v(TAG, "Unable to get the recording session!");
             }
-            }
         }
+    }
 
     private boolean isAppInstalled(String packageName) {
         boolean appIsInstalled = false;
@@ -334,7 +335,7 @@ public class RecordFragment extends Fragment implements
                             .getMediaProjection(resultCode, data);
                     RecordingSession recordingSession = new RecordingSession(mSelectedGame);
 
-                    if( recordingServiceConnection.startRecording(projection, recordingSession) ) {
+                    if (recordingServiceConnection.startRecording(projection, recordingSession)) {
                         ActiveRecordingSessionManager.addActiveSession(recordingSession);
                     }
                 } catch (ActivityNotFoundException e) {
@@ -358,17 +359,16 @@ public class RecordFragment extends Fragment implements
         });
         mRecordItemList.clear();
         boolean lastGameInstalled = false;
-        if( mGameList.size() > 0 && !mGameList.get(0).isInstalled )
-        {
+        if (mGameList.size() > 0 && !mGameList.get(0).isInstalled) {
             mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
             mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
             mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
         }
-        for( Game game : mGameList ) {
-            if( game.isInstalled && !lastGameInstalled ) {
+        for (Game game : mGameList) {
+            if (game.isInstalled && !lastGameInstalled) {
                 mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
 
-            } else if( !game.isInstalled && lastGameInstalled ) {
+            } else if (!game.isInstalled && lastGameInstalled) {
                 mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
                 mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
             }
@@ -406,7 +406,7 @@ public class RecordFragment extends Fragment implements
                 }
                 GameListUtils.saveGameList(mGameList);
 
-                if(viewsAreValid) {
+                if (viewsAreValid) {
                     if (refreshRecordTab.getVisibility() == View.VISIBLE) {
                         refreshRecordTab.setVisibility(View.INVISIBLE);
                     }
@@ -421,7 +421,7 @@ public class RecordFragment extends Fragment implements
         public void failure(RetrofitError retrofitError) {
             Log.e(TAG, "Unable to get list of KCP games.");
             Log.e(TAG, "  " + retrofitError.toString());
-            if(viewsAreValid) {
+            if (viewsAreValid) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 // TODO: show the user something about this.
             }
@@ -432,10 +432,10 @@ public class RecordFragment extends Fragment implements
     public void onGameActionButtonClick(final Game game) {
 
         if (game.isInstalled && !recordingServiceConnection.isServiceRecording()) {
-                mSelectedGame = game;
-                obtainMediaProjection();
+            mSelectedGame = game;
+            obtainMediaProjection();
 
-            } else {
+        } else {
             mSelectedGame = null;
             Intent intent = new Intent(
                     Intent.ACTION_VIEW,
@@ -471,25 +471,26 @@ public class RecordFragment extends Fragment implements
     }
 
     private class RecordingServiceConnection implements ServiceConnection {
-        private RecordingService recordingService = null;
+        private WeakReference<RecordingService> recordingServiceRef = null;
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            recordingService = ((RecordingService.InstanceBinder) iBinder).getInstance();
+            recordingServiceRef = new WeakReference<>(((RecordingService.InstanceBinder) iBinder).getInstance());
             handleServiceRunning();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-            recordingService = null;
+            recordingServiceRef = null;
         }
 
         public boolean isBound() {
-            return recordingService != null;
+            return recordingServiceRef != null;
         }
 
         public boolean startRecording(MediaProjection mediaProjection, RecordingSession recordingSession) {
-            if( recordingService != null ) {
+            RecordingService recordingService = recordingServiceRef != null ? recordingServiceRef.get() : null;
+            if (recordingService != null) {
                 FileSystemManager.removeInactiveRecordingSessions();
                 recordingService.startRecording(mediaProjection, recordingSession);
                 return true;
@@ -497,19 +498,20 @@ public class RecordFragment extends Fragment implements
             return false;
         }
 
-        public boolean stopRecording() {
-            if( recordingService != null ) {
+        public void stopRecording() {
+            RecordingService recordingService = recordingServiceRef != null ? recordingServiceRef.get() : null;
+            if (recordingService != null) {
                 recordingService.stopRecording();
-                return true;
             }
-            return false;
         }
 
         public boolean isServiceRecording() {
+            RecordingService recordingService = recordingServiceRef != null ? recordingServiceRef.get() : null;
             return recordingService != null && recordingService.isRecording();
         }
 
         public RecordingSession getRecordingSession() {
+            RecordingService recordingService = recordingServiceRef != null ? recordingServiceRef.get() : null;
             return recordingService != null ? recordingService.getRecordingSession() : null;
         }
     }
