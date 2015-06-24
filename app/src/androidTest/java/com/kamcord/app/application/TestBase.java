@@ -44,6 +44,7 @@ public abstract class TestBase {
 
     @Before
     public void setUp(){
+        clearSharedPreferences();
         setOrientationNatural();
         toggleNetwork(true);
         startKamcordApp();
@@ -141,7 +142,7 @@ public abstract class TestBase {
         findUiObj(R.id.skipButton, UiObjIdType.Res, UiObjSelType.Res).click();
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
-    
+
     public void findGame(String gameName) {
         findGame(gameName, true);
     }

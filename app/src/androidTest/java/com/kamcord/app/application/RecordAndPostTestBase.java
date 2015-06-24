@@ -337,7 +337,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 maxReTries = 15;
                 reTries = 0;
                 procVidObj = null;
-                while (reTries < maxReTries && procVidObj == null) {
+                while (reTries < maxReTries &&
+                        (procVidObj == null ||
+                                procVidObj.getResourceName()
+                                        .equals(getResByID(R.id.videoTitleTextView)))) {
                     reTries++;
                     procVidObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
                     scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);

@@ -19,7 +19,9 @@ public class FailureRule extends TestWatcher {
     protected void failed(Throwable e, Description description) {
         stopService(com.kamcord.app.service.RecordingService.class);
         stopService(com.kamcord.app.service.UploadService.class);
-        clearSharedPreferences();
+        //Clearing shared prefs without app restart is pointless app retains
+        //everything in memory. :( Good for running before the test.
+        //clearSharedPreferences();
         //stopActivity(com.kamcord.app.activity.LoginActivity.class);
         //stopActivity(com.kamcord.app.activity.ProfileVideoViewActivity.class);
         //stopActivity(com.kamcord.app.activity.RecordActivity.class);
