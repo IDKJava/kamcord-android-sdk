@@ -216,6 +216,9 @@ public abstract class RecordAndPostTestBase extends TestBase {
         //check if profile page works.
 
         findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
+        findUiObj(R.id.profile_recyclerview, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
+        scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
+
         //is it there?
         findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des).click();
         findUiObj(R.string.recordAndShare, UiObjIdType.Str, UiObjSelType.Txt);
