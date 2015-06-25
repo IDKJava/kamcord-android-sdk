@@ -1,10 +1,10 @@
-#REPORT_FOLDER=/Library/WebServer/Documents/reports/$BUILD_TAG
-REPORT_FOLDER=~/Desktop/reports
-#ADB_BIN=$ANDROID_SDK"/platform-tools/adb"
-ADB_BIN=/Users/Mehmet/Library/Android/sdk/platform-tools/adb
+REPORT_FOLDER=/Library/WebServer/Documents/reports/$BUILD_TAG
+ADB_BIN=$ANDROID_SDK"/platform-tools/adb"
 $ADB_BIN devices
-DEVICE_ID="047e1d53de4a0dac"
-#DEVICE_ID="ZX1G22S7X2"
+#DEVICE_ID="047e1d53de4a0dac"
+if [ "$DEVICE_ID" -eq "" ]; then
+    DEVICE_ID="ZX1G22S7X2"
+fi
 mkdir -p $REPORT_FOLDER
 gradle spoon -PspoonClassName=com.kamcord.app.application.ProfileTest,targetDeviceId="$DEVICE_ID"
 FAILED=$?
