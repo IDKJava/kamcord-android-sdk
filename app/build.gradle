@@ -117,7 +117,7 @@ spoon{
         className = project.spoonClassName
     }
     if(project.hasProperty('targetDeviceId')) {
-        devices = [project.targetDeviceID]
+        devices = [project.targetDeviceId]
     }
 
     logger.info(className)

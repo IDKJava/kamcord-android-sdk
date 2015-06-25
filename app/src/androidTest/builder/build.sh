@@ -1,3 +1,10 @@
+if [ -z "$ANDROID_SDK" ]; then
+    ANDROID_SDK=$1
+fi
+echo "sdk.dir=$ANDROID_SDK" > local.properties
+if [ -z "$BUILD_TAG" ]; then
+    BUILD_TAG="ZX1G22S7X2"
+fi
 REPORT_FOLDER=/Library/WebServer/Documents/reports/$BUILD_TAG
 ADB_BIN=$ANDROID_SDK"/platform-tools/adb"
 $ADB_BIN devices
@@ -7,36 +14,37 @@ if [ -z "$DEVICE_ID" ]; then
 fi
 $ADB_BIN uninstall com.kamcord.app
 $ADB_BIN uninstall com.kamcord.app.test
+rm -rf $REPORT_FOLDER
 mkdir -p $REPORT_FOLDER
-gradle spoon -PspoonClassName=com.kamcord.app.application.ProfileTest,targetDeviceId="$DEVICE_ID"
+gradle -PspoonClassName=com.kamcord.app.application.ProfileTest -PtargetDeviceId="$DEVICE_ID" spoon
 FAILED=$?
 cp -R app/build/spoon/debug $REPORT_FOLDER/ProfileTest
-gradle spoon -PspoonClassName=com.kamcord.app.application.GameListTest,targetDeviceId="$DEVICE_ID"
+gradle -PspoonClassName=com.kamcord.app.application.GameListTest -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R app/build/spoon/debug $REPORT_FOLDER/GameListTest
-gradle spoon -PspoonClassName=com.kamcord.app.application.LoginLogoutTest,targetDeviceId="$DEVICE_ID"
+gradle -PspoonClassName=com.kamcord.app.application.LoginLogoutTest -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R app/build/spoon/debug $REPORT_FOLDER/LoginLogoutTest
-gradle spoon -PspoonClassName=com.kamcord.app.application.MemoryTest,targetDeviceId="$DEVICE_ID"
+gradle -PspoonClassName=com.kamcord.app.application.MemoryTest -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R app/build/spoon/debug $REPORT_FOLDER/MemoryTest
-gradle spoon -PspoonClassName=com.kamcord.app.application.RecordingTestShort,targetDeviceId="$DEVICE_ID"
+gradle -PspoonClassName=com.kamcord.app.application.RecordingTestShort -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R app/build/spoon/debug $REPORT_FOLDER/RecordingTestShort
-gradle spoon -PspoonClassName=com.kamcord.app.application.RecordingTestMedium,targetDeviceId="$DEVICE_ID"
+gradle -PspoonClassName=com.kamcord.app.application.RecordingTestMedium -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R app/build/spoon/debug $REPORT_FOLDER/RecordingTestMedium
-gradle spoon -PspoonClassName=com.kamcord.app.application.RecordingTestLong,targetDeviceId="$DEVICE_ID"
+gradle -PspoonClassName=com.kamcord.app.application.RecordingTestLong -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
