@@ -2,7 +2,7 @@ REPORT_FOLDER=/Library/WebServer/Documents/reports/$BUILD_TAG
 ADB_BIN=$ANDROID_SDK"/platform-tools/adb"
 $ADB_BIN devices
 #DEVICE_ID="047e1d53de4a0dac"
-if [ "$DEVICE_ID" -eq "" ]; then
+if [ "$DEVICE_ID" -eq " ]; then
     DEVICE_ID="ZX1G22S7X2"
 fi
 $ADB_BIN uninstall com.kamcord.app
