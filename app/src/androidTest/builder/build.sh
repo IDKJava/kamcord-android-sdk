@@ -5,6 +5,8 @@ $ADB_BIN devices
 if [ "$DEVICE_ID" -eq "" ]; then
     DEVICE_ID="ZX1G22S7X2"
 fi
+$ADB_BIN uninstall com.kamcord.app
+$ADB_BIN uninstall com.kamcord.app.test
 mkdir -p $REPORT_FOLDER
 gradle spoon -PspoonClassName=com.kamcord.app.application.ProfileTest,targetDeviceId="$DEVICE_ID"
 FAILED=$?
