@@ -78,7 +78,9 @@
                                 android:layout_width="@dimen/actionbutton_width"
                                 android:layout_height="@dimen/actionbutton_width"
                                 android:layout_marginRight="8dp"
+                                android:progress="100"
                                 android:indeterminate="true"
+                                android:indeterminateDuration="1000"
                                 android:indeterminateDrawable="@drawable/custom_circular_progressbar" />
 
                         </LinearLayout>
@@ -111,8 +113,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/edittext_extraspace"
+                        android:layout_marginRight="@dimen/edittext_extraspace"
                         android:layout_marginTop="@dimen/edittext_extraspace"
                         android:background="@null"
+                        android:minLines="2"
+                        android:imeOptions="actionDone"
+                        android:inputType="textImeMultiLine"
                         android:ellipsize="end"
                         android:paddingBottom="30dp"
                         android:textColorHint="@color/kamcordHintText" />

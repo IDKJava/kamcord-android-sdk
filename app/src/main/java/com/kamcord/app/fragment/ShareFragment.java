@@ -223,7 +223,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     public void click(View v) {
         if (AccountManager.isLoggedIn()) {
             if (titleEditText.getEditableText().length() > 0) {
-                recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+                recordingSession.setVideoTitle(titleEditText.getEditableText().toString().trim());
             } else {
                 recordingSession.setVideoTitle(StringUtils.defaultVideoTitle(getActivity(), recordingSession));
             }
