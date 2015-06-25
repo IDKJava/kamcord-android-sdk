@@ -44,7 +44,7 @@ public abstract class TestBase {
 
     @Before
     public void setUp(){
-        clearSharedPreferences();
+        //clearSharedPreferences();
         setOrientationNatural();
         toggleNetwork(true);
         startKamcordApp();

@@ -221,11 +221,12 @@ public abstract class RecordAndPostTestBase extends TestBase {
         findUiObj(R.string.recordAndShare, UiObjIdType.Str, UiObjSelType.Txt);
     }
     protected void handleShareFlowQueueCheck(int durationInMs) {
-        handleShareFlowQueueCheck(durationInMs, UploadTestVariant.Normal);
+        handleShareFlowQueueCheck(durationInMs, UploadTestVariant.Normal, false);
     }
 
     protected void handleShareFlowQueueCheck(int durationInMs,
-                                             UploadTestVariant uploadTestType) {
+                                             UploadTestVariant uploadTestType,
+                                             boolean checkNotifications) {
         String videoTitle = UUID.randomUUID().toString();
         String currentlyUploading = getStrByID(R.string.currentlyUploadingPercent).split("\\(")[0];
         //wait for video processing to finish
@@ -305,15 +306,17 @@ public abstract class RecordAndPostTestBase extends TestBase {
             case Normal:
                 //Successful Completion Ending.
                 findUiObj(currentlyUploading, UiObjSelType.TxtContains, DEFAULT_UPLOAD_TIMEOUT);
-                mDevice.openNotification();
-                mDevice.waitForIdle(UI_TIMEOUT_MS);
-                sleep(UI_TIMEOUT_MS);
-                //We're not fast enough to check both before the upload finishes. :(
-                //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
-                findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
-                mDevice.pressBack();
-                mDevice.waitForIdle(UI_TIMEOUT_MS);
-                sleep(UI_TIMEOUT_MS);
+                if(checkNotifications) {
+                    mDevice.openNotification();
+                    mDevice.waitForIdle(UI_TIMEOUT_MS);
+                    sleep(UI_TIMEOUT_MS);
+                    //We're not fast enough to check both before the upload finishes. :(
+                    //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
+                    findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
+                    mDevice.pressBack();
+                    mDevice.waitForIdle(UI_TIMEOUT_MS);
+                    sleep(UI_TIMEOUT_MS);
+                }
                 //go to profile
                 findUiObj(R.string.processingPullToRefresh,
                         UiObjIdType.Str,

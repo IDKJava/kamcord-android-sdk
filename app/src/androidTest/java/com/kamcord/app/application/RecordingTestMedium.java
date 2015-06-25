@@ -23,6 +23,20 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
     }
 
     @Test
+    public void recordRippleTestLoginFirst() {
+        doLogin();
+        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
+        handleShareViewNotificationCheck(RECORDING_DURATION_MS);
+
+    }
+    @Test
+    public void recordRippleTestLoginLast() {
+        skipLogin();
+        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
+        handleShareViewNotificationCheck(RECORDING_DURATION_MS, false);
+
+    }
+    @Test
     public void recordRippleTestNTimesLoggedIn() {
         doLogin();
         int N = 5;

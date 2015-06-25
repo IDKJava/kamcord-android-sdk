@@ -16,15 +16,6 @@ import static com.kamcord.app.testutils.UiUtilities.*;
  */
 public class RecordingTestShort extends RecordAndPostTestBase {
 
-
-    @Test
-    public void recordRippleTestLoginLast() {
-        skipLogin();
-        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
-        handleShareViewNotificationCheck(RECORDING_DURATION_MS, false);
-
-    }
-
     @Test
     public void recordRippleTestLoginFirstShort() {
         doLogin();
@@ -34,13 +25,6 @@ public class RecordingTestShort extends RecordAndPostTestBase {
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
-    @Test
-    public void recordRippleTestLoginFirst() {
-        doLogin();
-        recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
-        handleShareViewNotificationCheck(RECORDING_DURATION_MS);
-
-    }
 
     @Test
     public void recordRippleTestSkipLoginShort() {
