@@ -36,7 +36,8 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
         handleShareViewNotificationCheck(RECORDING_DURATION_MS, false);
 
     }
-    @Test
+    //Enable after resolution of AA-41
+    //@Test
     public void recordRippleTestNTimesLoggedIn() {
         doLogin();
         int N = 2;
