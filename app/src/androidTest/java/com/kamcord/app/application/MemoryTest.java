@@ -54,12 +54,14 @@ public class MemoryTest extends RecordAndPostTestBase {
     //@Test
     //Char only for now
     public void checkHeapUsage() {
-        int recordingTrials = 20;
+        int recordingTrials = 5;
         int recordingBase  = 4000;
         doLogin();
         //get baseline
-        ArrayList<Integer> dataPoints = new ArrayList<>();
-        ArrayList<Integer> baseline = getHeapSize(KAMCORD_APP_PACKAGE);
+        int maxDalvik = Integer.MIN_VALUE;
+        int maxNative = Integer.MIN_VALUE;
+        int minDalvik = Integer.MAX_VALUE;
+        int minNative = Integer.MAX_VALUE;
 
         for (int i = 0; i < recordingTrials; i++) {
             recordGameVideo(RIPPLE_TEST_APP_NAME, recordingBase + 100 * i);
@@ -68,19 +70,17 @@ public class MemoryTest extends RecordAndPostTestBase {
             findUiObj(ANDROID_SYSTEM_BUTTON1, UiObjSelType.Res, 1000).click();
             mDevice.waitForIdle(UI_TIMEOUT_MS);
             sleep(APP_TIMEOUT_MS);
-            dataPoints.addAll(getHeapSize(KAMCORD_APP_PACKAGE));
+            ArrayList<Integer> sizes = getHeapSize(KAMCORD_APP_PACKAGE);
+            maxDalvik = Math.max(sizes.get(0), maxDalvik);
+            maxNative = Math.max(sizes.get(1), maxNative);
+            minDalvik = Math.min(sizes.get(0), minDalvik);
+            minNative = Math.min(sizes.get(1), minNative);
         }
 
-        System.gc();
-        sleep(APP_TIMEOUT_MS);
-        ArrayList<Integer> endOfTest = getHeapSize(KAMCORD_APP_PACKAGE);
-        //get baseline with short video
-        //cacheSizeBefore is 1x video size. System cleans up before record.
-
         assertTrue("Dalvik heap leaked!",
-                (Math.abs(endOfTest.get(0) - baseline.get(0)) / baseline.get(0)) < 0.1);
-        assertTrue("Dalvik heap leaked!",
-                (Math.abs(endOfTest.get(1) - baseline.get(1)) / baseline.get(1)) < 0.1);
+                ((maxDalvik - minDalvik) / (double)minDalvik) < 0.1);
+        assertTrue("Native heap leaked!",
+                ((maxNative - minNative) / (double)minNative) < 0.1);
     }
 
     //@Test
