@@ -12,6 +12,7 @@ $ADB_BIN devices
 #DEVICE_ID="047e1d53de4a0dac"
 if [ -z "$DEVICE_ID" ]; then
     DEVICE_ID="ZX1G22S7X2"
+    echo $DEVICE_ID
 fi
 $ADB_BIN uninstall com.kamcord.app
 $ADB_BIN uninstall com.kamcord.app.test
