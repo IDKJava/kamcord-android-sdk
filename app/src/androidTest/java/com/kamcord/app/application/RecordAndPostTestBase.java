@@ -339,12 +339,6 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
         UiObject2 button = findUiObjInObj(completeGameItem, R.id.gameActionImageButton,
                 UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
-        String buttonDescExpected;
-
-        buttonDescExpected = getStrByID(R.string.idle);
-
-        assertTrue("Wrong button showing!",
-                button.getContentDescription().equals(buttonDescExpected));
         return button;
     }
 
