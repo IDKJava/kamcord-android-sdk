@@ -22,6 +22,7 @@ import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.UserErrorCode;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.StringUtils;
 
 import java.util.HashMap;
@@ -36,26 +37,30 @@ import retrofit.client.Response;
 
 public class CreateProfileFragment extends Fragment {
 
-    @InjectView(R.id.usernameEditText) EditText usernameEditText;
-    @InjectView(R.id.passwordEditText) EditText passwordEditText;
-    @InjectView(R.id.emailEditText) EditText emailEditText;
-    @InjectView(R.id.createProfileButton) Button createProfileButton;
-    @InjectView(R.id.termsAndPolicyTextView) TextView termsAndPolicyTextView;
+    @InjectView(R.id.usernameEditText)
+    EditText usernameEditText;
+    @InjectView(R.id.passwordEditText)
+    EditText passwordEditText;
+    @InjectView(R.id.emailEditText)
+    EditText emailEditText;
+    @InjectView(R.id.createProfileButton)
+    Button createProfileButton;
+    @InjectView(R.id.termsAndPolicyTextView)
+    TextView termsAndPolicyTextView;
 
     private boolean viewsAreValid = false;
 
-    private static final HashMap<UserErrorCode, Integer> ERROR_CODE_STRING_MAP = new HashMap<UserErrorCode, Integer>()
-        {{
-            put(UserErrorCode.INVALID_CHARACTERS, R.string.invalidCharacters);
-            put(UserErrorCode.USERNAME_MISSING, R.string.youMustEnterUsername);
-            put(UserErrorCode.USERNAME_TAKEN, R.string.usernameTaken);
-            put(UserErrorCode.USERNAME_SHORT, R.string.usernameTooShort);
-            put(UserErrorCode.USERNAME_LONG, R.string.usernameTooLong);
-            put(UserErrorCode.EMAIL_INVALID, R.string.invalidEmail);
-            put(UserErrorCode.EMAIL_LONG, R.string.emailTooLong);
-            put(UserErrorCode.EMAIL_TAKEN, R.string.emailTaken);
-            put(UserErrorCode.EMAIL_MISSING, R.string.youMustEnterEmail);
-        }};
+    private static final HashMap<UserErrorCode, Integer> ERROR_CODE_STRING_MAP = new HashMap<UserErrorCode, Integer>() {{
+        put(UserErrorCode.INVALID_CHARACTERS, R.string.invalidCharacters);
+        put(UserErrorCode.USERNAME_MISSING, R.string.youMustEnterUsername);
+        put(UserErrorCode.USERNAME_TAKEN, R.string.usernameTaken);
+        put(UserErrorCode.USERNAME_SHORT, R.string.usernameTooShort);
+        put(UserErrorCode.USERNAME_LONG, R.string.usernameTooLong);
+        put(UserErrorCode.EMAIL_INVALID, R.string.invalidEmail);
+        put(UserErrorCode.EMAIL_LONG, R.string.emailTooLong);
+        put(UserErrorCode.EMAIL_TAKEN, R.string.emailTaken);
+        put(UserErrorCode.EMAIL_MISSING, R.string.youMustEnterEmail);
+    }};
 
 
     @Override
@@ -70,18 +75,17 @@ public class CreateProfileFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         viewsAreValid = false;
         ButterKnife.reset(this);
     }
 
     @OnFocusChange(R.id.usernameEditText)
-    public void validateUsername(boolean hasFocus)
-    {
+    public void validateUsername(boolean hasFocus) {
         if (!hasFocus && isResumed()) {
             String username = usernameEditText.getEditableText().toString();
+            KeyboardUtils.hideSoftKeyboard(usernameEditText, getActivity().getApplicationContext());
             if (username.isEmpty()) {
                 usernameEditText.setError(getResources().getString(R.string.youMustEnterUsername));
             } else {
@@ -92,10 +96,10 @@ public class CreateProfileFragment extends Fragment {
     }
 
     @OnFocusChange(R.id.emailEditText)
-    public void validateEmail(boolean hasFocus)
-    {
+    public void validateEmail(boolean hasFocus) {
         if (!hasFocus && isResumed()) {
             String email = emailEditText.getEditableText().toString();
+            KeyboardUtils.hideSoftKeyboard(usernameEditText, getActivity().getApplicationContext());
             if (email.isEmpty()) {
                 emailEditText.setError(getResources().getString(R.string.youMustEnterEmail));
             } else {
@@ -105,8 +109,14 @@ public class CreateProfileFragment extends Fragment {
         }
     }
 
-    private void initializeTermsAndPolicyString()
-    {
+    @OnFocusChange(R.id.passwordEditText)
+    public void passwordEditTextOutsideTouch(boolean hasFocus) {
+        if (!hasFocus && isResumed()) {
+            KeyboardUtils.hideSoftKeyboard(passwordEditText, getActivity().getApplicationContext());
+        }
+    }
+
+    private void initializeTermsAndPolicyString() {
         String termsAndPolicyText = termsAndPolicyTextView.getText().toString();
         String termsText = getResources().getString(R.string.termsOfService);
         String policyText = getResources().getString(R.string.privacyPolicy);
@@ -120,16 +130,14 @@ public class CreateProfileFragment extends Fragment {
     }
 
     @OnClick(R.id.createProfileButton)
-    public void createProfile()
-    {
+    public void createProfile() {
         String username = usernameEditText.getEditableText().toString();
         String email = emailEditText.getEditableText().toString();
         String password = passwordEditText.getEditableText().toString();
         AppServerClient.getInstance().createProfile(username, email, password, createProfileCallback);
     }
 
-    private void handleLoginFailure(GenericResponse<Account> accountWrapper)
-    {
+    private void handleLoginFailure(GenericResponse<Account> accountWrapper) {
         AccountManager.clearStoredAccount();
         new AlertDialog.Builder(getActivity())
                 .setMessage(R.string.createProfileErrorMessage)
@@ -137,13 +145,10 @@ public class CreateProfileFragment extends Fragment {
                 .show();
     }
 
-    private void handleInvalidUsername(GenericResponse<UserErrorCode> responseWrapper)
-    {
-        if( responseWrapper != null && responseWrapper.response != null && isResumed())
-        {
+    private void handleInvalidUsername(GenericResponse<UserErrorCode> responseWrapper) {
+        if (responseWrapper != null && responseWrapper.response != null && isResumed()) {
             int errorStringId = R.string.invalidUsername;
-            if( ERROR_CODE_STRING_MAP.containsKey(responseWrapper.response) )
-            {
+            if (ERROR_CODE_STRING_MAP.containsKey(responseWrapper.response)) {
                 errorStringId = ERROR_CODE_STRING_MAP.get(responseWrapper.response);
             }
             String errorString = getResources().getString(errorStringId);
@@ -151,38 +156,31 @@ public class CreateProfileFragment extends Fragment {
         }
     }
 
-    private void handleInvalidEmail(GenericResponse<UserErrorCode> responseWrapper)
-    {
-        if( responseWrapper != null && responseWrapper.response != null && isResumed())
-        {
+    private void handleInvalidEmail(GenericResponse<UserErrorCode> responseWrapper) {
+        if (responseWrapper != null && responseWrapper.response != null && isResumed()) {
             int errorStringId = R.string.invalidEmail;
-            if( ERROR_CODE_STRING_MAP.containsKey(responseWrapper.response) )
-            {
+            if (ERROR_CODE_STRING_MAP.containsKey(responseWrapper.response)) {
                 errorStringId = ERROR_CODE_STRING_MAP.get(responseWrapper.response);
             }
             emailEditText.setError(getResources().getString(errorStringId));
         }
     }
 
-    private Callback<GenericResponse<Account>> createProfileCallback = new Callback<GenericResponse<Account>>()
-    {
+    private Callback<GenericResponse<Account>> createProfileCallback = new Callback<GenericResponse<Account>>() {
         @Override
         public void success(GenericResponse<Account> accountWrapper, Response response) {
-            if( viewsAreValid ) {
-                if( accountWrapper != null
+            if (viewsAreValid) {
+                if (accountWrapper != null
                         && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
                         && accountWrapper.response != null
-                        && isResumed())
-                {
+                        && isResumed()) {
                     FlurryAgent.logEvent(getResources().getString(R.string.flurryCreateProfile));
                     AccountManager.setStoredAccount(accountWrapper.response);
                     Intent intent = new Intent(getActivity(), RecordActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     getActivity().finish();
-                }
-                else
-                {
+                } else {
                     handleLoginFailure(accountWrapper);
                 }
             }
@@ -190,7 +188,7 @@ public class CreateProfileFragment extends Fragment {
 
         @Override
         public void failure(RetrofitError error) {
-            if( viewsAreValid ) {
+            if (viewsAreValid) {
                 handleLoginFailure(null);
             }
         }
@@ -199,7 +197,7 @@ public class CreateProfileFragment extends Fragment {
     Callback<GenericResponse<UserErrorCode>> validateUsernameCallback = new Callback<GenericResponse<UserErrorCode>>() {
         @Override
         public void success(GenericResponse<UserErrorCode> responseWrapper, Response response) {
-            if( viewsAreValid ) {
+            if (viewsAreValid) {
                 if (responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
                         && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
                         && isResumed()) {
@@ -212,7 +210,7 @@ public class CreateProfileFragment extends Fragment {
 
         @Override
         public void failure(RetrofitError error) {
-            if( viewsAreValid ) {
+            if (viewsAreValid) {
                 usernameEditText.setError(null);
             }
         }
@@ -221,7 +219,7 @@ public class CreateProfileFragment extends Fragment {
     Callback<GenericResponse<UserErrorCode>> validateEmailCallback = new Callback<GenericResponse<UserErrorCode>>() {
         @Override
         public void success(GenericResponse<UserErrorCode> responseWrapper, Response response) {
-            if( viewsAreValid ) {
+            if (viewsAreValid) {
                 if (responseWrapper != null && responseWrapper.status != null && responseWrapper.response != null
                         && responseWrapper.status.equals(StatusCode.OK) && responseWrapper.response.equals(UserErrorCode.OK)
                         && isResumed()) {
@@ -234,7 +232,7 @@ public class CreateProfileFragment extends Fragment {
 
         @Override
         public void failure(RetrofitError error) {
-            if( viewsAreValid ) {
+            if (viewsAreValid) {
                 emailEditText.setError(null);
             }
         }

@@ -31,9 +31,9 @@
     <string name="loginFailureMessage">Please check your username and password</string>
     <string name="resetPassword">Reset Password</string>
 
-    <string name="enterEmailForReset">Enter the email address you used to sign up for Kamcord. We\'ll email you a link to reset your password.</string>
+    <string name="enterEmailForReset">Enter the email you used to sign up for Kamcord. We\'ll email you a link to reset your password.</string>
     <string name="checkYourEmail">We just sent you an email with a link to reset your password.</string>
-    <string name="resetPasswordProblem">There was a problem resetting your password. Please make sure you entered the email address you signed up for Kamcord with.</string>
+    <string name="resetPasswordProblem">There was a problem resetting your password. Please make sure you entered the email you signed up for Kamcord with.</string>
 
     <string name="invalidUsername">Username is invalid</string>
     <string name="youMustEnterUsername">Username is required</string>
@@ -70,9 +70,9 @@
     <string name="writeATitle">Write a title&#8230;</string>
 
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
-    <string name="signInProfilePrompt">You must log in to Kamcord to view your profile page.</string>
-    <!-- Not used? -->
-    <string name="signIn">Sign In</string>
+    <string name="signInProfilePrompt">You must log in to Kamcord to view your profile.</string>
+    <!-- We should get rid of this and used the other Log In tag -->
+    <string name="signIn">Log In</string>
     <string name="swipeToRefreshRecord">Oops! Pull down to refresh games when your network is ready.</string>
 
     <string name="uploading">Uploading&#8230;</string>
