@@ -14,10 +14,13 @@ if [ -z "$DEVICE_ID" ]; then
     DEVICE_ID="ZX1G22S7X2"
     echo $DEVICE_ID
 fi
+$ADB_BIN -s $DEVICE_ID shell su -c am force-stop com.kamcord.app
 $ADB_BIN -s $DEVICE_ID uninstall com.kamcord.app
 sleep 1
+$ADB_BIN -s $DEVICE_ID shell su -c am force-stop com.kamcord.app.test
 $ADB_BIN -s $DEVICE_ID uninstall com.kamcord.app.test
 sleep 1
+$ADB_BIN -s $DEVICE_ID shell su -c am force-stop com.kamcord.ripples
 $ADB_BIN -s $DEVICE_ID uninstall com.kamcord.ripples
 sleep 1
 $ADB_BIN -s $DEVICE_ID install -r app/src/androidTest/res/RippleActivity.apk
