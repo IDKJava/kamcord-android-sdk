@@ -14,12 +14,12 @@ if [ -z "$DEVICE_ID" ]; then
     DEVICE_ID="ZX1G22S7X2"
     echo $DEVICE_ID
 fi
-$ADB_BIN uninstall com.kamcord.app
-$ADB_BIN uninstall com.kamcord.app.test
-$ADB_BIN uninstall com.kamcord.ripples
-$ADB_BIN install -r app/src/androidTest/res/RippleActivity.apk
-$ADB_BIN push app/src/androidTest/res/enable.sh /sdcard/enable.sh
-$ADB_BIN push app/src/androidTest/res/disable.sh /sdcard/disable.sh
+$ADB_BIN -s $DEVICE_ID uninstall com.kamcord.app
+$ADB_BIN -s $DEVICE_ID uninstall com.kamcord.app.test
+$ADB_BIN -s $DEVICE_ID uninstall com.kamcord.ripples
+$ADB_BIN -s $DEVICE_ID install -r app/src/androidTest/res/RippleActivity.apk
+$ADB_BIN -s $DEVICE_ID push app/src/androidTest/res/enable.sh /sdcard/enable.sh
+$ADB_BIN -s $DEVICE_ID push app/src/androidTest/res/disable.sh /sdcard/disable.sh
 rm -rf $REPORT_FOLDER
 mkdir -p $REPORT_FOLDER
 gradle -PspoonClassName=com.kamcord.app.application.ProfileTest -PtargetDeviceId="$DEVICE_ID" spoon
