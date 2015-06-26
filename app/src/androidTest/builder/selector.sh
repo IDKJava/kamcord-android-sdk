@@ -11,5 +11,5 @@ case $EXECUTOR_NUMBER in
         #nexus 10
         DEVICE_ID="R32CA07T1VJ" ;;
 esac
-echo $DEVICE_ID
+export ANDROID_SERIAL=$DEVICE_ID
 export DEVICE_ID
