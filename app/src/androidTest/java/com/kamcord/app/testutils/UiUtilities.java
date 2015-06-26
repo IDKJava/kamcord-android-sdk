@@ -295,8 +295,10 @@ public class UiUtilities {
 
             //assertTrue("Not scrollable!", scrollableObject.isScrollable());
 
-            //larger number for max swipes.
-            scrollableObject.flingToBeginning(100);
+            //adding more steps to avoid getting stuck with scrolling without refresh
+            scrollableObject.scrollForward();
+            scrollableObject.scrollToBeginning(100, 20);
+            scrollableObject.scrollBackward();
         } catch (UiObjectNotFoundException e) {
             e.printStackTrace();
             assertTrue("Object not found!", false);

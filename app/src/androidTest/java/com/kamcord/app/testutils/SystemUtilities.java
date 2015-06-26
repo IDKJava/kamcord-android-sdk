@@ -69,9 +69,8 @@ public class SystemUtilities {
                 .getLaunchIntentForPackage(appPackageName);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.stopService(intent);
-        context.startActivity(intent);
 
+        context.startActivity(intent);
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(By.pkg(KAMCORD_APP_PACKAGE).depth(0)), APP_TIMEOUT_MS);
         assertTrue("Application load timed out!", notTimedOut);
@@ -117,16 +116,8 @@ public class SystemUtilities {
     }
 
     public static void toggleNetwork(boolean On){
-        String opWord =  On ? "enable" : "disable";
-        executeShellCommand(String.format("su -c svc wifi %s", opWord));
-        executeShellCommand(String.format("su -c svc data %s", opWord));
-        int timeOut = 30000;
-        int timeOutCtr = 0;
-        while(doWeHaveInternet() != On && timeOutCtr < timeOut){
-            sleep(100);
-            timeOutCtr++;
-        }
-        assertTrue("Network toggle timed out!", timeOutCtr < timeOut);
+        String opWord =  On ? "enable.sh" : "disable.sh";
+        executeShellCommand(String.format("su -c /system/bin/sh %s%s", SDCARD_ROOT, opWord));
     }
 
     public static void clearSharedPreferences(){

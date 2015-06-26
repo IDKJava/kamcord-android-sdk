@@ -40,14 +40,15 @@ public class RecordingTestShort extends RecordAndPostTestBase {
     //@Test
     public void recordRippleTestLoginFirstSwitchWithNotificationClick() {
         doLogin();
+        int recordingDuration = RECORDING_DURATION_MS * 3;
         recordGameVideo(RIPPLE_TEST_APP_NAME,
                 RIPPLE_TEST_APP_NAME,
-                RECORDING_DURATION_MS,
+                recordingDuration,
                 false,
                 true,
                 false,
                 false);
-        handleShareViewNotificationCheck(RECORDING_DURATION_MS);
+        handleShareFlowQueueCheck(recordingDuration, UploadTestVariant.Normal, true, false);
 
     }
 
@@ -66,14 +67,19 @@ public class RecordingTestShort extends RecordAndPostTestBase {
     @Test
     public void recordRippleTestLoginFirstCheckNotifications() {
         doLogin();
+        int recordingDuration = RECORDING_DURATION_MS * 3;
         recordGameVideo(RIPPLE_TEST_APP_NAME,
                 RIPPLE_TEST_APP_TITLE,
-                RECORDING_DURATION_MS,
+                recordingDuration,
                 false,
                 false,
                 false,
                 false);
-        handleShareViewNotificationCheck(RECORDING_DURATION_MS);
+        handleShareFlowQueueCheck(recordingDuration,
+                UploadTestVariant.Normal,
+                true,
+                false);
+        //handleShareViewNotificationCheck(RECORDING_DURATION_MS);
 
     }
 

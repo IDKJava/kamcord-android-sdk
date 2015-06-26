@@ -160,76 +160,27 @@ public abstract class RecordAndPostTestBase extends TestBase {
             }
         }
 
-    protected void handleShareViewNotificationCheck(int durationInMs) {
-        handleShareViewNotificationCheck(durationInMs, true, true);
-    }
-
-    protected void handleShareViewNotificationCheck(int durationInMs, boolean failIfNotLoggedIn) {
-        handleShareViewNotificationCheck(durationInMs, failIfNotLoggedIn, true);
-    }
-
-    protected void handleShareViewNotificationCheck(int durationInMs,
-                                                    boolean failIfNotLoggedIn,
-                                                    boolean waitForUpload) {
-        String videoTitle = UUID.randomUUID().toString();
-        //wait for video processing to finish
-        //TODO: Adjust the "1" divider to something reasonable as stitching perf. improves.
-        int processingTimeout = Math.max((durationInMs / 1), DEFAULT_VIDEO_PROCESSING_TIMEOUT);
-        int uploadTimeout = Math.max((durationInMs / 1), DEFAULT_UPLOAD_TIMEOUT);
-
-        findUiObj(R.id.playImageView, UiObjIdType.Res, UiObjSelType.Res, processingTimeout);
-
-        UiObject2 title = findUiObj(R.id.titleEditText, UiObjIdType.Res, UiObjSelType.Res);
-        title.click();
-        title.setText(videoTitle);
-
-        //close soft keyboard
-        mDevice.pressBack();
-        mDevice.waitForIdle(UI_TIMEOUT_MS);
-        sleep(UI_TIMEOUT_MS);
-        findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
-
-
-
-        if (failIfNotLoggedIn) {
-            findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des);
-        } else {
-            handleWelcomeLoginView();
-            findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
-        }
-
-        //check if it's uploading, we seem not to be fast enough to check this.
-        mDevice.openNotification();
-        mDevice.waitForIdle(UI_TIMEOUT_MS);
-        sleep(UI_TIMEOUT_MS);
-        //We're not fast enough to check both before the upload finishes. :(
-        //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
-        findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt);
-
-        if(waitForUpload) {
-            loseUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt, uploadTimeout);
-        }
-        //close notifications
-        mDevice.pressBack();
-        mDevice.waitForIdle(UI_TIMEOUT_MS);
-        sleep(UI_TIMEOUT_MS);
-        //check if profile page works.
-
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des).click();
-        findUiObj(R.id.profile_recyclerview, UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS);
-        scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
-
-        //is it there?
-        findUiObj(R.string.kamcordRecordTab, UiObjIdType.Str, UiObjSelType.Des).click();
-        findUiObj(R.string.recordAndShare, UiObjIdType.Str, UiObjSelType.Txt);
-    }
     protected void handleShareFlowQueueCheck(int durationInMs) {
-        handleShareFlowQueueCheck(durationInMs, UploadTestVariant.Normal, false);
+        handleShareFlowQueueCheck(durationInMs, UploadTestVariant.Normal, false, false);
     }
 
     protected void handleShareFlowQueueCheck(int durationInMs,
                                              UploadTestVariant uploadTestType,
-                                             boolean checkNotifications) {
+                                             boolean checkNotifications,
+                                             boolean notLoggedIn) {
+        switch (uploadTestType) {
+
+            case NoNetwork:
+            case Delete:
+                toggleNetwork(false);
+                break;
+            case Normal:
+            case Interrupted:
+                //let normal run here and interrupt if need be
+                break;
+        }
+        sleep(UI_INTERACTION_DELAY_MS);
+
         String videoTitle = UUID.randomUUID().toString();
         String currentlyUploading = getStrByID(R.string.currentlyUploadingPercent).split("\\(")[0];
         //wait for video processing to finish
@@ -254,24 +205,16 @@ public abstract class RecordAndPostTestBase extends TestBase {
         int reTries;
         String videoAuthor;
         //network start state
-        switch (uploadTestType) {
 
-            case NoNetwork:
-            case Delete:
-                toggleNetwork(false);
-                break;
-            case Normal:
-            case Interrupted:
-                //let normal run here and interrupt if need be
-                break;
-        }
         findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
-
+        if(notLoggedIn) {
+            handleWelcomeLoginView();
+            findUiObj(R.id.share_button, UiObjIdType.Res, UiObjSelType.Res).click();
+        }
         findUiObj(R.string.kamcordProfileTab,
                 UiObjIdType.Str,
                 UiObjSelType.Des,
                 UI_TIMEOUT_MS).click();
-
         //Decisions on how to resume.
         switch (uploadTestType) {
             case NoNetwork:
@@ -283,6 +226,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                         DEFAULT_UPLOAD_TIMEOUT);
                 //turning on the Internets
                 toggleNetwork(true);
+                sleep(UI_TIMEOUT_MS);
                 break;
             case Normal:
                 //do nothing
@@ -298,6 +242,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                         DEFAULT_UPLOAD_TIMEOUT);
                 //turning on the Internets
                 toggleNetwork(true);
+                sleep(UI_TIMEOUT_MS);
                 break;
         }
         //the finale
@@ -312,7 +257,6 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 if(checkNotifications) {
                     mDevice.openNotification();
                     mDevice.waitForIdle(UI_TIMEOUT_MS);
-                    sleep(UI_TIMEOUT_MS);
                     //We're not fast enough to check both before the upload finishes. :(
                     //findUiObj(R.string.app_name, UiObjIdType.Str, UiObjSelType.Txt);
                     findUiObj(R.string.uploading, UiObjIdType.Str, UiObjSelType.Txt, APP_TIMEOUT_MS);
@@ -350,6 +294,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                     reTries++;
                     procVidObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS, false);
                     scrollToBeginning(R.id.profile_recyclerview, UI_INTERACTION_DELAY_MS);
+                    mDevice.waitForIdle(UI_TIMEOUT_MS);
                     sleep(UI_TIMEOUT_MS);
                 }
                 assertTrue("Feed timed out!", reTries <= maxReTries);
@@ -367,7 +312,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                         UiObjIdType.Str,
                         UiObjSelType.Txt,
                         UI_TIMEOUT_MS).click();
-                loseUiObj(R.string.processingPullToRefresh,
+                loseUiObj(R.string.uploadFailed,
                         UiObjIdType.Str,
                         UiObjSelType.Txt,
                         UI_TIMEOUT_MS);
@@ -437,7 +382,9 @@ public abstract class RecordAndPostTestBase extends TestBase {
 
     }
     protected String getVideoAuthor(String videoTitle){
-        UiObject2 videoTitleObj = findUiObj(videoTitle, UiObjSelType.Txt, UI_TIMEOUT_MS);
+        UiObject2 videoTitleObj = findUiObj(videoTitle.substring(0, 8),
+                                            UiObjSelType.TxtContains,
+                                            UI_TIMEOUT_MS);
         UiObject2 listItemObj = videoTitleObj.getParent();
         UiObject2 obj = findUiObjInObj(listItemObj,
                 R.id.profile_item_author,
