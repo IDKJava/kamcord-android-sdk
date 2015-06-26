@@ -9,6 +9,7 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.utils.ViewUtils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -24,6 +25,7 @@ public class ProfileVideoViewActivity extends FragmentActivity implements MediaP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ViewUtils.setUpActionBar(this);
         setContentView(R.layout.activity_profile_video_view);
         ButterKnife.inject(this);
 
