@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_activated="true">
+        <bitmap
+            android:src="@drawable/youtube_light_color_icon"
+            android:tint="@color/youtubeRed"
+            android:tintMode="multiply"/>
+    </item>
+    <item>
+        <bitmap
+            android:src="@drawable/youtube_light_color_icon"
+            android:tint="@color/ColorPrimaryDark"
+            android:tintMode="multiply"/>
+    </item>
+</selector>

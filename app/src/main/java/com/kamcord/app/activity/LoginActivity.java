@@ -1,11 +1,13 @@
 package com.kamcord.app.activity;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.RelativeLayout;
 
 import com.kamcord.app.R;
@@ -13,14 +15,14 @@ import com.kamcord.app.fragment.WelcomeFragment;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends FragmentActivity {
 
     private int containerViewId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setUpActionBar();
         containerViewId = View.generateViewId();
         RelativeLayout contentView = new RelativeLayout(this);
         contentView.setId(containerViewId);
@@ -29,6 +31,13 @@ public class LoginActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(containerViewId, new WelcomeFragment())
                 .commit();
+    }
+
+    private void setUpActionBar() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+            getActionBar().hide();
+        }
     }
 
     @Override

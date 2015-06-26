@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -28,7 +28,7 @@ import butterknife.InjectView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
-public class RecordActivity extends AppCompatActivity implements
+public class RecordActivity extends FragmentActivity implements
         Uploader.UploadStatusListener {
 
     @InjectView(R.id.main_pager) DisableableViewPager mViewPager;

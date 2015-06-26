@@ -1,0 +1,43 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_mdrecord_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kamcord.app.activity.RecordActivity">
+
+    <com.kamcord.app.view.DisableableViewPager
+        android:id="@+id/main_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:clipChildren="false" />
+
+    <RelativeLayout
+        android:id="@+id/toolbarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <com.kamcord.app.view.SlidingTabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/ColorPrimary" />
+
+        <ProgressBar
+            android:id="@+id/uploadProgressBar"
+            style="@android:style/Widget.Material.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/uploadProgressSize"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:progressDrawable="@drawable/upload_progressbar_blue"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_below="@id/toolbarContainer"
+        android:background="@drawable/drop_shadow" />
+
+</RelativeLayout>
