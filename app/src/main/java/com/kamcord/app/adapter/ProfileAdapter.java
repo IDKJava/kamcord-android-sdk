@@ -7,14 +7,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
+import android.os.Build;
 import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
+import android.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -41,6 +41,7 @@ import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
+import com.kamcord.app.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
@@ -329,9 +330,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             likeButton.setActivated(true);
             AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
         }
-        ViewAnimationUtils.createCircularReveal(likeButton,
-                likeButton.getWidth() / 2, likeButton.getHeight() / 2, 0,
-                likeButton.getHeight() * 2).start();
+        ViewUtils.buttonCircularReveal(likeButton);
     }
 
     @Override
@@ -382,18 +381,33 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void showDeleteVideoDialog(final Video video) {
-        new AlertDialog.Builder(mContext)
-                .setTitle(R.string.areYouSure)
-                .setMessage(R.string.ifYouDeleteThis)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        AppServerClient.getInstance().deleteVideo(
-                                video.video_id,
-                                new DeleteVideoCallback(video));
-                    }
-                }).show();
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            new android.support.v7.app.AlertDialog.Builder(mContext)
+                    .setTitle(R.string.areYouSure)
+                    .setMessage(R.string.ifYouDeleteThis)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            AppServerClient.getInstance().deleteVideo(
+                                    video.video_id,
+                                    new DeleteVideoCallback(video));
+                        }
+                    }).show();
+        } else {
+            new AlertDialog.Builder(mContext)
+                    .setTitle(R.string.areYouSure)
+                    .setMessage(R.string.ifYouDeleteThis)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            AppServerClient.getInstance().deleteVideo(
+                                    video.video_id,
+                                    new DeleteVideoCallback(video));
+                        }
+                    }).show();
+        }
     }
 
     private class LikeVideosCallback implements Callback<GenericResponse<?>> {
