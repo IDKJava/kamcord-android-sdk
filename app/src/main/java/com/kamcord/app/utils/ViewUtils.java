@@ -1,8 +1,11 @@
 package com.kamcord.app.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.util.TypedValue;
+import android.view.Window;
 
 import com.kamcord.app.R;
 
@@ -24,4 +27,10 @@ public class ViewUtils {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
+    public static void setUpActionBar(Activity activityReference) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            activityReference.getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
+            activityReference.getActionBar().hide();
+        }
+    }
 }
