@@ -169,6 +169,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
             stitchClipsThread.start();
         }
 
+
         titleEditText.setHint(StringUtils.defaultVideoTitle(getActivity(), recordingSession));
 
         twitterLoginButton.setCallback(
@@ -215,9 +216,10 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                         }
                     }
                 });
-
         return false;
     }
+
+
 
     @OnClick(R.id.share_button)
     public void click(View v) {

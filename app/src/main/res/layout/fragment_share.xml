@@ -78,10 +78,10 @@
                                 android:layout_width="@dimen/actionbutton_width"
                                 android:layout_height="@dimen/actionbutton_width"
                                 android:layout_marginRight="8dp"
-                                android:progress="100"
                                 android:indeterminate="true"
+                                android:indeterminateDrawable="@drawable/custom_circular_progressbar"
                                 android:indeterminateDuration="1000"
-                                android:indeterminateDrawable="@drawable/custom_circular_progressbar" />
+                                android:progress="100" />
 
                         </LinearLayout>
 
@@ -116,10 +116,11 @@
                         android:layout_marginRight="@dimen/edittext_extraspace"
                         android:layout_marginTop="@dimen/edittext_extraspace"
                         android:background="@null"
-                        android:minLines="2"
-                        android:imeOptions="actionDone"
-                        android:inputType="textImeMultiLine"
                         android:ellipsize="end"
+                        android:imeOptions="actionDone"
+                        android:inputType="textAutoCorrect|textCapSentences|textImeMultiLine"
+                        android:maxLines="3"
+                        android:maxLength="100"
                         android:paddingBottom="30dp"
                         android:textColorHint="@color/kamcordHintText" />
 
@@ -197,7 +198,6 @@
                     android:visibility="gone" />
 
             </LinearLayout>
-
         </LinearLayout>
 
     </ScrollView>
