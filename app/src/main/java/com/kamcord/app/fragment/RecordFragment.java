@@ -40,6 +40,7 @@ import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
+import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.GameListUtils;
 import com.kamcord.app.utils.VideoUtils;
@@ -166,8 +167,9 @@ public class RecordFragment extends Fragment implements
 
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        if (mRecordItemList.size() == 0) {
+        if (mRecordItemList.size() == 0 && !Connectivity.isConnected()) {
             refreshRecordTab.setVisibility(View.VISIBLE);
+        } else {
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
