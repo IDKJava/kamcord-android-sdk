@@ -1,9 +1,11 @@
 package com.kamcord.app.application;
 
+import android.graphics.Point;
 import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import com.kamcord.app.R;
 import org.junit.Test;
@@ -122,6 +124,25 @@ public class ProfileTest extends TestBase {
         verifyProfileUserInfo();
 
 
+    }
+    //@Test
+    public void refreshProfileTest() {
+        //Addresses AA-72
+        doLogin();
+        int numRefreshes = 10000;
+        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
+                .click();
+        Point[] pattern = new Point[]{
+                new Point(500, 500),
+                new Point(500, 800)};
+        sleep(1000);
+        for (int i = 0; i < numRefreshes; i++) {
+
+            executeTouchPattern(pattern, 2);
+            sleep(1);
+
+        }
+        sleep(3000);
     }
     protected void verifyProfileUserInfo() {
         //TODO: Add more features to test.

@@ -1,5 +1,6 @@
 package com.kamcord.app.testutils;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +14,8 @@ import android.util.Log;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -50,7 +53,7 @@ public class SystemUtilities {
             return output.toString();
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
-            return e.getStackTrace().toString();
+            return "Exception!";
         }
     }
     public static void startApplication(String appPackageName) {
@@ -66,9 +69,8 @@ public class SystemUtilities {
                 .getLaunchIntentForPackage(appPackageName);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        context.stopService(intent);
-        context.startActivity(intent);
 
+        context.startActivity(intent);
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(By.pkg(KAMCORD_APP_PACKAGE).depth(0)), APP_TIMEOUT_MS);
         assertTrue("Application load timed out!", notTimedOut);
@@ -109,22 +111,13 @@ public class SystemUtilities {
         ConnectivityManager cm =
                 (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnected();
+        boolean isConnected = (activeNetwork != null && activeNetwork.isConnected());
         return isConnected;
     }
 
     public static void toggleNetwork(boolean On){
-        String opWord =  On ? "enable" : "disable";
-        executeShellCommand(String.format("su -c svc wifi %s", opWord));
-        executeShellCommand(String.format("su -c svc data %s", opWord));
-        int timeOut = 30000;
-        int timeOutCtr = 0;
-        while(doWeHaveInternet() != On && timeOutCtr < timeOut){
-            sleep(100);
-            timeOutCtr++;
-        }
-        assertTrue("Network toggle timed out!", timeOutCtr < timeOut);
+        String opWord =  On ? "enable.sh" : "disable.sh";
+        executeShellCommand(String.format("su -c /system/bin/sh %s%s", SDCARD_ROOT, opWord));
     }
 
     public static void clearSharedPreferences(){
@@ -132,7 +125,23 @@ public class SystemUtilities {
                 SHARED_PREF_ROOT,
                 KAMCORD_APP_PACKAGE,
                 ACTIVE_SESSION_PREFS);
-        executeShellCommand(String.format("su -c rm %s",sharedAppPrefs));
+        executeShellCommand(String.format("su -c rm %s", sharedAppPrefs));
     }
-
+    public static ArrayList<Integer> getHeapSize(String appPackageName){
+        String meminfo = executeShellCommand(String.format("su -c dumpsys meminfo %s", appPackageName));
+        ArrayList<Integer> heapSizes = new ArrayList<>();
+        for(String line: meminfo.split("\r\n")){
+            if(line.toLowerCase().contains("native heap") ||
+                    line.toLowerCase().contains("dalvik heap")){
+                String[] items = line.split("\\s+");
+                try {
+                    heapSizes.add(Integer.parseInt(items[7]));
+                } catch (Exception e){
+                    heapSizes.add(0);
+                }
+            }
+        }
+        //native, dalvik in order
+        return heapSizes;
+    }
 }

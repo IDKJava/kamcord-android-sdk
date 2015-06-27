@@ -44,6 +44,8 @@ public abstract class TestBase {
 
     @Before
     public void setUp(){
+        //clearSharedPreferences();
+        setOrientationNatural();
         toggleNetwork(true);
         startKamcordApp();
         doLogout();
@@ -92,7 +94,7 @@ public abstract class TestBase {
         // only works from login screen.
         handleWelcomeLoginView();
         //Welcome screen of sorts
-        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
+        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res,APP_TIMEOUT_MS);
     }
 
     protected void handleWelcomeLoginView(){
@@ -138,15 +140,6 @@ public abstract class TestBase {
         //skip login
         //should see an active record tab.
         findUiObj(R.id.skipButton, UiObjIdType.Res, UiObjSelType.Res).click();
-        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
-    }
-
-    protected void clearCache() {
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
-                .click();
-        findUiObj(R.id.profile_action_menu, UiObjIdType.Res, UiObjSelType.Res, APP_TIMEOUT_MS)
-                .click();
-        findUiObj(R.string.action_cleancache, UiObjIdType.Str, UiObjSelType.Txt).click();
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
@@ -230,7 +223,7 @@ public abstract class TestBase {
         int retries = 0;
         while(!gone && retries < maxRetries){
             gone = true;
-            mDevice.waitForIdle();
+            mDevice.waitForIdle(UI_INTERACTION_DELAY_MS);
             sleep(UI_INTERACTION_DELAY_MS);
             UiObject2 gameTiles = findUiObj(gameTileParentId, UiObjIdType.Res, UiObjSelType.Res);
             for (UiObject2 child : gameTiles.getChildren()) {
