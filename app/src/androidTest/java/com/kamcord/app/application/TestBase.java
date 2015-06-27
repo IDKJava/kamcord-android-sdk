@@ -223,7 +223,7 @@ public abstract class TestBase {
         int retries = 0;
         while(!gone && retries < maxRetries){
             gone = true;
-            mDevice.waitForIdle();
+            mDevice.waitForIdle(UI_INTERACTION_DELAY_MS);
             sleep(UI_INTERACTION_DELAY_MS);
             UiObject2 gameTiles = findUiObj(gameTileParentId, UiObjIdType.Res, UiObjSelType.Res);
             for (UiObject2 child : gameTiles.getChildren()) {
