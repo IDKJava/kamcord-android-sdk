@@ -57,7 +57,6 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
             }
             return fragment;
         }
-
     }
 
     @Override

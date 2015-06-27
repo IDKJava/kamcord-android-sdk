@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -70,13 +71,15 @@ public class RecordActivity extends FragmentActivity implements
 
     public void initMainActivity() {
 
-        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             tabTitles = new String[2];
             tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
             tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
+            Log.d("fuk", "2");
         } else {
             tabTitles = new String[1];
             tabTitles[0] = getResources().getString(R.string.kamcordProfileTab);
+            Log.d("fuck", "1");
         }
 
         numberOfTabs = tabTitles.length;
