@@ -33,7 +33,9 @@ import static org.junit.Assert.assertTrue;
  */
 public class UiUtilities {
 
-    public static final int APP_TIMEOUT_MS = 10000;
+    //APP timeout is huge, but the game list won't
+    // load on time if the delay is not large,
+    public static final int APP_TIMEOUT_MS = 30000;
     public static final int UI_TIMEOUT_MS = 5000;
     public static final int RECORDING_DURATION_MS = 6000;
     public static final int DEFAULT_UPLOAD_TIMEOUT = 30000;
