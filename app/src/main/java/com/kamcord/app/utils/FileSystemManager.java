@@ -136,9 +136,9 @@ public class FileSystemManager {
 
     private static void makeNoMedia(File directory)
     {
-        if( directory.isDirectory() ) {
-        try {
-                File noMedia = new File(directory, ".nomedia");
+        File noMedia;
+        if( directory.isDirectory() && !(noMedia = new File(directory, ".nomedia")).exists() ) {
+            try {
                 noMedia.createNewFile();
             } catch( Exception e ) {
                 e.printStackTrace();

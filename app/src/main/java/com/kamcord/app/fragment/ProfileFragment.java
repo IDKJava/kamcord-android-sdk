@@ -153,6 +153,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     checkProcessingSessions();
                 } else if (AccountManager.isLoggedIn()) {
                     Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_SHORT).show();
+                    marshalActiveSessions();
                     videoFeedRefreshLayout.setRefreshing(false);
                 } else {
                     videoFeedRefreshLayout.setRefreshing(false);
