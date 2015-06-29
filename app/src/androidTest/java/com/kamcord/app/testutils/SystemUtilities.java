@@ -144,4 +144,7 @@ public class SystemUtilities {
         //native, dalvik in order
         return heapSizes;
     }
+    public static void unlockScreen(){
+        executeShellCommand("shell su -c input keyevent 82");
+    }
 }

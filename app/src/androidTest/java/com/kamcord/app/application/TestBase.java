@@ -63,6 +63,11 @@ public abstract class TestBase {
     }
 
     protected void startKamcordApp(){
+        UiObject2 screenLock = findUiObj(ANDROID_LOCK_ICON, UiObjSelType.Res, APP_TIMEOUT_MS, false);
+        if(screenLock != null){
+            unlockScreen();
+        }
+
         mDevice.pressHome();
 
         startApplication(KAMCORD_APP_PACKAGE);

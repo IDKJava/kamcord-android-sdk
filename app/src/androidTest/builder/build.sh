@@ -29,6 +29,8 @@ $ADB_BIN -s $DEVICE_ID push app/src/androidTest/res/enable.sh /sdcard/enable.sh
 sleep 1
 $ADB_BIN -s $DEVICE_ID push app/src/androidTest/res/disable.sh /sdcard/disable.sh
 sleep 1
+#Make sure screen is not locked.
+$ADB_BIN shell input keyevent 82
 rm -rf $REPORT_FOLDER
 mkdir -p $REPORT_FOLDER
 gradle -PspoonClassName=com.kamcord.app.application.ProfileTest -PtargetDeviceId="$DEVICE_ID" spoon

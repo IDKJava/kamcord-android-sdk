@@ -33,12 +33,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class UiUtilities {
 
-    public static final int APP_TIMEOUT_MS = 5000;
-    public static final int UI_TIMEOUT_MS = 3000;
+    public static final int APP_TIMEOUT_MS = 10000;
+    public static final int UI_TIMEOUT_MS = 5000;
     public static final int RECORDING_DURATION_MS = 6000;
     public static final int DEFAULT_UPLOAD_TIMEOUT = 30000;
     public static final int MS_PER_MIN = 60000;
-    public static final int DEFAULT_VIDEO_PROCESSING_TIMEOUT = 10000;
+    public static final int DEFAULT_VIDEO_PROCESSING_TIMEOUT = 20000;
     public static final String OVERFLOW_DESCRIPTION = "More options";
     public static final String KAMCORD_APP_PACKAGE = "com.kamcord.app";
     public static final String RIPPLE_TEST_APP_PACKAGE = "com.kamcord.ripples";
@@ -48,6 +48,7 @@ public class UiUtilities {
     public static final String ANDROID_DISMISS_TASK = "com.android.systemui:id/dismiss_task";
     public static final String ANDROID_SYSTEM_BUTTON1 = "android:id/button1";
     public static final String ANDROID_SYSTEM_BUTTON3 = "android:id/button3";
+    public static final String ANDROID_LOCK_ICON = "com.android.systemui:id/lock_icon";
     public static final String ANDROID_SETTINGS_L_BUTTON = "com.android.settings:id/left_button";
     public static final String ANDROID_NOTIFICATION_HEADER = "com.android.systemui:id/header";
     public static final String ANDROID_APP_ICON  = "com.android.systemui:id/application_icon";
@@ -442,6 +443,8 @@ public class UiUtilities {
             assertTrue("Failed setting device orientation!", false);
         }
     }
+
+
 
 }
 
