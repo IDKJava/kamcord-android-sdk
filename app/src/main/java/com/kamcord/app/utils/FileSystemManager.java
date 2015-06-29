@@ -18,6 +18,7 @@ public class FileSystemManager {
     public static final String STITCHED_VIDEO_FILENAME = "video.mp4";
     public static final String STITCHED_AUDIO_FILENAME = "audio.mp4";
     public static final String MERGED_VIDEO_FILENAME = "merged.mp4";
+    public static final String THUMBNAIL_FILENAME = "thumbnail.png";
     public static final String VIDEO_CLIP_REGEX = "video[0-9][0-9][0-9].mp4";
     public static final String AUDIO_CLIP_REGEX = "audio[0-9][0-9][0-9].mp4";
 
@@ -136,9 +137,9 @@ public class FileSystemManager {
 
     private static void makeNoMedia(File directory)
     {
-        if( directory.isDirectory() ) {
-        try {
-                File noMedia = new File(directory, ".nomedia");
+        File noMedia;
+        if( directory.isDirectory() && !(noMedia = new File(directory, ".nomedia")).exists() ) {
+            try {
                 noMedia.createNewFile();
             } catch( Exception e ) {
                 e.printStackTrace();
