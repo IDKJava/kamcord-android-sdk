@@ -6,7 +6,7 @@ SPOON_FOLDER="app/build/spoon/debug"
 DOXYGEN_FOLDER="app/build/testDocs/html"
 ADB_BIN=$ANDROID_SDK"/platform-tools/adb"
 
-function testPrepDevice{
+function testPrepDevice(){
     echo "Install com.kamcord.ripples"
     $ADB_BIN -s $DEVICE_ID install -r app/src/androidTest/res/RippleActivity.apk
     sleep 5
@@ -23,7 +23,7 @@ function testPrepDevice{
     $ADB_BIN shell input keyevent 3
 }
 
-function cleanDevice{
+function cleanDevice(){
     echo "Stop com.kamcord.app"
     $ADB_BIN -s $DEVICE_ID shell su -c am force-stop com.kamcord.app
     sleep 5
