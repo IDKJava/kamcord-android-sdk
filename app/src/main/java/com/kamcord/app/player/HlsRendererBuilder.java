@@ -17,6 +17,7 @@ package com.kamcord.app.player;
 
 import android.content.Context;
 import android.media.MediaCodec;
+import android.net.Uri;
 import android.os.Handler;
 import android.widget.TextView;
 
@@ -55,7 +56,7 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
 
     private final Context context;
     private final String userAgent;
-    private final String url;
+    private final Uri uri;
     private final TextView debugTextView;
     private final AudioCapabilities audioCapabilities;
 
@@ -63,14 +64,14 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
     private RendererBuilderCallback callback;
     private float qualityMultiplier = 1f;
 
-    public HlsRendererBuilder(Context context, String userAgent, String url, TextView debugTextView, AudioCapabilities audioCapabilities) {
-        this(context, userAgent, url, debugTextView, audioCapabilities, 1);
+    public HlsRendererBuilder(Context context, String userAgent, Uri uri, TextView debugTextView, AudioCapabilities audioCapabilities) {
+        this(context, userAgent, uri, debugTextView, audioCapabilities, 1);
     }
 
-    public HlsRendererBuilder(Context context, String userAgent, String url, TextView debugTextView, AudioCapabilities audioCapabilities, float qualityMultiplier) {
+    public HlsRendererBuilder(Context context, String userAgent, Uri uri, TextView debugTextView, AudioCapabilities audioCapabilities, float qualityMultiplier) {
         this.context = context;
         this.userAgent = userAgent;
-        this.url = url;
+        this.uri = uri;
         this.debugTextView = debugTextView;
         this.audioCapabilities = audioCapabilities;
         this.qualityMultiplier = qualityMultiplier;
@@ -81,7 +82,7 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
         this.player = player;
         this.callback = callback;
         HlsPlaylistParser parser = new HlsPlaylistParser();
-        ManifestFetcher<HlsPlaylist> playlistFetcher = new ManifestFetcher<HlsPlaylist>(url,
+        ManifestFetcher<HlsPlaylist> playlistFetcher = new ManifestFetcher<HlsPlaylist>(uri.toString(),
                 new DefaultUriDataSource(context, userAgent), parser);
         playlistFetcher.singleLoad(player.getMainHandler().getLooper(), this);
     }
@@ -109,7 +110,7 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
         }
 
         DataSource dataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
-        HlsChunkSource chunkSource = new HlsChunkSource(dataSource, url, manifest, bandwidthMeter,
+        HlsChunkSource chunkSource = new HlsChunkSource(dataSource, uri.toString(), manifest, bandwidthMeter,
                 variantIndices, HlsChunkSource.ADAPTIVE_MODE_SPLICE, audioCapabilities);
         HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, true, 3, REQUESTED_BUFFER_SIZE,
                 REQUESTED_BUFFER_DURATION_MS, mainHandler, player, Player.TYPE_VIDEO);

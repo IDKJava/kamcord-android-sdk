@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -23,6 +24,7 @@ import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.VideoSurfaceView;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
+import com.google.android.exoplayer.extractor.mp4.Mp4Extractor;
 import com.google.android.exoplayer.metadata.GeobMetadata;
 import com.google.android.exoplayer.metadata.PrivMetadata;
 import com.google.android.exoplayer.metadata.TxxxMetadata;
@@ -30,8 +32,9 @@ import com.google.android.exoplayer.text.CaptionStyleCompat;
 import com.google.android.exoplayer.text.SubtitleView;
 import com.google.android.exoplayer.util.Util;
 import com.kamcord.app.R;
-import com.kamcord.app.player.Player;
+import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
+import com.kamcord.app.player.Player;
 
 import java.util.Map;
 
@@ -46,7 +49,12 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
         AudioCapabilitiesReceiver.Listener {
     private static final String TAG = StreamingVideoViewActivity.class.getSimpleName();
 
-    public static final String ARG_VIDEO_PATH = "video_path";
+    public static final String ARG_VIDEO_TYPE = "video_type";
+    public enum VideoType {
+        HLS,
+        MP4,
+    }
+
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
     @InjectView(R.id.surface_view)
@@ -60,7 +68,8 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
     @InjectView(R.id.subtitles)
     SubtitleView subtitleView;
 
-    private String url;
+    private Uri videoUri;
+    private VideoType videoType = VideoType.HLS;
     private Player player;
     private boolean playerNeedsPrepare;
     private float qualityMultiplier = 2f;
@@ -78,7 +87,10 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
         ButterKnife.inject(this);
 
         Intent intent = getIntent();
-        url = intent.getExtras().getString(ARG_VIDEO_PATH);
+        videoUri = intent.getData();
+        if( intent.hasExtra(ARG_VIDEO_TYPE) ) {
+            videoType = (VideoType) intent.getSerializableExtra(ARG_VIDEO_TYPE);
+        }
 
         View root = findViewById(R.id.root);
         root.setOnTouchListener(new View.OnTouchListener() {
@@ -149,9 +161,22 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
     // Internal methods
 
     private Player.RendererBuilder getRendererBuilder() {
+        Player.RendererBuilder rendererBuilder = null;
         String userAgent = Util.getUserAgent(this, "ExoPlayerDemo");
-        return new HlsRendererBuilder(this, userAgent, url, debugTextView,
-                audioCapabilities, qualityMultiplier);
+
+        switch(videoType) {
+            case HLS:
+                rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, debugTextView,
+                        audioCapabilities, qualityMultiplier);
+                break;
+
+            case MP4:
+                rendererBuilder = new ExtractorRendererBuilder(this, userAgent, videoUri,
+                        debugTextView, new Mp4Extractor());
+                break;
+        }
+
+        return rendererBuilder;
     }
 
     private void preparePlayer() {

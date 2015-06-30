@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -189,7 +190,9 @@ public class
                 video.views = video.views + 1;
                 videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, StreamingVideoViewActivity.class);
-                intent.putExtra(StreamingVideoViewActivity.ARG_VIDEO_PATH, video.video_url);
+                intent.setData(Uri.parse(video.video_url));
+                intent.putExtra(StreamingVideoViewActivity.ARG_VIDEO_TYPE,
+                        StreamingVideoViewActivity.VideoType.HLS);
                 mContext.startActivity(intent);
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }
