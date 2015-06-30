@@ -30,7 +30,7 @@ import com.google.android.exoplayer.text.CaptionStyleCompat;
 import com.google.android.exoplayer.text.SubtitleView;
 import com.google.android.exoplayer.util.Util;
 import com.kamcord.app.R;
-import com.kamcord.app.player.DemoPlayer;
+import com.kamcord.app.player.Player;
 import com.kamcord.app.player.HlsRendererBuilder;
 
 import java.util.Map;
@@ -40,9 +40,9 @@ import butterknife.InjectView;
 
 public class StreamingVideoViewActivity extends AppCompatActivity implements
         SurfaceHolder.Callback,
-        DemoPlayer.Listener,
-        DemoPlayer.TextListener,
-        DemoPlayer.Id3MetadataListener,
+        Player.Listener,
+        Player.TextListener,
+        Player.Id3MetadataListener,
         AudioCapabilitiesReceiver.Listener {
     private static final String TAG = StreamingVideoViewActivity.class.getSimpleName();
 
@@ -61,9 +61,9 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
     SubtitleView subtitleView;
 
     private String url;
-
-    private DemoPlayer player;
+    private Player player;
     private boolean playerNeedsPrepare;
+    private float qualityMultiplier = 2f;
 
     private long playerPosition;
 
@@ -148,15 +148,15 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
 
     // Internal methods
 
-    private DemoPlayer.RendererBuilder getRendererBuilder() {
+    private Player.RendererBuilder getRendererBuilder() {
         String userAgent = Util.getUserAgent(this, "ExoPlayerDemo");
         return new HlsRendererBuilder(this, userAgent, url, debugTextView,
-                audioCapabilities);
+                audioCapabilities, qualityMultiplier);
     }
 
     private void preparePlayer() {
         if (player == null) {
-            player = new DemoPlayer(getRendererBuilder());
+            player = new Player(getRendererBuilder());
             player.addListener(this);
             player.setTextListener(this);
             player.setMetadataListener(this);
@@ -181,7 +181,7 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
         }
     }
 
-    // DemoPlayer.Listener implementation
+    // Player.Listener implementation
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
@@ -243,7 +243,7 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
         mediaController.show(0);
     }
 
-    // DemoPlayer.TextListener implementation
+    // Player.TextListener implementation
 
     @Override
     public void onText(String text) {
@@ -255,7 +255,7 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
         }
     }
 
-    // DemoPlayer.MetadataListener implementation
+    // Player.MetadataListener implementation
 
     @Override
     public void onId3Metadata(Map<String, Object> metadata) {

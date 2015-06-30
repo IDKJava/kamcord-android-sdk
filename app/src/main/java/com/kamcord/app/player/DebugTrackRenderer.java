@@ -29,13 +29,13 @@ import com.google.android.exoplayer.chunk.Format;
 /* package */ class DebugTrackRenderer extends TrackRenderer implements Runnable {
 
     private final TextView textView;
-    private final DemoPlayer player;
+    private final Player player;
     private final MediaCodecTrackRenderer renderer;
 
     private volatile boolean pendingFailure;
     private volatile long currentPositionUs;
 
-    public DebugTrackRenderer(TextView textView, DemoPlayer player,
+    public DebugTrackRenderer(TextView textView, Player player,
                               MediaCodecTrackRenderer renderer) {
         this.textView = textView;
         this.player = player;

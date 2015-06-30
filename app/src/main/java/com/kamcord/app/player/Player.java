@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.kamcord.app.player;
 
 import android.media.MediaCodec.CryptoException;
@@ -42,72 +27,27 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * A wrapper around {@link ExoPlayer} that provides a higher level interface. It can be prepared
- * with one of a number of {@link RendererBuilder} classes to suit different use cases (e.g. DASH,
- * SmoothStreaming and so on).
- */
-public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventListener,
+public class Player implements ExoPlayer.Listener, ChunkSampleSource.EventListener,
         HlsSampleSource.EventListener, DefaultBandwidthMeter.EventListener,
         MediaCodecVideoTrackRenderer.EventListener, MediaCodecAudioTrackRenderer.EventListener,
         StreamingDrmSessionManager.EventListener, TextRenderer {
 
-    /**
-     * Builds renderers for the player.
-     */
     public interface RendererBuilder {
-        /**
-         * Constructs the necessary components for playback.
-         *
-         * @param player The parent player.
-         * @param callback The callback to invoke with the constructed components.
-         */
-        void buildRenderers(DemoPlayer player, RendererBuilderCallback callback);
+        void buildRenderers(Player player, RendererBuilderCallback callback);
     }
 
-    /**
-     * A callback invoked by a {@link RendererBuilder}.
-     */
     public interface RendererBuilderCallback {
-        /**
-         * Invoked with the results from a {@link RendererBuilder}.
-         *
-         * @param trackNames The names of the available tracks, indexed by {@link DemoPlayer} TYPE_*
-         *     constants. May be null if the track names are unknown. An individual element may be null
-         *     if the track names are unknown for the corresponding type.
-         * @param multiTrackSources Sources capable of switching between multiple available tracks,
-         *     indexed by {@link DemoPlayer} TYPE_* constants. May be null if there are no types with
-         *     multiple tracks. An individual element may be null if it does not have multiple tracks.
-         * @param renderers Renderers indexed by {@link DemoPlayer} TYPE_* constants. An individual
-         *     element may be null if there do not exist tracks of the corresponding type.
-         */
         void onRenderers(String[][] trackNames, MultiTrackChunkSource[] multiTrackSources,
                          TrackRenderer[] renderers);
-        /**
-         * Invoked if a {@link RendererBuilder} encounters an error.
-         *
-         * @param e Describes the error.
-         */
         void onRenderersError(Exception e);
     }
 
-    /**
-     * A listener for core events.
-     */
     public interface Listener {
         void onStateChanged(boolean playWhenReady, int playbackState);
         void onError(Exception e);
         void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio);
     }
 
-    /**
-     * A listener for internal errors.
-     * <p>
-     * These errors are not visible to the user, and hence this listener is provided for
-     * informational purposes only. Note however that an internal error may cause a fatal
-     * error if the player fails to recover. If this happens, {@link Listener#onError(Exception)}
-     * will be invoked.
-     */
     public interface InternalErrorListener {
         void onRendererInitializationError(Exception e);
         void onAudioTrackInitializationError(AudioTrack.InitializationException e);
@@ -118,9 +58,6 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
         void onDrmSessionManagerError(Exception e);
     }
 
-    /**
-     * A listener for debugging information.
-     */
     public interface InfoListener {
         void onVideoFormatEnabled(Format format, int trigger, int mediaTimeMs);
         void onAudioFormatEnabled(Format format, int trigger, int mediaTimeMs);
@@ -134,16 +71,10 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
                                   long initializationDurationMs);
     }
 
-    /**
-     * A listener for receiving notifications of timed text.
-     */
     public interface TextListener {
         void onText(String text);
     }
 
-    /**
-     * A listener for receiving ID3 metadata parsed from the media stream.
-     */
     public interface Id3MetadataListener {
         void onId3Metadata(Map<String, Object> metadata);
     }
@@ -195,7 +126,7 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
     private InternalErrorListener internalErrorListener;
     private InfoListener infoListener;
 
-    public DemoPlayer(RendererBuilder rendererBuilder) {
+    public Player(RendererBuilder rendererBuilder) {
         this.rendererBuilder = rendererBuilder;
         player = ExoPlayer.Factory.newInstance(RENDERER_COUNT, 1000, 5000);
         player.addListener(this);
@@ -373,12 +304,6 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
             return ExoPlayer.STATE_PREPARING;
         }
         int playerState = player.getPlaybackState();
-        if (rendererBuildingState == RENDERER_BUILDING_STATE_BUILT
-                && rendererBuildingState == RENDERER_BUILDING_STATE_IDLE) {
-            // This is an edge case where the renderers are built, but are still being passed to the
-            // player's playback thread.
-            return ExoPlayer.STATE_PREPARING;
-        }
         return playerState;
     }
 
@@ -626,14 +551,14 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
         public void onRenderers(String[][] trackNames, MultiTrackChunkSource[] multiTrackSources,
                                 TrackRenderer[] renderers) {
             if (!canceled) {
-                DemoPlayer.this.onRenderers(trackNames, multiTrackSources, renderers);
+                Player.this.onRenderers(trackNames, multiTrackSources, renderers);
             }
         }
 
         @Override
         public void onRenderersError(Exception e) {
             if (!canceled) {
-                DemoPlayer.this.onRenderersError(e);
+                Player.this.onRenderersError(e);
             }
         }
 

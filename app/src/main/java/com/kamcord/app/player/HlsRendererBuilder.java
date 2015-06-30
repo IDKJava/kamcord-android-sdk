@@ -26,8 +26,6 @@ import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.TrackRenderer;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.chunk.VideoFormatSelectorUtil;
-import com.kamcord.app.player.DemoPlayer.RendererBuilder;
-import com.kamcord.app.player.DemoPlayer.RendererBuilderCallback;
 import com.google.android.exoplayer.hls.HlsChunkSource;
 import com.google.android.exoplayer.hls.HlsMasterPlaylist;
 import com.google.android.exoplayer.hls.HlsPlaylist;
@@ -41,6 +39,8 @@ import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.ManifestFetcher;
 import com.google.android.exoplayer.util.ManifestFetcher.ManifestCallback;
+import com.kamcord.app.player.Player.RendererBuilder;
+import com.kamcord.app.player.Player.RendererBuilderCallback;
 
 import java.io.IOException;
 import java.util.Map;
@@ -59,19 +59,25 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
     private final TextView debugTextView;
     private final AudioCapabilities audioCapabilities;
 
-    private DemoPlayer player;
+    private Player player;
     private RendererBuilderCallback callback;
+    private float qualityMultiplier = 1f;
 
     public HlsRendererBuilder(Context context, String userAgent, String url, TextView debugTextView, AudioCapabilities audioCapabilities) {
+        this(context, userAgent, url, debugTextView, audioCapabilities, 1);
+    }
+
+    public HlsRendererBuilder(Context context, String userAgent, String url, TextView debugTextView, AudioCapabilities audioCapabilities, float qualityMultiplier) {
         this.context = context;
         this.userAgent = userAgent;
         this.url = url;
         this.debugTextView = debugTextView;
         this.audioCapabilities = audioCapabilities;
+        this.qualityMultiplier = qualityMultiplier;
     }
 
     @Override
-    public void buildRenderers(DemoPlayer player, RendererBuilderCallback callback) {
+    public void buildRenderers(Player player, RendererBuilderCallback callback) {
         this.player = player;
         this.callback = callback;
         HlsPlaylistParser parser = new HlsPlaylistParser();
@@ -88,7 +94,7 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
     @Override
     public void onSingleManifest(HlsPlaylist manifest) {
         Handler mainHandler = player.getMainHandler();
-        DefaultBandwidthMeter bandwidthMeter = new MyBandwidthMeter();
+        DefaultBandwidthMeter bandwidthMeter = new QualityBandwidthMeter(qualityMultiplier);
 
         int[] variantIndices = null;
         if (manifest instanceof HlsMasterPlaylist) {
@@ -106,13 +112,13 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
         HlsChunkSource chunkSource = new HlsChunkSource(dataSource, url, manifest, bandwidthMeter,
                 variantIndices, HlsChunkSource.ADAPTIVE_MODE_SPLICE, audioCapabilities);
         HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, true, 3, REQUESTED_BUFFER_SIZE,
-                REQUESTED_BUFFER_DURATION_MS, mainHandler, player, DemoPlayer.TYPE_VIDEO);
+                REQUESTED_BUFFER_DURATION_MS, mainHandler, player, Player.TYPE_VIDEO);
         MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
-                MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, mainHandler, player, 50);
+                MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING, 5000, mainHandler, player, 50);
         MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
 
         MetadataTrackRenderer<Map<String, Object>> id3Renderer =
-                new MetadataTrackRenderer<Map<String, Object>>(sampleSource, new Id3Parser(),
+                new MetadataTrackRenderer<>(sampleSource, new Id3Parser(),
                         player.getId3MetadataRenderer(), mainHandler.getLooper());
 
         Eia608TrackRenderer closedCaptionRenderer = new Eia608TrackRenderer(sampleSource, player,
@@ -122,19 +128,25 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
         TrackRenderer debugRenderer = debugTextView != null
                 ? new DebugTrackRenderer(debugTextView, player, videoRenderer) : null;
 
-        TrackRenderer[] renderers = new TrackRenderer[DemoPlayer.RENDERER_COUNT];
-        renderers[DemoPlayer.TYPE_VIDEO] = videoRenderer;
-        renderers[DemoPlayer.TYPE_AUDIO] = audioRenderer;
-        renderers[DemoPlayer.TYPE_TIMED_METADATA] = id3Renderer;
-        renderers[DemoPlayer.TYPE_TEXT] = closedCaptionRenderer;
-        renderers[DemoPlayer.TYPE_DEBUG] = debugRenderer;
+        TrackRenderer[] renderers = new TrackRenderer[Player.RENDERER_COUNT];
+        renderers[Player.TYPE_VIDEO] = videoRenderer;
+        renderers[Player.TYPE_AUDIO] = audioRenderer;
+        renderers[Player.TYPE_TIMED_METADATA] = id3Renderer;
+        renderers[Player.TYPE_TEXT] = closedCaptionRenderer;
+        renderers[Player.TYPE_DEBUG] = debugRenderer;
         callback.onRenderers(null, null, renderers);
     }
 
-    private static class MyBandwidthMeter extends DefaultBandwidthMeter {
+    private static class QualityBandwidthMeter extends DefaultBandwidthMeter {
+        private float qualityMultiplier = 1f;
+
+        QualityBandwidthMeter(float qualityMultiplier) {
+            this.qualityMultiplier = qualityMultiplier;
+        }
+
         @Override
         public synchronized long getBitrateEstimate() {
-            return 2 * super.getBitrateEstimate();
+            return (long) (qualityMultiplier * super.getBitrateEstimate());
         }
     }
 }
