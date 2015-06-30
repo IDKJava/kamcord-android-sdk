@@ -14,6 +14,18 @@ import static com.kamcord.app.testutils.UiUtilities.sleep;
  */
 public class RecordingTestMedium extends RecordAndPostTestBase {
     //@Test
+    /**
+     * Test record and upload flow with a long video.
+     * Char only
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record}
+     *     a very long video.<br>
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload} video.<br>
+     *     4) Expect the video to appear on the profile.<br>
+     * </p>
+     */
     public void recordRippleTestLoginFirstLong() {
         doLogin();
         //TODO: What do we do with the really long tests?
@@ -26,7 +38,19 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
         //handleShareViewNotificationCheck(recordingDuration);
     }
 
-    @Test
+    //@Test
+    /**
+     * Basic record and share.
+     * Disabled as it is redundant.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record}
+     *     a video.<br>
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload} video.<br>
+     *     4) Expect the video to appear on the profile.<br>
+     * </p>
+     */
     public void recordRippleTestLoginFirst() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
@@ -34,10 +58,21 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
                 UploadTestVariant.Normal,
                 false,
                 false);
-        //handleShareViewNotificationCheck(RECORDING_DURATION_MS);
 
     }
     @Test
+    /**
+     * Basic record and share logging in before share.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#skipLogin Skip log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record}
+     *     a video.<br>
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload}
+     *     video while logging in<br>
+     *     4) Expect the video to appear on the profile.<br>
+     * </p>
+     */
     public void recordRippleTestLoginLast() {
         skipLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RECORDING_DURATION_MS);
@@ -45,11 +80,20 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
                 UploadTestVariant.Normal,
                 false,
                 true);
-        //handleShareViewNotificationCheck(RECORDING_DURATION_MS, false);
-
     }
-    //Enable after resolution of AA-41
     //@Test
+    /**
+     * Basic record and share logging in before share repeated twice in a row.
+     * Seems redundant and hence disabled. May review later.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a video.<br>
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload} video<br>
+     *     4) Repeat 2-3 two times.<br>
+     *     4) Expect the videos to appear on the profile.<br>
+     * </p>
+     */
     public void recordRippleTestNTimesLoggedIn() {
         doLogin();
         int N = 2;
@@ -60,11 +104,9 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
                     UploadTestVariant.Normal,
                     false,
                     false);
-            //handleShareViewNotificationCheck(recDuration, true, false);
             sleep(UI_TIMEOUT_MS);
         }
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, recordingDuration);
-        //handleShareViewNotificationCheck(recDuration, true, true);
         handleShareFlowQueueCheck(recordingDuration,
                 UploadTestVariant.Normal,
                 false,
@@ -73,6 +115,18 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
 
     //Do not run fails by design!
     //@Test
+    /**
+     * Basic record and share, where recording is paused every 2 secs.
+     * Pausing too often isn't supported, may revise later, if need be.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record}
+     *     a video.<br>
+     *     3){@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload} video<br>
+     *     4) Expect the videos to appear on the profile.<br>
+     *
+     */
     public void recordAndPostLoggedInWithPause() {
         doLogin();
         int recordingDuration = RECORDING_DURATION_MS * 2;
@@ -81,6 +135,5 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
                 UploadTestVariant.Normal,
                 false,
                 false);
-        //handleShareViewNotificationCheck(RECORDING_DURATION_MS);
     }
 }
