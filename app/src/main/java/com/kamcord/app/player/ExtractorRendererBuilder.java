@@ -39,8 +39,8 @@ public class ExtractorRendererBuilder implements Player.RendererBuilder {
         ExtractorSampleSource sampleSource = new ExtractorSampleSource(uri, dataSource, extractor, 2,
                 BUFFER_SIZE);
         MediaCodecVideoTrackRenderer videoRenderer = new MediaCodecVideoTrackRenderer(sampleSource,
-                null, true, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, null, player.getMainHandler(),
-                player, 50);
+                null, true, MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING, 5000, null,
+                player.getMainHandler(), player, 50);
         MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource,
                 null, true, player.getMainHandler(), player);
 

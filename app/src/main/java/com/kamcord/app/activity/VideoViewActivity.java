@@ -92,8 +92,6 @@ public class VideoViewActivity extends AppCompatActivity implements
             videoType = (VideoType) intent.getSerializableExtra(ARG_VIDEO_TYPE);
         }
 
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-
         View root = findViewById(R.id.root);
         root.setOnTouchListener(new View.OnTouchListener() {
             @Override
