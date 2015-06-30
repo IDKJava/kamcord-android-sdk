@@ -88,6 +88,9 @@ dependencies {
     // Using this for YouTube auth stuff.
     compile 'com.google.android.gms:play-services-base:7.3.0'
 
+    // Exoplayer
+    compile 'com.google.android.exoplayer:exoplayer:r1.3.3'
+
 
     // Testing-only dependencies
     androidTestCompile 'com.android.support.test:runner:0.2'
