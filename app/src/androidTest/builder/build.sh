@@ -22,8 +22,7 @@ function testPrepDevice(){
     #Make sure we're home
     $ADB_BIN shell input keyevent 3
 }
-
-function cleanDevice(){
+function cleanTestApps(){
     echo "Stop com.kamcord.app"
     $ADB_BIN -s $DEVICE_ID shell su -c am force-stop com.kamcord.app
     sleep 5
@@ -39,10 +38,14 @@ function cleanDevice(){
     echo "Stop com.kamcord.ripples"
     $ADB_BIN -s $DEVICE_ID shell su -c am force-stop com.kamcord.ripples
     sleep 5
+}
+function cleanDevice(){
+    cleanTestApps
     echo "Uninstall com.kamcord.ripples"
     $ADB_BIN -s $DEVICE_ID uninstall com.kamcord.ripples
     sleep 5
 }
+
 #generate test docs
 $DIR/generateDoxygen.sh
 rm -rf $TESTDOC_FOLDER
@@ -80,35 +83,35 @@ if [ $? -ne 0 ]; then
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/GameListTest
 #Run LoginLogoutTest
-cleanDevice
+cleanTestApps
 gradle -PspoonClassName=com.kamcord.app.application.LoginLogoutTest -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/LoginLogoutTest
 #Run MemoryTest
-cleanDevice
+cleanTestApps
 gradle -PspoonClassName=com.kamcord.app.application.MemoryTest -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/MemoryTest
 #Run RecordingTestShort
-cleanDevice
+cleanTestApps
 gradle -PspoonClassName=com.kamcord.app.application.RecordingTestShort -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/RecordingTestShort
 #Run RecordingTestMedium
-cleanDevice
+cleanTestApps
 gradle -PspoonClassName=com.kamcord.app.application.RecordingTestMedium -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/RecordingTestMedium
 #Run RecordingTestLong
-cleanDevice
+cleanTestApps
 gradle -PspoonClassName=com.kamcord.app.application.RecordingTestLong -PtargetDeviceId="$DEVICE_ID" spoon
 if [ $? -ne 0 ]; then
     FAILED=1
