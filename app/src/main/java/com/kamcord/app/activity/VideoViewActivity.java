@@ -41,13 +41,13 @@ import java.util.Map;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class StreamingVideoViewActivity extends AppCompatActivity implements
+public class VideoViewActivity extends AppCompatActivity implements
         SurfaceHolder.Callback,
         Player.Listener,
         Player.TextListener,
         Player.Id3MetadataListener,
         AudioCapabilitiesReceiver.Listener {
-    private static final String TAG = StreamingVideoViewActivity.class.getSimpleName();
+    private static final String TAG = VideoViewActivity.class.getSimpleName();
 
     public static final String ARG_VIDEO_TYPE = "video_type";
     public enum VideoType {

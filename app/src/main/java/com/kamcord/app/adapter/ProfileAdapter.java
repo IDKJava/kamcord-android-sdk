@@ -26,7 +26,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
-import com.kamcord.app.activity.StreamingVideoViewActivity;
+import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
@@ -189,10 +189,10 @@ public class
             public void onClick(View v) {
                 video.views = video.views + 1;
                 videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
-                Intent intent = new Intent(mContext, StreamingVideoViewActivity.class);
+                Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.setData(Uri.parse(video.video_url));
-                intent.putExtra(StreamingVideoViewActivity.ARG_VIDEO_TYPE,
-                        StreamingVideoViewActivity.VideoType.HLS);
+                intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
+                        VideoViewActivity.VideoType.HLS);
                 mContext.startActivity(intent);
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }
