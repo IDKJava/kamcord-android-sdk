@@ -159,9 +159,10 @@ public class ProfileTest extends TestBase {
 
 
     }
-    @Test
+   // @Test
     /**
      * Check if a the cached profile info displays when there's not network connection.
+     * //TODO: Enable when AA-36 is resolved.
      * <p>
      *     <b>Test Sequence:</b><br>
      *     1) {@link TestBase#doLogin Log in.}<br>
