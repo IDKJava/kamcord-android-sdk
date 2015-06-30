@@ -42,7 +42,7 @@
 
         <activity
             android:name=".activity.StreamingVideoViewActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
         </activity>
 
         <service android:name=".service.RecordingService" />
