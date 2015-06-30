@@ -12,6 +12,14 @@ import static org.junit.Assert.assertTrue;
 public class LoginLogoutTest extends TestBase {
 
     @Test
+    /**
+     * Tests log in to the app.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin  Log in}<br>
+     *     2) Expect to be taken to the recording tab.<br>
+     * </p>
+     */
     public void testLogin() {
         assertFalse("Already logged in!", isLoggedIn());
         doLogin();
@@ -19,6 +27,15 @@ public class LoginLogoutTest extends TestBase {
     }
 
     @Test
+    /**
+     * Tests log out from the app.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in}<br>
+     *     2) {@link TestBase#doLogout Log out}<br>
+     *     3) Expect to be taken to the welcome page.<br>
+     * <p>
+     */
     public void testLogout() {
         assertFalse("Already logged in!", isLoggedIn());
         doLogin();

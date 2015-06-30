@@ -14,9 +14,27 @@ import static com.kamcord.app.testutils.SystemUtilities.*;
  */
 // Will work in Junit 4.11
 // @FixMethodOrder
+
+/**
+ * Checks disk cache usage and memory leaks.
+ */
 public class MemoryTest extends RecordAndPostTestBase {
 
     @Test
+    /**
+     * Checks if the cache is cleared when a new video recording starts.
+     * Checks if the temp files have .nomedia tags.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in}<br>
+     *     2) Record a short video. @see RecordAndPostTestBase#recordGameVideo<br>
+     *     3) Check cache size.<br>
+     *     4) Discard the video after processing is done by clicking back.<br>
+     *     5) Record a video 3 times the short length.<br>
+     *     6) Expect the cache size to be less than the expected sum of the two recordings.<br>
+     *     7) Expect ".nomedia" files to be present in the temp folder. (check using shell cmd)<br>
+     * </p>
+     */
     public void checkCacheNoMediaTest(){
         int recordindDuration1X = RECORDING_DURATION_MS;
         int recordindDuration3X = RECORDING_DURATION_MS * 3;
@@ -53,6 +71,19 @@ public class MemoryTest extends RecordAndPostTestBase {
 
     //@Test
     //Char only for now
+    /**
+     * Record 5 videos and discard videos after processing.
+     * Monitor dalvik and native heap usage. Expect min-max diff to be less than 10% of min.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a 4 sec video.<br>
+     *     3) Check heap sizes.<br>
+     *     4) Discard the video after processing is done by clicking back.<br>
+     *     5) Repeat 2-4 5 times.<br>
+     *     6) Expect max-min difference to be less than min heap size.<br>
+     * </p>
+     */
     public void checkHeapUsage() {
         int recordingTrials = 5;
         int recordingBase  = 4000;

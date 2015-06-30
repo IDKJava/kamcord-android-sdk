@@ -15,10 +15,23 @@ import static com.kamcord.app.testutils.SystemUtilities.*;
 /**
  * Created by Mehmet on 6/3/15.
  */
+
+/**
+ * Profile tab related tests.
+ */
 public class ProfileTest extends TestBase {
 
 
     @Test
+    /**
+     * Check if profile information loads right after log in.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in}<br>
+     *     2) Click on the profile tab.<br>
+     *     3) {@link ProfileTest#verifyProfileUserInfo Verify profile info}<br>
+     * </p>
+     */
     public void testProfileLoadLoggedIn()
     {
         doLogin();
@@ -28,6 +41,17 @@ public class ProfileTest extends TestBase {
     }
 
     @Test
+    /**
+     * Check profile tab prompts for log in and works as intended after login.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#skipLogin Skip log in.}<br>
+     *     2) Click on the profile tab.<br>
+     *     3) Expect to find sign in prompt button and click.<br>
+     *     4) Expect to find welcome window and {@link TestBase#handleWelcomeLoginView login.}<br>
+     *     5) {@link ProfileTest#verifyProfileUserInfoVerify profile info}<br>
+     * </p>
+     */
     public void testProfileLoadLoggedOut()
     {
         skipLogin();
@@ -39,6 +63,19 @@ public class ProfileTest extends TestBase {
         verifyProfileUserInfo();
     }
     @Test
+    /**
+     * Check the functionality of the video like button.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) Click on the profile tab.<br>
+     *     3) Refresh profile and scroll to top.<br>
+     *     4) Note the number of likes for the first video.<br>
+     *     5) Click on the like button.<br>
+     *     6) Repeat 3-4<br>
+     *     7) Expect delta likes to be -/+ 1<br>
+     * </p>
+     */
     public void testProfileVideoLike(){
         //TODO: find a way to cover more than just video #1
         doLogin();
@@ -69,6 +106,21 @@ public class ProfileTest extends TestBase {
         assertTrue("Like didn't work!", Math.abs(numLikes - numLikesAfter) == 1);
     }
     @Test
+    /**
+     * Check video view counter.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) Click on the profile tab.<br>
+     *     3) Refresh profile and scroll to top.<br>
+     *     4) Note the view number for the first video.<br>
+     *     5) Click on the first video.<br>
+     *     6) Wait for the player to load.<br>
+     *     7) Press back to profile view<br>
+     *     8) Repeat 3-4<br>
+     *     9) Expect delta views to be +1<br>
+     * </p>
+     */
     public void testProfileVideoView(){
         //TODO: find a way to cover more than just video #1
         doLogin();
@@ -107,8 +159,21 @@ public class ProfileTest extends TestBase {
 
 
     }
-    //TODO: enable after AA-36 is fixed.
-    //@Test
+    @Test
+    /**
+     * Check if a the cached profile info displays when there's not network connection.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) Click on the profile tab.<br>
+     *     3) Refresh profile and scroll to top.<br>
+     *     4) {@link ProfileTest#verifyProfileUserInfo Verify profile info}<br>
+     *     5) Disable network connection.<br>
+     *     6) Press device home button.<br>
+     *     7) {@link TestBase#startKamcordApp Relaunch app}<br>
+     *     8) Repeat 2-4<br>
+     * </p>
+     */
     public void verifyProfileOffline(){
         //Addresses AA-36
         doLogin();
@@ -126,6 +191,16 @@ public class ProfileTest extends TestBase {
 
     }
     //@Test
+    /**
+     * Check if profile refreshes cause any crashes.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) Click on the profile tab.<br>
+     *     3) Refresh profile and scroll to top.<br>
+     *     4) Repeat 3 really really fast. 10000 times.<br>
+     * </p>
+     */
     public void refreshProfileTest() {
         //Addresses AA-72
         doLogin();
@@ -144,6 +219,15 @@ public class ProfileTest extends TestBase {
         }
         sleep(3000);
     }
+    /**
+     * Profile information verification helper.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) Refresh view. <br>
+     *     2) Check username non-case sensitive. <br>
+     *     3) Check profile letter non-case sensitive. <br>
+     * </p>
+     */
     protected void verifyProfileUserInfo() {
         //TODO: Add more features to test.
 
