@@ -3,7 +3,13 @@ package com.kamcord.app.utils;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.ViewAnimationUtils;
@@ -44,5 +50,22 @@ public class ViewUtils {
                     button.getWidth() / 2, button.getHeight() / 2, 0,
                     button.getHeight() * 2).start();
         }
+    }
+
+    public static Drawable getDimmedDrawable(Context context, Drawable drawable) {
+        Resources resources = context.getResources();
+
+        StateListDrawable stateListDrawable = new StateListDrawable();
+        Drawable tintedDrawable = drawable;
+        tintedDrawable.setColorFilter(resources.getColor(R.color.kamcordGreen), PorterDuff.Mode.MULTIPLY);
+
+        LayerDrawable layerDrawableDefault = new LayerDrawable(new Drawable[]{new ColorDrawable(resources.getColor(R.color.ColorPrimaryDark)), tintedDrawable});
+        LayerDrawable layerDrawableHighLight = new LayerDrawable(new Drawable[]{new ColorDrawable(resources.getColor(R.color.kamcordGreen)), drawable});
+
+        stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, layerDrawableHighLight);
+        stateListDrawable.addState(new int[]{android.R.attr.state_focused}, layerDrawableHighLight);
+        stateListDrawable.addState(new int[]{android.R.attr.state_selected}, layerDrawableHighLight);
+        stateListDrawable.addState(new int[]{}, layerDrawableDefault);
+        return stateListDrawable;
     }
 }

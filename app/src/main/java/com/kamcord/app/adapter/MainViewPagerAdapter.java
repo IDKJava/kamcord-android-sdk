@@ -30,7 +30,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;
-        if(numberOfTabs >= NUMBERS_OF_TAB) {
+        if (numberOfTabs >= NUMBERS_OF_TAB) {
             switch (position) {
                 case RECORD_FRAGMENT_POSITION:
                     fragment = new RecordFragment();

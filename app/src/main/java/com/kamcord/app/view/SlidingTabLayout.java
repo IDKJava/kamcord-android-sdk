@@ -18,6 +18,7 @@ package com.kamcord.app.view;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -196,8 +197,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
             if (mTabViewLayoutId != 0) {
                 // If there is a custom tab view layout id set, try and inflate it
-                tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip,
-                        false);
+                tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip, false);
                 tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
             }
 
@@ -209,7 +209,12 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabIconView = (ImageView) tabView;
             }
 
-            tabIconView.setImageDrawable(getResources().getDrawable(adapter.getDrawableId(i)));
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                tabIconView.setImageDrawable(getResources().getDrawable(adapter.getDrawableId(i), null));
+            } else {
+                tabIconView.setImageDrawable(ViewUtils.getDimmedDrawable(getContext(), getResources().getDrawable(adapter.getDrawableId(i))));
+            }
+
             if (mViewPager.getCurrentItem() == i) {
                 tabIconView.setSelected(true);
             }
