@@ -209,7 +209,6 @@ public class StreamingVideoViewActivity extends AppCompatActivity implements
                 text += "unknown";
                 break;
         }
-        Log.v("FindMe", "onStateChanged(" + playWhenReady + ", " + playbackState + ")");
         playerStateTextView.setText(text);
     }
 
