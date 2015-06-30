@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.TypedValue;
 import android.view.ViewAnimationUtils;
 import android.view.Window;
@@ -58,8 +59,10 @@ public class ViewUtils {
         StateListDrawable stateListDrawable = new StateListDrawable();
         Drawable tintedDrawable = drawable;
         tintedDrawable.setColorFilter(resources.getColor(R.color.kamcordGreen), PorterDuff.Mode.MULTIPLY);
+        DrawableCompat.setTint(tintedDrawable, resources.getColor(R.color.kamcordGreen));
+        DrawableCompat.setTintMode(tintedDrawable, PorterDuff.Mode.MULTIPLY);
 
-        LayerDrawable layerDrawableDefault = new LayerDrawable(new Drawable[]{new ColorDrawable(resources.getColor(R.color.ColorPrimaryDark)), tintedDrawable});
+        LayerDrawable layerDrawableDefault = new LayerDrawable(new Drawable[]{tintedDrawable});
         LayerDrawable layerDrawableHighLight = new LayerDrawable(new Drawable[]{new ColorDrawable(resources.getColor(R.color.kamcordGreen)), drawable});
 
         stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, layerDrawableHighLight);

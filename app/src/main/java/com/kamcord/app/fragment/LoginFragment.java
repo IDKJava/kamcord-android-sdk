@@ -2,9 +2,9 @@ package com.kamcord.app.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,19 +93,35 @@ public class LoginFragment extends Fragment {
         AccountManager.clearStoredAccount();
         if( accountWrapper != null )
         {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.loginFailed)
-                    .setMessage(R.string.loginFailureMessage)
-                    .setNeutralButton(android.R.string.ok, null)
-                    .setPositiveButton(R.string.resetPassword,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                    pushResetPasswordFragment();
-                                }
-                            })
-                    .show();
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                new android.support.v7.app.AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.loginFailed)
+                        .setMessage(R.string.loginFailureMessage)
+                        .setNeutralButton(android.R.string.ok, null)
+                        .setPositiveButton(R.string.resetPassword,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                        pushResetPasswordFragment();
+                                    }
+                                })
+                        .show();
+            } else {
+                new android.app.AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.loginFailed)
+                        .setMessage(R.string.loginFailureMessage)
+                        .setNeutralButton(android.R.string.ok, null)
+                        .setPositiveButton(R.string.resetPassword,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                        pushResetPasswordFragment();
+                                    }
+                                })
+                        .show();
+            }
         }
     }
 

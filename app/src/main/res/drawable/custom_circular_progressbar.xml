@@ -7,13 +7,13 @@
     <shape
         android:innerRadiusRatio="3"
         android:shape="ring"
-        android:thicknessRatio="8"
+        android:thicknessRatio="15"
         android:useLevel="false">
         <gradient
             android:centerColor="@color/ColorPrimary"
             android:centerY="0.5"
             android:endColor="@color/ShareBackgroundColor"
-            android:startColor="@color/ColorPrimary"
+            android:startColor="@color/kamcordGreen"
             android:type="sweep"
             android:useLevel="false" />
     </shape>

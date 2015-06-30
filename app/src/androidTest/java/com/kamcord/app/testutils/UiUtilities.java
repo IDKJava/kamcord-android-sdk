@@ -18,14 +18,11 @@ import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
 import android.support.test.uiautomator.Until;
-import android.view.Surface;
 
 import com.kamcord.app.R;
 
 import java.util.ArrayList;
 
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -33,12 +30,14 @@ import static org.junit.Assert.assertTrue;
  */
 public class UiUtilities {
 
-    public static final int APP_TIMEOUT_MS = 5000;
-    public static final int UI_TIMEOUT_MS = 3000;
+    //APP timeout is huge, but the game list won't
+    // load on time if the delay is not large,
+    public static final int APP_TIMEOUT_MS = 30000;
+    public static final int UI_TIMEOUT_MS = 5000;
     public static final int RECORDING_DURATION_MS = 6000;
     public static final int DEFAULT_UPLOAD_TIMEOUT = 30000;
     public static final int MS_PER_MIN = 60000;
-    public static final int DEFAULT_VIDEO_PROCESSING_TIMEOUT = 10000;
+    public static final int DEFAULT_VIDEO_PROCESSING_TIMEOUT = 20000;
     public static final String OVERFLOW_DESCRIPTION = "More options";
     public static final String KAMCORD_APP_PACKAGE = "com.kamcord.app";
     public static final String RIPPLE_TEST_APP_PACKAGE = "com.kamcord.ripples";
@@ -48,6 +47,7 @@ public class UiUtilities {
     public static final String ANDROID_DISMISS_TASK = "com.android.systemui:id/dismiss_task";
     public static final String ANDROID_SYSTEM_BUTTON1 = "android:id/button1";
     public static final String ANDROID_SYSTEM_BUTTON3 = "android:id/button3";
+    public static final String ANDROID_LOCK_ICON = "com.android.systemui:id/lock_icon";
     public static final String ANDROID_SETTINGS_L_BUTTON = "com.android.settings:id/left_button";
     public static final String ANDROID_NOTIFICATION_HEADER = "com.android.systemui:id/header";
     public static final String ANDROID_APP_ICON  = "com.android.systemui:id/application_icon";
@@ -241,12 +241,14 @@ public class UiUtilities {
     }
 
     public static Point[] validateSwipe(Point[] swipePoints) {
-        //TODO: works for vertical only.
+        //TODO: works fine except when the device is a tablet
+        /*
         int bottomBar = 200;
         int topBar = 100;
         int height = mDevice.getDisplayHeight();
         int width = mDevice.getDisplayWidth();
         int orientation = mDevice.getDisplayRotation();
+        String name = mDevice.getProductName();
         switch (orientation) {
             case Surface.ROTATION_90:
                 //TODO: handle swipe by processing swapping coordinates and proportionallly
@@ -275,7 +277,7 @@ public class UiUtilities {
                 break;
         }
 
-
+        */
         return swipePoints;
     }
 
@@ -293,8 +295,10 @@ public class UiUtilities {
 
             //assertTrue("Not scrollable!", scrollableObject.isScrollable());
 
-            //larger number for max swipes.
-            scrollableObject.flingToBeginning(100);
+            //adding more steps to avoid getting stuck with scrolling without refresh
+            scrollableObject.scrollForward();
+            scrollableObject.scrollToBeginning(100, 20);
+            scrollableObject.scrollBackward();
         } catch (UiObjectNotFoundException e) {
             e.printStackTrace();
             assertTrue("Object not found!", false);
@@ -430,5 +434,16 @@ public class UiUtilities {
         }
         return appObj;
     }
+    public static void setOrientationNatural(){
+        try{
+            mDevice.setOrientationNatural();
+        } catch (RemoteException e){
+            e.printStackTrace();
+            assertTrue("Failed setting device orientation!", false);
+        }
+    }
+
+
+
 }
 

@@ -1,7 +1,9 @@
 package com.kamcord.app.testutils.testrules;
 
+import android.support.test.uiautomator.StaleObjectException;
 import android.util.EventLogTags;
 
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapperConfig;
 import com.kamcord.app.utils.StringUtils;
 
 import org.junit.rules.TestRule;
@@ -38,13 +40,22 @@ public class RetryRule implements TestRule {
                         return;
                     } catch (Throwable t) {
                         caughtThrowable = t;
-                        System.err.println(String.format("%s run %d failed", description.getDisplayName(), (i + 1)));
-                        if(!(t instanceof AssertionError)){
+                        System.err.println(String.format(
+                                "%s run %d failed",
+                                description.getDisplayName(),
+                                (i + 1)));
+                        /*
+                        if(!((t instanceof AssertionError) ||
+                                (t instanceof StaleObjectException)){
                             throw t;
                         }
+                        */
                     }
                 }
-                System.err.println(String.format("%s giving up after %s failures", description.getDisplayName(), retryCount));
+                System.err.println(String.format(
+                        "%s giving up after %s failures",
+                        description.getDisplayName(),
+                        retryCount));
                 throw caughtThrowable;
             }
         };

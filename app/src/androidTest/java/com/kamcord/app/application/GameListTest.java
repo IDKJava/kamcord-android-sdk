@@ -6,6 +6,8 @@ import android.support.test.uiautomator.UiObject2;
 import android.support.test.uiautomator.UiObjectNotFoundException;
 import android.support.test.uiautomator.UiScrollable;
 import android.support.test.uiautomator.UiSelector;
+import android.test.suitebuilder.annotation.SmallTest;
+import android.test.suitebuilder.annotation.Smoke;
 
 import com.kamcord.app.R;
 
@@ -19,9 +21,26 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Mehmet on 5/27/15.
  */
+
+/**
+ * Game List Related Tests. (Recording tab tests)
+ */
 public class GameListTest extends RecordAndPostTestBase {
 
     @Test
+    /**
+     * Checks the number of installed games. Passes if at least one
+     * recordable game is installed.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in}<br>
+     *     2) Go to the record tab.<br>
+     *     3) Refresh games list. (pull to refresh)<br>
+     *     4) Scroll to top.<br>
+     *     5) Get a list of visible installed games.<br>
+     *     6) Scroll down until there are no games or no unique games to be found.<br>
+     *
+     */
     public void checkGamesInstalledList() throws UiObjectNotFoundException{
         //TODO: Check for content not just count.
         doLogin();
@@ -59,10 +78,23 @@ public class GameListTest extends RecordAndPostTestBase {
         }
 
         mDevice.swipe(validateSwipe(new Point[]{new Point(380, 400), new Point(380, 1150)}), 40);
-        assertTrue("Has no games listed!", gameTitles.size() > 2);
+        assertTrue("Has no games listed!", gameTitles.size() >= 1);
     }
 
     @Test
+    /**
+     * Checks the number of available games. Passes if at least one
+     * game could be installed.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in}<br>
+     *     2) Go to the record tab. <br>
+     *     3) Refresh games list. (pull to refresh)<br>
+     *     4) Scroll to top.<br>
+     *     5) Get a list of visible available games.<br>
+     *     6) Scroll down until there are no games or no unique games to install to be found.<br>
+     * </p>
+     */
     public void checkGameList() throws UiObjectNotFoundException{
         //TODO: Check for content not just count.
         doLogin();
@@ -93,8 +125,17 @@ public class GameListTest extends RecordAndPostTestBase {
         assertTrue("Has no games listed!", gameTitles.size() >= 1);
     }
 
-
-    @Test
+    //Disabled covered by test cases above
+    //@Test
+    /**
+     * Checks if pull to refresh works on record tab.
+     * <p>
+     *     <b>Test Sequence:</b><br> <br>
+     *     1) {@link TestBase#doLogin Log in}<br>
+     *     2) Go to the record tab.<br>
+     *     3) Refresh games list. (pull to refresh)<br>
+     * </p>
+     */
     public void checkIfGamesUpdate() {
         //TODO: Check for content not just count.
         doLogin();

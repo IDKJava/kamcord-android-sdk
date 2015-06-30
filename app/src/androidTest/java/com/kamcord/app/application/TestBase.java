@@ -43,7 +43,19 @@ public abstract class TestBase {
     public FailureRule mTestFailureRule = new FailureRule();
 
     @Before
+    /**
+     * Test setup
+     * <p>
+     *     <b>For each test:</b>
+     *     1) Sets orientation to device natural.<br>
+     *     2) Enables network<br>
+     *     3) Starts Kamcord app<br>
+     *     4) Logs out current user.<br>
+     * </p>
+     */
     public void setUp(){
+        //clearSharedPreferences();
+        setOrientationNatural();
         toggleNetwork(true);
         startKamcordApp();
         doLogout();
@@ -56,11 +68,20 @@ public abstract class TestBase {
         //stopService(com.kamcord.app.service.UploadService.class);
     }
     @AfterClass
+    /**
+     * Stops the game/test app after test class completion.
+     */
     public static void cleanUpClass(){
         stopApp(RIPPLE_TEST_APP_PACKAGE);
     }
 
+
     protected void startKamcordApp(){
+        UiObject2 screenLock = findUiObj(ANDROID_LOCK_ICON, UiObjSelType.Res, APP_TIMEOUT_MS, false);
+        if(screenLock != null){
+            unlockScreen();
+        }
+
         mDevice.pressHome();
 
         startApplication(KAMCORD_APP_PACKAGE);
@@ -68,6 +89,10 @@ public abstract class TestBase {
         mDevice.waitForIdle(APP_TIMEOUT_MS);
     }
 
+    /**
+     * Checks if welcome fragment shows a login button and there's user info listed on profile tab.
+     * @return true for logged in.
+     */
     protected boolean isLoggedIn(){
         UiObject2 loginActivity = mDevice
                 .findObject(By.res(getResByID(R.id.fragment_welcome_layout)));
@@ -88,13 +113,35 @@ public abstract class TestBase {
 
     }
 
+
+    /**
+     * Logs user in.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link #handleWelcomeLoginView Login}<br>
+     *     2) Expect to be taken to the recording view.<br>
+     * </p>
+     */
     protected void doLogin() {
         // only works from login screen.
         handleWelcomeLoginView();
         //Welcome screen of sorts
-        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
+        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res,APP_TIMEOUT_MS);
     }
 
+    /**
+     * Assumes welcome view as starting point and logs user in.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) Check if we're on welcome page, find login button.<br>
+     *     2) Click user name field.<br>
+     *     3) Enter user name.<br>
+     *     3) Click password field.<br>
+     *     4) Enter password.<br>
+     *     5) Hide keyboard. (press back)<br>
+     *     6) Click login.<br>
+     * </p>
+     */
     protected void handleWelcomeLoginView(){
         findUiObj(R.id.loginButton, UiObjIdType.Res, UiObjSelType.Res).click();
 
@@ -117,7 +164,19 @@ public abstract class TestBase {
         mDevice.pressBack();
         findUiObj(R.id.loginButton, UiObjIdType.Res, UiObjSelType.Res).click();
     }
-
+    /**
+     * Logs user out.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) Check if on welcome page with login button. If so do nothing.<br>
+     *     2) Switch to profile view. (Click on tab.)<br>
+     *     3) Scroll to top.<br>
+     *     3) Click more options button.<br>
+     *     4) Find and click log out menu option.<br>
+     *     5) Expect to see the welcome screen.<br>
+     * </p>
+     *
+     */
     protected void doLogout(){
         if(mDevice.hasObject(By.res(getResByID(R.id.fragment_welcome_layout))) &&
                 mDevice.hasObject(By.res(getResByID(R.id.loginButton)))) {
@@ -138,15 +197,6 @@ public abstract class TestBase {
         //skip login
         //should see an active record tab.
         findUiObj(R.id.skipButton, UiObjIdType.Res, UiObjSelType.Res).click();
-        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
-    }
-
-    protected void clearCache() {
-        findUiObj(R.string.kamcordProfileTab, UiObjIdType.Str, UiObjSelType.Des, UI_TIMEOUT_MS)
-                .click();
-        findUiObj(R.id.profile_action_menu, UiObjIdType.Res, UiObjSelType.Res, APP_TIMEOUT_MS)
-                .click();
-        findUiObj(R.string.action_cleancache, UiObjIdType.Str, UiObjSelType.Txt).click();
         findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res);
     }
 
@@ -178,7 +228,7 @@ public abstract class TestBase {
             //larger number for max swipes.
             gameTiles.flingToBeginning(100);
             mDevice.waitForIdle(UI_TIMEOUT_MS);
-            sleep(UI_INTERACTION_DELAY_MS);
+            sleep(UI_TIMEOUT_MS);
             waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
 
             //Longer timeout due to reload
@@ -230,7 +280,7 @@ public abstract class TestBase {
         int retries = 0;
         while(!gone && retries < maxRetries){
             gone = true;
-            mDevice.waitForIdle();
+            mDevice.waitForIdle(UI_INTERACTION_DELAY_MS);
             sleep(UI_INTERACTION_DELAY_MS);
             UiObject2 gameTiles = findUiObj(gameTileParentId, UiObjIdType.Res, UiObjSelType.Res);
             for (UiObject2 child : gameTiles.getChildren()) {

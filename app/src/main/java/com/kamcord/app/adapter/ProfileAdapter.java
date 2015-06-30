@@ -1,14 +1,12 @@
 package com.kamcord.app.adapter;
 
+import com.kamcord.app.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.media.ThumbnailUtils;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
@@ -42,12 +39,9 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.ViewUtils;
+import com.kamcord.app.utils.VideoUtils;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Request;
-import com.squareup.picasso.RequestHandler;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -236,15 +230,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void bindProfileUploadProgressViewHolder(final ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
-        Picasso picasso = new Picasso.Builder(mContext)
-                .addRequestHandler(new ThumbnailRequestHandler())
-                .build();
-        String path = new File(FileSystemManager.getRecordingSessionCacheDirectory(session), FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath();
-        if (!path.equals(viewHolder.thumbnailImageView.getTag())) {
-            viewHolder.thumbnailImageView.setTag(path);
-            picasso.load(ThumbnailRequestHandler.SCHEME + ":" + path)
-                    .into(viewHolder.thumbnailImageView);
-        }
+        Picasso.with(mContext)
+                .load(VideoUtils.getVideoThumbnailFile(session))
+                .into(viewHolder.thumbnailImageView);
 
         viewHolder.retryUploadImageButton.setVisibility(View.GONE);
         viewHolder.uploadFailedImageButton.setVisibility(View.GONE);
@@ -491,20 +479,4 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
     };
-
-    private static class ThumbnailRequestHandler extends RequestHandler {
-        public static final String SCHEME = "video";
-
-        @Override
-        public boolean canHandleRequest(Request data) {
-            String scheme = data.uri.getScheme();
-            return SCHEME.equals(scheme);
-        }
-
-        @Override
-        public Result load(Request request, int networkPolicy) throws IOException {
-            Bitmap bm = ThumbnailUtils.createVideoThumbnail(request.uri.getPath(), MediaStore.Images.Thumbnails.MINI_KIND);
-            return new Result(bm, Picasso.LoadedFrom.DISK);
-        }
-    }
 }
