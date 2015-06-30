@@ -4,7 +4,6 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -41,6 +40,7 @@ import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.view.utils.OnBackPressedListener;
+import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -90,7 +90,6 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
     @InjectView(R.id.twitterLoginButton)
     TwitterLoginButton twitterLoginButton;
 
-    private String videoPath;
     private RecordingSession recordingSession;
     private StitchSuccessListener stitchSuccessListener = new StitchSuccessListener() {
         @Override
@@ -115,8 +114,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
         @Override
         public void onMergeSuccess(RecordingSession recordingSession) {
-            videoPrepared(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
-                    FileSystemManager.MERGED_VIDEO_FILENAME));
+            videoPrepared(recordingSession);
             FileSystemManager.deleteUnmerged(recordingSession);
         }
 
@@ -126,7 +124,6 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         }
     };
     private StitchClipsThread stitchClipsThread;
-    private Toast videoTitleToast = null;
     private HashMap<Integer, Boolean> shareSourceHashMap = new HashMap<>();
     private static final int TWITTER_INDEX = 0;
     private static final int YOUTUBE_INDEX = 1;
@@ -155,7 +152,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         File videoFile = new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
                 FileSystemManager.MERGED_VIDEO_FILENAME);
         if (videoFile.exists()) {
-            videoPrepared(videoFile);
+            videoPrepared(recordingSession);
         } else {
             processingProgressBarContainer.setVisibility(View.VISIBLE);
             playImageView.setVisibility(View.GONE);
@@ -168,6 +165,7 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                     stitchSuccessListener);
             stitchClipsThread.start();
         }
+
 
         titleEditText.setHint(StringUtils.defaultVideoTitle(getActivity(), recordingSession));
 
@@ -215,15 +213,16 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                         }
                     }
                 });
-
         return false;
     }
+
+
 
     @OnClick(R.id.share_button)
     public void click(View v) {
         if (AccountManager.isLoggedIn()) {
             if (titleEditText.getEditableText().length() > 0) {
-                recordingSession.setVideoTitle(titleEditText.getEditableText().toString());
+                recordingSession.setVideoTitle(titleEditText.getEditableText().toString().trim());
             } else {
                 recordingSession.setVideoTitle(StringUtils.defaultVideoTitle(getActivity(), recordingSession));
             }
@@ -336,13 +335,20 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         ActiveRecordingSessionManager.updateActiveSession(recordingSession);
     }
 
-    private void videoPrepared(File videoFile) {
-        videoPath = videoFile.getAbsolutePath();
-        Bitmap bitmap = VideoUtils.getVideoThumbnail(videoPath);
-        if (thumbnailImageView != null && bitmap != null) {
-            thumbnailImageView.setImageBitmap(bitmap);
+    private void videoPrepared(RecordingSession recordingSession) {
+        if( !this.recordingSession.equals(recordingSession) ) {
+            // TODO: show the user something about this funky state we're in.
+            return;
         }
-        String videoDurationStr = VideoUtils.getVideoDuration(videoPath);
+
+        if (thumbnailImageView != null ) {
+            File thumbnailFile = VideoUtils.getVideoThumbnailFile(recordingSession);
+            Picasso.with(getActivity())
+                    .load(thumbnailFile)
+                    .into(thumbnailImageView);
+        }
+
+        String videoDurationStr = VideoUtils.getVideoDuration(recordingSession);
         if (videoDurationTextView != null && videoDurationStr != null) {
             videoDurationTextView.setVisibility(View.VISIBLE);
             videoDurationTextView.setText(videoDurationStr);
