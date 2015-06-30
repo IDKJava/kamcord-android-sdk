@@ -11,6 +11,6 @@ mkdir -p $DOCDIR
 $DOXYGEN_BIN $DIR/doxygenConfig.cfg
 echo "******"
 echo "Documents generated can be found under $DOCDIR/annotated.html"
-echo "******"fir
+echo "******"
 echo "Main test classes are listed under com.kamcord.app.application"
 echo "******"

@@ -3,7 +3,7 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 TESTDOC_FOLDER="/Library/WebServer/Documents/documentation/android-app"
 REPORT_FOLDER="/Library/WebServer/Documents/reports/"$BUILD_TAG
 SPOON_FOLDER="app/build/spoon/debug"
-DOXYGEN_FOLDER="app/build/testDoc/html"
+DOXYGEN_FOLDER="app/build/testDocs/html"
 ADB_BIN=$ANDROID_SDK"/platform-tools/adb"
 
 
@@ -55,6 +55,9 @@ $ADB_BIN -s $DEVICE_ID push app/src/androidTest/res/disable.sh /sdcard/disable.s
 sleep 5
 #Make sure screen is not locked.
 $ADB_BIN shell input keyevent 82
+sleep 5
+#Make sure we're home
+$ADB_BIN shell input keyevent 3
 rm -rf $REPORT_FOLDER
 mkdir -p $REPORT_FOLDER
 gradle -PspoonClassName=com.kamcord.app.application.ProfileTest -PtargetDeviceId="$DEVICE_ID" spoon
