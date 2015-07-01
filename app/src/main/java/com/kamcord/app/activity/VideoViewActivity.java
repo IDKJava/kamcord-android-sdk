@@ -166,11 +166,13 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         switch(videoType) {
             case HLS:
+                Log.v("FindMe", "HLS");
                 rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, debugTextView,
                         audioCapabilities, qualityMultiplier);
                 break;
 
             case MP4:
+                Log.v("FindMe", "MP4");
                 rendererBuilder = new ExtractorRendererBuilder(this, userAgent, videoUri,
                         debugTextView, new Mp4Extractor());
                 break;
