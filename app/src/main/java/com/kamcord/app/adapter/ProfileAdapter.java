@@ -28,13 +28,15 @@ import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.ProfileStreamItemViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
 import com.kamcord.app.analytics.KamcordAnalytics;
-import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
+import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.service.UploadService;
@@ -61,9 +63,9 @@ public class
         ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<ProfileItem> mProfileList;
+    private List<FeedItem> mProfileList;
 
-    public ProfileAdapter(Context context, List<ProfileItem> mProfileList) {
+    public ProfileAdapter(Context context, List<FeedItem> mProfileList) {
         this.mContext = context;
         this.mProfileList = mProfileList;
     }
@@ -71,7 +73,7 @@ public class
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayoutView;
-        ProfileItem.Type type = ProfileItem.Type.values()[viewType];
+        FeedItem.Type type = FeedItem.Type.values()[viewType];
         switch (type) {
             case HEADER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_header, parent, false);
@@ -80,6 +82,10 @@ public class
             case VIDEO: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_item, parent, false);
                 return new ProfileVideoItemViewHolder(itemLayoutView);
+            }
+            case STREAM: {
+                itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stream_item, parent, false);
+                return new ProfileStreamItemViewHolder(itemLayoutView);
             }
             case FOOTER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
@@ -109,6 +115,12 @@ public class
             Video video = getItem(position).getVideo();
             if( video != null ) {
                 bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
+            }
+
+        } else if (viewHolder instanceof ProfileStreamItemViewHolder) {
+            Stream stream = getItem(position).getStream();
+            if( stream != null ) {
+                bindStreamVideoItemViewHolder((ProfileStreamItemViewHolder) viewHolder, stream);
             }
 
         } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
@@ -235,6 +247,53 @@ public class
         });
     }
 
+    private void bindStreamVideoItemViewHolder(ProfileStreamItemViewHolder viewHolder, final Stream stream) {
+
+        viewHolder.getProfileItemTitle().setText(stream.name);
+        final TextView streamViewsTextView = viewHolder.getStreamViews();
+        streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+        final ImageView streamImageView = viewHolder.getProfileItemThumbnail();
+        if (stream.thumbnails != null && stream.thumbnails.medium != null) {
+            Picasso.with(mContext)
+                    .load(stream.thumbnails.medium.unsecure_url) //DQTODO see if we should use secure?
+                    .into(streamImageView);
+        }
+        streamImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stream.current_viewers_count = stream.current_viewers_count + 1;
+                streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+                Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
+                intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, stream.play.hls);
+                mContext.startActivity(intent);
+                //AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback()); //DQTODO update server views?
+            }
+        });
+
+        String username = "";
+        String gameName = "";
+
+        if (stream.user != null && stream.user.username != null)
+            username = stream.user.username;
+        if (stream.game != null && stream.game.name != null)
+            gameName = stream.game.name;
+
+        viewHolder.getProfileItemAuthor().setText(String.format(Locale.ENGLISH,
+                mContext.getResources().getString(R.string.byAuthorGame),
+                username, gameName));
+        /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
+
+        final Button streamLikesButton = viewHolder.getStreamLikesButton();
+        streamLikesButton.setText(StringUtils.abbreviatedCount(stream.heart_count));
+        streamLikesButton.setActivated(false);
+        streamLikesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //toggleLikeButton(streamLikesButton, stream); //DQTODO
+            }
+        });
+    }
+
     private void bindProfileUploadProgressViewHolder(final ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
         Picasso picasso = new Picasso.Builder(mContext)
                 .addRequestHandler(new ThumbnailRequestHandler())
@@ -337,7 +396,7 @@ public class
 
     @Override
     public int getItemViewType(int position) {
-        ProfileItem viewModel = mProfileList.get(position);
+        FeedItem viewModel = mProfileList.get(position);
         return viewModel.getType().ordinal();
     }
 
@@ -346,7 +405,7 @@ public class
         return mProfileList.size();
     }
 
-    public ProfileItem getItem(int position) {
+    public FeedItem getItem(int position) {
         return mProfileList.get(position);
     }
 
@@ -438,8 +497,8 @@ public class
         @Override
         public void success(GenericResponse<?> genericResponse, Response response) {
             int index = 0;
-            for( ProfileItem item : mProfileList ) {
-                if( item.getType() == ProfileItem.Type.VIDEO
+            for( FeedItem item : mProfileList ) {
+                if( item.getType() == FeedItem.Type.VIDEO
                     && item.getVideo().video_id.equals(video.video_id) ) {
                     mProfileList.remove(index);
                     notifyItemRemoved(index);

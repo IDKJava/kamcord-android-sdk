@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.model.User;
 
 import java.lang.reflect.Type;
@@ -26,22 +26,22 @@ public class ProfileListUtils {
                 .getSharedPreferences(CACHE_PREFS, Context.MODE_PRIVATE);
     }
 
-    public static List<ProfileItem> getCachedProfileList() {
-        List<ProfileItem> cachedProfileItemList = new ArrayList<>();
+    public static List<FeedItem> getCachedProfileList() {
+        List<FeedItem> cachedFeedItemList = new ArrayList<>();
         try {
             String jsonProfileItemList = preferences.getString(PROFILE_LIST, "[]");
-            Type type = new TypeToken<List<ProfileItem>>() {}.getType();
-            cachedProfileItemList = new Gson().fromJson(jsonProfileItemList, type);
+            Type type = new TypeToken<List<FeedItem>>() {}.getType();
+            cachedFeedItemList = new Gson().fromJson(jsonProfileItemList, type);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return cachedProfileItemList;
+        return cachedFeedItemList;
     }
 
-    public static void saveProfileList(List<ProfileItem> profileItemList) {
+    public static void saveProfileList(List<FeedItem> feedItemList) {
         try {
             preferences.edit()
-                    .putString(PROFILE_LIST, new Gson().toJson(profileItemList))
+                    .putString(PROFILE_LIST, new Gson().toJson(feedItemList))
                     .apply();
         } catch (Exception e) {
             e.printStackTrace();

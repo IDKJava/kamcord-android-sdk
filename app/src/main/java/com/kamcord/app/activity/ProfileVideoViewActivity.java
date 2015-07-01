@@ -27,7 +27,7 @@ public class ProfileVideoViewActivity extends FragmentActivity implements MediaP
         setContentView(R.layout.activity_profile_video_view);
         ButterKnife.inject(this);
 
-        url = getIntent().getExtras().getString(ARG_VIDEO_PATH);
+        url = "http://content.kamcord.com/live/111614/index.m3u8"; //DQTODO // getIntent().getExtras().getString(ARG_VIDEO_PATH);
         if(mediaController == null) {
             mediaController = new MediaController(this);
             try {

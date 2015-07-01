@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.kamcord.app.R;
+import com.kamcord.app.fragment.HomeFragment;
 import com.kamcord.app.fragment.ProfileFragment;
 import com.kamcord.app.fragment.RecordFragment;
 
@@ -13,11 +14,13 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     public static final int RECORD_FRAGMENT_POSITION = 0;
     public static final int PROFILE_FRAGMENT_POSITION = 1;
+    public static final int HOME_FRAGMENT_POSITION = 2;
     private int numberOfTabs;
     private CharSequence tabTitles[];
 
     private int[] imageResId = {
             R.drawable.tabicon_record_selector,
+            R.drawable.tabicon_profile_selector,
             R.drawable.tabicon_profile_selector};
 
     public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs) {
@@ -36,6 +39,10 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
             case PROFILE_FRAGMENT_POSITION:
                 fragment = new ProfileFragment();
+                break;
+
+            case HOME_FRAGMENT_POSITION:
+                fragment = new HomeFragment();
                 break;
 
             default:

@@ -68,9 +68,10 @@ public class RecordActivity extends FragmentActivity implements
 
     public void initMainActivity() {
 
-        tabTitles = new String[2];
+        tabTitles = new String[3];
         tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
         tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
+        tabTitles[2] = getResources().getString(R.string.kamcordHomeTab);
         numberOfTabs = tabTitles.length;
 
         mTabs.setDistributeEvenly(true);

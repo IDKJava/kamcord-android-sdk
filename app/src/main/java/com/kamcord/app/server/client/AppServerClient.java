@@ -8,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.kamcord.app.BuildConfig;
 import com.kamcord.app.server.model.Account;
+import com.kamcord.app.server.model.DiscoverFeed;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.server.model.PaginatedVideoList;
@@ -94,6 +95,9 @@ public class AppServerClient {
 
         @GET("/app/v3/users/{userId}/videos/feed")
         void getUserVideoFeed(@Path("userId") String userId, @Query("page") String page, Callback<GenericResponse<PaginatedVideoList>> cb);
+
+        @GET("/app/v4/feeds/discovery/?locale=en")
+        void getDiscoverFeed(@Query("page") String page, Callback<GenericResponse<DiscoverFeed>> cb);
 
         @GET("/app/v3/videos/{videoId}")
         void getVideoInfo(@Path("videoId") String videoId, Callback<GenericResponse<Video>> cb);
