@@ -2,14 +2,14 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_selected="true">
         <bitmap
-            android:src="@drawable/ic_account_circle_white_48dp" />
+            android:src="@drawable/ic_account_circle_green_48dp" />
     </item>
     <item android:state_pressed="true">
         <bitmap
-            android:src="@drawable/ic_account_circle_white_48dp" />
+            android:src="@drawable/ic_account_circle_green_48dp" />
     </item>
     <item>
         <bitmap
-            android:src="@drawable/ic_account_circle_white_48dp" />
+            android:src="@drawable/ic_account_circle_gray_48dp" />
     </item>
 </selector>

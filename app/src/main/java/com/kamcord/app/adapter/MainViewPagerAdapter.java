@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final HashMap<Integer, Class<?>> POSITION_FRAGMENT_MAP = new HashMap<Integer, Class<?>>() {{
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             put(0, RecordFragment.class);
             put(1, ProfileFragment.class);
         } else {
@@ -66,7 +66,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         } else if( fragmentClass != null && fragmentClass.equals(ProfileFragment.class) ) {
             return imageResId[PROFILE_FRAGMENT_POSITION];
         }
-        return imageResId[position];
+        return imageResId[RECORD_FRAGMENT_POSITION];
     }
 
     @Override

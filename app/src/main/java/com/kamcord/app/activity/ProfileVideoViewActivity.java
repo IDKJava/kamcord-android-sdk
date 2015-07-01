@@ -4,7 +4,7 @@ import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -14,7 +14,7 @@ import com.kamcord.app.utils.ViewUtils;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class ProfileVideoViewActivity extends FragmentActivity implements MediaPlayer.OnPreparedListener {
+public class ProfileVideoViewActivity extends AppCompatActivity implements MediaPlayer.OnPreparedListener {
 
     public static final String ARG_VIDEO_PATH = "video_path";
 

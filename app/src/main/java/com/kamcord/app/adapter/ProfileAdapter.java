@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -390,33 +389,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void showDeleteVideoDialog(final Video video) {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            new android.support.v7.app.AlertDialog.Builder(mContext)
-                    .setTitle(R.string.areYouSure)
-                    .setMessage(R.string.ifYouDeleteThis)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            AppServerClient.getInstance().deleteVideo(
-                                    video.video_id,
-                                    new DeleteVideoCallback(video));
-                        }
-                    }).show();
-        } else {
-            new AlertDialog.Builder(mContext)
-                    .setTitle(R.string.areYouSure)
-                    .setMessage(R.string.ifYouDeleteThis)
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            AppServerClient.getInstance().deleteVideo(
-                                    video.video_id,
-                                    new DeleteVideoCallback(video));
-                        }
-                    }).show();
-        }
+        new AlertDialog.Builder(mContext)
+                .setTitle(R.string.areYouSure)
+                .setMessage(R.string.ifYouDeleteThis)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.deleteVideo, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AppServerClient.getInstance().deleteVideo(
+                                video.video_id,
+                                new DeleteVideoCallback(video));
+                    }
+                }).show();
     }
 
     private class LikeVideosCallback implements Callback<GenericResponse<?>> {

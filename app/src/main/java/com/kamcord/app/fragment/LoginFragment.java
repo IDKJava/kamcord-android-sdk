@@ -2,7 +2,6 @@ package com.kamcord.app.fragment;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -33,10 +32,14 @@ import retrofit.client.Response;
 
 public class LoginFragment extends Fragment {
 
-    @InjectView(R.id.usernameEditText) EditText userNameEditText;
-    @InjectView(R.id.passwordEditText) EditText passwordEditText;
-    @InjectView(R.id.loginButton) Button loginButton;
-    @InjectView(R.id.forgotPasswordTextView) TextView forgotPasswordTextView;
+    @InjectView(R.id.usernameEditText)
+    EditText userNameEditText;
+    @InjectView(R.id.passwordEditText)
+    EditText passwordEditText;
+    @InjectView(R.id.loginButton)
+    Button loginButton;
+    @InjectView(R.id.forgotPasswordTextView)
+    TextView forgotPasswordTextView;
 
     private boolean viewsAreValid = true;
 
@@ -50,8 +53,7 @@ public class LoginFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         viewsAreValid = false;
         ButterKnife.reset(this);
@@ -72,65 +74,44 @@ public class LoginFragment extends Fragment {
     }
 
     @OnClick(R.id.loginButton)
-    public void login()
-    {
+    public void login() {
         String username = userNameEditText.getEditableText().toString().trim();
         String password = passwordEditText.getEditableText().toString();
         AppServerClient.getInstance().login(username, password, loginCallback);
     }
 
     @OnClick(R.id.forgotPasswordTextView)
-    public void pushResetPasswordFragment()
-    {
+    public void pushResetPasswordFragment() {
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                 .replace(getContainerViewId(), new ResetPasswordFragment())
                 .addToBackStack(null).commit();
     }
 
-    private void handleLoginFailure(GenericResponse<Account> accountWrapper)
-    {
+    private void handleLoginFailure(GenericResponse<Account> accountWrapper) {
         AccountManager.clearStoredAccount();
-        if( accountWrapper != null )
-        {
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                new android.support.v7.app.AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.loginFailed)
-                        .setMessage(R.string.loginFailureMessage)
-                        .setNeutralButton(android.R.string.ok, null)
-                        .setPositiveButton(R.string.resetPassword,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.dismiss();
-                                        pushResetPasswordFragment();
-                                    }
-                                })
-                        .show();
-            } else {
-                new android.app.AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.loginFailed)
-                        .setMessage(R.string.loginFailureMessage)
-                        .setNeutralButton(android.R.string.ok, null)
-                        .setPositiveButton(R.string.resetPassword,
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        dialogInterface.dismiss();
-                                        pushResetPasswordFragment();
-                                    }
-                                })
-                        .show();
-            }
+        if (accountWrapper != null) {
+            new android.app.AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.loginFailed)
+                    .setMessage(R.string.loginFailureMessage)
+                    .setNeutralButton(android.R.string.ok, null)
+                    .setPositiveButton(R.string.resetPassword,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                    pushResetPasswordFragment();
+                                }
+                            })
+                    .show();
+
         }
     }
 
-    Callback<GenericResponse<Account>> loginCallback = new Callback<GenericResponse<Account>>()
-    {
+    Callback<GenericResponse<Account>> loginCallback = new Callback<GenericResponse<Account>>() {
         @Override
-        public void success(GenericResponse<Account> accountWrapper, Response response)
-        {
-            if( viewsAreValid ) {
+        public void success(GenericResponse<Account> accountWrapper, Response response) {
+            if (viewsAreValid) {
                 if (accountWrapper != null
                         && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
                         && accountWrapper.response != null) {
@@ -147,9 +128,8 @@ public class LoginFragment extends Fragment {
         }
 
         @Override
-        public void failure(RetrofitError error)
-        {
-            if( viewsAreValid ) {
+        public void failure(RetrofitError error) {
+            if (viewsAreValid) {
                 handleLoginFailure(null);
             }
         }
