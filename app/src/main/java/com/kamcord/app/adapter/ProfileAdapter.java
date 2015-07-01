@@ -1,13 +1,12 @@
 package com.kamcord.app.adapter;
 
-import com.kamcord.app.R;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
@@ -38,8 +38,8 @@ import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
-import com.kamcord.app.utils.ViewUtils;
 import com.kamcord.app.utils.VideoUtils;
+import com.kamcord.app.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -197,6 +197,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
+        if (!video.is_user_liking) {
+            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(
+                            mContext,
+                            mContext.getResources().getDrawable(R.drawable.likes_white),
+                            R.color.kamcordGreen),
+                    null, null, null);
+        }
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -310,12 +318,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             video.likes = video.likes - 1;
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
             likeButton.setActivated(false);
+            likeButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
+                    null, null, null);
             AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
         } else {
             video.is_user_liking = true;
             video.likes = video.likes + 1;
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
             likeButton.setActivated(true);
+            likeButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.ColorPrimary),
+                    null, null, null);
             AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
         }
         ViewUtils.buttonCircularReveal(likeButton);

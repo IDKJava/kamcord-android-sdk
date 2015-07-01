@@ -2,17 +2,14 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_activated="true">
         <bitmap android:src="@drawable/likes_white"
-            android:tint="@android:color/white"
-            android:tintMode="multiply" />
+            android:tint="@android:color/white" />
     </item>
     <item android:state_checked="true">
         <bitmap android:src="@drawable/likes_white"
-            android:tint="@android:color/white"
-            android:tintMode="multiply" />
+            android:tint="@android:color/white" />
     </item>
     <item>
         <bitmap android:src="@drawable/likes_white"
-            android:tint="@color/kamcordGreen"
-            android:tintMode="multiply" />
+            android:tint="@color/kamcordGreen" />
     </item>
 </selector>
