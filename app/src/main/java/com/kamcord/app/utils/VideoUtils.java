@@ -2,7 +2,14 @@ package com.kamcord.app.utils;
 
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
 
+import com.kamcord.app.model.RecordingSession;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -10,13 +17,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class VideoUtils {
 
-    public static String getVideoDuration(String filePath) {
+    public static String getVideoDuration(RecordingSession session) {
+        String mergedVideoPath = new File(FileSystemManager.getRecordingSessionCacheDirectory(session),
+                FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath();
         int videoDuration = 0;
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         String time = "";
         long hours, mins, secs;
+
         try {
-            retriever.setDataSource(filePath);
+            retriever.setDataSource(mergedVideoPath);
             time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
             videoDuration = Integer.parseInt(time);
             time = videoDurationString(TimeUnit.MILLISECONDS, videoDuration);
@@ -31,6 +41,7 @@ public class VideoUtils {
                 e.printStackTrace();
             }
         }
+
         return time;
     }
 
@@ -49,24 +60,32 @@ public class VideoUtils {
         return time;
     }
 
-    public static Bitmap getVideoThumbnail(String filePath) {
-        Bitmap bitmap = null;
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        try {
-            retriever.setDataSource(filePath);
-            bitmap = retriever.getFrameAtTime(2000000);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        } finally {
+    public static File getVideoThumbnailFile(RecordingSession session) {
+        File sessionCache = FileSystemManager.getRecordingSessionCacheDirectory(session);
+        File thumbnailFile = new File(sessionCache, FileSystemManager.THUMBNAIL_FILENAME);
+
+        // Lazily create the thumbnail.
+        if( !thumbnailFile.exists() ) {
+            File videoFile = new File(sessionCache, FileSystemManager.MERGED_VIDEO_FILENAME);
+            Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(videoFile.getAbsolutePath(), MediaStore.Images.Thumbnails.MINI_KIND);
+            FileOutputStream out = null;
             try {
-                retriever.release();
-            } catch (RuntimeException e) {
+                out = new FileOutputStream(thumbnailFile);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+            } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-        return bitmap;
+
+        return thumbnailFile;
     }
 
 }

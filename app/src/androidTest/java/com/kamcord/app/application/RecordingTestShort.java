@@ -17,6 +17,16 @@ import static com.kamcord.app.testutils.UiUtilities.*;
 public class RecordingTestShort extends RecordAndPostTestBase {
 
     @Test
+    /**
+     * Basic record with video length <3 secs.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a video.<br>
+     *     3) Agree to discard short video.<br>
+     *     4) Expect to be taken to the recording tab.<br>
+     *
+     */
     public void recordRippleTestLoginFirstShort() {
         doLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, 1000, false, false, true, false);
@@ -27,6 +37,16 @@ public class RecordingTestShort extends RecordAndPostTestBase {
 
 
     @Test
+    /**
+     * Basic record with video length <3 secs, user not logged in.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#skipLogin Skip log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a video.<br>
+     *     3) Agree to discard short video.<br>
+     *     4) Expect to be taken to the recording tab.<br>
+     *
+     */
     public void recordRippleTestSkipLoginShort() {
         skipLogin();
         recordGameVideo(RIPPLE_TEST_APP_NAME, RIPPLE_TEST_APP_TITLE, 1000, false, false, true, false);
@@ -38,6 +58,16 @@ public class RecordingTestShort extends RecordAndPostTestBase {
     //TODO: Enable after resolution of AA-23
     //Works on occasion, but not stable.
     //@Test
+    /**
+     * Basic record and share with app switching through notification click.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a video.<br>
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload} video.<br>
+     *     4) Expect video to appear on profile tab.<br>
+     *
+     */
     public void recordRippleTestLoginFirstSwitchWithNotificationClick() {
         doLogin();
         int recordingDuration = RECORDING_DURATION_MS * 3;
@@ -53,6 +83,16 @@ public class RecordingTestShort extends RecordAndPostTestBase {
     }
 
     @Test
+    /**
+     * Basic record and share with app switching through notification click.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a video.<br>
+     *     3) Click play on share view, before stitching ends.<br>
+     *     4) Expect nothing to happen.<br>
+     *
+     */
     public void recordRippleTestLoginFirstPrematurePlay() {
         doLogin();
         int recordingDuration = 10000;
@@ -65,6 +105,17 @@ public class RecordingTestShort extends RecordAndPostTestBase {
     }
 
     @Test
+    /**
+     * Basic record and share with status checks for upload/recording, etc.
+     * through notifications
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin Log in.}<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a video.<br>
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload} video.<br>
+     *     4) Expect video to appear on profile tab.
+     *
+     */
     public void recordRippleTestLoginFirstCheckNotifications() {
         doLogin();
         int recordingDuration = RECORDING_DURATION_MS * 3;

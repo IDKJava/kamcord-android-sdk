@@ -231,6 +231,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             }
             if (currentSession != null) {
                 addToProfileList(new ProfileItem<>(ProfileItem.Type.UPLOAD_PROGRESS, uploadService.getCurrentlyUploadingSession()));
+                modified = true;
             }
         }
 
