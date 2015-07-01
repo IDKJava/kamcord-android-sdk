@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -55,13 +56,13 @@ public class ViewUtils {
         Resources resources = context.getResources();
 
         StateListDrawable stateListDrawable = new StateListDrawable();
-//        LayerDrawable layerDrawableDefault = new LayerDrawable(new Drawable[]{ViewUtils.getTintedDrawable(context, drawable)});
-//        LayerDrawable layerDrawableHighLight = new LayerDrawable(new Drawable[]{ViewUtils.getTintedDrawable(context, drawable)});
+        LayerDrawable layerDrawableDefault = new LayerDrawable(new Drawable[]{ViewUtils.getTintedDrawable(context, drawable, R.color.kamcordGreen)});
+        LayerDrawable layerDrawableHighLight = new LayerDrawable(new Drawable[]{ViewUtils.getTintedDrawable(context, drawable, R.color.ColorPrimary)});
 
-//        stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, layerDrawableHighLight);
-//        stateListDrawable.addState(new int[]{android.R.attr.state_focused}, layerDrawableHighLight);
-//        stateListDrawable.addState(new int[]{android.R.attr.state_selected}, layerDrawableHighLight);
-//        stateListDrawable.addState(new int[]{}, layerDrawableDefault);
+        stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, layerDrawableHighLight);
+        stateListDrawable.addState(new int[]{android.R.attr.state_focused}, layerDrawableHighLight);
+        stateListDrawable.addState(new int[]{android.R.attr.state_selected}, layerDrawableHighLight);
+        stateListDrawable.addState(new int[]{}, layerDrawableDefault);
         return  stateListDrawable;
     }
 

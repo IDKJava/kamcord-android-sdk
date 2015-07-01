@@ -188,7 +188,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     private void populateTabStrip() {
-        final MainViewPagerAdapter adapter = (MainViewPagerAdapter)mViewPager.getAdapter();
+        final MainViewPagerAdapter adapter = (MainViewPagerAdapter) mViewPager.getAdapter();
         final View.OnClickListener tabClickListener = new TabClickListener();
 
         for (int i = 0; i < adapter.getCount(); i++) {
@@ -210,7 +210,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabIconView = (ImageView) tabView;
             }
 
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
                 tabIconView.setImageDrawable(getResources().getDrawable(adapter.getDrawableId(i), null));
             } else {
                 tabIconView.setImageDrawable(ViewUtils.getTintedDrawable(

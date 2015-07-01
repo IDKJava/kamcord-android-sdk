@@ -1,5 +1,6 @@
 package com.kamcord.app.adapter;
 
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -8,8 +9,19 @@ import com.kamcord.app.R;
 import com.kamcord.app.fragment.ProfileFragment;
 import com.kamcord.app.fragment.RecordFragment;
 
+import java.util.HashMap;
+
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
+
+    private static final HashMap<Integer, Class<?>> POSITION_FRAGMENT_MAP = new HashMap<Integer, Class<?>>() {{
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            put(0, RecordFragment.class);
+            put(1, ProfileFragment.class);
+        } else {
+            put(0, ProfileFragment.class);
+        }
+    }};
 
     public static final int RECORD_FRAGMENT_POSITION = 0;
     public static final int PROFILE_FRAGMENT_POSITION = 1;
@@ -17,7 +29,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private int numberOfTabs;
     private CharSequence tabTitles[];
 
-    private int[] imageResId = {
+    private static int[] imageResId = {
             R.drawable.tabicon_record_selector,
             R.drawable.tabicon_profile_selector};
 
@@ -29,34 +41,17 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+
         Fragment fragment;
-        if (numberOfTabs >= NUMBERS_OF_TAB) {
-            switch (position) {
-                case RECORD_FRAGMENT_POSITION:
-                    fragment = new RecordFragment();
-                    break;
-
-                case PROFILE_FRAGMENT_POSITION:
-                    fragment = new ProfileFragment();
-                    break;
-
-                default:
-                    fragment = new RecordFragment();
-                    break;
-            }
-            return fragment;
+        Class fragmentClass = POSITION_FRAGMENT_MAP.get(position);
+        if( fragmentClass != null && fragmentClass.equals(RecordFragment.class) ) {
+            fragment = new RecordFragment();
+        } else if( fragmentClass != null && fragmentClass.equals(ProfileFragment.class) ) {
+            fragment = new ProfileFragment();
         } else {
-            switch (position) {
-                case PROFILE_FRAGMENT_POSITION:
-                    fragment = new ProfileFragment();
-                    break;
-
-                default:
-                    fragment = new ProfileFragment();
-                    break;
-            }
-            return fragment;
+            fragment = new RecordFragment();
         }
+        return fragment;
     }
 
     @Override
@@ -65,6 +60,12 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public int getDrawableId(int position) {
+        Class fragmentClass = POSITION_FRAGMENT_MAP.get(position);
+        if( fragmentClass != null && fragmentClass.equals(RecordFragment.class) ) {
+            return imageResId[RECORD_FRAGMENT_POSITION];
+        } else if( fragmentClass != null && fragmentClass.equals(ProfileFragment.class) ) {
+            return imageResId[PROFILE_FRAGMENT_POSITION];
+        }
         return imageResId[position];
     }
 

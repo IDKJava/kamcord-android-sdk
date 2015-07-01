@@ -204,6 +204,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             mContext.getResources().getDrawable(R.drawable.likes_white),
                             R.color.kamcordGreen),
                     null, null, null);
+        } else {
+            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(
+                            mContext,
+                            mContext.getResources().getDrawable(R.drawable.likes_white),
+                            R.color.ColorPrimary),
+                    null, null, null);
         }
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
             @Override
