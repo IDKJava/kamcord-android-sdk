@@ -1,11 +1,19 @@
 package com.kamcord.app.utils;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.TypedValue;
+import android.view.ViewAnimationUtils;
 import android.view.Window;
+import android.widget.Button;
 
 import com.kamcord.app.R;
 
@@ -32,5 +40,36 @@ public class ViewUtils {
             activityReference.getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
             activityReference.getActionBar().hide();
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static void buttonCircularReveal(Button button) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ViewAnimationUtils.createCircularReveal(button,
+                    button.getWidth() / 2, button.getHeight() / 2, 0,
+                    button.getHeight() * 2).start();
+        }
+    }
+
+    public static Drawable getSelectorDrawable(Context context, Drawable drawable) {
+        Resources resources = context.getResources();
+
+        StateListDrawable stateListDrawable = new StateListDrawable();
+//        LayerDrawable layerDrawableDefault = new LayerDrawable(new Drawable[]{ViewUtils.getTintedDrawable(context, drawable)});
+//        LayerDrawable layerDrawableHighLight = new LayerDrawable(new Drawable[]{ViewUtils.getTintedDrawable(context, drawable)});
+
+//        stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, layerDrawableHighLight);
+//        stateListDrawable.addState(new int[]{android.R.attr.state_focused}, layerDrawableHighLight);
+//        stateListDrawable.addState(new int[]{android.R.attr.state_selected}, layerDrawableHighLight);
+//        stateListDrawable.addState(new int[]{}, layerDrawableDefault);
+        return  stateListDrawable;
+    }
+
+    public static Drawable getTintedDrawable(Context context, Drawable drawable, int color) {
+        Resources resources = context.getResources();
+        Drawable tintedDrawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(tintedDrawable, resources.getColor(color));
+        DrawableCompat.setTintMode(tintedDrawable.mutate(), PorterDuff.Mode.MULTIPLY);
+        return tintedDrawable;
     }
 }

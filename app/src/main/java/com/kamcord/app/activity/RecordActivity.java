@@ -3,6 +3,7 @@ package com.kamcord.app.activity;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -17,6 +18,7 @@ import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
+import com.kamcord.app.utils.ViewUtils;
 import com.kamcord.app.view.DisableableViewPager;
 import com.kamcord.app.view.SlidingTabLayout;
 import com.kamcord.app.view.utils.OnBackPressedListener;
@@ -48,7 +50,7 @@ public class RecordActivity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ViewUtils.setUpActionBar(this);
         setContentView(R.layout.activity_mdrecord);
         FlurryAgent.onStartSession(this);
         ButterKnife.inject(this);
@@ -68,12 +70,18 @@ public class RecordActivity extends FragmentActivity implements
 
     public void initMainActivity() {
 
-        tabTitles = new String[3];
-        tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
-        tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
-        tabTitles[2] = getResources().getString(R.string.kamcordHomeTab);
-        numberOfTabs = tabTitles.length;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            tabTitles = new String[3];
+            tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
+            tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
+            tabTitles[2] = getResources().getString(R.string.kamcordHomeTab);
+        } else {
+            tabTitles = new String[2];
+            tabTitles[0] = getResources().getString(R.string.kamcordProfileTab);
+            tabTitles[1] = getResources().getString(R.string.kamcordHomeTab);
+        }
 
+        numberOfTabs = tabTitles.length;
         mTabs.setDistributeEvenly(true);
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override

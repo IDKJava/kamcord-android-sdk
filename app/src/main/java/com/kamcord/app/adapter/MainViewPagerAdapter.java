@@ -15,6 +15,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     public static final int RECORD_FRAGMENT_POSITION = 0;
     public static final int PROFILE_FRAGMENT_POSITION = 1;
     public static final int HOME_FRAGMENT_POSITION = 2;
+    public static final int NUMBERS_OF_TAB = 3;
     private int numberOfTabs;
     private CharSequence tabTitles[];
 
@@ -32,24 +33,41 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;
-        switch (position) {
-            case RECORD_FRAGMENT_POSITION:
-                fragment = new RecordFragment();
-                break;
+        if (numberOfTabs >= NUMBERS_OF_TAB) {
+            switch (position) {
+                case RECORD_FRAGMENT_POSITION:
+                    fragment = new RecordFragment();
+                    break;
 
-            case PROFILE_FRAGMENT_POSITION:
-                fragment = new ProfileFragment();
-                break;
+                case PROFILE_FRAGMENT_POSITION:
+                    fragment = new ProfileFragment();
+                    break;
 
-            case HOME_FRAGMENT_POSITION:
-                fragment = new HomeFragment();
-                break;
+                case HOME_FRAGMENT_POSITION:
+                    fragment = new HomeFragment();
+                    break;
 
-            default:
-                fragment = new RecordFragment();
-                break;
+                default:
+                    fragment = new RecordFragment();
+                    break;
+            }
+            return fragment;
+        } else {
+            switch (position) {
+                case PROFILE_FRAGMENT_POSITION:
+                    fragment = new ProfileFragment();
+                    break;
+
+                case HOME_FRAGMENT_POSITION:
+                    fragment = new HomeFragment();
+                    break;
+
+                default:
+                    fragment = new ProfileFragment();
+                    break;
+            }
+            return fragment;
         }
-        return fragment;
     }
 
     @Override

@@ -72,8 +72,6 @@
 
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
     <string name="signInProfilePrompt">You must log in to Kamcord to view your profile.</string>
-    <!-- We should get rid of this and used the other Log In tag -->
-    <string name="signIn">Log In</string>
     <string name="swipeToRefreshRecord">Oops! Pull down to refresh games when your network is ready.</string>
 
     <string name="uploading">Uploading&#8230;</string>
