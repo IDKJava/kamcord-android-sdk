@@ -324,17 +324,12 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
     @OnClick(R.id.thumbnailImageView)
     public void showVideoPreviewActivity() {
-//        Bundle bundle = new Bundle();
-//        bundle.putString(VideoPreviewActivity.ARG_VIDEO_PATH,
-//                new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
-//                        FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
         Intent intent = new Intent(getActivity().getApplicationContext(), VideoViewActivity.class);
 
         Uri uri = Uri.parse(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession)
                 , FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
         intent.setData(uri);
         intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE, VideoViewActivity.VideoType.MP4);
-//        intent.putExtras(bundle);
         startActivity(intent);
 
         recordingSession.setWasReplayed(true);
