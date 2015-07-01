@@ -18,9 +18,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.CaptioningManager;
 import android.widget.MediaController;
-import android.widget.TextView;
 
-import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.VideoSurfaceView;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
@@ -61,10 +59,6 @@ public class VideoViewActivity extends AppCompatActivity implements
     VideoSurfaceView surfaceView;
     @InjectView(R.id.shutter)
     View shutterView;
-    @InjectView(R.id.debug_text_view)
-    TextView debugTextView;
-    @InjectView(R.id.player_state_view)
-    TextView playerStateTextView;
     @InjectView(R.id.subtitles)
     SubtitleView subtitleView;
 
@@ -166,15 +160,13 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         switch(videoType) {
             case HLS:
-                Log.v("FindMe", "HLS");
-                rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, debugTextView,
+                rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, null,
                         audioCapabilities, qualityMultiplier);
                 break;
 
             case MP4:
-                Log.v("FindMe", "MP4");
                 rendererBuilder = new ExtractorRendererBuilder(this, userAgent, videoUri,
-                        debugTextView, new Mp4Extractor());
+                        null, new Mp4Extractor());
                 break;
         }
 
@@ -212,31 +204,6 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == ExoPlayer.STATE_ENDED) {
-            showControls();
-        }
-        String text = "playWhenReady=" + playWhenReady + ", playbackState=";
-        switch(playbackState) {
-            case ExoPlayer.STATE_BUFFERING:
-                text += "buffering";
-                break;
-            case ExoPlayer.STATE_ENDED:
-                text += "ended";
-                break;
-            case ExoPlayer.STATE_IDLE:
-                text += "idle";
-                break;
-            case ExoPlayer.STATE_PREPARING:
-                text += "preparing";
-                break;
-            case ExoPlayer.STATE_READY:
-                text += "ready";
-                break;
-            default:
-                text += "unknown";
-                break;
-        }
-        playerStateTextView.setText(text);
     }
 
     @Override
