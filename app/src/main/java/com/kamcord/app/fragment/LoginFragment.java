@@ -33,10 +33,14 @@ import retrofit.client.Response;
 
 public class LoginFragment extends Fragment {
 
-    @InjectView(R.id.usernameEditText) EditText userNameEditText;
-    @InjectView(R.id.passwordEditText) EditText passwordEditText;
-    @InjectView(R.id.loginButton) Button loginButton;
-    @InjectView(R.id.forgotPasswordTextView) TextView forgotPasswordTextView;
+    @InjectView(R.id.usernameEditText)
+    EditText userNameEditText;
+    @InjectView(R.id.passwordEditText)
+    EditText passwordEditText;
+    @InjectView(R.id.loginButton)
+    Button loginButton;
+    @InjectView(R.id.forgotPasswordTextView)
+    TextView forgotPasswordTextView;
 
     private boolean viewsAreValid = true;
 
@@ -50,8 +54,7 @@ public class LoginFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         viewsAreValid = false;
         ButterKnife.reset(this);
@@ -72,27 +75,23 @@ public class LoginFragment extends Fragment {
     }
 
     @OnClick(R.id.loginButton)
-    public void login()
-    {
+    public void login() {
         String username = userNameEditText.getEditableText().toString().trim();
         String password = passwordEditText.getEditableText().toString();
         AppServerClient.getInstance().login(username, password, loginCallback);
     }
 
     @OnClick(R.id.forgotPasswordTextView)
-    public void pushResetPasswordFragment()
-    {
+    public void pushResetPasswordFragment() {
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
                 .replace(getContainerViewId(), new ResetPasswordFragment())
                 .addToBackStack(null).commit();
     }
 
-    private void handleLoginFailure(GenericResponse<Account> accountWrapper)
-    {
+    private void handleLoginFailure(GenericResponse<Account> accountWrapper) {
         AccountManager.clearStoredAccount();
-        if( accountWrapper != null )
-        {
+        if (accountWrapper != null) {
             new AlertDialog.Builder(getActivity())
                     .setTitle(R.string.loginFailed)
                     .setMessage(R.string.loginFailureMessage)
@@ -106,15 +105,14 @@ public class LoginFragment extends Fragment {
                                 }
                             })
                     .show();
+
         }
     }
 
-    Callback<GenericResponse<Account>> loginCallback = new Callback<GenericResponse<Account>>()
-    {
+    Callback<GenericResponse<Account>> loginCallback = new Callback<GenericResponse<Account>>() {
         @Override
-        public void success(GenericResponse<Account> accountWrapper, Response response)
-        {
-            if( viewsAreValid ) {
+        public void success(GenericResponse<Account> accountWrapper, Response response) {
+            if (viewsAreValid) {
                 if (accountWrapper != null
                         && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
                         && accountWrapper.response != null) {
@@ -131,9 +129,8 @@ public class LoginFragment extends Fragment {
         }
 
         @Override
-        public void failure(RetrofitError error)
-        {
-            if( viewsAreValid ) {
+        public void failure(RetrofitError error) {
+            if (viewsAreValid) {
                 handleLoginFailure(null);
             }
         }

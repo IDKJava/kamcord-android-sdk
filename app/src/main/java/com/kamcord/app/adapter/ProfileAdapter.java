@@ -1,17 +1,18 @@
 package com.kamcord.app.adapter;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,6 +40,7 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
+import com.kamcord.app.utils.ViewUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -51,8 +53,7 @@ import retrofit.client.Response;
 /**
  * Created by donliang1 on 5/28/15.
  */
-public class
-        ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
     private List<ProfileItem> mProfileList;
@@ -93,7 +94,7 @@ public class
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         if (viewHolder instanceof ProfileHeaderViewHolder) {
             User user = getItem(position).getUser();
-            if( user != null ) {
+            if (user != null) {
                 bindProfileHeader((ProfileHeaderViewHolder) viewHolder, user);
             }
 
@@ -101,13 +102,13 @@ public class
 
         } else if (viewHolder instanceof ProfileVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
-            if( video != null ) {
+            if (video != null) {
                 bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
             }
 
         } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
             RecordingSession session = getItem(position).getSession();
-            if( session != null ) {
+            if (session != null && Build.VERSION.SDK_INT >= 21) {
                 bindProfileUploadProgressViewHolder((ProfileUploadProgressViewHolder) viewHolder, session, position);
             }
         }
@@ -117,7 +118,7 @@ public class
     private void bindProfileHeader(ProfileHeaderViewHolder viewHolder, User user) {
         if (user != null) {
             viewHolder.getProfileUserName().setText(user.username);
-            if (user.username != null && user.username.length() > 0 ) {
+            if (user.username != null && user.username.length() > 0) {
                 viewHolder.getProfileLetter().setText(user.username.substring(0, 1).toUpperCase());
             }
             viewHolder.getProfileUserTag().setText(user.tagline);
@@ -137,7 +138,7 @@ public class
             int profileColor = mContext.getResources().getColor(R.color.defaultProfileColor);
             try {
                 profileColor = Color.parseColor(user.profile_color);
-            } catch( Exception e ) {
+            } catch (Exception e) {
             }
             viewHolder.getProfileLetter().setTextColor(profileColor);
             viewHolder.getProfileHeaderLayout().setBackgroundColor(profileColor);
@@ -197,6 +198,21 @@ public class
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
+        if (!video.is_user_liking) {
+            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(
+                            mContext,
+                            mContext.getResources().getDrawable(R.drawable.likes_white),
+                            R.color.kamcordGreen),
+                    null, null, null);
+        } else {
+            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(
+                            mContext,
+                            mContext.getResources().getDrawable(R.drawable.likes_white),
+                            R.color.ColorPrimary),
+                    null, null, null);
+        }
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,6 +245,7 @@ public class
         });
     }
 
+    @TargetApi(21)
     private void bindProfileUploadProgressViewHolder(final ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
         Picasso.with(mContext)
                 .load(VideoUtils.getVideoThumbnailFile(session))
@@ -239,9 +256,9 @@ public class
         viewHolder.uploadProgressBar.setVisibility(View.GONE);
         viewHolder.divider.setVisibility(View.GONE);
         String uploadStatus = null;
-        if( session.getUploadProgress() < 0f ) {
+        if (session.getUploadProgress() < 0f) {
             uploadStatus = mContext.getString(R.string.queuedForUpload);
-        } else if( session.getUploadProgress() <= 1f ) {
+        } else if (session.getUploadProgress() <= 1f) {
             int percentProgress = (int) (100f * session.getUploadProgress());
             int progressBarProgress = (int) (viewHolder.uploadProgressBar.getMax() * session.getUploadProgress());
             uploadStatus = String.format(Locale.ENGLISH, mContext.getString(R.string.currentlyUploadingPercent), percentProgress);
@@ -249,11 +266,11 @@ public class
             viewHolder.uploadProgressBar.setProgressDrawable(mContext.getDrawable(R.drawable.upload_progressbar_blue));
             viewHolder.uploadProgressBar.setProgress(progressBarProgress);
 
-        } else if( session.getUploadProgress() == RecordingSession.UPLOAD_PROCESSING_PROGRESS ) {
+        } else if (session.getUploadProgress() == RecordingSession.UPLOAD_PROCESSING_PROGRESS) {
             uploadStatus = mContext.getString(R.string.processingPullToRefresh);
             viewHolder.divider.setVisibility(View.VISIBLE);
 
-        } else if( session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS ){
+        } else if (session.getUploadProgress() == RecordingSession.UPLOAD_FAILED_PROGRESS) {
             uploadStatus = mContext.getString(R.string.uploadFailed);
             viewHolder.uploadProgressBar.setVisibility(View.VISIBLE);
             viewHolder.uploadProgressBar.setProgressDrawable(mContext.getDrawable(R.drawable.upload_progressbar_red));
@@ -310,17 +327,21 @@ public class
             video.likes = video.likes - 1;
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
             likeButton.setActivated(false);
+            likeButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
+                    null, null, null);
             AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
         } else {
             video.is_user_liking = true;
             video.likes = video.likes + 1;
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
             likeButton.setActivated(true);
+            likeButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.ColorPrimary),
+                    null, null, null);
             AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
         }
-        ViewAnimationUtils.createCircularReveal(likeButton,
-                likeButton.getWidth() / 2, likeButton.getHeight() / 2, 0,
-                likeButton.getHeight() * 2).start();
+        ViewUtils.buttonCircularReveal(likeButton);
     }
 
     @Override
@@ -339,18 +360,19 @@ public class
     }
 
     private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
+
     private void doExternalShare(Video video) {
-        if( mContext instanceof Activity && video.video_id != null ) {
+        if (mContext instanceof Activity && video.video_id != null) {
             Activity activity = (Activity) mContext;
             String watchPageLink = "www.kamcord.com/v/" + video.video_id;
 
 
             String externalShareText = null;
-            if( video.title != null ) {
+            if (video.title != null) {
                 externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
                         video.title, watchPageLink);
                 int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
-                if( diff > 0 ) {
+                if (diff > 0) {
                     String truncatedTitle = StringUtils.ellipsize(video.title, video.title.length() - diff);
                     externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
                             truncatedTitle, video.video_site_watch_page);
@@ -419,6 +441,7 @@ public class
 
     private class DeleteVideoCallback implements Callback<GenericResponse<?>> {
         private Video video;
+
         public DeleteVideoCallback(Video video) {
             this.video = video;
         }
@@ -426,9 +449,9 @@ public class
         @Override
         public void success(GenericResponse<?> genericResponse, Response response) {
             int index = 0;
-            for( ProfileItem item : mProfileList ) {
-                if( item.getType() == ProfileItem.Type.VIDEO
-                    && item.getVideo().video_id.equals(video.video_id) ) {
+            for (ProfileItem item : mProfileList) {
+                if (item.getType() == ProfileItem.Type.VIDEO
+                        && item.getVideo().video_id.equals(video.video_id)) {
                     mProfileList.remove(index);
                     notifyItemRemoved(index);
                     break;
