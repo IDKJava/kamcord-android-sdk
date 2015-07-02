@@ -32,10 +32,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         }
     }};
 
-
-    public static final int RECORD_FRAGMENT_POSITION = 0;
     public static final int PROFILE_FRAGMENT_POSITION = 1;
-    public static final int NUMBERS_OF_TAB = 2;
     private int numberOfTabs;
     private CharSequence tabTitles[];
 

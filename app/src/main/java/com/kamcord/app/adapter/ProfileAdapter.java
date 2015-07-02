@@ -1,6 +1,8 @@
 package com.kamcord.app.adapter;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -106,7 +108,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
             RecordingSession session = getItem(position).getSession();
-            if (session != null) {
+            if (session != null && Build.VERSION.SDK_INT >= 21) {
                 bindProfileUploadProgressViewHolder((ProfileUploadProgressViewHolder) viewHolder, session, position);
             }
         }
@@ -243,6 +245,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
+    @TargetApi(21)
     private void bindProfileUploadProgressViewHolder(final ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {
         Picasso.with(mContext)
                 .load(VideoUtils.getVideoThumbnailFile(session))
