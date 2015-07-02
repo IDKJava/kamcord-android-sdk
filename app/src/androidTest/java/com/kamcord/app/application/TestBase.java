@@ -201,15 +201,10 @@ public abstract class TestBase {
     }
 
     public void findGame(String gameName) {
-        findGame(gameName, true);
-    }
-    public void findGame(String gameName, boolean installed) {
         int idToFind;
-        if(installed){
-            idToFind = R.id.gameNameTextView;
-        } else {
-            idToFind = R.id.item_packagename;
-        }
+
+        idToFind = R.id.gameNameTextView;
+
         try {
             //TODO: Refactor to move the try catch block to utilities.
             ArrayList<String> gameTitles = new ArrayList<>();
