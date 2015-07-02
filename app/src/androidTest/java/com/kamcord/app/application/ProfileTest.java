@@ -141,7 +141,7 @@ public class ProfileTest extends TestBase {
         UiObject2 videoContainer = viewObj.getParent().getParent();
         findUiObjInObj(videoContainer, R.id.profile_item_thumbnail,
                 UiObjIdType.Res, UiObjSelType.Res, UI_TIMEOUT_MS).click();
-        findUiObj(R.id.profile_videoview, UiObjIdType.Res, UiObjSelType.Res, APP_TIMEOUT_MS);
+        findUiObj(R.id.surface_view, UiObjIdType.Res, UiObjSelType.Res, APP_TIMEOUT_MS);
 
         mDevice.pressBack();
         scrollToBeginning(R.id.profile_recyclerview);

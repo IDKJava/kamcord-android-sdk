@@ -77,7 +77,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_streaming_video_view);
+        setContentView(R.layout.activity_video_view);
         ButterKnife.inject(this);
 
         Intent intent = getIntent();
