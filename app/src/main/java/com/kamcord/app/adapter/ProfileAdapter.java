@@ -25,7 +25,7 @@ import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.ProfileVideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
-import com.kamcord.app.adapter.viewholder.ProfileStreamItemViewHolder;
+import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
 import com.kamcord.app.analytics.KamcordAnalytics;
@@ -79,7 +79,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             case STREAM: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stream_item, parent, false);
-                return new ProfileStreamItemViewHolder(itemLayoutView);
+                return new StreamItemViewHolder(itemLayoutView);
             }
             case FOOTER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
@@ -111,10 +111,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
             }
 
-        } else if (viewHolder instanceof ProfileStreamItemViewHolder) {
+        } else if (viewHolder instanceof StreamItemViewHolder) {
             Stream stream = getItem(position).getStream();
             if( stream != null ) {
-                bindStreamVideoItemViewHolder((ProfileStreamItemViewHolder) viewHolder, stream);
+                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream);
             }
 
         } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
@@ -249,12 +249,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    private void bindStreamVideoItemViewHolder(ProfileStreamItemViewHolder viewHolder, final Stream stream) {
+    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream) {
 
-        viewHolder.getProfileItemTitle().setText(stream.name);
+        viewHolder.getStreamItemTitle().setText(stream.name);
         final TextView streamViewsTextView = viewHolder.getStreamViews();
         streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
-        final ImageView streamImageView = viewHolder.getProfileItemThumbnail();
+        final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
         if (stream.thumbnails != null && stream.thumbnails.medium != null) {
             Picasso.with(mContext)
                     .load(stream.thumbnails.medium.unsecure_url) //DQTODO see if we should use secure?
@@ -266,7 +266,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 stream.current_viewers_count = stream.current_viewers_count + 1;
                 streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
                 Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
-                intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, stream.play.hls);
+                if (stream.play != null)
+                    intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, stream.play.hls);
+
                 mContext.startActivity(intent);
                 //AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback()); //DQTODO update server views?
             }
@@ -280,20 +282,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (stream.game != null && stream.game.name != null)
             gameName = stream.game.name;
 
-        viewHolder.getProfileItemAuthor().setText(String.format(Locale.ENGLISH,
+        viewHolder.getStreamItemAuthor().setText(String.format(Locale.ENGLISH,
                 mContext.getResources().getString(R.string.byAuthorGame),
                 username, gameName));
-        /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
-
-        final Button streamLikesButton = viewHolder.getStreamLikesButton();
-        streamLikesButton.setText(StringUtils.abbreviatedCount(stream.heart_count));
-        streamLikesButton.setActivated(false);
-        streamLikesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //toggleLikeButton(streamLikesButton, stream); //DQTODO
-            }
-        });
     }
 
     private void bindProfileUploadProgressViewHolder(final ProfileUploadProgressViewHolder viewHolder, final RecordingSession session, final int position) {

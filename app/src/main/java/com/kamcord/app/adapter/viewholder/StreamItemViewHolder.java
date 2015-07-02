@@ -14,7 +14,7 @@ import butterknife.InjectView;
 /**
  * Created by donliang1 on 6/1/15.
  */
-public class ProfileStreamItemViewHolder extends RecyclerView.ViewHolder {
+public class StreamItemViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.stream_item_title)
     TextView streamItemTitle;
@@ -22,35 +22,25 @@ public class ProfileStreamItemViewHolder extends RecyclerView.ViewHolder {
     TextView streamItemAuthor;
     @InjectView(R.id.stream_item_thumbnail)
     ImageView streamItemThumbnail;
-    @InjectView(R.id.stream_likes_button)
-    Button videoLikes;
     @InjectView(R.id.video_views)
     TextView videoViews;
 
-    public ProfileStreamItemViewHolder(final View itemLayoutView) {
+    public StreamItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
     }
 
-    public TextView getProfileItemTitle() {
+    public TextView getStreamItemTitle() {
         return this.streamItemTitle;
     }
 
-    public TextView getProfileItemAuthor() {
+    public TextView getStreamItemAuthor() {
         return this.streamItemAuthor;
     }
 
-    public ImageView getProfileItemThumbnail() {
+    public ImageView getStreamItemThumbnail() {
         return this.streamItemThumbnail;
     }
-
-    public Button getStreamLikesButton() {
-        return this.videoLikes;
-    }
-
-    /*public TextView getVideoComments() {
-        return this.videoComments;
-    }*/
 
     public TextView getStreamViews() {
         return this.videoViews;

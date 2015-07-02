@@ -1,5 +1,6 @@
 package com.kamcord.app.adapter;
 
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -12,16 +13,15 @@ import com.kamcord.app.fragment.RecordFragment;
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    public static final int RECORD_FRAGMENT_POSITION = 0;
-    public static final int PROFILE_FRAGMENT_POSITION = 1;
-    public static final int HOME_FRAGMENT_POSITION = 2;
-    public static final int NUMBERS_OF_TAB = 3;
+    public static final int HOME_FRAGMENT_POSITION = 0;
+    public static final int RECORD_FRAGMENT_POSITION = 1;
+    public static final int PROFILE_FRAGMENT_POSITION = 2;
     private int numberOfTabs;
     private CharSequence tabTitles[];
 
     private int[] imageResId = {
+            R.drawable.tabicon_home_selector,
             R.drawable.tabicon_record_selector,
-            R.drawable.tabicon_profile_selector,
             R.drawable.tabicon_profile_selector};
 
     public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs) {
@@ -33,41 +33,26 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;
-        if (numberOfTabs >= NUMBERS_OF_TAB) {
-            switch (position) {
-                case RECORD_FRAGMENT_POSITION:
-                    fragment = new RecordFragment();
-                    break;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && position >= RECORD_FRAGMENT_POSITION)
+            position++;
+        switch (position) {
+            case RECORD_FRAGMENT_POSITION:
+                fragment = new RecordFragment();
+                break;
 
-                case PROFILE_FRAGMENT_POSITION:
-                    fragment = new ProfileFragment();
-                    break;
+            case PROFILE_FRAGMENT_POSITION:
+                fragment = new ProfileFragment();
+                break;
 
-                case HOME_FRAGMENT_POSITION:
-                    fragment = new HomeFragment();
-                    break;
+            case HOME_FRAGMENT_POSITION:
+                fragment = new HomeFragment();
+                break;
 
-                default:
-                    fragment = new RecordFragment();
-                    break;
-            }
-            return fragment;
-        } else {
-            switch (position) {
-                case PROFILE_FRAGMENT_POSITION:
-                    fragment = new ProfileFragment();
-                    break;
-
-                case HOME_FRAGMENT_POSITION:
-                    fragment = new HomeFragment();
-                    break;
-
-                default:
-                    fragment = new ProfileFragment();
-                    break;
-            }
-            return fragment;
+            default:
+                fragment = new HomeFragment();
+                break;
         }
+        return fragment;
     }
 
     @Override
@@ -76,6 +61,8 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public int getDrawableId(int position) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && position >= RECORD_FRAGMENT_POSITION)
+            position++;
         return imageResId[position];
     }
 

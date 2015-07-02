@@ -116,6 +116,7 @@
         <item quantity="one">%s Video</item>
         <item quantity="other">%s Videos</item>
     </plurals>
+    <string name="live">LIVE</string>
 
     <!-- Not used? -->
     <string name="alreadyRecording">Already Recording!</string>
