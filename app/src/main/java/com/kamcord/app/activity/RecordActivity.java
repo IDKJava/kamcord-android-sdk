@@ -18,7 +18,6 @@ import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
-import com.kamcord.app.utils.ViewUtils;
 import com.kamcord.app.view.DisableableViewPager;
 import com.kamcord.app.view.SlidingTabLayout;
 import com.kamcord.app.view.utils.OnBackPressedListener;
@@ -49,7 +48,6 @@ public class RecordActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ViewUtils.setUpActionBar(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mdrecord);
         FlurryAgent.onStartSession(this);
@@ -70,7 +68,7 @@ public class RecordActivity extends AppCompatActivity implements
 
     public void initMainActivity() {
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             tabTitles = new String[2];
             tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
             tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);

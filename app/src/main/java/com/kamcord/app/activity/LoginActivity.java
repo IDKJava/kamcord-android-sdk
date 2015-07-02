@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.WelcomeFragment;
-import com.kamcord.app.utils.ViewUtils;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -20,7 +19,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ViewUtils.setUpActionBar(this);
         super.onCreate(savedInstanceState);
         containerViewId = View.generateViewId();
         RelativeLayout contentView = new RelativeLayout(this);
