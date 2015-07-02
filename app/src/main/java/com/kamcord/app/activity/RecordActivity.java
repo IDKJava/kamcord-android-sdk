@@ -68,7 +68,7 @@ public class RecordActivity extends AppCompatActivity implements
 
     public void initMainActivity() {
 
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             tabTitles = new String[2];
             tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
             tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);

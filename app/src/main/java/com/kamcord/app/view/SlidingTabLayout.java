@@ -209,7 +209,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabIconView = (ImageView) tabView;
             }
 
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            if (Build.VERSION.SDK_INT > 19) {
                 tabIconView.setImageDrawable(getResources().getDrawable(adapter.getDrawableId(i), null));
             } else {
                 tabIconView.setImageDrawable(getResources().getDrawable(adapter.getDrawableId(i)));

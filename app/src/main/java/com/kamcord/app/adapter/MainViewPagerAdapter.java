@@ -23,15 +23,21 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         }
     }};
 
+    private static final HashMap<Integer, Integer> POSITION_DRAWABLE_MAP = new HashMap<Integer, Integer>() {{
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            put(0, R.drawable.tabicon_record_selector);
+            put(1, R.drawable.tabicon_profile_selector);
+        } else {
+            put(0, R.drawable.tabicon_profile_selector);
+        }
+    }};
+
+
     public static final int RECORD_FRAGMENT_POSITION = 0;
     public static final int PROFILE_FRAGMENT_POSITION = 1;
     public static final int NUMBERS_OF_TAB = 2;
     private int numberOfTabs;
     private CharSequence tabTitles[];
-
-    private static int[] imageResId = {
-            R.drawable.tabicon_record_selector,
-            R.drawable.tabicon_profile_selector};
 
     public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs) {
         super(fm);
@@ -60,13 +66,10 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public int getDrawableId(int position) {
-        Class fragmentClass = POSITION_FRAGMENT_MAP.get(position);
-        if( fragmentClass != null && fragmentClass.equals(RecordFragment.class) ) {
-            return imageResId[RECORD_FRAGMENT_POSITION];
-        } else if( fragmentClass != null && fragmentClass.equals(ProfileFragment.class) ) {
-            return imageResId[PROFILE_FRAGMENT_POSITION];
+        if(POSITION_DRAWABLE_MAP.get(position) != null) {
+            return POSITION_DRAWABLE_MAP.get(position);
         }
-        return imageResId[RECORD_FRAGMENT_POSITION];
+        return POSITION_DRAWABLE_MAP.get(0);
     }
 
     @Override
