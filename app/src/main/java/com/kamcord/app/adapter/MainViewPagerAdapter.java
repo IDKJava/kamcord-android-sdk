@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private static final HashMap<Integer, Class<?>> POSITION_FRAGMENT_MAP = new HashMap<Integer, Class<?>>() {{
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if(Build.VERSION.SDK_INT >= 21) {
             put(0, RecordFragment.class);
             put(1, ProfileFragment.class);
         } else {
@@ -24,7 +24,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     }};
 
     private static final HashMap<Integer, Integer> POSITION_DRAWABLE_MAP = new HashMap<Integer, Integer>() {{
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if(Build.VERSION.SDK_INT >= 21) {
             put(0, R.drawable.tabicon_record_selector);
             put(1, R.drawable.tabicon_profile_selector);
         } else {

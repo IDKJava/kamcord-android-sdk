@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.TypedValue;
 import android.view.ViewAnimationUtils;
@@ -32,9 +31,9 @@ public class ViewUtils {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(21)
     public static void buttonCircularReveal(Button button) {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (android.os.Build.VERSION.SDK_INT >= 21) {
             ViewAnimationUtils.createCircularReveal(button,
                     button.getWidth() / 2, button.getHeight() / 2, 0,
                     button.getHeight() * 2).start();
