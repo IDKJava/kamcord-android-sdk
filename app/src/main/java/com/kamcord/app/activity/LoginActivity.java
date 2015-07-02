@@ -2,7 +2,7 @@ package com.kamcord.app.activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,18 +10,16 @@ import android.widget.RelativeLayout;
 
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.WelcomeFragment;
-import com.kamcord.app.utils.ViewUtils;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class LoginActivity extends FragmentActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private int containerViewId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ViewUtils.setUpActionBar(this);
         containerViewId = View.generateViewId();
         RelativeLayout contentView = new RelativeLayout(this);
         contentView.setId(containerViewId);

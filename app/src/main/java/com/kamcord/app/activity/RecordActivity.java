@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -18,7 +18,6 @@ import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
-import com.kamcord.app.utils.ViewUtils;
 import com.kamcord.app.view.DisableableViewPager;
 import com.kamcord.app.view.SlidingTabLayout;
 import com.kamcord.app.view.utils.OnBackPressedListener;
@@ -30,7 +29,7 @@ import butterknife.InjectView;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
-public class RecordActivity extends FragmentActivity implements
+public class RecordActivity extends AppCompatActivity implements
         Uploader.UploadStatusListener {
 
     @InjectView(R.id.main_pager) DisableableViewPager mViewPager;
@@ -50,7 +49,6 @@ public class RecordActivity extends FragmentActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ViewUtils.setUpActionBar(this);
         setContentView(R.layout.activity_mdrecord);
         FlurryAgent.onStartSession(this);
         ButterKnife.inject(this);
@@ -70,8 +68,7 @@ public class RecordActivity extends FragmentActivity implements
 
     public void initMainActivity() {
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            tabTitles = new String[3];
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
             tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
             tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
             tabTitles[2] = getResources().getString(R.string.kamcordHomeTab);

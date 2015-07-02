@@ -10,6 +10,8 @@ import com.kamcord.app.fragment.HomeFragment;
 import com.kamcord.app.fragment.ProfileFragment;
 import com.kamcord.app.fragment.RecordFragment;
 
+import java.util.HashMap;
+
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 

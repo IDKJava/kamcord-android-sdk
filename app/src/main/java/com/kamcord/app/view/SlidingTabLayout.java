@@ -32,7 +32,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.utils.ViewUtils;
 
@@ -188,7 +187,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     private void populateTabStrip() {
-        final MainViewPagerAdapter adapter = (MainViewPagerAdapter)mViewPager.getAdapter();
+        final MainViewPagerAdapter adapter = (MainViewPagerAdapter) mViewPager.getAdapter();
         final View.OnClickListener tabClickListener = new TabClickListener();
 
         for (int i = 0; i < adapter.getCount(); i++) {
@@ -208,13 +207,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabIconView = (ImageView) tabView;
             }
 
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            if (Build.VERSION.SDK_INT > 19) {
                 tabIconView.setImageDrawable(getResources().getDrawable(adapter.getDrawableId(i), null));
             } else {
-                tabIconView.setImageDrawable(ViewUtils.getTintedDrawable(
-                        getContext(),
-                        getResources().getDrawable(adapter.getDrawableId(i)),
-                        R.color.kamcordGreen));
+                tabIconView.setImageDrawable(getResources().getDrawable(adapter.getDrawableId(i)));
             }
 
             if (mViewPager.getCurrentItem() == i) {

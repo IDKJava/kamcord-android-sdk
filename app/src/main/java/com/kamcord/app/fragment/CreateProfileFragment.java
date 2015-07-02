@@ -99,7 +99,7 @@ public class CreateProfileFragment extends Fragment {
     public void validateEmail(boolean hasFocus) {
         if (!hasFocus && isResumed()) {
             String email = emailEditText.getEditableText().toString();
-            KeyboardUtils.hideSoftKeyboard(new View(getActivity().getApplicationContext()), getActivity().getApplicationContext());
+            KeyboardUtils.hideSoftKeyboard(emailEditText, getActivity().getApplicationContext());
             if (email.isEmpty()) {
                 emailEditText.setError(getResources().getString(R.string.youMustEnterEmail));
             } else {

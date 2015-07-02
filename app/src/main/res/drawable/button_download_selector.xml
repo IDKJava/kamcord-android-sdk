@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true">
-        <bitmap android:src="@drawable/install_icon" android:tint="@color/ColorPrimary" android:tintMode="multiply" />
-    </item>
-    <item>
-        <bitmap android:src="@drawable/install_icon" android:tint="@color/kamcordBlue" android:tintMode="multiply" />
-    </item>
-</selector>
