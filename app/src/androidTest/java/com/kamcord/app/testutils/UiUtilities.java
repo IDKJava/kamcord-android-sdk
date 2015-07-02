@@ -114,7 +114,7 @@ public class UiUtilities {
         BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut || !failIfNotFound);
+        assertTrue(String.format("UI Object: %s failed to load!",idString), notTimedOut || !failIfNotFound);
         return mDevice.findObject(objSelector);
     }
     public static UiObject2 findUiObjInObj(UiObject2 parentObj,
@@ -146,7 +146,7 @@ public class UiUtilities {
         BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = parentObj.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut || !failIfNotFound);
+        assertTrue(String.format("UI Object: %s failed to load!",idString), notTimedOut || !failIfNotFound);
         return parentObj.findObject(objSelector);
     }
     public static UiObject2 findUiObjInObj(UiObject2 parentObj,
@@ -165,7 +165,7 @@ public class UiUtilities {
         BySelector objSelector = getSelector(selType, idString);
 
         boolean notTimedOut = parentObj.wait(Until.hasObject(objSelector), timeOut);
-        assertTrue("UI Object failed to load!", notTimedOut || !failIfNotFound);
+        assertTrue(String.format("UI Object: %s failed to load!",idString), notTimedOut || !failIfNotFound);
         return parentObj.findObject(objSelector);
     }
     public static void loseUiObj(int id,
@@ -205,7 +205,7 @@ public class UiUtilities {
 
         boolean notTimedOut = mDevice.wait(Until.hasObject(objSelector), timeOut);
 
-        assertTrue("UI Object failed to load!", notTimedOut || !failIfNotFound);
+        assertTrue(String.format("UI Object: %s failed to load!", text), notTimedOut || !failIfNotFound);
 
         return mDevice.findObject(objSelector);
     }
