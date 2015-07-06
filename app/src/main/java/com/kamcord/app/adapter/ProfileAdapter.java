@@ -2,12 +2,12 @@ package com.kamcord.app.adapter;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.Build;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -49,6 +48,7 @@ import java.util.Locale;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.http.HEAD;
 
 /**
  * Created by donliang1 on 5/28/15.
@@ -170,8 +170,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video) {
 
         viewHolder.getProfileItemTitle().setText(video.title);
-        final TextView videoViewsTextView = viewHolder.getVideoViews();
-        videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
+        final Button videoViewsButton = viewHolder.getVideoViews();
+        ViewUtils.setButtonPadding(videoViewsButton, (int)mContext.getResources().getDimension(R.dimen.buttonPadding));
+        videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
         final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
         if (video.thumbnails != null && video.thumbnails.regular != null) {
             Picasso.with(mContext)
@@ -182,7 +183,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 video.views = video.views + 1;
-                videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
+                videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
                 intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, video.video_url);
                 mContext.startActivity(intent);
@@ -196,7 +197,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
-        videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
+        ViewUtils.setButtonPadding(videoLikesButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
+        if(video.likes < 0) {
+            videoLikesButton.setText(StringUtils.abbreviatedCount(0));
+        } else {
+            videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
+        }
         videoLikesButton.setActivated(video.is_user_liking);
         if (video.is_user_liking) {
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(

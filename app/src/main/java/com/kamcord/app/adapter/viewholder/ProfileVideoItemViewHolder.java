@@ -29,7 +29,7 @@ public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
     /*@InjectView(R.id.video_comments)
     TextView videoComments;*/
     @InjectView(R.id.video_views)
-    TextView videoViews;
+    Button videoViews;
     @InjectView(R.id.moreVideoActionsImageButton)
     ImageButton moreVideoActions;
 
@@ -58,7 +58,7 @@ public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
         return this.videoComments;
     }*/
 
-    public TextView getVideoViews() {
+    public Button getVideoViews() {
         return this.videoViews;
     }
 
