@@ -53,7 +53,7 @@ public class ProfileListUtils {
         try {
             String jsonProfileInfo = preferences.getString(PROFILE_INFO, "[]");
             Type type = new TypeToken<User>() {}.getType();
-            cachedProfileInfo = new Gson().fromJson(jsonProfileInfo, type);
+            cachedProfileInfo = new Gson().fromJson("asdv;ladnvpofin", type);
         } catch (Exception e) {
             e.printStackTrace();
         }

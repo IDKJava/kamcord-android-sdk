@@ -283,7 +283,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     public void onLoggedInChanged(boolean state) {
         if (viewsAreValid) {
             if (state) {
-                userHeader = new ProfileItem<User>(ProfileItem.Type.HEADER, null);
+                userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, null);
                 mProfileList.add(userHeader);
                 signInPromptContainer.setVisibility(View.GONE);
                 Account myAccount = AccountManager.getStoredAccount();
@@ -298,16 +298,22 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     private class GetUserInfoCallBack implements Callback<GenericResponse<User>> {
         @Override
         public void success(GenericResponse<User> userResponse, Response response) {
-            if (userResponse != null && userResponse.response != null && userHeader != null && viewsAreValid) {
-                userHeader.setUser(userResponse.response);
-                if (userHeader.getUser() != null) {
-                    totalItems = userHeader.getUser().video_count;
-                } else {
-                    totalItems = 0;
-                }
-                ProfileListUtils.saveProfileInfo(userHeader.getUser());
-                mProfileAdapter.notifyItemChanged(0);
+            if (viewsAreValid) {
                 videoFeedRefreshLayout.setRefreshing(false);
+                if (userResponse != null
+                        && userResponse.status != null && userResponse.status.equals(StatusCode.OK)
+                        && userResponse.response != null && userHeader != null ) {
+                    userHeader.setUser(userResponse.response);
+                    if (userHeader.getUser() != null) {
+                        totalItems = userHeader.getUser().video_count;
+                    } else {
+                        totalItems = 0;
+                    }
+                    ProfileListUtils.saveProfileInfo(userHeader.getUser());
+                    mProfileAdapter.notifyItemChanged(0);
+                } else if( userResponse.status != null && userResponse.status.equals(StatusCode.USER_NOT_AUTHORIZED) ) {
+                    AccountManager.clearStoredAccount();
+                }
             }
         }
 
@@ -323,26 +329,28 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     private class SwipeToRefreshVideoFeedCallBack implements Callback<GenericResponse<PaginatedVideoList>> {
         @Override
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
-            if (paginatedVideoListGenericResponse != null
-                    && paginatedVideoListGenericResponse.response != null
-                    && paginatedVideoListGenericResponse.response.video_list != null
-                    && viewsAreValid) {
-                Iterator<ProfileItem> iterator = mProfileList.iterator();
-                while (iterator.hasNext()) {
-                    if (iterator.next().getType() == ProfileItem.Type.VIDEO) {
-                        iterator.remove();
-                    }
-                }
-                nextPage = paginatedVideoListGenericResponse.response.next_page;
-                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                    if (!video.is_user_resharing) {
-                        ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
-                        mProfileList.add(profileViewModel);
-                    }
-                }
-                footerVisible = false;
-                mProfileAdapter.notifyDataSetChanged();
+            if (viewsAreValid) {
                 videoFeedRefreshLayout.setRefreshing(false);
+                if (paginatedVideoListGenericResponse != null
+                        && paginatedVideoListGenericResponse.response != null
+                        && paginatedVideoListGenericResponse.response.video_list != null
+                        && viewsAreValid) {
+                    Iterator<ProfileItem> iterator = mProfileList.iterator();
+                    while (iterator.hasNext()) {
+                        if (iterator.next().getType() == ProfileItem.Type.VIDEO) {
+                            iterator.remove();
+                        }
+                    }
+                    nextPage = paginatedVideoListGenericResponse.response.next_page;
+                    for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                        if (!video.is_user_resharing) {
+                            ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
+                            mProfileList.add(profileViewModel);
+                        }
+                    }
+                    footerVisible = false;
+                    mProfileAdapter.notifyDataSetChanged();
+                }
             }
         }
 
