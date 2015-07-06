@@ -25,6 +25,7 @@
     <dimen name="actionbutton_width">100dp</dimen>
     <dimen name="button_gap">1dp</dimen>
     <dimen name="shareButtonHeight">56dp</dimen>
-    <dimen name="buttonPadding">16dp</dimen>
+
+    <dimen name="subtitle_minimum_font_size">24sp</dimen>
 
 </resources>
