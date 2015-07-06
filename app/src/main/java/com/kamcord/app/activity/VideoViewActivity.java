@@ -19,7 +19,6 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.CaptioningManager;
-import android.widget.MediaController;
 
 import com.google.android.exoplayer.VideoSurfaceView;
 import com.google.android.exoplayer.audio.AudioCapabilities;
@@ -35,6 +34,8 @@ import com.kamcord.app.R;
 import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.view.MediaControls;
+import com.kamcord.app.view.StaticMediaControls;
 
 import java.util.Map;
 
@@ -54,6 +55,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         HLS,
         MP4,
     }
+    public static final String ARG_IS_LIVE = "is_live";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
@@ -66,13 +68,15 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Uri videoUri;
     private VideoType videoType = VideoType.HLS;
+    private boolean isLive = false;
+
     private Player player;
     private boolean playerNeedsPrepare;
     private float qualityMultiplier = 2f;
 
     private long playerPosition;
 
-    private MediaController mediaController;
+    private MediaControls mediaControls;
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
     private AudioCapabilities audioCapabilities;
 
@@ -87,6 +91,12 @@ public class VideoViewActivity extends AppCompatActivity implements
         if( intent.hasExtra(ARG_VIDEO_TYPE) ) {
             videoType = (VideoType) intent.getSerializableExtra(ARG_VIDEO_TYPE);
         }
+        if( intent.hasExtra(ARG_IS_LIVE) ) {
+            isLive = intent.getBooleanExtra(ARG_IS_LIVE, false);
+        }
+
+        audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
+        surfaceView.getHolder().addCallback(this);
 
         View root = findViewById(R.id.root);
         root.setOnTouchListener(new View.OnTouchListener() {
@@ -104,17 +114,18 @@ public class VideoViewActivity extends AppCompatActivity implements
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                    return mediaController.dispatchKeyEvent(event);
+                    return mediaControls.dispatchKeyEvent(event);
                 }
                 return false;
             }
         });
-        audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
+        if( !isLive ) {
+            mediaControls = new StaticMediaControls(this);
+        } else {
+            mediaControls = new StaticMediaControls(this);
+        }
 
-        surfaceView.getHolder().addCallback(this);
-
-        mediaController = new MediaController(this);
-        mediaController.setAnchorView(root);
+        mediaControls.setAnchorView(root);
     }
 
     @Override
@@ -201,8 +212,8 @@ public class VideoViewActivity extends AppCompatActivity implements
             player.setMetadataListener(this);
             player.seekTo(playerPosition);
             playerNeedsPrepare = true;
-            mediaController.setMediaPlayer(player.getPlayerControl());
-            mediaController.setEnabled(true);
+            mediaControls.setMediaPlayer(player.getPlayerControl());
+            mediaControls.setEnabled(true);
         }
         if (playerNeedsPrepare) {
             player.prepare();
@@ -246,15 +257,17 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     private void toggleControlsVisibility()  {
-        if (mediaController.isShowing()) {
-            mediaController.hide();
+        if (mediaControls.isShowing()) {
+            mediaControls.hide();
         } else {
             showControls();
         }
     }
 
     private void showControls() {
-        mediaController.show(0);
+        if( !isLive ) {
+            mediaControls.show(0);
+        }
     }
 
     // Player.TextListener implementation
