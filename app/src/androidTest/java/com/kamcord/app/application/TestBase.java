@@ -179,10 +179,10 @@ public abstract class TestBase {
         pWord.setText(PASSWORD1);
         if(autoHideKeyBoardTest) {
             //hide the soft keyboard.
-            mDevice.pressBack();
+            mDevice.click(250, 250);
         } else {
             //click away expect keyboard gone.
-            mDevice.click(250,250);
+            mDevice.pressBack();
         }
         findUiObj(R.id.loginButton, UiObjIdType.Res, UiObjSelType.Res).click();
     }
