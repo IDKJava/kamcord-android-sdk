@@ -277,9 +277,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             public void onClick(View v) {
                 stream.current_viewers_count = stream.current_viewers_count + 1;
                 streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
-                Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
-                if (stream.play != null)
-                    intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, stream.play.hls);
+                Intent intent = new Intent(mContext, VideoViewActivity.class);
+                if (stream.play != null) {
+                    intent.setData(Uri.parse(stream.play.hls));
+                    intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
+                            VideoViewActivity.VideoType.HLS);
+                }
 
                 mContext.startActivity(intent);
                 //AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback()); //DQTODO update server views?
