@@ -2,11 +2,13 @@ package com.kamcord.app.activity;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -118,6 +120,22 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
+
+        if( videoUri == null ) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.errorPlayingVideo)
+                    .setMessage(R.string.thereWasAnError)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            finish();
+                        }
+                    })
+                    .show();
+            return;
+        }
+
         configureSubtitleView();
 
         // The player will be prepared on receiving audio capabilities.
@@ -127,9 +145,11 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
-        player.setBackgrounded(true);
-        audioCapabilitiesReceiver.unregister();
-        shutterView.setVisibility(View.VISIBLE);
+        if( player != null ) {
+            player.setBackgrounded(true);
+            audioCapabilitiesReceiver.unregister();
+            shutterView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -156,7 +176,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Player.RendererBuilder getRendererBuilder() {
         Player.RendererBuilder rendererBuilder = null;
-        String userAgent = Util.getUserAgent(this, "ExoPlayerDemo");
+        String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
 
         switch(videoType) {
             case HLS:
