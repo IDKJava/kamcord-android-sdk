@@ -42,6 +42,7 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class VideoViewActivity extends AppCompatActivity implements
         SurfaceHolder.Callback,
@@ -170,6 +171,11 @@ public class VideoViewActivity extends AppCompatActivity implements
         releasePlayer();
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     // AudioCapabilitiesReceiver.Listener methods
 
     @Override
@@ -266,9 +272,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     private void showControls() {
-        if( !isLive ) {
-            mediaControls.show(0);
-        }
+        mediaControls.show(0);
     }
 
     // Player.TextListener implementation

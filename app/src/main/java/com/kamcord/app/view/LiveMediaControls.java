@@ -48,7 +48,7 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void show() {
-        visibilityHandler.show();
+        visibilityHandler.show(0);
     }
 
     @Override
@@ -69,10 +69,6 @@ public class LiveMediaControls implements MediaControls {
     private class VisibilityHandler extends Handler {
         public VisibilityHandler(Looper looper) {
             super(looper);
-        }
-
-        public void show() {
-            show(0);
         }
 
         public void show(int timeoutMs) {
