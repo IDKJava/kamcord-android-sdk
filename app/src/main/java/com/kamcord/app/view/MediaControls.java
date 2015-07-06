@@ -8,7 +8,7 @@ import android.widget.MediaController;
  * Created by pplunkett on 7/6/15.
  */
 public interface MediaControls {
-    void setAnchorView(View view);
+    void setAnchorView(View anchorView);
     boolean dispatchKeyEvent(KeyEvent event);
     void setMediaPlayer(MediaController.MediaPlayerControl control);
     void setEnabled(boolean enabled);

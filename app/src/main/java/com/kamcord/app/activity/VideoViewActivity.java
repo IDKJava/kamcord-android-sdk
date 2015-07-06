@@ -34,6 +34,7 @@ import com.kamcord.app.R;
 import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.view.LiveMediaControls;
 import com.kamcord.app.view.MediaControls;
 import com.kamcord.app.view.StaticMediaControls;
 
@@ -68,7 +69,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Uri videoUri;
     private VideoType videoType = VideoType.HLS;
-    private boolean isLive = false;
+    private boolean isLive = true;
 
     private Player player;
     private boolean playerNeedsPrepare;
@@ -119,8 +120,8 @@ public class VideoViewActivity extends AppCompatActivity implements
                 return false;
             }
         });
-        if( !isLive ) {
-            mediaControls = new StaticMediaControls(this);
+        if( isLive ) {
+            mediaControls = new LiveMediaControls(this);
         } else {
             mediaControls = new StaticMediaControls(this);
         }

@@ -16,8 +16,8 @@ public class StaticMediaControls implements MediaControls {
     }
 
     @Override
-    public void setAnchorView(View view) {
-        mediaController.setAnchorView(view);
+    public void setAnchorView(View anchorView) {
+        mediaController.setAnchorView(anchorView);
     }
 
     @Override

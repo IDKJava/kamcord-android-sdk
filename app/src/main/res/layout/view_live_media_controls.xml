@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <include
+        layout="@layout/live_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="28dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="16dp"/>
+
+    <ImageButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="0dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/sharebutton_selector"
+        android:background="@null"
+        android:padding="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="#5A4F575C"
+        android:gravity="center_vertical">
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="15dp"
+            android:src="@drawable/hollow_circle_background"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DavidPlays"
+            android:textColor="#fff"
+            android:textSize="18sp"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            style="@style/KamcordButton.HollowGray"
+            android:text="+ Follow"
+            android:textSize="16sp" />
+    </LinearLayout>
+</RelativeLayout>
