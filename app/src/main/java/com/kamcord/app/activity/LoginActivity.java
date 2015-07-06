@@ -20,7 +20,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         containerViewId = View.generateViewId();
         RelativeLayout contentView = new RelativeLayout(this);
         contentView.setId(containerViewId);

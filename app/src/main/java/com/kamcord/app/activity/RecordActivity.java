@@ -3,6 +3,7 @@ package com.kamcord.app.activity;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -48,7 +49,6 @@ public class RecordActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_mdrecord);
         FlurryAgent.onStartSession(this);
         ButterKnife.inject(this);
@@ -68,11 +68,16 @@ public class RecordActivity extends AppCompatActivity implements
 
     public void initMainActivity() {
 
-        tabTitles = new String[2];
-        tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
-        tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
-        numberOfTabs = tabTitles.length;
+        if(Build.VERSION.SDK_INT > 19) {
+            tabTitles = new String[2];
+            tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
+            tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
+        } else {
+            tabTitles = new String[1];
+            tabTitles[0] = getResources().getString(R.string.kamcordProfileTab);
+        }
 
+        numberOfTabs = tabTitles.length;
         mTabs.setDistributeEvenly(true);
         mTabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
