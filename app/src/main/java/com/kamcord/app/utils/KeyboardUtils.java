@@ -15,4 +15,20 @@ public class KeyboardUtils {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+    public static void showSoftKeyboard(View view, Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, 0);
+//        if(imm.isActive() == true && view.getWindowToken() != null) {
+//            imm.showSoftInputFromInputMethod(view.getWindowToken(), 0);
+//        }
+    }
+
+    public static void setSoftKeyboardVisibility(View view, Context context, boolean visible) {
+        if( visible ) {
+            showSoftKeyboard(view, context);
+        } else {
+            hideSoftKeyboard(view, context);
+        }
+    }
 }
