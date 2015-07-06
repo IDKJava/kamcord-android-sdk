@@ -332,7 +332,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                         userResponse.status != null &&
                         userResponse.status.equals(StatusCode.USER_NOT_AUTHORIZED) ) {
                     AccountManager.clearStoredAccount();
-                    // TODO: show the user something about getting logged out.
+                    Toast.makeText(getActivity(), userResponse.status.status_reason, Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -343,7 +343,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             requestingUserInfo = false;
             if (viewsAreValid) {
                 possiblyStopRefreshing();
-                // TODO: show something to the user about errors.
+                Toast.makeText(getActivity(), R.string.thereWasAnErrorProfile, Toast.LENGTH_SHORT).show();
             }
         }
     }
