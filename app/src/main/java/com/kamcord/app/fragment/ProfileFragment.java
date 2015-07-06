@@ -31,7 +31,6 @@ import com.kamcord.app.utils.AccountListener;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.Connectivity;
-import com.kamcord.app.utils.ProfileListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
@@ -116,14 +115,11 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
 
         if (AccountManager.isLoggedIn()) {
 
-            if (ProfileListUtils.getCachedProfileInfo() != null && !Connectivity.isConnected()) {
-                userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, (ProfileListUtils.getCachedProfileInfo()));
-                mProfileList.add(userHeader);
-            } else {
-                userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, (User) null);
-                mProfileList.add(userHeader);
+            Account myAccount = AccountManager.getStoredAccount();
+            userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, new User.Builder().fromAccount(myAccount).build());
+            mProfileList.add(userHeader);
+            if( Connectivity.isConnected() ) {
                 signInPromptContainer.setVisibility(View.GONE);
-                Account myAccount = AccountManager.getStoredAccount();
                 AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
                 AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
             }
@@ -309,10 +305,12 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     } else {
                         totalItems = 0;
                     }
-                    ProfileListUtils.saveProfileInfo(userHeader.getUser());
                     mProfileAdapter.notifyItemChanged(0);
-                } else if( userResponse.status != null && userResponse.status.equals(StatusCode.USER_NOT_AUTHORIZED) ) {
+                } else if( userResponse != null &&
+                        userResponse.status != null &&
+                        userResponse.status.equals(StatusCode.USER_NOT_AUTHORIZED) ) {
                     AccountManager.clearStoredAccount();
+                    // TODO: show the user something about getting logged out.
                 }
             }
         }
@@ -322,6 +320,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             Log.e(TAG, "  " + error.toString());
             if (viewsAreValid) {
                 videoFeedRefreshLayout.setRefreshing(false);
+                // TODO: show something to the user about errors.
             }
         }
     }
