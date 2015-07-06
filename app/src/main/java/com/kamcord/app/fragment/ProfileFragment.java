@@ -296,11 +296,12 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     public void onLoggedInChanged(boolean state) {
         if (viewsAreValid) {
             if (state) {
-                userHeader = new ProfileItem<>(ProfileItem.Type.HEADER, null);
+                Account myAccount = AccountManager.getStoredAccount();
+                userHeader = new ProfileItem<>(ProfileItem.Type.HEADER,
+                        new User.Builder().fromAccount(myAccount).build());
                 mProfileList.add(userHeader);
                 signInPromptContainer.setVisibility(View.GONE);
                 videoFeedRefreshLayout.setVisibility(View.VISIBLE);
-                Account myAccount = AccountManager.getStoredAccount();
                 requestingUserInfo = true;
                 requestingFirstVideosPage = true;
                 AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
