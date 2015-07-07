@@ -342,8 +342,8 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
             requestingUserInfo = false;
-            if (viewsAreValid) {
-                possiblyStopRefreshing();
+            possiblyStopRefreshing();
+            if (getActivity() != null) {
                 Toast.makeText(getActivity(), R.string.thereWasAnErrorProfile, Toast.LENGTH_SHORT).show();
             }
         }
@@ -353,28 +353,25 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         @Override
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
             requestingFirstVideosPage = false;
-            if (viewsAreValid) {
-                possiblyStopRefreshing();
-                if (paginatedVideoListGenericResponse != null
-                        && paginatedVideoListGenericResponse.response != null
-                        && paginatedVideoListGenericResponse.response.video_list != null
-                        && viewsAreValid) {
-                    Iterator<ProfileItem> iterator = mProfileList.iterator();
-                    while (iterator.hasNext()) {
-                        if (iterator.next().getType() == ProfileItem.Type.VIDEO) {
-                            iterator.remove();
-                        }
+            possiblyStopRefreshing();
+            if (paginatedVideoListGenericResponse != null
+                    && paginatedVideoListGenericResponse.response != null
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                Iterator<ProfileItem> iterator = mProfileList.iterator();
+                while (iterator.hasNext()) {
+                    if (iterator.next().getType() == ProfileItem.Type.VIDEO) {
+                        iterator.remove();
                     }
-                    nextPage = paginatedVideoListGenericResponse.response.next_page;
-                    for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                        if (!video.is_user_resharing) {
-                            ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
-                            mProfileList.add(profileViewModel);
-                        }
-                    }
-                    footerVisible = false;
-                    mProfileAdapter.notifyDataSetChanged();
                 }
+                nextPage = paginatedVideoListGenericResponse.response.next_page;
+                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                    if (!video.is_user_resharing) {
+                        ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
+                        mProfileList.add(profileViewModel);
+                    }
+                }
+                footerVisible = false;
+                mProfileAdapter.notifyDataSetChanged();
             }
         }
 
@@ -382,9 +379,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
             requestingFirstVideosPage = false;
-            if (viewsAreValid) {
-                possiblyStopRefreshing();
-            }
+            possiblyStopRefreshing();
         }
     }
 
@@ -392,24 +387,22 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         @Override
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
             requestingVideosPage = false;
-            if( viewsAreValid ) {
-                possiblyStopRefreshing();
-                if (paginatedVideoListGenericResponse != null
-                        && paginatedVideoListGenericResponse.response != null
-                        && paginatedVideoListGenericResponse.response.video_list != null) {
-                    nextPage = paginatedVideoListGenericResponse.response.next_page;
-                    if (mProfileList.size() > 0 && (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == ProfileItem.Type.FOOTER)) {
-                        mProfileList.remove(mProfileAdapter.getItemCount() - 1);
-                    }
-                    for (Video video : paginatedVideoListGenericResponse.response.video_list) {
-                        if (!video.is_user_resharing) {
-                            ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
-                            mProfileList.add(profileViewModel);
-                        }
-                    }
-                    footerVisible = false;
-                    mProfileAdapter.notifyDataSetChanged();
+            possiblyStopRefreshing();
+            if (paginatedVideoListGenericResponse != null
+                    && paginatedVideoListGenericResponse.response != null
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
+                nextPage = paginatedVideoListGenericResponse.response.next_page;
+                if (mProfileList.size() > 0 && (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == ProfileItem.Type.FOOTER)) {
+                    mProfileList.remove(mProfileAdapter.getItemCount() - 1);
                 }
+                for (Video video : paginatedVideoListGenericResponse.response.video_list) {
+                    if (!video.is_user_resharing) {
+                        ProfileItem profileViewModel = new ProfileItem<>(ProfileItem.Type.VIDEO, video);
+                        mProfileList.add(profileViewModel);
+                    }
+                }
+                footerVisible = false;
+                mProfileAdapter.notifyDataSetChanged();
             }
         }
 
@@ -417,9 +410,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
             requestingVideosPage = false;
-            if (viewsAreValid) {
-                possiblyStopRefreshing();
-            }
+            possiblyStopRefreshing();
         }
     }
 
