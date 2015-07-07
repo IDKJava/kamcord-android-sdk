@@ -41,16 +41,12 @@ public class StaticMediaControls implements MediaControls {
 
     @Override
     public void show(int timeout, boolean fade) {
-        if( fade ) {
-            visibilityHandler.show(timeout);
-        } else {
-            mediaController.setAlpha(1f);
-        }
+        visibilityHandler.show(timeout, fade);
     }
 
     @Override
     public void hide(boolean fade) {
-
+        visibilityHandler.hide(fade);
     }
 
     @Override

@@ -16,34 +16,53 @@ public class VisibilityHandler extends Handler {
     }
 
     public void show(int timeoutMs, boolean fade) {
-        this.removeCallbacks(showRunnable);
-        this.removeCallbacks(hideRunnable);
+        removeAllCallbacks();
 
-        this.post(showRunnable);
+        this.post(fade ? fadeInRunnable : showRunnable);
         if( timeoutMs > 0 ) {
-            this.postDelayed(hideRunnable, timeoutMs);
+            this.postDelayed(fade ? fadeOutRunnable : hideRunnable, timeoutMs);
         }
     }
 
     public void hide(boolean fade) {
-        this.removeCallbacks(showRunnable);
-        this.removeCallbacks(hideRunnable);
-        this.post(hideRunnable);
+        removeAllCallbacks();
+        this.post(fade ? fadeOutRunnable : hideRunnable);
+    }
+
+    private void removeAllCallbacks() {
+        removeCallbacks(hideRunnable);
+        removeCallbacks(showRunnable);
+        removeCallbacks(fadeOutRunnable);
+        removeCallbacks(fadeInRunnable);
     }
 
     private Runnable hideRunnable = new Runnable() {
-        int duration = 200;
         @Override
         public void run() {
-            root.animate().alpha(0f).setDuration(duration);
+            root.animate().cancel();
+            root.setAlpha(0f);
         }
     };
 
     private Runnable showRunnable = new Runnable() {
-        int duration = 200;
         @Override
         public void run() {
-            root.animate().alpha(1f).setDuration(duration);
+            root.animate().cancel();
+            root.setAlpha(1f);
+        }
+    };
+
+    private Runnable fadeInRunnable = new Runnable() {
+        @Override
+        public void run() {
+            root.animate().alpha(1f);
+        }
+    };
+
+    private Runnable fadeOutRunnable = new Runnable() {
+        @Override
+        public void run() {
+            root.animate().alpha(0f);
         }
     };
 }

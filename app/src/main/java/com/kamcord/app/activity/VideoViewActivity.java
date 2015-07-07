@@ -126,7 +126,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         } else {
             mediaControls = new StaticMediaControls(this);
         }
-
+        mediaControls.hide(false);
         mediaControls.setAnchorView(root);
     }
 
@@ -242,6 +242,9 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
+        if( playbackState == Player.STATE_READY ) {
+            mediaControls.show(playWhenReady ? 3000 : 0, true);
+        }
     }
 
     @Override
@@ -256,23 +259,29 @@ public class VideoViewActivity extends AppCompatActivity implements
         surfaceView.setVideoWidthHeightRatio(
                 height == 0 ? 1 : (width * pixelWidthAspectRatio) / height);
 
+        int currentOrientation = getRequestedOrientation();
+        int newOrientation;
         if (height <= width) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            newOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            newOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
+        if( newOrientation != currentOrientation ) {
+            setRequestedOrientation(newOrientation);
+            mediaControls.show(3000, true);
         }
     }
 
     private void toggleControlsVisibility()  {
         if (mediaControls.isShowing()) {
-            mediaControls.hide();
+            mediaControls.hide(true);
         } else {
             showControls();
         }
     }
 
     private void showControls() {
-        mediaControls.show(0);
+        mediaControls.show(0, true);
     }
 
     // Player.TextListener implementation

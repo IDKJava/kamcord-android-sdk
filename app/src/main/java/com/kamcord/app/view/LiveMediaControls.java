@@ -48,20 +48,12 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void show(int timeout, boolean fade) {
-        if( fade ) {
-            visibilityHandler.show(timeout);
-        } else {
-            root.setAlpha(1f);
-        }
+        visibilityHandler.show(timeout, fade);
     }
 
     @Override
     public void hide(boolean fade) {
-        if( fade ) {
-            visibilityHandler.hide();
-        } else {
-            root.setAlpha(0f);
-        }
+        visibilityHandler.hide(fade );
     }
 
     @Override
