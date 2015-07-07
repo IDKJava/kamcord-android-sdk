@@ -13,31 +13,46 @@
         android:layout_margin="16dp"/>
 
     <ImageButton
+        android:id="@+id/share_button"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_margin="0dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/sharebutton_selector"
+        android:src="@drawable/ic_share_white"
         android:background="@null"
         android:padding="16dp"/>
+
+    <ImageView
+        android:id="@+id/avatar_imageview"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:padding="15dp"
+        android:src="@drawable/hollow_circle_background"/>
+
+    <TextView
+        android:id="@+id/profile_letter_textview"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:padding="15dp"
+        android:src="@drawable/hollow_circle_background" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_toRightOf="@id/avatar_imageview"
         android:layout_alignParentBottom="true"
         android:background="#B34F575C"
         android:gravity="center_vertical">
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:padding="15dp"
-            android:src="@drawable/hollow_circle_background"/>
         <TextView
+            android:id="@+id/username_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DavidPlays"
             android:textColor="#fff"
             android:textSize="18sp"/>
         <View
@@ -45,6 +60,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
         <Button
+            android:id="@+id/follow_button"
             android:layout_width="wrap_content"
             android:layout_height="28dp"
             android:paddingStart="8dp"
@@ -52,7 +68,6 @@
             android:layout_marginEnd="16dp"
             android:gravity="center"
             style="@style/KamcordButton.HollowGray"
-            android:text="+ Follow"
             android:textSize="16sp" />
     </LinearLayout>
 </RelativeLayout>

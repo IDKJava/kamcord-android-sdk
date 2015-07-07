@@ -188,6 +188,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 intent.setData(Uri.parse(video.video_url));
                 intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
                         VideoViewActivity.VideoType.HLS);
+                intent.putExtra(VideoViewActivity.ARG_VIDEO_OWNER, new Gson().toJson(video.user));
                 mContext.startActivity(intent);
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }

@@ -17,7 +17,6 @@ import com.kamcord.app.view.utils.VisibilityHandler;
  */
 public class LiveMediaControls implements MediaControls {
     private RelativeLayout root;
-    private MediaController.MediaPlayerControl player;
     private VisibilityHandler visibilityHandler;
 
     private User owner;
@@ -42,7 +41,6 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void setMediaPlayer(MediaController.MediaPlayerControl player) {
-        this.player = player;
     }
 
     @Override
@@ -52,7 +50,7 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void show(int timeout, boolean fade) {
-        visibilityHandler.show(timeout, fade);
+        visibilityHandler.show(owner == null || owner.is_user_following ? timeout : 0, fade);
     }
 
     @Override
