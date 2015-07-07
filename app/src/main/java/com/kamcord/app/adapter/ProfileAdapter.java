@@ -170,7 +170,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         viewHolder.getProfileItemTitle().setText(video.title);
         final Button videoViewsButton = viewHolder.getVideoViews();
-        ViewUtils.setButtonPadding(videoViewsButton, (int)mContext.getResources().getDimension(R.dimen.buttonPadding));
+        ViewUtils.setButtonPadding(videoViewsButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
         videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
         final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
         if (video.thumbnails != null && video.thumbnails.regular != null) {
@@ -197,11 +197,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
         ViewUtils.setButtonPadding(videoLikesButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
-        if(video.likes < 0) {
-            videoLikesButton.setText(StringUtils.abbreviatedCount(0));
-        } else {
-            videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
-        }
+        videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
         if (video.is_user_liking) {
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
@@ -329,7 +325,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void toggleLikeButton(Button likeButton, Video video) {
         if (video.is_user_liking) {
             video.is_user_liking = false;
-            if(video.likes > 0) {
+            if (video.likes > 0) {
                 video.likes = video.likes - 1;
             }
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
