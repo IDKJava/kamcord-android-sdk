@@ -154,5 +154,7 @@
     <string name="failedToConnect">Failed to connect. Check your network connection.</string>
 
     <string name="youWillLoseMonster">You will lose your video forever to the video monster!</string>
+    <string name="errorPlayingVideo">Error Playing Video</string>
+    <string name="thereWasAnError">There was an error trying to play that video. Please try again later.</string>
     <string name="thereWasAnErrorProfile">There was an error fetching your profile information.</string>
 </resources>

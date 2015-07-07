@@ -2,12 +2,13 @@ package com.kamcord.app.adapter;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.os.Build;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +24,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
-import com.kamcord.app.activity.ProfileVideoViewActivity;
+import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
@@ -183,8 +184,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             public void onClick(View v) {
                 video.views = video.views + 1;
                 videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
-                Intent intent = new Intent(mContext, ProfileVideoViewActivity.class);
-                intent.putExtra(ProfileVideoViewActivity.ARG_VIDEO_PATH, video.video_url);
+                Intent intent = new Intent(mContext, VideoViewActivity.class);
+                intent.setData(Uri.parse(video.video_url));
+                intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
+                        VideoViewActivity.VideoType.HLS);
                 mContext.startActivity(intent);
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }

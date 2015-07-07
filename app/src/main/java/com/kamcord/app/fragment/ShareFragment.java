@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +27,7 @@ import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
-import com.kamcord.app.activity.VideoPreviewActivity;
+import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
@@ -323,12 +324,12 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
     @OnClick(R.id.thumbnailImageView)
     public void showVideoPreviewActivity() {
-        Bundle bundle = new Bundle();
-        bundle.putString(VideoPreviewActivity.ARG_VIDEO_PATH,
-                new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession),
-                        FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
-        Intent intent = new Intent(getActivity().getApplicationContext(), VideoPreviewActivity.class);
-        intent.putExtras(bundle);
+        Intent intent = new Intent(getActivity().getApplicationContext(), VideoViewActivity.class);
+
+        Uri uri = Uri.parse(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession)
+                , FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
+        intent.setData(uri);
+        intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE, VideoViewActivity.VideoType.MP4);
         startActivity(intent);
 
         recordingSession.setWasReplayed(true);

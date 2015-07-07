@@ -30,10 +30,11 @@
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+
         <activity
-            android:name=".activity.VideoPreviewActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+            android:name=".activity.VideoViewActivity"
+            android:label="@string/app_name">
+        </activity>
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.UploadService" />
@@ -41,11 +42,6 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="658cda3c063565dc206501acd9ce961c5f835a01" />
-
-        <activity
-            android:name=".activity.ProfileVideoViewActivity"
-            android:label="@string/app_name" >
-        </activity>
     </application>
 
 </manifest>
