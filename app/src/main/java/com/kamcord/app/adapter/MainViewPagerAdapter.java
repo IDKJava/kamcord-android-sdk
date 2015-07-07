@@ -10,8 +10,6 @@ import com.kamcord.app.fragment.HomeFragment;
 import com.kamcord.app.fragment.ProfileFragment;
 import com.kamcord.app.fragment.RecordFragment;
 
-import java.util.HashMap;
-
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -38,16 +36,16 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && position >= RECORD_FRAGMENT_POSITION)
             position++;
         switch (position) {
+            case HOME_FRAGMENT_POSITION:
+                fragment = new HomeFragment();
+                break;
+
             case RECORD_FRAGMENT_POSITION:
                 fragment = new RecordFragment();
                 break;
 
             case PROFILE_FRAGMENT_POSITION:
                 fragment = new ProfileFragment();
-                break;
-
-            case HOME_FRAGMENT_POSITION:
-                fragment = new HomeFragment();
                 break;
 
             default:
