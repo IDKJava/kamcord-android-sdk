@@ -23,6 +23,11 @@
         <item name="android:minHeight">0dp</item>
     </style>
 
+    <style name="KamcordButton.HollowWhite" parent="KamcordButton">
+        <item name="android:background">@drawable/hollow_gray_button_background</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
     <style name="KamcordButton.HollowGray" parent="KamcordButton">
         <item name="android:background">@drawable/hollow_gray_button_background</item>
         <item name="android:textColor">@color/kamcordGray</item>
