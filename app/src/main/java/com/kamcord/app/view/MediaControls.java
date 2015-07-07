@@ -12,8 +12,7 @@ public interface MediaControls {
     boolean dispatchKeyEvent(KeyEvent event);
     void setMediaPlayer(MediaController.MediaPlayerControl control);
     void setEnabled(boolean enabled);
-    void show();
-    void show(int timeout);
-    void hide();
+    void show(int timeout, boolean fade);
+    void hide(boolean fade);
     boolean isShowing();
 }

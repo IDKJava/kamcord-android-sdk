@@ -5,14 +5,18 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.MediaController;
 
+import com.kamcord.app.view.utils.VisibilityHandler;
+
 /**
  * Created by pplunkett on 7/6/15.
  */
 public class StaticMediaControls implements MediaControls {
     private MediaController mediaController;
+    private VisibilityHandler visibilityHandler;
 
     public StaticMediaControls(Context context) {
         mediaController = new MediaController(context);
+        visibilityHandler = new VisibilityHandler(mediaController);
     }
 
     @Override
@@ -36,22 +40,21 @@ public class StaticMediaControls implements MediaControls {
     }
 
     @Override
-    public void show() {
-        mediaController.show();
+    public void show(int timeout, boolean fade) {
+        if( fade ) {
+            visibilityHandler.show(timeout);
+        } else {
+            mediaController.setAlpha(1f);
+        }
     }
 
     @Override
-    public void show(int timeout) {
-        mediaController.show(timeout);
-    }
+    public void hide(boolean fade) {
 
-    @Override
-    public void hide() {
-        mediaController.hide();
     }
 
     @Override
     public boolean isShowing() {
-        return mediaController.isShowing();
+        return mediaController.getAlpha() > 0f;
     }
 }

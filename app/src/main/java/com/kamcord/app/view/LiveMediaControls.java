@@ -1,8 +1,6 @@
 package com.kamcord.app.view;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +9,7 @@ import android.widget.MediaController;
 import android.widget.RelativeLayout;
 
 import com.kamcord.app.R;
+import com.kamcord.app.view.utils.VisibilityHandler;
 
 /**
  * Created by pplunkett on 7/6/15.
@@ -18,10 +17,11 @@ import com.kamcord.app.R;
 public class LiveMediaControls implements MediaControls {
     private RelativeLayout root;
     private MediaController.MediaPlayerControl player;
-    private VisibilityHandler visibilityHandler = new VisibilityHandler(Looper.getMainLooper());
+    private VisibilityHandler visibilityHandler;
 
     public LiveMediaControls(Context context) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
+        visibilityHandler = new VisibilityHandler(root);
     }
 
     @Override
@@ -47,57 +47,25 @@ public class LiveMediaControls implements MediaControls {
     }
 
     @Override
-    public void show() {
-        visibilityHandler.show(0);
+    public void show(int timeout, boolean fade) {
+        if( fade ) {
+            visibilityHandler.show(timeout);
+        } else {
+            root.setAlpha(1f);
+        }
     }
 
     @Override
-    public void show(int timeoutMs) {
-        visibilityHandler.show(timeoutMs);
-    }
-
-    @Override
-    public void hide() {
-        visibilityHandler.hide();
+    public void hide(boolean fade) {
+        if( fade ) {
+            visibilityHandler.hide();
+        } else {
+            root.setAlpha(0f);
+        }
     }
 
     @Override
     public boolean isShowing() {
-        return root.getVisibility() == View.VISIBLE;
+        return root.getAlpha() > 0f;
     }
-
-    private class VisibilityHandler extends Handler {
-        public VisibilityHandler(Looper looper) {
-            super(looper);
-        }
-
-        public void show(int timeoutMs) {
-            this.removeCallbacks(showRunnable);
-            this.post(showRunnable);
-
-            this.removeCallbacks(hideRunnable);
-            if( timeoutMs > 0 ) {
-                this.postDelayed(hideRunnable, timeoutMs);
-            }
-        }
-
-        public void hide() {
-            this.removeCallbacks(hideRunnable);
-            this.post(hideRunnable);
-        }
-    }
-
-    private Runnable hideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            root.setVisibility(View.INVISIBLE);
-        }
-    };
-
-    private Runnable showRunnable = new Runnable() {
-        @Override
-        public void run() {
-            root.setVisibility(View.VISIBLE);
-        }
-    };
 }
