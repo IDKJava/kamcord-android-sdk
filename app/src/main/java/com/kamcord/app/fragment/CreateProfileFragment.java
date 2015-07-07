@@ -81,11 +81,30 @@ public class CreateProfileFragment extends Fragment {
         ButterKnife.reset(this);
     }
 
-    @OnFocusChange(R.id.usernameEditText)
-    public void validateUsername(boolean hasFocus) {
-        if (!hasFocus && isResumed()) {
+    @OnFocusChange({R.id.usernameEditText, R.id.emailEditText, R.id.passwordEditText})
+    public void editTextFocusChange(View v, boolean hasFocus) {
+        if (isResumed()) {
+            KeyboardUtils.setSoftKeyboardVisibility(v, getActivity(), hasFocus);
+        }
+        if (!hasFocus) {
+            switch (v.getId()) {
+                case R.id.usernameEditText:
+                    validateUsername();
+                    break;
+
+                case R.id.emailEditText:
+                    validateEmail();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void validateUsername() {
+        if (isResumed()) {
             String username = usernameEditText.getEditableText().toString();
-            KeyboardUtils.hideSoftKeyboard(usernameEditText, getActivity().getApplicationContext());
             if (username.isEmpty()) {
                 usernameEditText.setError(getResources().getString(R.string.youMustEnterUsername));
             } else {
@@ -95,9 +114,8 @@ public class CreateProfileFragment extends Fragment {
         }
     }
 
-    @OnFocusChange(R.id.emailEditText)
-    public void validateEmail(boolean hasFocus) {
-        if (!hasFocus && isResumed()) {
+    private void validateEmail() {
+        if (isResumed()) {
             String email = emailEditText.getEditableText().toString();
             KeyboardUtils.hideSoftKeyboard(emailEditText, getActivity().getApplicationContext());
             if (email.isEmpty()) {
@@ -106,13 +124,6 @@ public class CreateProfileFragment extends Fragment {
                 emailEditText.setError(null);
                 AppServerClient.getInstance().validateEmail(email, validateEmailCallback);
             }
-        }
-    }
-
-    @OnFocusChange(R.id.passwordEditText)
-    public void passwordEditTextOutsideTouch(boolean hasFocus) {
-        if (!hasFocus && isResumed()) {
-            KeyboardUtils.hideSoftKeyboard(passwordEditText, getActivity().getApplicationContext());
         }
     }
 

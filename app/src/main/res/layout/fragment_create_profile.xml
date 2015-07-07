@@ -6,7 +6,8 @@
     android:orientation="vertical"
     android:id="@+id/fragment_create_profile_layout"
     android:clickable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"

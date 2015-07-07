@@ -27,7 +27,7 @@ public class MemoryTest extends RecordAndPostTestBase {
      * <p>
      *     <b>Test Sequence:</b><br>
      *     1) {@link TestBase#doLogin Log in}<br>
-     *     2) Record a short video. @see RecordAndPostTestBase#recordGameVideo<br>
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a short video. <br>
      *     3) Check cache size.<br>
      *     4) Discard the video after processing is done by clicking back.<br>
      *     5) Record a video 3 times the short length.<br>
