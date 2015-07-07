@@ -35,12 +35,12 @@ import retrofit.client.Response;
 
 public class HomeFragment extends Fragment {
 
-    @InjectView(R.id.profilefragment_refreshlayout)
-    SwipeRefreshLayout videoFeedRefreshLayout;
-    @InjectView(R.id.profile_recyclerview)
-    DynamicRecyclerView profileRecyclerView;
+    @InjectView(R.id.homefragment_refreshlayout)
+    SwipeRefreshLayout discoverFeedRefreshLayout;
+    @InjectView(R.id.home_recyclerview)
+    DynamicRecyclerView homeRecyclerView;
 
-    private static final String TAG = ProfileFragment.class.getSimpleName();
+    private static final String TAG = HomeFragment.class.getSimpleName();
     private List<FeedItem> mProfileList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
     private String nextPage;
@@ -50,12 +50,12 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.profile_tab, container, false);
+        View root = inflater.inflate(R.layout.home_tab, container, false);
 
         ButterKnife.inject(this, root);
         viewsAreValid = true;
 
-        initKamcordProfileFragment();
+        initKamcordHomeFragment();
 
         return root;
     }
@@ -77,35 +77,35 @@ public class HomeFragment extends Fragment {
         super.onPause();
     }
 
-    public void initKamcordProfileFragment() {
+    public void initKamcordHomeFragment() {
 
         if (Connectivity.isConnected()) {
             AppServerClient.getInstance().getDiscoverFeed(null, new GetDiscoverFeedCallBack());
         } else {
-            videoFeedRefreshLayout.setEnabled(false);
+            discoverFeedRefreshLayout.setEnabled(false);
         }
 
         mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
-        profileRecyclerView.setAdapter(mProfileAdapter);
-        profileRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(profileRecyclerView));
-        profileRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
+        homeRecyclerView.setAdapter(mProfileAdapter);
+        homeRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(homeRecyclerView));
+        homeRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
-        videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
-        videoFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        videoFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        discoverFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
+        discoverFeedRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
+        discoverFeedRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if (Connectivity.isConnected()) {
-                    videoFeedRefreshLayout.setRefreshing(true);
+                    discoverFeedRefreshLayout.setRefreshing(true);
                     AppServerClient.AppServer client = AppServerClient.getInstance();
-                    client.getDiscoverFeed(null, new SwipeToRefreshVideoFeedCallBack());
+                    client.getDiscoverFeed(null, new SwipeToRefreshDiscoverFeedCallBack());
                 } else {
-                    videoFeedRefreshLayout.setRefreshing(false);
+                    discoverFeedRefreshLayout.setRefreshing(false);
                 }
             }
         });
 
-        profileRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        homeRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int state) {
@@ -113,12 +113,15 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (profileRecyclerView.getChildAt(0) != null) {
+                if (homeRecyclerView.getChildAt(0) != null) {
                     int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
-                    videoFeedRefreshLayout.setEnabled(profileRecyclerView.getChildAdapterPosition(profileRecyclerView.getChildAt(0)) == 0
-                            && profileRecyclerView.getChildAt(0).getTop() == tabsHeight);
+                    int cardMargin = getResources().getDimensionPixelSize(R.dimen.cardview_lightermargin);
+                    Log.d("onScrolled", "you kidding me?");
+                    discoverFeedRefreshLayout.setEnabled(homeRecyclerView.getChildAdapterPosition(homeRecyclerView.getChildAt(0)) == 0
+                            && homeRecyclerView.getChildAt(0).getTop() == tabsHeight + cardMargin);
                 } else {
-                    videoFeedRefreshLayout.setEnabled(true);
+                    Log.d("onScrolled", "do it sucker");
+                    discoverFeedRefreshLayout.setEnabled(true);
                 }
 
                 if ((mProfileList.size() - 1) < totalItems
@@ -138,7 +141,7 @@ public class HomeFragment extends Fragment {
         AppServerClient.getInstance().getDiscoverFeed(nextPage, new GetDiscoverFeedCallBack());
     }
 
-    private class SwipeToRefreshVideoFeedCallBack implements Callback<GenericResponse<DiscoverFeed>> {
+    private class SwipeToRefreshDiscoverFeedCallBack implements Callback<GenericResponse<DiscoverFeed>> {
         @Override
         public void success(GenericResponse<DiscoverFeed> discoverFeedGenericResponse, Response response) {
             if (discoverFeedGenericResponse != null
@@ -168,7 +171,7 @@ public class HomeFragment extends Fragment {
                     }
                     footerVisible = false;
                     mProfileAdapter.notifyDataSetChanged();
-                    videoFeedRefreshLayout.setRefreshing(false);
+                    discoverFeedRefreshLayout.setRefreshing(false);
                 }
             }
         }
@@ -177,7 +180,7 @@ public class HomeFragment extends Fragment {
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
             if (viewsAreValid) {
-                videoFeedRefreshLayout.setRefreshing(false);
+                discoverFeedRefreshLayout.setRefreshing(false);
             }
         }
     }
@@ -209,7 +212,7 @@ public class HomeFragment extends Fragment {
                     }
                     footerVisible = false;
                     mProfileAdapter.notifyDataSetChanged();
-                    videoFeedRefreshLayout.setRefreshing(false);
+                    discoverFeedRefreshLayout.setRefreshing(false);
                 }
             }
         }
@@ -218,7 +221,7 @@ public class HomeFragment extends Fragment {
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
             if (viewsAreValid) {
-                videoFeedRefreshLayout.setRefreshing(false);
+                discoverFeedRefreshLayout.setRefreshing(false);
             }
         }
     }
