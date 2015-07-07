@@ -5,6 +5,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.MediaController;
 
+import com.kamcord.app.server.model.User;
 import com.kamcord.app.view.utils.VisibilityHandler;
 
 /**
@@ -14,9 +15,12 @@ public class StaticMediaControls implements MediaControls {
     private MediaController mediaController;
     private VisibilityHandler visibilityHandler;
 
-    public StaticMediaControls(Context context) {
+    private User owner;
+
+    public StaticMediaControls(Context context, User owner) {
         mediaController = new MediaController(context);
         visibilityHandler = new VisibilityHandler(mediaController);
+        this.owner = owner;
     }
 
     @Override

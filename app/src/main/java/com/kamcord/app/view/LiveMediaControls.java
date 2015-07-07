@@ -9,6 +9,7 @@ import android.widget.MediaController;
 import android.widget.RelativeLayout;
 
 import com.kamcord.app.R;
+import com.kamcord.app.server.model.User;
 import com.kamcord.app.view.utils.VisibilityHandler;
 
 /**
@@ -19,9 +20,12 @@ public class LiveMediaControls implements MediaControls {
     private MediaController.MediaPlayerControl player;
     private VisibilityHandler visibilityHandler;
 
-    public LiveMediaControls(Context context) {
+    private User owner;
+
+    public LiveMediaControls(Context context, User owner) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
         visibilityHandler = new VisibilityHandler(root);
+        this.owner = owner;
     }
 
     @Override

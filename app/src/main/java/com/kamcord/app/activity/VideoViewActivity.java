@@ -30,10 +30,12 @@ import com.google.android.exoplayer.metadata.TxxxMetadata;
 import com.google.android.exoplayer.text.CaptionStyleCompat;
 import com.google.android.exoplayer.text.SubtitleView;
 import com.google.android.exoplayer.util.Util;
+import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.server.model.User;
 import com.kamcord.app.view.LiveMediaControls;
 import com.kamcord.app.view.MediaControls;
 import com.kamcord.app.view.StaticMediaControls;
@@ -58,6 +60,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         MP4,
     }
     public static final String ARG_IS_LIVE = "is_live";
+    public static final String ARG_VIDEO_OWNER = "video_owner";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
@@ -70,6 +73,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Uri videoUri;
     private VideoType videoType = VideoType.HLS;
+    private User videoOwner = null;
     private boolean isLive = true;
 
     private Player player;
@@ -89,12 +93,15 @@ public class VideoViewActivity extends AppCompatActivity implements
         ButterKnife.inject(this);
 
         Intent intent = getIntent();
-        videoUri = intent.getData();
+        videoUri = Uri.parse("http://content.kamcord.com/live/34080/index.m3u8");//intent.getData();
         if( intent.hasExtra(ARG_VIDEO_TYPE) ) {
             videoType = (VideoType) intent.getSerializableExtra(ARG_VIDEO_TYPE);
         }
         if( intent.hasExtra(ARG_IS_LIVE) ) {
             isLive = intent.getBooleanExtra(ARG_IS_LIVE, false);
+        }
+        if( intent.hasExtra(ARG_VIDEO_OWNER) ) {
+            videoOwner = new Gson().fromJson(intent.getStringExtra(ARG_VIDEO_OWNER), User.class);
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -122,9 +129,9 @@ public class VideoViewActivity extends AppCompatActivity implements
             }
         });
         if( isLive ) {
-            mediaControls = new LiveMediaControls(this);
+            mediaControls = new LiveMediaControls(this, videoOwner);
         } else {
-            mediaControls = new StaticMediaControls(this);
+            mediaControls = new StaticMediaControls(this, videoOwner);
         }
         mediaControls.hide(false);
         mediaControls.setAnchorView(root);
@@ -242,6 +249,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
+        Log.v("FindMe", "onStateChanged(" + playWhenReady + ", " + playbackState + ")");
         if( playbackState == Player.STATE_READY ) {
             mediaControls.show(playWhenReady ? 3000 : 0, true);
         }
@@ -249,6 +257,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onError(Exception e) {
+        Log.v("FindMe", "onError(" + e + ")");
         playerNeedsPrepare = true;
         showControls();
     }
