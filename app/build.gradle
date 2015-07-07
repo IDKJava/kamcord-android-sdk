@@ -36,6 +36,16 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debugTest {
+            defaultConfig.minSdkVersion 18
+        }
+        spoonDebugAndroidTest {
+            defaultConfig.minSdkVersion 18
+        }
+        deviceAndroidTest {
+            defaultConfig.minSdkVersion 18
+        }
     }
     packagingOptions {
         exclude 'LICENSE.txt'
@@ -112,6 +122,7 @@ dependencies {
 apply plugin: 'spoon'
 
 spoon{
+
     debug = true
     if (project.hasProperty('spoonClassName')) {
         className = project.spoonClassName
