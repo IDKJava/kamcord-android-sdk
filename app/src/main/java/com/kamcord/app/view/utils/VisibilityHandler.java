@@ -8,6 +8,7 @@ import android.view.View;
  * Created by pplunkett on 7/6/15.
  */
 public class VisibilityHandler extends Handler {
+    private static final int FADE_DURATION_MS = 150;
     private View root;
 
     public VisibilityHandler(View root) {
@@ -55,14 +56,14 @@ public class VisibilityHandler extends Handler {
     private Runnable fadeInRunnable = new Runnable() {
         @Override
         public void run() {
-            root.animate().alpha(1f);
+            root.animate().alpha(1f).setDuration(FADE_DURATION_MS);
         }
     };
 
     private Runnable fadeOutRunnable = new Runnable() {
         @Override
         public void run() {
-            root.animate().alpha(0f);
+            root.animate().alpha(0f).setDuration(FADE_DURATION_MS);
         }
     };
 }

@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:background="#9000"
+        android:background="#B34F575C"
         android:gravity="center_vertical">
         <ImageView
             android:layout_width="60dp"
