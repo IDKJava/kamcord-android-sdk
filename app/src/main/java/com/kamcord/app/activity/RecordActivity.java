@@ -69,13 +69,14 @@ public class RecordActivity extends AppCompatActivity implements
     public void initMainActivity() {
 
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-            tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
-            tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
-            tabTitles[2] = getResources().getString(R.string.kamcordHomeTab);
+            tabTitles = new String[3];
+            tabTitles[0] = getResources().getString(R.string.kamcordHomeTab);
+            tabTitles[1] = getResources().getString(R.string.kamcordRecordTab);
+            tabTitles[2] = getResources().getString(R.string.kamcordProfileTab);
         } else {
             tabTitles = new String[2];
-            tabTitles[0] = getResources().getString(R.string.kamcordProfileTab);
-            tabTitles[1] = getResources().getString(R.string.kamcordHomeTab);
+            tabTitles[0] = getResources().getString(R.string.kamcordHomeTab);
+            tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
         }
 
         numberOfTabs = tabTitles.length;

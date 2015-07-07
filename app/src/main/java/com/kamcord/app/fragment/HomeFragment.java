@@ -96,6 +96,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onRefresh() {
                 if (Connectivity.isConnected()) {
+                    videoFeedRefreshLayout.setRefreshing(true);
                     AppServerClient.AppServer client = AppServerClient.getInstance();
                     client.getDiscoverFeed(null, new SwipeToRefreshVideoFeedCallBack());
                 } else {
