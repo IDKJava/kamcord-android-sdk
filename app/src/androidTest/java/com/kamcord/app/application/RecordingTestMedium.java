@@ -123,7 +123,7 @@ public class RecordingTestMedium extends RecordAndPostTestBase {
      *     1) {@link TestBase#doLogin Log in.}<br>
      *     2) {@link RecordAndPostTestBase#recordGameVideo Record}
      *     a video.<br>
-     *     3){@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload} video<br>
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload} video<br>
      *     4) Expect the videos to appear on the profile.<br>
      *
      */
