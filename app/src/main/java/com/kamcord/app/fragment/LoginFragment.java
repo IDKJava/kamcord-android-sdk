@@ -68,10 +68,8 @@ public class LoginFragment extends Fragment {
     }
 
     @OnFocusChange({R.id.usernameEditText, R.id.passwordEditText})
-    void editTextOutsideTouch(boolean focused) {
-        if (!focused) {
-            KeyboardUtils.hideSoftKeyboard(new View(getActivity().getApplicationContext()), getActivity().getApplicationContext());
-        }
+    void editTextOutsideTouch(View v, boolean focused) {
+        KeyboardUtils.setSoftKeyboardVisibility(v, getActivity(), focused);
     }
 
     @OnClick(R.id.loginButton)

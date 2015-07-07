@@ -130,7 +130,7 @@ public class GameListTest extends RecordAndPostTestBase {
     /**
      * Checks if pull to refresh works on record tab.
      * <p>
-     *     <b>Test Sequence:</b><br> <br>
+     *     <b>Test Sequence:</b><br>
      *     1) {@link TestBase#doLogin Log in}<br>
      *     2) Go to the record tab.<br>
      *     3) Refresh games list. (pull to refresh)<br>

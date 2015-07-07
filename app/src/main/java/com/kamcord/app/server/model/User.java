@@ -20,4 +20,22 @@ public class User {
     public Integer views_received;
     public Integer likes_received;
     public Integer reshares_received;
+
+    public static class Builder {
+        private User user = new User();
+
+        public Builder fromAccount(Account account) {
+            user.id = account.id;
+            user.username = account.username;
+            user.profile_color = account.color;
+            return this;
+        }
+
+        public User build() {
+            if( user.id == null ) {
+                throw new IllegalArgumentException("User does not have an id.");
+            }
+            return user;
+        }
+    }
 }

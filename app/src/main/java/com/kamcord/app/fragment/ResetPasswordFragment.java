@@ -14,10 +14,12 @@ import com.kamcord.app.R;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.StatusCode;
+import com.kamcord.app.utils.KeyboardUtils;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -56,6 +58,13 @@ public class ResetPasswordFragment extends Fragment {
                 .setMessage(R.string.resetPasswordProblem)
                 .setNeutralButton(android.R.string.ok, null)
                 .show();
+    }
+
+    @OnFocusChange(R.id.emailEditText)
+    public void editTextFocusChange(View v, boolean hasFocus) {
+        if (isResumed()) {
+            KeyboardUtils.setSoftKeyboardVisibility(v, getActivity(), hasFocus);
+        }
     }
 
     @OnClick(R.id.resetPasswordButton)
