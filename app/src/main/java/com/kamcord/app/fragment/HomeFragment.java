@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.ProfileAdapter;
@@ -35,6 +36,8 @@ import retrofit.client.Response;
 
 public class HomeFragment extends Fragment {
 
+    @InjectView(R.id.homefeedPromptContainer)
+    ViewGroup homefeedPromptContainer;
     @InjectView(R.id.homefragment_refreshlayout)
     SwipeRefreshLayout discoverFeedRefreshLayout;
     @InjectView(R.id.home_recyclerview)
@@ -83,6 +86,7 @@ public class HomeFragment extends Fragment {
             AppServerClient.getInstance().getDiscoverFeed(null, new GetDiscoverFeedCallBack());
         } else {
             discoverFeedRefreshLayout.setEnabled(false);
+            homefeedPromptContainer.setVisibility(View.VISIBLE);
         }
 
         mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
@@ -100,6 +104,7 @@ public class HomeFragment extends Fragment {
                     AppServerClient.AppServer client = AppServerClient.getInstance();
                     client.getDiscoverFeed(null, new SwipeToRefreshDiscoverFeedCallBack());
                 } else {
+                    Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_SHORT).show();
                     discoverFeedRefreshLayout.setRefreshing(false);
                 }
             }
@@ -213,6 +218,7 @@ public class HomeFragment extends Fragment {
                     footerVisible = false;
                     mProfileAdapter.notifyDataSetChanged();
                     discoverFeedRefreshLayout.setRefreshing(false);
+                    homefeedPromptContainer.setVisibility(View.GONE);
                 }
             }
         }
