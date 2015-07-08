@@ -35,7 +35,7 @@ import com.kamcord.app.R;
 import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
 import com.kamcord.app.player.Player;
-import com.kamcord.app.server.model.User;
+import com.kamcord.app.server.model.Video;
 import com.kamcord.app.view.LiveMediaControls;
 import com.kamcord.app.view.MediaControls;
 import com.kamcord.app.view.StaticMediaControls;
@@ -54,13 +54,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         AudioCapabilitiesReceiver.Listener {
     private static final String TAG = VideoViewActivity.class.getSimpleName();
 
-    public static final String ARG_VIDEO_TYPE = "video_type";
-    public enum VideoType {
-        HLS,
-        MP4,
-    }
     public static final String ARG_IS_LIVE = "is_live";
-    public static final String ARG_VIDEO_OWNER = "video_owner";
+    public static final String ARG_VIDEO = "video";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
@@ -71,9 +66,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @InjectView(R.id.subtitles)
     SubtitleView subtitleView;
 
-    private Uri videoUri;
-    private VideoType videoType = VideoType.HLS;
-    private User videoOwner = null;
+    private Video video;
     private boolean isLive = true;
 
     private Player player;
@@ -93,15 +86,11 @@ public class VideoViewActivity extends AppCompatActivity implements
         ButterKnife.inject(this);
 
         Intent intent = getIntent();
-        videoUri = Uri.parse("http://content.kamcord.com/live/34080/index.m3u8");//intent.getData();
-        if( intent.hasExtra(ARG_VIDEO_TYPE) ) {
-            videoType = (VideoType) intent.getSerializableExtra(ARG_VIDEO_TYPE);
+        if( intent.hasExtra(ARG_VIDEO) ) {
+            video = new Gson().fromJson(intent.getStringExtra(ARG_VIDEO), Video.class);
         }
         if( intent.hasExtra(ARG_IS_LIVE) ) {
             isLive = intent.getBooleanExtra(ARG_IS_LIVE, false);
-        }
-        if( intent.hasExtra(ARG_VIDEO_OWNER) ) {
-            videoOwner = new Gson().fromJson(intent.getStringExtra(ARG_VIDEO_OWNER), User.class);
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -129,9 +118,9 @@ public class VideoViewActivity extends AppCompatActivity implements
             }
         });
         if( isLive ) {
-            mediaControls = new LiveMediaControls(this, videoOwner);
+            mediaControls = new LiveMediaControls(this, video);
         } else {
-            mediaControls = new StaticMediaControls(this, videoOwner);
+            mediaControls = new StaticMediaControls(this, video);
         }
         mediaControls.hide(false);
         mediaControls.setAnchorView(root);
@@ -141,7 +130,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
 
-        if( videoUri == null ) {
+        if( video == null || video.video_url == null ) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.errorPlayingVideo)
                     .setMessage(R.string.thereWasAnError)
@@ -203,16 +192,15 @@ public class VideoViewActivity extends AppCompatActivity implements
         Player.RendererBuilder rendererBuilder = null;
         String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
 
-        switch(videoType) {
-            case HLS:
+        if( video.video_url != null ) {
+            Uri videoUri = Uri.parse(isLive ? "http://content.kamcord.com/live/34080/index.m3u8" : video.video_url);
+            if (video.video_url.endsWith("m3u8")) {
                 rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, null,
                         audioCapabilities, qualityMultiplier);
-                break;
-
-            case MP4:
+            } else {
                 rendererBuilder = new ExtractorRendererBuilder(this, userAgent, videoUri,
                         null, new Mp4Extractor());
-                break;
+            }
         }
 
         return rendererBuilder;

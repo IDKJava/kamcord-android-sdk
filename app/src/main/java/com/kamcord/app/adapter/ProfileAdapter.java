@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -185,10 +184,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 video.views = video.views + 1;
                 videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
-                intent.setData(Uri.parse(video.video_url));
-                intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
-                        VideoViewActivity.VideoType.HLS);
-                intent.putExtra(VideoViewActivity.ARG_VIDEO_OWNER, new Gson().toJson(video.user));
+                intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
                 mContext.startActivity(intent);
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }
@@ -235,7 +231,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.action_external_share:
-                                doExternalShare(video);
+                                VideoUtils.doExternalShare(mContext, video);
                                 break;
 
                             case R.id.action_delete:
@@ -361,38 +357,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public ProfileItem getItem(int position) {
         return mProfileList.get(position);
-    }
-
-    private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
-
-    private void doExternalShare(Video video) {
-        if (mContext instanceof Activity && video.video_id != null) {
-            Activity activity = (Activity) mContext;
-            String watchPageLink = "www.kamcord.com/v/" + video.video_id;
-
-
-            String externalShareText = null;
-            if (video.title != null) {
-                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                        video.title, watchPageLink);
-                int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
-                if (diff > 0) {
-                    String truncatedTitle = StringUtils.ellipsize(video.title, video.title.length() - diff);
-                    externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                            truncatedTitle, video.video_site_watch_page);
-                }
-            } else {
-                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextNoTitle),
-                        watchPageLink);
-            }
-            externalShareText = StringUtils.ellipsize(externalShareText, MAX_EXTERNAL_SHARE_TEXT_LENGTH);
-
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, externalShareText);
-            shareIntent.setType("text/plain");
-            activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.shareTo)));
-        }
     }
 
     private void showDeleteVideoDialog(final Video video) {

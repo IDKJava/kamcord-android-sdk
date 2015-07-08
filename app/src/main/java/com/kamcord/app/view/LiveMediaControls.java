@@ -16,10 +16,13 @@ import android.widget.TextView;
 
 import com.kamcord.app.R;
 import com.kamcord.app.server.model.User;
+import com.kamcord.app.server.model.Video;
+import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.view.utils.VisibilityHandler;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
@@ -29,7 +32,7 @@ public class LiveMediaControls implements MediaControls {
     private RelativeLayout root;
     private VisibilityHandler visibilityHandler;
 
-    private User owner;
+    private Video video;
 
     @InjectView(R.id.owner_container)
     ViewGroup ownerContainer;
@@ -44,10 +47,10 @@ public class LiveMediaControls implements MediaControls {
     @InjectView(R.id.follow_button)
     Button followButton;
 
-    public LiveMediaControls(Context context, User owner) {
+    public LiveMediaControls(Context context, Video video) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
         visibilityHandler = new VisibilityHandler(root);
-        this.owner = owner;
+        this.video = video;
 
     }
 
@@ -58,7 +61,9 @@ public class LiveMediaControls implements MediaControls {
 
             ButterKnife.inject(this, root);
 
-            if( owner != null ) {
+            if( video != null && video.user != null ) {
+                User owner = video.user;
+
                 avatarImageView.setVisibility(View.GONE); // TODO: unhide this when we start receiving avatars from server
 
                 usernameTextView.setText(owner.username);
@@ -80,6 +85,12 @@ public class LiveMediaControls implements MediaControls {
         }
     }
 
+    @OnClick(R.id.share_button)
+    public void doExternalShare() {
+        VideoUtils.doExternalShare(root.getContext(), video);
+    }
+
+
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         return root.dispatchKeyEvent(event);
@@ -96,6 +107,7 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void show(int timeout, boolean fade) {
+        User owner = video != null ? video.user : null;
         visibilityHandler.show(owner == null || owner.is_user_following ? timeout : 0, fade);
     }
 

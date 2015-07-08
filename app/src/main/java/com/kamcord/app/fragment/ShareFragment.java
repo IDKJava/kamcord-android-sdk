@@ -31,6 +31,7 @@ import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.server.model.Video;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
@@ -328,8 +329,8 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
         Uri uri = Uri.parse(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession)
                 , FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
-        intent.setData(uri);
-        intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE, VideoViewActivity.VideoType.MP4);
+        Video video = new Video.Builder().fromRecordingSession(recordingSession).build();
+        intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
         intent.putExtra(VideoViewActivity.ARG_IS_LIVE, false);
         startActivity(intent);
 
