@@ -120,6 +120,9 @@ spoon{
     if (project.hasProperty('spoonClassName')) {
         className = project.spoonClassName
     }
+    if (project.hasProperty('spoonMethodName')) {
+        methodName = project.spoonMethodName
+    }
     if(project.hasProperty('targetDeviceId')) {
         devices = [project.targetDeviceId]
     }
