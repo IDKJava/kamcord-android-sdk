@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -42,7 +43,9 @@ public class LiveMediaControls implements MediaControls {
     private Video video;
     private boolean isLive = false;
     private MediaController.MediaPlayerControl playerControl;
+
     private boolean isScrubberTracking = false;
+    private boolean isAnchored = false;
 
     @InjectView(R.id.live_indicator_textview)
     TextView liveIndicatorTextView;
@@ -73,9 +76,12 @@ public class LiveMediaControls implements MediaControls {
     ViewGroup playButtonContainer;
     @InjectView(R.id.play_button)
     ImageButton playButton;
+    @InjectView(R.id.buffering_progressbar)
+    ProgressBar bufferingProgressBar;
 
     public LiveMediaControls(Context context, Video video, boolean isLive) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
+        ButterKnife.inject(this, root);
         this.video = video;
         this.isLive = isLive;
     }
@@ -85,7 +91,6 @@ public class LiveMediaControls implements MediaControls {
         if (anchorView instanceof ViewGroup) {
             ((ViewGroup) anchorView).addView(root);
 
-            ButterKnife.inject(this, root);
             if (Build.VERSION.SDK_INT >= 21) {
                 scrubberSeekBar.setSplitTrack(false);
             }
@@ -283,9 +288,16 @@ public class LiveMediaControls implements MediaControls {
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         if( playbackState == Player.STATE_READY ) {
             playButton.setVisibility(View.VISIBLE);
+            bufferingProgressBar.setVisibility(View.GONE);
+
             playButton.setImageResource(playWhenReady ? R.drawable.pause_white : R.drawable.play_white);
+        } else if( playbackState == Player.STATE_BUFFERING
+                || playbackState == Player.STATE_PREPARING ) {
+            playButton.setVisibility(View.GONE);
+            bufferingProgressBar.setVisibility(View.VISIBLE);
         } else {
             playButton.setVisibility(View.GONE);
+            bufferingProgressBar.setVisibility(View.GONE);
         }
     }
 

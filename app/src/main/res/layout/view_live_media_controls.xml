@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
@@ -10,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_above="@+id/bottom_chrome_container"
-        android:background="#9000">
+        android:background="#3000">
         <ImageButton
             android:id="@+id/play_button"
             android:layout_width="wrap_content"
@@ -20,6 +21,15 @@
             android:minHeight="48dp"
             android:scaleType="centerInside"
             android:background="@null"/>
+        <ProgressBar
+            android:id="@+id/buffering_progressbar"
+            android:layout_width="@dimen/actionbutton_width"
+            android:layout_height="@dimen/actionbutton_width"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateDuration="1000"
+            android:progress="100"
+            android:visibility="gone"/>
     </FrameLayout>
 
     <include
