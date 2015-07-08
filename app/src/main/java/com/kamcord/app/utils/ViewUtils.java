@@ -70,10 +70,4 @@ public class ViewUtils {
 
         }
     }
-
-    public static void setViewPadding(View view, int pixel) {
-        if (Build.VERSION.SDK_INT < 17) {
-            view.setPadding(pixel, 0, pixel, 0);
-        }
-    }
 }

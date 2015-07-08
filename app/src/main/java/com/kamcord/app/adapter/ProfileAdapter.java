@@ -172,7 +172,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         viewHolder.getProfileItemTitle().setText(video.title);
         final TextView videoViewsButton = viewHolder.getVideoViews();
-        ViewUtils.setViewPadding(videoViewsButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
         videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
         final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
         if (video.thumbnails != null && video.thumbnails.regular != null) {
@@ -200,7 +199,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
-        ViewUtils.setViewPadding(videoLikesButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
         if (video.is_user_liking) {

@@ -84,6 +84,8 @@
                     style="@style/KamcordVideoCardCountButton"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:drawableLeft="@drawable/likes_icon_selector"
                     android:drawableStart="@drawable/likes_icon_selector"
                     android:text="@string/defaultNumber" />
@@ -112,6 +114,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:drawableLeft="@drawable/views_gray"
                 android:drawableStart="@drawable/views_gray"
                 android:enabled="false"
