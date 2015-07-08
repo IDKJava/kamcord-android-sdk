@@ -4,6 +4,24 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
+    <FrameLayout
+        android:id="@+id/play_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/bottom_chrome_container"
+        android:background="#9000">
+        <ImageButton
+            android:id="@+id/play_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:scaleType="centerInside"
+            android:background="@null"/>
+    </FrameLayout>
+
     <include
         android:id="@+id/live_indicator_textview"
         layout="@layout/live_indicator"
@@ -26,6 +44,7 @@
         android:src="@drawable/ic_share_white" />
 
     <LinearLayout
+        android:id="@+id/bottom_chrome_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -208,6 +208,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         if (player == null) {
             player = new Player(getRendererBuilder());
             player.addListener(this);
+            player.addListener(mediaControls);
             player.setTextListener(this);
             player.setMetadataListener(this);
             player.seekTo(playerPosition);

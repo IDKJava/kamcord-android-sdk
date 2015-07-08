@@ -4,10 +4,12 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.MediaController;
 
+import com.kamcord.app.player.Player;
+
 /**
  * Created by pplunkett on 7/6/15.
  */
-public interface MediaControls {
+public interface MediaControls extends Player.Listener {
     void setAnchorView(View anchorView);
     boolean dispatchKeyEvent(KeyEvent event);
     void setMediaPlayer(MediaController.MediaPlayerControl control);

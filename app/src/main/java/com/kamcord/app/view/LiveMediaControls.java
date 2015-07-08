@@ -17,6 +17,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.player.Player;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
@@ -68,6 +69,11 @@ public class LiveMediaControls implements MediaControls {
     @InjectView(R.id.total_time_textview)
     TextView totalTimeTextView;
 
+    @InjectView(R.id.play_button_container)
+    ViewGroup playButtonContainer;
+    @InjectView(R.id.play_button)
+    ImageButton playButton;
+
     public LiveMediaControls(Context context, Video video, boolean isLive) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
         this.video = video;
@@ -111,10 +117,12 @@ public class LiveMediaControls implements MediaControls {
 
             if (isLive) {
                 scrubberContainer.setVisibility(View.GONE);
+                playButtonContainer.setVisibility(View.GONE);
             } else {
                 liveIndicatorTextView.setVisibility(View.GONE);
+
                 scrubberSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                    private boolean wasPaused = false;
+                    private boolean wasPlaying = false;
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
@@ -124,8 +132,8 @@ public class LiveMediaControls implements MediaControls {
                     public void onStartTrackingTouch(SeekBar seekBar) {
                         isScrubberTracking = true;
                         if( playerControl != null ) {
+                            wasPlaying = playerControl.isPlaying();
                             if( playerControl.canPause() ) {
-                                wasPaused = true;
                                 playerControl.pause();
                             }
                         }
@@ -138,9 +146,8 @@ public class LiveMediaControls implements MediaControls {
                             float percent = (float) scrubberSeekBar.getProgress() / (float) scrubberSeekBar.getMax();
                             int position = (int) ((float) playerControl.getDuration() * percent);
                             playerControl.seekTo(position);
-                            if( wasPaused ) {
+                            if( wasPlaying) {
                                 playerControl.start();
-                                wasPaused = false;
                             }
                         }
                     }
@@ -158,6 +165,16 @@ public class LiveMediaControls implements MediaControls {
         VideoUtils.doExternalShare(root.getContext(), video);
     }
 
+    @OnClick(R.id.play_button)
+    public void onPlayButtonClick() {
+        if( playerControl != null ) {
+            if( playerControl.isPlaying() && playerControl.canPause() ) {
+                playerControl.pause();
+            } else {
+                playerControl.start();
+            }
+        }
+    }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -260,4 +277,23 @@ public class LiveMediaControls implements MediaControls {
             }
         }
     };
+
+    // Player.Listener methods.
+    @Override
+    public void onStateChanged(boolean playWhenReady, int playbackState) {
+        if( playbackState == Player.STATE_READY ) {
+            playButton.setVisibility(View.VISIBLE);
+            playButton.setImageResource(playWhenReady ? R.drawable.pause_white : R.drawable.play_white);
+        } else {
+            playButton.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void onError(Exception e) {
+    }
+
+    @Override
+    public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
+    }
 }
