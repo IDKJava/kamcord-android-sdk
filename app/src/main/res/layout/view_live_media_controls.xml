@@ -5,6 +5,7 @@
     android:background="@android:color/transparent">
 
     <include
+        android:id="@+id/live_indicator_textview"
         layout="@layout/live_indicator"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
@@ -98,8 +99,9 @@
                 android:id="@+id/current_time_textview"
                 android:layout_width="50sp"
                 android:layout_height="40dp"
+                android:gravity="center"
                 android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <SeekBar
                 android:id="@+id/scrubber_seekbar"
@@ -107,20 +109,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
+                android:max="1000"
                 android:maxHeight="6dp"
                 android:minHeight="6dp"
-                android:progressDrawable="@drawable/scrubber_progress"
+                android:paddingBottom="14dp"
+                android:paddingTop="14dp"
                 android:progress="20"
-                android:thumb="@drawable/solid_white_circle_12dp"/>
+                android:progressDrawable="@drawable/scrubber_progress"
+                android:thumb="@drawable/solid_white_circle_12dp" />
 
             <TextView
                 android:id="@+id/total_time_textview"
                 android:layout_width="50sp"
                 android:layout_height="40dp"
+                android:gravity="center"
                 android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
         </LinearLayout>
     </LinearLayout>

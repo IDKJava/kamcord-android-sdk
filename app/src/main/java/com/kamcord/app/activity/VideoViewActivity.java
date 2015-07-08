@@ -38,7 +38,6 @@ import com.kamcord.app.player.Player;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.view.LiveMediaControls;
 import com.kamcord.app.view.MediaControls;
-import com.kamcord.app.view.StaticMediaControls;
 
 import java.util.Map;
 
@@ -67,7 +66,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     SubtitleView subtitleView;
 
     private Video video;
-    private boolean isLive = true;
+    private boolean isLive = false;
 
     private Player player;
     private boolean playerNeedsPrepare;
@@ -91,6 +90,9 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if( intent.hasExtra(ARG_IS_LIVE) ) {
             isLive = intent.getBooleanExtra(ARG_IS_LIVE, false);
+        }
+        if( "sYCwcoHjfX6".equals(video.video_id) ) {
+            isLive = true;
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -117,11 +119,7 @@ public class VideoViewActivity extends AppCompatActivity implements
                 return false;
             }
         });
-        if( isLive ) {
-            mediaControls = new LiveMediaControls(this, video);
-        } else {
-            mediaControls = new StaticMediaControls(this, video);
-        }
+        mediaControls = new LiveMediaControls(this, video, isLive);
         mediaControls.hide(false);
         mediaControls.setAnchorView(root);
     }

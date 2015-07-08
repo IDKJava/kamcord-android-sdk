@@ -17,10 +17,13 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.kamcord.app.R;
+import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.VideoUtils;
-import com.kamcord.app.view.utils.VisibilityHandler;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -31,15 +34,22 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
  * Created by pplunkett on 7/6/15.
  */
 public class LiveMediaControls implements MediaControls {
+    private static final int FADE_DURATION_MS = 150;
+
     private RelativeLayout root;
-    private VisibilityHandler visibilityHandler;
 
     private Video video;
+    private boolean isLive = false;
+    private MediaController.MediaPlayerControl playerControl;
+    private boolean isScrubberTracking = false;
+
+    @InjectView(R.id.live_indicator_textview)
+    TextView liveIndicatorTextView;
+    @InjectView(R.id.share_button)
+    ImageButton shareButton;
 
     @InjectView(R.id.owner_container)
     ViewGroup ownerContainer;
-    @InjectView(R.id.share_button)
-    ImageButton shareButton;
     @InjectView(R.id.profile_letter_textview)
     TextView profileLetterTextView;
     @InjectView(R.id.avatar_imageview)
@@ -48,27 +58,36 @@ public class LiveMediaControls implements MediaControls {
     TextView usernameTextView;
     @InjectView(R.id.follow_button)
     Button followButton;
+
+    @InjectView(R.id.scrubber_container)
+    ViewGroup scrubberContainer;
     @InjectView(R.id.scrubber_seekbar)
     SeekBar scrubberSeekBar;
+    @InjectView(R.id.current_time_textview)
+    TextView currentTimeTextView;
+    @InjectView(R.id.total_time_textview)
+    TextView totalTimeTextView;
 
-    public LiveMediaControls(Context context, Video video) {
+    public LiveMediaControls(Context context, Video video, boolean isLive) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
-        visibilityHandler = new VisibilityHandler(root);
         this.video = video;
-
+        this.isLive = isLive;
     }
 
     @Override
     public void setAnchorView(View anchorView) {
-        if( anchorView instanceof ViewGroup ) {
+        if (anchorView instanceof ViewGroup) {
             ((ViewGroup) anchorView).addView(root);
 
             ButterKnife.inject(this, root);
-            if(Build.VERSION.SDK_INT >= 21 ) {
+            if (Build.VERSION.SDK_INT >= 21) {
                 scrubberSeekBar.setSplitTrack(false);
             }
 
-            if( video != null && video.user != null ) {
+            // We only display the user information if there is a user, and that user is not us.
+            Account myAccount = AccountManager.getStoredAccount();
+            if (video != null && video.user != null
+                    && !(myAccount != null && video.user.id.equals(myAccount.id))) {
                 User owner = video.user;
 
                 avatarImageView.setVisibility(View.GONE); // TODO: unhide this when we start receiving avatars from server
@@ -89,6 +108,48 @@ public class LiveMediaControls implements MediaControls {
             } else {
                 ownerContainer.setVisibility(View.GONE);
             }
+
+            if (isLive) {
+                scrubberContainer.setVisibility(View.GONE);
+            } else {
+                liveIndicatorTextView.setVisibility(View.GONE);
+                scrubberSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    private boolean wasPaused = false;
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                        isScrubberTracking = true;
+                        if( playerControl != null ) {
+                            if( playerControl.canPause() ) {
+                                wasPaused = true;
+                                playerControl.pause();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        isScrubberTracking = false;
+                        if( playerControl != null ) {
+                            float percent = (float) scrubberSeekBar.getProgress() / (float) scrubberSeekBar.getMax();
+                            int position = (int) ((float) playerControl.getDuration() * percent);
+                            playerControl.seekTo(position);
+                            if( wasPaused ) {
+                                playerControl.start();
+                                wasPaused = false;
+                            }
+                        }
+                    }
+                });
+            }
+
+            if( video == null || video.video_site_watch_page == null ) {
+                shareButton.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -104,7 +165,8 @@ public class LiveMediaControls implements MediaControls {
     }
 
     @Override
-    public void setMediaPlayer(MediaController.MediaPlayerControl player) {
+    public void setMediaPlayer(MediaController.MediaPlayerControl playerControl) {
+        this.playerControl = playerControl;
     }
 
     @Override
@@ -113,18 +175,89 @@ public class LiveMediaControls implements MediaControls {
     }
 
     @Override
-    public void show(int timeout, boolean fade) {
-        User owner = video != null ? video.user : null;
-        visibilityHandler.show(owner == null || owner.is_user_following ? timeout : 0, fade);
+    public void show(int timeoutMs, boolean fade) {
+        removeAllVisibilityCallbacks();
+        root.post(fade ? fadeInRunnable : showRunnable);
+        if (timeoutMs > 0) {
+            root.postDelayed(fade ? fadeOutRunnable : hideRunnable, timeoutMs);
+        }
+
+        removeAllScrubberCallbacks();
+        root.post(updateScrubberRunnable);
     }
 
     @Override
     public void hide(boolean fade) {
-        visibilityHandler.hide(fade );
+        removeAllVisibilityCallbacks();
+        removeAllScrubberCallbacks();
+        root.post(fade ? fadeOutRunnable : hideRunnable);
     }
 
     @Override
     public boolean isShowing() {
         return root.getAlpha() > 0f;
     }
+
+    private void removeAllVisibilityCallbacks() {
+        root.removeCallbacks(hideRunnable);
+        root.removeCallbacks(showRunnable);
+        root.removeCallbacks(fadeOutRunnable);
+        root.removeCallbacks(fadeInRunnable);
+    }
+
+    private void removeAllScrubberCallbacks() {
+        root.removeCallbacks(updateScrubberRunnable);
+    }
+
+    private Runnable hideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            root.animate().cancel();
+            root.setAlpha(0f);
+        }
+    };
+
+    private Runnable showRunnable = new Runnable() {
+        @Override
+        public void run() {
+            root.animate().cancel();
+            root.setAlpha(1f);
+        }
+    };
+
+    private Runnable fadeInRunnable = new Runnable() {
+        @Override
+        public void run() {
+            root.animate().alpha(1f).setDuration(FADE_DURATION_MS);
+        }
+    };
+
+    private Runnable fadeOutRunnable = new Runnable() {
+        @Override
+        public void run() {
+            root.animate().alpha(0f).setDuration(FADE_DURATION_MS);
+        }
+    };
+
+    private Runnable updateScrubberRunnable = new Runnable() {
+        private static final int UPDATE_FREQUENCY_MS = 200;
+        @Override
+        public void run() {
+            if( playerControl != null ) {
+                if( !isScrubberTracking ) {
+                    int durationMs = playerControl.getDuration();
+                    int currentPositionMs = playerControl.getCurrentPosition();
+
+                    totalTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, durationMs));
+                    currentTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, currentPositionMs));
+
+                    int progress = (int) ((float) scrubberSeekBar.getMax() * ((float) currentPositionMs / (float) durationMs));
+                    scrubberSeekBar.setProgress(progress);
+                }
+
+                removeAllScrubberCallbacks();
+                root.postDelayed(updateScrubberRunnable, UPDATE_FREQUENCY_MS);
+            }
+        }
+    };
 }
