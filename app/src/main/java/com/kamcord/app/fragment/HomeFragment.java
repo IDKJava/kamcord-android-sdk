@@ -121,11 +121,9 @@ public class HomeFragment extends Fragment {
                 if (homeRecyclerView.getChildAt(0) != null) {
                     int tabsHeight = getResources().getDimensionPixelSize(R.dimen.tabsHeight);
                     int cardMargin = getResources().getDimensionPixelSize(R.dimen.cardview_lightermargin);
-                    Log.d("onScrolled", "you kidding me?");
                     discoverFeedRefreshLayout.setEnabled(homeRecyclerView.getChildAdapterPosition(homeRecyclerView.getChildAt(0)) == 0
                             && homeRecyclerView.getChildAt(0).getTop() == tabsHeight + cardMargin);
                 } else {
-                    Log.d("onScrolled", "do it sucker");
                     discoverFeedRefreshLayout.setEnabled(true);
                 }
 
