@@ -3,7 +3,7 @@ package com.kamcord.app.view;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,9 +64,9 @@ public class LiveMediaControls implements MediaControls {
             ((ViewGroup) anchorView).addView(root);
 
             ButterKnife.inject(this, root);
-            Drawable thumb = root.getResources().getDrawable(R.drawable.solid_white_circle_12dp);
-            thumb.setColorFilter(android.R.color.white, PorterDuff.Mode.SRC_IN);
-            scrubberSeekBar.setThumb(thumb);
+            if(Build.VERSION.SDK_INT >= 21 ) {
+                scrubberSeekBar.setSplitTrack(false);
+            }
 
             if( video != null && video.user != null ) {
                 User owner = video.user;

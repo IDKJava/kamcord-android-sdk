@@ -104,7 +104,7 @@
             <SeekBar
                 android:id="@+id/scrubber_seekbar"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:paddingTop="14dp"
@@ -113,7 +113,7 @@
                 android:minHeight="6dp"
                 android:progressDrawable="@drawable/scrubber_progress"
                 android:progress="20"
-                android:thumb="@null"/>
+                android:thumb="@drawable/solid_white_circle_12dp"/>
 
             <TextView
                 android:id="@+id/total_time_textview"
