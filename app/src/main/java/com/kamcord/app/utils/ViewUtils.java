@@ -71,9 +71,9 @@ public class ViewUtils {
         }
     }
 
-    public static void setButtonPadding(Button button, int pixel) {
+    public static void setViewPadding(View view, int pixel) {
         if (Build.VERSION.SDK_INT < 17) {
-            button.setPadding(pixel, 0, pixel, 0);
+            view.setPadding(pixel, 0, pixel, 0);
         }
     }
 }

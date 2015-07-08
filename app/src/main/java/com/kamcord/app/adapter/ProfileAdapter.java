@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -49,7 +50,6 @@ import java.util.Locale;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import retrofit.http.HEAD;
 
 /**
  * Created by donliang1 on 5/28/15.
@@ -171,8 +171,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video) {
 
         viewHolder.getProfileItemTitle().setText(video.title);
-        final Button videoViewsButton = viewHolder.getVideoViews();
-        ViewUtils.setButtonPadding(videoViewsButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
+        final TextView videoViewsButton = viewHolder.getVideoViews();
+        ViewUtils.setViewPadding(videoViewsButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
         videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
         final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
         if (video.thumbnails != null && video.thumbnails.regular != null) {
@@ -200,7 +200,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
-        ViewUtils.setButtonPadding(videoLikesButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
+        ViewUtils.setViewPadding(videoLikesButton, (int) mContext.getResources().getDimension(R.dimen.buttonPadding));
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
         if (video.is_user_liking) {

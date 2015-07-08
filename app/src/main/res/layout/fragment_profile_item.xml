@@ -105,7 +105,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
-            <Button
+            <TextView
                 android:id="@+id/video_views"
                 style="@style/KamcordVideoCardCountButton"
                 android:layout_width="wrap_content"
