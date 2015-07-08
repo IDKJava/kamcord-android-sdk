@@ -5,6 +5,7 @@ REPORT_FOLDER="/Library/WebServer/Documents/reports/"$BUILD_TAG
 SPOON_FOLDER="app/build/spoon/debug"
 DOXYGEN_FOLDER="app/build/testDocs/html"
 ADB_BIN=$ANDROID_SDK"/platform-tools/adb"
+GRADLE_EXCLUDE="-x processDefaultConfigDebugAndroidTestManifest -x processDefaultConfigDebugAndroidTestResources -x packageDefaultConfigDebugAndroidTest -x spoonDefaultConfigDebugAndroidTest"
 
 function testPrepDevice(){
     echo "Install com.kamcord.ripples"
@@ -74,45 +75,45 @@ mkdir -p $REPORT_FOLDER
 cleanDevice
 testPrepDevice
 #Run ProfileTest
-gradle -PspoonClassName=com.kamcord.app.application.ProfileTest -PtargetDeviceId="$DEVICE_ID" spoon
+gradle -PspoonClassName=com.kamcord.app.application.ProfileTest -PtargetDeviceId="$DEVICE_ID" $GRADLE_EXCLUDE spoon
 FAILED=$?
 cp -R $SPOON_FOLDER $REPORT_FOLDER/ProfileTest
-gradle -PspoonClassName=com.kamcord.app.application.GameListTest -PtargetDeviceId="$DEVICE_ID" spoon
+gradle -PspoonClassName=com.kamcord.app.application.GameListTest -PtargetDeviceId="$DEVICE_ID" $GRADLE_EXCLUDE spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/GameListTest
 #Run LoginLogoutTest
 cleanTestApps
-gradle -PspoonClassName=com.kamcord.app.application.LoginLogoutTest -PtargetDeviceId="$DEVICE_ID" spoon
+gradle -PspoonClassName=com.kamcord.app.application.LoginLogoutTest -PtargetDeviceId="$DEVICE_ID" $GRADLE_EXCLUDE spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/LoginLogoutTest
 #Run MemoryTest
 cleanTestApps
-gradle -PspoonClassName=com.kamcord.app.application.MemoryTest -PtargetDeviceId="$DEVICE_ID" spoon
+gradle -PspoonClassName=com.kamcord.app.application.MemoryTest -PtargetDeviceId="$DEVICE_ID" $GRADLE_EXCLUDE spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/MemoryTest
 #Run RecordingTestShort
 cleanTestApps
-gradle -PspoonClassName=com.kamcord.app.application.RecordingTestShort -PtargetDeviceId="$DEVICE_ID" spoon
+gradle -PspoonClassName=com.kamcord.app.application.RecordingTestShort -PtargetDeviceId="$DEVICE_ID" $GRADLE_EXCLUDE spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/RecordingTestShort
 #Run RecordingTestMedium
 cleanTestApps
-gradle -PspoonClassName=com.kamcord.app.application.RecordingTestMedium -PtargetDeviceId="$DEVICE_ID" spoon
+gradle -PspoonClassName=com.kamcord.app.application.RecordingTestMedium -PtargetDeviceId="$DEVICE_ID" $GRADLE_EXCLUDE spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
 cp -R $SPOON_FOLDER $REPORT_FOLDER/RecordingTestMedium
 #Run RecordingTestLong
 cleanTestApps
-gradle -PspoonClassName=com.kamcord.app.application.RecordingTestLong -PtargetDeviceId="$DEVICE_ID" spoon
+gradle -PspoonClassName=com.kamcord.app.application.RecordingTestLong -PtargetDeviceId="$DEVICE_ID" $GRADLE_EXCLUDE spoon
 if [ $? -ne 0 ]; then
     FAILED=1
 fi
