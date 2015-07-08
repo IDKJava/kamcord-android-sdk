@@ -100,6 +100,11 @@ dependencies {
     compile 'io.reactivex:rxandroid:0.24.0'
     // Using this for YouTube auth stuff.
     compile 'com.google.android.gms:play-services-base:7.3.0'
+
+    // Exoplayer
+    // TODO: revert to this when ExoPlayer releases a stable version with MpegAudioReader
+    // TODO: compile 'com.google.android.exoplayer:exoplayer:r1.3.3'
+
     // Testing-only dependencies
     androidTestCompile 'com.android.support.test:runner:0.2'
     // UiAutomator Testing

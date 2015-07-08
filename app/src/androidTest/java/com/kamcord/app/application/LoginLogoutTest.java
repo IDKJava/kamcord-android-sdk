@@ -28,6 +28,21 @@ public class LoginLogoutTest extends TestBase {
 
     @Test
     /**
+     * Tests log in to the app, check if keyboard hides automatically.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link TestBase#doLogin  Log in}<br>
+     *     2) Expect to be taken to the recording tab.<br>
+     * </p>
+     */
+    public void testLoginAutoHideKeyboard() {
+        assertFalse("Already logged in!", isLoggedIn());
+        doLogin(true);
+        assertTrue("Login failed!", isLoggedIn());
+    }
+
+    @Test
+    /**
      * Tests log out from the app.
      * <p>
      *     <b>Test Sequence:</b><br>
