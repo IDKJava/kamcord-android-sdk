@@ -79,6 +79,9 @@ public class LiveMediaControls implements MediaControls {
     @InjectView(R.id.buffering_progressbar)
     ProgressBar bufferingProgressBar;
 
+    @InjectView(R.id.error_container)
+    ViewGroup errorContainer;
+
     public LiveMediaControls(Context context, Video video, boolean isLive) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
         ButterKnife.inject(this, root);
@@ -303,6 +306,9 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void onError(Exception e) {
+        if( isLive ) {
+            errorContainer.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

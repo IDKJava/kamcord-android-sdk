@@ -91,9 +91,6 @@ public class VideoViewActivity extends AppCompatActivity implements
         if( intent.hasExtra(ARG_IS_LIVE) ) {
             isLive = intent.getBooleanExtra(ARG_IS_LIVE, false);
         }
-        if( "sYCwcoHjfX6".equals(video.video_id) ) {
-            isLive = true;
-        }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
         surfaceView.getHolder().addCallback(this);
@@ -191,7 +188,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
 
         if( video.video_url != null ) {
-            Uri videoUri = Uri.parse(isLive ? "http://content.kamcord.com/live/34080/index.m3u8" : video.video_url);
+            Uri videoUri = Uri.parse(video.video_url);
             if (video.video_url.endsWith("m3u8")) {
                 rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, null,
                         audioCapabilities, qualityMultiplier);
