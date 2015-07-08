@@ -44,7 +44,7 @@ public class HomeFragment extends Fragment {
     DynamicRecyclerView homeRecyclerView;
 
     private static final String TAG = HomeFragment.class.getSimpleName();
-    private List<FeedItem> mProfileList = new ArrayList<>();
+    private List<FeedItem> mStreamList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
     private String nextPage;
     private int totalItems = 0;
@@ -83,13 +83,14 @@ public class HomeFragment extends Fragment {
     public void initKamcordHomeFragment() {
 
         if (Connectivity.isConnected()) {
+            discoverFeedRefreshLayout.setEnabled(true);
             AppServerClient.getInstance().getDiscoverFeed(null, new GetDiscoverFeedCallBack());
         } else {
             discoverFeedRefreshLayout.setEnabled(false);
             homefeedPromptContainer.setVisibility(View.VISIBLE);
         }
 
-        mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
+        mProfileAdapter = new ProfileAdapter(getActivity(), mStreamList);
         homeRecyclerView.setAdapter(mProfileAdapter);
         homeRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(homeRecyclerView));
         homeRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
@@ -127,9 +128,9 @@ public class HomeFragment extends Fragment {
                     discoverFeedRefreshLayout.setEnabled(true);
                 }
 
-                if ((mProfileList.size() - 1) < totalItems
+                if ((mStreamList.size() - 1) < totalItems
                         && nextPage != null
-                        && ((GridLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition() == (mProfileList.size() - 1)
+                        && ((GridLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition() == (mStreamList.size() - 1)
                         && !footerVisible) {
                     loadMoreItems();
                 }
@@ -139,7 +140,7 @@ public class HomeFragment extends Fragment {
 
     public void loadMoreItems() {
         footerVisible = true;
-        mProfileList.add(new FeedItem<>(FeedItem.Type.FOOTER, null));
+        mStreamList.add(new FeedItem<>(FeedItem.Type.FOOTER, null));
         mProfileAdapter.notifyItemInserted(mProfileAdapter.getItemCount());
         AppServerClient.getInstance().getDiscoverFeed(nextPage, new GetDiscoverFeedCallBack());
     }
@@ -159,7 +160,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 if (streamGroup != null) {
-                    Iterator<FeedItem> iterator = mProfileList.iterator();
+                    Iterator<FeedItem> iterator = mStreamList.iterator();
                     while (iterator.hasNext()) {
                         if (iterator.next().getType() == FeedItem.Type.STREAM) {
                             iterator.remove();
@@ -169,7 +170,7 @@ public class HomeFragment extends Fragment {
                     for (Card card : streamGroup.card_models) {
                         if (card.stream != null) {
                             FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
-                            mProfileList.add(profileViewModel);
+                            mStreamList.add(profileViewModel);
                         }
                     }
                     footerVisible = false;
@@ -204,13 +205,13 @@ public class HomeFragment extends Fragment {
                 }
                 if (streamGroup != null) {
                     nextPage = streamGroup.next_page;
-                    if (mProfileList.size() > 0 && (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
-                        mProfileList.remove(mProfileAdapter.getItemCount() - 1);
+                    if (mStreamList.size() > 0 && (mStreamList.get(mProfileAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
+                        mStreamList.remove(mProfileAdapter.getItemCount() - 1);
                     }
                     for (Card card : streamGroup.card_models) {
                         if (card.stream != null) {
                             FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
-                            mProfileList.add(profileViewModel);
+                            mStreamList.add(profileViewModel);
                         }
                     }
                     footerVisible = false;
