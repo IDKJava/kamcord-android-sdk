@@ -180,6 +180,7 @@ public abstract class TestBase {
         if(autoHideKeyBoardTest) {
             //hide the soft keyboard.
             mDevice.click(250, 250);
+            sleep(UI_INTERACTION_DELAY_MS);
         } else {
             //click away expect keyboard gone.
             mDevice.pressBack();
