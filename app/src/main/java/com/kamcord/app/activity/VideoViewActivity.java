@@ -240,7 +240,6 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
-        Log.v("FindMe", "onStateChanged(" + playWhenReady + ", " + playbackState + ")");
         if (playbackState == Player.STATE_READY) {
             mediaControls.show(playWhenReady ? 3000 : 0, true);
         }
@@ -248,7 +247,6 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onError(Exception e) {
-        Log.v("FindMe", "onError(" + e + ")");
         playerNeedsPrepare = true;
         showControls();
     }
