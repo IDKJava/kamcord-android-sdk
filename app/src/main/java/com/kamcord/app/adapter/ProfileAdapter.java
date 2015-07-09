@@ -269,7 +269,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
         if (stream.thumbnails != null && stream.thumbnails.medium != null) {
             Picasso.with(mContext)
-                    .load(stream.thumbnails.medium.unsecure_url) //DQTODO see if we should use secure?
+                    .load(stream.thumbnails.medium.unsecure_url)
                     .into(streamImageView);
         }
         streamImageView.setOnClickListener(new View.OnClickListener() {
@@ -290,16 +290,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
 
         String username = "";
-        String gameName = "";
 
         if (stream.user != null && stream.user.username != null)
             username = stream.user.username;
-        if (stream.game != null && stream.game.name != null)
-            gameName = stream.game.name;
 
         viewHolder.getStreamItemAuthor().setText(String.format(Locale.ENGLISH,
-                mContext.getResources().getString(R.string.byAuthorGame),
-                username, gameName));
+                mContext.getResources().getString(R.string.author), username));
     }
 
     @TargetApi(21)
