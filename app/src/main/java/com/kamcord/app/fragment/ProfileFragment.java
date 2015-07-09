@@ -22,6 +22,7 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedVideoList;
+import com.kamcord.app.server.model.ProfileItem;
 import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
@@ -31,7 +32,6 @@ import com.kamcord.app.utils.AccountListener;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.Connectivity;
-import com.kamcord.app.utils.ProfileListUtils;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
@@ -55,8 +55,6 @@ import retrofit.client.Response;
  */
 public class ProfileFragment extends Fragment implements AccountListener, Uploader.UploadStatusListener {
 
-    private static final int HEADER_EXISTS = 1;
-
     @InjectView(R.id.signInPromptContainer)
     ViewGroup signInPromptContainer;
     @InjectView(R.id.signInPromptButton)
@@ -75,6 +73,10 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     private int totalItems = 0;
     private boolean footerVisible = false;
     private boolean viewsAreValid = false;
+
+    private boolean requestingUserInfo = false;
+    private boolean requestingFirstVideosPage = false;
+    private boolean requestingVideosPage = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -115,22 +117,23 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     public void initKamcordProfileFragment() {
 
         if (AccountManager.isLoggedIn()) {
+            signInPromptContainer.setVisibility(View.GONE);
+            videoFeedRefreshLayout.setVisibility(View.VISIBLE);
 
-            if (ProfileListUtils.getCachedProfileInfo() != null && !Connectivity.isConnected()) {
-                userHeader = new FeedItem<>(FeedItem.Type.HEADER, (ProfileListUtils.getCachedProfileInfo()));
-                mProfileList.add(userHeader);
-            } else {
-                userHeader = new FeedItem<>(FeedItem.Type.HEADER, (User) null);
-                mProfileList.add(userHeader);
-                signInPromptContainer.setVisibility(View.GONE);
-                Account myAccount = AccountManager.getStoredAccount();
+            Account myAccount = AccountManager.getStoredAccount();
+            userHeader = new FeedItem<>(FeedItem.Type.HEADER, new User.Builder().fromAccount(myAccount).build());
+            mProfileList.add(userHeader);
+            if( Connectivity.isConnected() ) {
+
+                requestingUserInfo = true;
+                requestingFirstVideosPage = true;
                 AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
                 AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
             }
 
         } else {
             signInPromptContainer.setVisibility(View.VISIBLE);
-            videoFeedRefreshLayout.setEnabled(false);
+            videoFeedRefreshLayout.setVisibility(View.GONE);
         }
 
         mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
@@ -148,8 +151,12 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     marshalActiveSessions();
                     Account myAccount = AccountManager.getStoredAccount();
                     AppServerClient.AppServer client = AppServerClient.getInstance();
+
+                    requestingUserInfo = true;
+                    requestingFirstVideosPage = true;
                     client.getUserInfo(myAccount.id, new GetUserInfoCallBack());
                     client.getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
+
                     checkProcessingSessions();
                 } else if (AccountManager.isLoggedIn()) {
                     Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_SHORT).show();
@@ -276,21 +283,33 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
         mProfileList.add(new FeedItem<>(FeedItem.Type.FOOTER, null));
         mProfileAdapter.notifyItemInserted(mProfileAdapter.getItemCount());
         Account myAccount = AccountManager.getStoredAccount();
+        requestingVideosPage = true;
         AppServerClient.getInstance().getUserVideoFeed(myAccount.id, nextPage, new GetUserVideoFeedCallBack());
+    }
+
+    private void possiblyStopRefreshing() {
+        if( !(requestingUserInfo || requestingFirstVideosPage || requestingVideosPage) && viewsAreValid ) {
+            videoFeedRefreshLayout.setRefreshing(false);
+        }
     }
 
     @Override
     public void onLoggedInChanged(boolean state) {
         if (viewsAreValid) {
             if (state) {
-                userHeader = new FeedItem<User>(FeedItem.Type.HEADER, null);
+                Account myAccount = AccountManager.getStoredAccount();
+                userHeader = new FeedItem<>(FeedItem.Type.HEADER,
+                        new User.Builder().fromAccount(myAccount).build());
                 mProfileList.add(userHeader);
                 signInPromptContainer.setVisibility(View.GONE);
-                Account myAccount = AccountManager.getStoredAccount();
+                videoFeedRefreshLayout.setVisibility(View.VISIBLE);
+                requestingUserInfo = true;
+                requestingFirstVideosPage = true;
                 AppServerClient.getInstance().getUserInfo(myAccount.id, new GetUserInfoCallBack());
-                AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new GetUserVideoFeedCallBack());
+                AppServerClient.getInstance().getUserVideoFeed(myAccount.id, null, new SwipeToRefreshVideoFeedCallBack());
             } else {
                 signInPromptContainer.setVisibility(View.VISIBLE);
+                videoFeedRefreshLayout.setVisibility(View.GONE);
             }
         }
     }
@@ -298,24 +317,35 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     private class GetUserInfoCallBack implements Callback<GenericResponse<User>> {
         @Override
         public void success(GenericResponse<User> userResponse, Response response) {
-            if (userResponse != null && userResponse.response != null && userHeader != null && viewsAreValid) {
-                userHeader.setUser(userResponse.response);
-                if (userHeader.getUser() != null) {
-                    totalItems = userHeader.getUser().video_count;
-                } else {
-                    totalItems = 0;
+            requestingUserInfo = false;
+            if (viewsAreValid) {
+                possiblyStopRefreshing();
+                if (userResponse != null
+                        && userResponse.status != null && userResponse.status.equals(StatusCode.OK)
+                        && userResponse.response != null && userHeader != null ) {
+                    userHeader.setUser(userResponse.response);
+                    if (userHeader.getUser() != null) {
+                        totalItems = userHeader.getUser().video_count;
+                    } else {
+                        totalItems = 0;
+                    }
+                    mProfileAdapter.notifyItemChanged(0);
+                } else if( userResponse != null &&
+                        userResponse.status != null &&
+                        userResponse.status.equals(StatusCode.USER_NOT_AUTHORIZED) ) {
+                    AccountManager.clearStoredAccount();
+                    Toast.makeText(getActivity(), userResponse.status.status_reason, Toast.LENGTH_SHORT).show();
                 }
-                ProfileListUtils.saveProfileInfo(userHeader.getUser());
-                mProfileAdapter.notifyItemChanged(0);
-                videoFeedRefreshLayout.setRefreshing(false);
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if (viewsAreValid) {
-                videoFeedRefreshLayout.setRefreshing(false);
+            requestingUserInfo = false;
+            possiblyStopRefreshing();
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), R.string.thereWasAnErrorProfile, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -323,10 +353,11 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     private class SwipeToRefreshVideoFeedCallBack implements Callback<GenericResponse<PaginatedVideoList>> {
         @Override
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
+            requestingFirstVideosPage = false;
+            possiblyStopRefreshing();
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
-                    && paginatedVideoListGenericResponse.response.video_list != null
-                    && viewsAreValid) {
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
                 Iterator<FeedItem> iterator = mProfileList.iterator();
                 while (iterator.hasNext()) {
                     if (iterator.next().getType() == FeedItem.Type.VIDEO) {
@@ -342,26 +373,25 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                 }
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
-                videoFeedRefreshLayout.setRefreshing(false);
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if (viewsAreValid) {
-                videoFeedRefreshLayout.setRefreshing(false);
-            }
+            requestingFirstVideosPage = false;
+            possiblyStopRefreshing();
         }
     }
 
     private class GetUserVideoFeedCallBack implements Callback<GenericResponse<PaginatedVideoList>> {
         @Override
         public void success(GenericResponse<PaginatedVideoList> paginatedVideoListGenericResponse, Response response) {
+            requestingVideosPage = false;
+            possiblyStopRefreshing();
             if (paginatedVideoListGenericResponse != null
                     && paginatedVideoListGenericResponse.response != null
-                    && paginatedVideoListGenericResponse.response.video_list != null
-                    && viewsAreValid) {
+                    && paginatedVideoListGenericResponse.response.video_list != null) {
                 nextPage = paginatedVideoListGenericResponse.response.next_page;
                 if (mProfileList.size() > 0 && (mProfileList.get(mProfileAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
                     mProfileList.remove(mProfileAdapter.getItemCount() - 1);
@@ -374,16 +404,14 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                 }
                 footerVisible = false;
                 mProfileAdapter.notifyDataSetChanged();
-                videoFeedRefreshLayout.setRefreshing(false);
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if (viewsAreValid) {
-                videoFeedRefreshLayout.setRefreshing(false);
-            }
+            requestingVideosPage = false;
+            possiblyStopRefreshing();
         }
     }
 
