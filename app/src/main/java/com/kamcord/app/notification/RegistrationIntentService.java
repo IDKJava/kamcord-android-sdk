@@ -30,7 +30,7 @@ public class RegistrationIntentService extends IntentService {
             // Send Token to Server
             // sendRegistrationToServer()
 
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.d("Registration Service", "onHandleIntent");
         }
     }

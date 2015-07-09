@@ -15,7 +15,7 @@ import com.kamcord.app.R;
 import com.kamcord.app.activity.VideoViewActivity;
 
 
-public class gcmListenerService extends GcmListenerService {
+public class NotifGcmListenerService extends GcmListenerService {
 
     private static int NOTIFICATION_ID = 3141592;
     private static Notification notification;
@@ -24,7 +24,7 @@ public class gcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = "";
-        if(data != null) {
+        if (data != null) {
             message = data.getString("kamcord");
             Log.d("Message sender:", "From: " + from);
             Log.d("Message content:", "Message: " + message);
@@ -33,14 +33,16 @@ public class gcmListenerService extends GcmListenerService {
         }
 
         // Display Message as a notification
-         sendNotification("LiveStreaming", message);
+        sendNotification("LiveStreaming", message);
     }
 
     public void sendNotification(String liveStreamer, String message) {
         notificationBuilder = new Notification.Builder(this)
                 .setContentTitle(liveStreamer)
                 .setContentText(message)
-                .setSmallIcon(R.drawable.app_icon);
+                .setSmallIcon(R.drawable.app_icon)
+                .setDefaults(Notification.DEFAULT_SOUND)
+                .setAutoCancel(true);
 
         Intent resultIntent = new Intent(this, VideoViewActivity.class);
         resultIntent.setData(Uri.parse("http://content.kamcord.com/live/377125/playlist.m3u8"));
@@ -52,6 +54,6 @@ public class gcmListenerService extends GcmListenerService {
         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
         notificationBuilder.setContentIntent(resultPendingIntent);
 
-                ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 }
