@@ -182,8 +182,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video) {
 
         viewHolder.getProfileItemTitle().setText(video.title);
-        final TextView videoViewsTextView = viewHolder.getVideoViews();
-        videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
+        final TextView videoViewsButton = viewHolder.getVideoViews();
+        videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
         final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
         if (video.thumbnails != null && video.thumbnails.regular != null) {
             Picasso.with(mContext)
@@ -194,7 +194,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 video.views = video.views + 1;
-                videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
+                videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
                 mContext.startActivity(intent);
@@ -210,19 +210,19 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
-        if (!video.is_user_liking) {
+        if (video.is_user_liking) {
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
                     ViewUtils.getTintedDrawable(
                             mContext,
                             mContext.getResources().getDrawable(R.drawable.likes_white),
-                            R.color.kamcordGreen),
+                            R.color.ColorPrimary),
                     null, null, null);
         } else {
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
                     ViewUtils.getTintedDrawable(
                             mContext,
                             mContext.getResources().getDrawable(R.drawable.likes_white),
-                            R.color.ColorPrimary),
+                            R.color.kamcordGreen),
                     null, null, null);
         }
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
@@ -375,7 +375,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void toggleLikeButton(Button likeButton, Video video) {
         if (video.is_user_liking) {
             video.is_user_liking = false;
-            video.likes = video.likes - 1;
+            if (video.likes > 0) {
+                video.likes = video.likes - 1;
+            }
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
             likeButton.setActivated(false);
             likeButton.setCompoundDrawablesWithIntrinsicBounds(

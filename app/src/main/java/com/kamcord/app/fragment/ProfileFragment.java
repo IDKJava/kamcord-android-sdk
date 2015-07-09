@@ -121,7 +121,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
 
             Account myAccount = AccountManager.getStoredAccount();
             userHeader = new FeedItem<>(FeedItem.Type.HEADER, new User.Builder().fromAccount(myAccount).build());
-                mProfileList.add(userHeader);
+            mProfileList.add(userHeader);
             if( Connectivity.isConnected() ) {
 
                 requestingUserInfo = true;
