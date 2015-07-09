@@ -2,12 +2,17 @@ package com.kamcord.app.notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.kamcord.app.R;
+import com.kamcord.app.activity.VideoViewActivity;
 
 
 public class gcmListenerService extends GcmListenerService {
@@ -32,12 +37,21 @@ public class gcmListenerService extends GcmListenerService {
     }
 
     public void sendNotification(String liveStreamer, String message) {
-        notificationBuilder = new Notification.Builder(this);
-        notification = notificationBuilder
+        notificationBuilder = new Notification.Builder(this)
                 .setContentTitle(liveStreamer)
                 .setContentText(message)
-                .setSmallIcon(R.drawable.app_icon)
-                .build();
-        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+                .setSmallIcon(R.drawable.app_icon);
+
+        Intent resultIntent = new Intent(this, VideoViewActivity.class);
+        resultIntent.setData(Uri.parse("http://content.kamcord.com/live/377125/playlist.m3u8"));
+        resultIntent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
+                VideoViewActivity.VideoType.HLS);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(VideoViewActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_ONE_SHOT);
+        notificationBuilder.setContentIntent(resultPendingIntent);
+
+                ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 }
