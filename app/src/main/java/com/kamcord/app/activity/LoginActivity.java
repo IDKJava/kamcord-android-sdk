@@ -1,6 +1,7 @@
 package com.kamcord.app.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.kamcord.app.R;
 import com.kamcord.app.fragment.WelcomeFragment;
+import com.kamcord.app.notification.RegistrationIntentService;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -28,6 +30,9 @@ public class LoginActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .add(containerViewId, new WelcomeFragment())
                 .commit();
+
+        Intent intent = new Intent(this, RegistrationIntentService.class);
+        startService(intent);
     }
 
     @Override

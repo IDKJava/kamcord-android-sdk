@@ -87,6 +87,8 @@ dependencies {
 
     // Using this for YouTube auth stuff.
     compile 'com.google.android.gms:play-services-base:7.3.0'
+    // Google Cloud Messaging
+    compile 'com.google.android.gms:play-services-gcm:7.5.0'
 
     // Exoplayer
     // TODO: revert to this when ExoPlayer releases a stable version with MpegAudioReader
