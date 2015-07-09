@@ -35,6 +35,7 @@ import com.kamcord.app.R;
 import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.view.LiveMediaControls;
 import com.kamcord.app.view.MediaControls;
@@ -53,8 +54,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         AudioCapabilitiesReceiver.Listener {
     private static final String TAG = VideoViewActivity.class.getSimpleName();
 
-    public static final String ARG_IS_LIVE = "is_live";
     public static final String ARG_VIDEO = "video";
+    public static final String ARG_STREAM = "stream";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
@@ -65,8 +66,8 @@ public class VideoViewActivity extends AppCompatActivity implements
     @InjectView(R.id.subtitles)
     SubtitleView subtitleView;
 
-    private Video video;
-    private boolean isLive = false;
+    private Video video = null;
+    private Stream stream = null;
 
     private Player player;
     private boolean playerNeedsPrepare;
@@ -85,11 +86,11 @@ public class VideoViewActivity extends AppCompatActivity implements
         ButterKnife.inject(this);
 
         Intent intent = getIntent();
-        if( intent.hasExtra(ARG_VIDEO) ) {
+        if (intent.hasExtra(ARG_VIDEO)) {
             video = new Gson().fromJson(intent.getStringExtra(ARG_VIDEO), Video.class);
         }
-        if( intent.hasExtra(ARG_IS_LIVE) ) {
-            isLive = intent.getBooleanExtra(ARG_IS_LIVE, false);
+        if (intent.hasExtra(ARG_STREAM)) {
+            stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -116,7 +117,7 @@ public class VideoViewActivity extends AppCompatActivity implements
                 return false;
             }
         });
-        mediaControls = new LiveMediaControls(this, video, isLive);
+        mediaControls = new LiveMediaControls(this, video, stream);
         mediaControls.hide(false);
         mediaControls.setAnchorView(root);
     }
@@ -125,7 +126,8 @@ public class VideoViewActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
 
-        if( video == null || video.video_url == null ) {
+        if ((video == null || video.video_url == null)
+                && (stream == null || stream.play == null || stream.play.hls == null)) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.errorPlayingVideo)
                     .setMessage(R.string.thereWasAnError)
@@ -149,7 +151,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
-        if( player != null ) {
+        if (player != null) {
             player.setBackgrounded(true);
             audioCapabilitiesReceiver.unregister();
             shutterView.setVisibility(View.VISIBLE);
@@ -187,9 +189,15 @@ public class VideoViewActivity extends AppCompatActivity implements
         Player.RendererBuilder rendererBuilder = null;
         String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
 
-        if( video.video_url != null ) {
-            Uri videoUri = Uri.parse(video.video_url);
-            if (video.video_url.endsWith("m3u8")) {
+        Uri videoUri = null;
+        if (video != null && video.video_url != null) {
+            videoUri = Uri.parse(video.video_url);
+        } else if (stream != null && stream.play != null && stream.play.hls != null) {
+            videoUri = Uri.parse(stream.play.hls);
+        }
+
+        if (videoUri != null) {
+            if (videoUri.toString().endsWith(".m3u8")) {
                 rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, null,
                         audioCapabilities, qualityMultiplier);
             } else {
@@ -197,7 +205,6 @@ public class VideoViewActivity extends AppCompatActivity implements
                         null, new Mp4Extractor());
             }
         }
-
         return rendererBuilder;
     }
 
@@ -234,7 +241,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         Log.v("FindMe", "onStateChanged(" + playWhenReady + ", " + playbackState + ")");
-        if( playbackState == Player.STATE_READY ) {
+        if (playbackState == Player.STATE_READY) {
             mediaControls.show(playWhenReady ? 3000 : 0, true);
         }
     }
@@ -259,13 +266,13 @@ public class VideoViewActivity extends AppCompatActivity implements
         } else {
             newOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         }
-        if( newOrientation != currentOrientation ) {
+        if (newOrientation != currentOrientation) {
             setRequestedOrientation(newOrientation);
             mediaControls.show(3000, true);
         }
     }
 
-    private void toggleControlsVisibility()  {
+    private void toggleControlsVisibility() {
         if (mediaControls.isShowing()) {
             mediaControls.hide(true);
         } else {

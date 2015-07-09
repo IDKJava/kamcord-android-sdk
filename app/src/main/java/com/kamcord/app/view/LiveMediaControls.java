@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.kamcord.app.R;
 import com.kamcord.app.player.Player;
 import com.kamcord.app.server.model.Account;
+import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
@@ -41,7 +42,7 @@ public class LiveMediaControls implements MediaControls {
     private RelativeLayout root;
 
     private Video video;
-    private boolean isLive = false;
+    private Stream stream;
     private MediaController.MediaPlayerControl playerControl;
 
     private boolean isScrubberTracking = false;
@@ -82,11 +83,11 @@ public class LiveMediaControls implements MediaControls {
     @InjectView(R.id.error_container)
     ViewGroup errorContainer;
 
-    public LiveMediaControls(Context context, Video video, boolean isLive) {
+    public LiveMediaControls(Context context, Video video, Stream stream) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
         ButterKnife.inject(this, root);
         this.video = video;
-        this.isLive = isLive;
+        this.stream = stream;
     }
 
     @Override
@@ -123,7 +124,7 @@ public class LiveMediaControls implements MediaControls {
                 ownerContainer.setVisibility(View.GONE);
             }
 
-            if (isLive) {
+            if (stream != null) {
                 scrubberContainer.setVisibility(View.GONE);
                 playButtonContainer.setVisibility(View.GONE);
             } else {
@@ -306,7 +307,7 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void onError(Exception e) {
-        if( isLive ) {
+        if( stream != null ) {
             errorContainer.setVisibility(View.VISIBLE);
         }
     }

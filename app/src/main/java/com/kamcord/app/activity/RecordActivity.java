@@ -68,13 +68,15 @@ public class RecordActivity extends AppCompatActivity implements
 
     public void initMainActivity() {
 
-        if(Build.VERSION.SDK_INT > 19) {
-            tabTitles = new String[2];
-            tabTitles[0] = getResources().getString(R.string.kamcordRecordTab);
-            tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            tabTitles = new String[3];
+            tabTitles[0] = getResources().getString(R.string.kamcordHomeTab);
+            tabTitles[1] = getResources().getString(R.string.kamcordRecordTab);
+            tabTitles[2] = getResources().getString(R.string.kamcordProfileTab);
         } else {
-            tabTitles = new String[1];
-            tabTitles[0] = getResources().getString(R.string.kamcordProfileTab);
+            tabTitles = new String[2];
+            tabTitles[0] = getResources().getString(R.string.kamcordHomeTab);
+            tabTitles[1] = getResources().getString(R.string.kamcordProfileTab);
         }
 
         numberOfTabs = tabTitles.length;
@@ -87,6 +89,7 @@ public class RecordActivity extends AppCompatActivity implements
         });
         mTabs.setCustomTabView(R.layout.tab_icon_title, 0);
         mainViewPagerAdapter = new com.kamcord.app.adapter.MainViewPagerAdapter(getSupportFragmentManager(), tabTitles, numberOfTabs);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mainViewPagerAdapter);
         mTabs.setViewPager(mViewPager);
     }

@@ -331,7 +331,6 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                 , FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
         Video video = new Video.Builder().fromRecordingSession(recordingSession).build();
         intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
-        intent.putExtra(VideoViewActivity.ARG_IS_LIVE, false);
         startActivity(intent);
 
         recordingSession.setWasReplayed(true);

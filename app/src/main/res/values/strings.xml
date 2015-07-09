@@ -58,6 +58,7 @@
     <string name="pressTheButton">Press the green button to start recording %s!</string>
     <string name="kamcordRecordTab">Record</string>
     <string name="kamcordProfileTab">Profile</string>
+    <string name="kamcordHomeTab">Home</string>
     <string name="kamcordVideoTab">Top Videos</string>
     <string name="stitchingVideos">Stitching the clips&#8230;</string>
     <string name="install">Install</string>
