@@ -83,7 +83,12 @@ public class HomeFragment extends Fragment {
     public void initKamcordHomeFragment() {
 
         if (Connectivity.isConnected()) {
-            discoverFeedRefreshLayout.setEnabled(true);
+            discoverFeedRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    discoverFeedRefreshLayout.setRefreshing(true);
+                }
+            });
             AppServerClient.getInstance().getDiscoverFeed(null, new GetDiscoverFeedCallBack());
         } else {
             discoverFeedRefreshLayout.setEnabled(false);
