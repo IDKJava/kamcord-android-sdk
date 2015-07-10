@@ -16,9 +16,7 @@ import com.kamcord.app.adapter.viewholder.InstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.RequestGameViewHolder;
 import com.kamcord.app.model.RecordItem;
-import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.Game;
-import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
