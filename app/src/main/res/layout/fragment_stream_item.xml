@@ -30,9 +30,11 @@
                 android:layout_height="32dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
                 android:text="@string/live"
                 style="@style/KamcordLiveStreamIndicator"
                 android:drawableStart="@drawable/white_circle"
+                android:drawableLeft="@drawable/white_circle"
                 android:enabled="false" />
 
         </RelativeLayout>
@@ -82,11 +84,12 @@
                 android:layout_height="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
                 android:text="@string/defaultNumber"
                 style="@style/KamcordStreamCardCountButton"
                 android:drawableStart="@drawable/stream_view_count"
+                android:drawableLeft="@drawable/stream_view_count"
                 android:enabled="false" />
-
         </LinearLayout>
 
     </LinearLayout>
