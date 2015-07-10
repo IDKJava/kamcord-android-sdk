@@ -152,6 +152,9 @@
     <string name="deleteVideo">Delete Video</string>
     <string name="failedToDelete">Failed to delete video. Check your network connection.</string>
     <string name="failedToConnect">Failed to connect. Check your network connection.</string>
+    <string name="doYouContinue">Do you continue?</string>
+    <string name="continueUploadVideo">Continue</string>
+    <string name="notConnectToFastNetwork">Your device is not in Wifi or high speed network connection.</string>
 
     <string name="youWillLoseMonster">You will lose your video forever to the video monster!</string>
     <string name="errorPlayingVideo">Error Playing Video</string>
