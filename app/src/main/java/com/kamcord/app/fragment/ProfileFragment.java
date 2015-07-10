@@ -22,7 +22,6 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedVideoList;
-import com.kamcord.app.server.model.ProfileItem;
 import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
@@ -323,20 +322,20 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                 if (userResponse != null
                         && userResponse.status != null && userResponse.status.equals(StatusCode.OK)
                         && userResponse.response != null && userHeader != null ) {
-                    userHeader.setUser(userResponse.response);
-                    if (userHeader.getUser() != null) {
-                        totalItems = userHeader.getUser().video_count;
-                    } else {
-                        totalItems = 0;
-                    }
-                    mProfileAdapter.notifyItemChanged(0);
+                userHeader.setUser(userResponse.response);
+                if (userHeader.getUser() != null) {
+                    totalItems = userHeader.getUser().video_count;
+                } else {
+                    totalItems = 0;
+                }
+                mProfileAdapter.notifyItemChanged(0);
                 } else if( userResponse != null &&
                         userResponse.status != null &&
                         userResponse.status.equals(StatusCode.USER_NOT_AUTHORIZED) ) {
                     AccountManager.clearStoredAccount();
                     Toast.makeText(getActivity(), userResponse.status.status_reason, Toast.LENGTH_SHORT).show();
-                }
             }
+        }
         }
 
         @Override
@@ -381,8 +380,8 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             Log.e(TAG, "  " + error.toString());
             requestingFirstVideosPage = false;
             possiblyStopRefreshing();
+            }
         }
-    }
 
     private class GetUserVideoFeedCallBack implements Callback<GenericResponse<PaginatedVideoList>> {
         @Override
@@ -412,8 +411,8 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             Log.e(TAG, "  " + error.toString());
             requestingVideosPage = false;
             possiblyStopRefreshing();
+            }
         }
-    }
 
     private class VideoProcessingDoneCallback implements Callback<GenericResponse<Video>> {
 

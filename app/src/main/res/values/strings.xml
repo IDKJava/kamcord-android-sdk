@@ -117,7 +117,6 @@
         <item quantity="one">%s Video</item>
         <item quantity="other">%s Videos</item>
     </plurals>
-    <string name="live">LIVE</string>
 
     <!-- Not used? -->
     <string name="alreadyRecording">Already Recording!</string>
@@ -160,4 +159,6 @@
     <string name="errorPlayingVideo">Error Playing Video</string>
     <string name="thereWasAnError">There was an error trying to play that video. Please try again later.</string>
     <string name="thereWasAnErrorProfile">There was an error fetching your profile information.</string>
+    <string name="live">LIVE</string>
+    <string name="weveLostTheStream">We\'ve lost the stream. Stand by&#8230;</string>
 </resources>

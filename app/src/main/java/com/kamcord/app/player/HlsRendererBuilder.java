@@ -19,7 +19,6 @@ import android.content.Context;
 import android.media.MediaCodec;
 import android.net.Uri;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
@@ -111,7 +110,6 @@ public class HlsRendererBuilder implements RendererBuilder, ManifestCallback<Hls
         }
 
         DataSource dataSource = new DefaultUriDataSource(context, bandwidthMeter, userAgent);
-        Log.v("FindMe", "onSingleManifest, audioCapabilities: " + audioCapabilities);
         HlsChunkSource chunkSource = new HlsChunkSource(dataSource, uri.toString(), manifest, bandwidthMeter,
                 variantIndices, HlsChunkSource.ADAPTIVE_MODE_SPLICE, audioCapabilities);
         HlsSampleSource sampleSource = new HlsSampleSource(chunkSource, true, 3, REQUESTED_BUFFER_SIZE,

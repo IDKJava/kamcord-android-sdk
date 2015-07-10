@@ -19,7 +19,6 @@ import android.view.SurfaceHolder;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.CaptioningManager;
-import android.widget.MediaController;
 
 import com.google.android.exoplayer.VideoSurfaceView;
 import com.google.android.exoplayer.audio.AudioCapabilities;
@@ -31,15 +30,21 @@ import com.google.android.exoplayer.metadata.TxxxMetadata;
 import com.google.android.exoplayer.text.CaptionStyleCompat;
 import com.google.android.exoplayer.text.SubtitleView;
 import com.google.android.exoplayer.util.Util;
+import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.server.model.Stream;
+import com.kamcord.app.server.model.Video;
+import com.kamcord.app.view.LiveMediaControls;
+import com.kamcord.app.view.MediaControls;
 
 import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class VideoViewActivity extends AppCompatActivity implements
         SurfaceHolder.Callback,
@@ -49,11 +54,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         AudioCapabilitiesReceiver.Listener {
     private static final String TAG = VideoViewActivity.class.getSimpleName();
 
-    public static final String ARG_VIDEO_TYPE = "video_type";
-    public enum VideoType {
-        HLS,
-        MP4,
-    }
+    public static final String ARG_VIDEO = "video";
+    public static final String ARG_STREAM = "stream";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
@@ -64,15 +66,16 @@ public class VideoViewActivity extends AppCompatActivity implements
     @InjectView(R.id.subtitles)
     SubtitleView subtitleView;
 
-    private Uri videoUri;
-    private VideoType videoType = VideoType.HLS;
+    private Video video = null;
+    private Stream stream = null;
+
     private Player player;
     private boolean playerNeedsPrepare;
     private float qualityMultiplier = 2f;
 
     private long playerPosition;
 
-    private MediaController mediaController;
+    private MediaControls mediaControls;
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
     private AudioCapabilities audioCapabilities;
 
@@ -83,10 +86,15 @@ public class VideoViewActivity extends AppCompatActivity implements
         ButterKnife.inject(this);
 
         Intent intent = getIntent();
-        videoUri = intent.getData();
-        if( intent.hasExtra(ARG_VIDEO_TYPE) ) {
-            videoType = (VideoType) intent.getSerializableExtra(ARG_VIDEO_TYPE);
+        if (intent.hasExtra(ARG_VIDEO)) {
+            video = new Gson().fromJson(intent.getStringExtra(ARG_VIDEO), Video.class);
         }
+        if (intent.hasExtra(ARG_STREAM)) {
+            stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
+        }
+
+        audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
+        surfaceView.getHolder().addCallback(this);
 
         View root = findViewById(R.id.root);
         root.setOnTouchListener(new View.OnTouchListener() {
@@ -104,24 +112,22 @@ public class VideoViewActivity extends AppCompatActivity implements
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE) {
-                    return mediaController.dispatchKeyEvent(event);
+                    return mediaControls.dispatchKeyEvent(event);
                 }
                 return false;
             }
         });
-        audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
-
-        surfaceView.getHolder().addCallback(this);
-
-        mediaController = new MediaController(this);
-        mediaController.setAnchorView(root);
+        mediaControls = new LiveMediaControls(this, video, stream);
+        mediaControls.hide(false);
+        mediaControls.setAnchorView(root);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if( videoUri == null ) {
+        if ((video == null || video.video_url == null)
+                && (stream == null || stream.play == null || stream.play.hls == null)) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.errorPlayingVideo)
                     .setMessage(R.string.thereWasAnError)
@@ -145,7 +151,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
-        if( player != null ) {
+        if (player != null) {
             player.setBackgrounded(true);
             audioCapabilitiesReceiver.unregister();
             shutterView.setVisibility(View.VISIBLE);
@@ -156,6 +162,11 @@ public class VideoViewActivity extends AppCompatActivity implements
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     // AudioCapabilitiesReceiver.Listener methods
@@ -178,18 +189,22 @@ public class VideoViewActivity extends AppCompatActivity implements
         Player.RendererBuilder rendererBuilder = null;
         String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
 
-        switch(videoType) {
-            case HLS:
-                rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, null,
-                        audioCapabilities, qualityMultiplier);
-                break;
-
-            case MP4:
-                rendererBuilder = new ExtractorRendererBuilder(this, userAgent, videoUri,
-                        null, new Mp4Extractor());
-                break;
+        Uri videoUri = null;
+        if (video != null && video.video_url != null) {
+            videoUri = Uri.parse(video.video_url);
+        } else if (stream != null && stream.play != null && stream.play.hls != null) {
+            videoUri = Uri.parse(stream.play.hls);
         }
 
+        if (videoUri != null) {
+            if (videoUri.toString().endsWith(".m3u8")) {
+                rendererBuilder = new HlsRendererBuilder(this, userAgent, videoUri, null,
+                        audioCapabilities, qualityMultiplier);
+            } else {
+                rendererBuilder = new ExtractorRendererBuilder(this, userAgent, videoUri,
+                        null, new Mp4Extractor());
+            }
+        }
         return rendererBuilder;
     }
 
@@ -197,12 +212,13 @@ public class VideoViewActivity extends AppCompatActivity implements
         if (player == null) {
             player = new Player(getRendererBuilder());
             player.addListener(this);
+            player.addListener(mediaControls);
             player.setTextListener(this);
             player.setMetadataListener(this);
             player.seekTo(playerPosition);
             playerNeedsPrepare = true;
-            mediaController.setMediaPlayer(player.getPlayerControl());
-            mediaController.setEnabled(true);
+            mediaControls.setMediaPlayer(player.getPlayerControl());
+            mediaControls.setEnabled(true);
         }
         if (playerNeedsPrepare) {
             player.prepare();
@@ -224,6 +240,9 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
+        if (playbackState == Player.STATE_READY) {
+            mediaControls.show(playWhenReady ? 3000 : 0, true);
+        }
     }
 
     @Override
@@ -238,23 +257,29 @@ public class VideoViewActivity extends AppCompatActivity implements
         surfaceView.setVideoWidthHeightRatio(
                 height == 0 ? 1 : (width * pixelWidthAspectRatio) / height);
 
+        int currentOrientation = getRequestedOrientation();
+        int newOrientation;
         if (height <= width) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            newOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            newOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
+        if (newOrientation != currentOrientation) {
+            setRequestedOrientation(newOrientation);
+            mediaControls.show(3000, true);
         }
     }
 
-    private void toggleControlsVisibility()  {
-        if (mediaController.isShowing()) {
-            mediaController.hide();
+    private void toggleControlsVisibility() {
+        if (mediaControls.isShowing()) {
+            mediaControls.hide(true);
         } else {
             showControls();
         }
     }
 
     private void showControls() {
-        mediaController.show(0);
+        mediaControls.show(0, true);
     }
 
     // Player.TextListener implementation
