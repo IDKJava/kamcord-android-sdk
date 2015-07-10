@@ -44,8 +44,8 @@ public class RecordingTestLong extends RecordAndPostTestBase {
      * <p>
      *     <b>Test Sequence:</b><br>
      *     1) {@link TestBase#doLogin Log in.}<br>
-     *     2) Record a video. @see RecordAndPostTestBase#recordGameVideo<br>
-     *     3)  {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload}
+     *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a video.<br>
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Upload}
      *     a video after an unsuccessful upload attempt.<br>
      *     4) Expect the video appear on profile feed.<br>
      * </p>
@@ -86,7 +86,7 @@ public class RecordingTestLong extends RecordAndPostTestBase {
      *     <b>Test Sequence:</b><br>
      *     1) {@link TestBase#doLogin Log in.}<br>
      *     2) {@link RecordAndPostTestBase#recordGameVideo Record} a video.<br>
-     *     3) {@see RecordAndPostTestBase#handleShareFlowQueueCheck Delete}
+     *     3) {@link RecordAndPostTestBase#handleShareFlowQueueCheck Delete}
      *     video after an unsuccessful upload attempt.<br>
      *     4) Expect the video to disappear into the void.<br>
      * </p>

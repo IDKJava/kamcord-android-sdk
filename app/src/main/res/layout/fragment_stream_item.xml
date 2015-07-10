@@ -30,9 +30,11 @@
                 android:layout_height="32dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
                 android:text="@string/live"
                 style="@style/KamcordLiveStreamIndicator"
                 android:drawableStart="@drawable/white_circle"
+                android:drawableLeft="@drawable/white_circle"
                 android:enabled="false" />
 
         </RelativeLayout>
@@ -49,6 +51,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingBottom="0dp"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/stream_item_title"
@@ -68,7 +71,7 @@
                     android:layout_marginLeft="@dimen/cardview_standardmargin"
                     android:layout_marginRight="@dimen/cardview_standardmargin"
                     android:textSize="16sp"
-                    android:text="@string/byAuthorGame"
+                    android:text="@string/author"
                     android:textColor="@color/kamcordLightText"
                     android:maxLines="1"
                     android:ellipsize="end"/>
@@ -81,9 +84,11 @@
                 android:layout_height="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
                 android:text="@string/defaultNumber"
                 style="@style/KamcordStreamCardCountButton"
                 android:drawableStart="@drawable/stream_view_count"
+                android:drawableLeft="@drawable/stream_view_count"
                 android:enabled="false" />
         </LinearLayout>
 

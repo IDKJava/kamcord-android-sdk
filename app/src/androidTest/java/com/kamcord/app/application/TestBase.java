@@ -115,7 +115,23 @@ public abstract class TestBase {
 
 
     /**
-     * Logs user in.
+     * Logs user in, while testing auto hiding keyboard (opt)
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) {@link #handleWelcomeLoginView Login}<br>
+     *     2) Expect to be taken to the recording view.<br>
+     * </p>
+     * @param autoHideKeyboardTest tests the auto hide keyboard option
+     */
+    protected void doLogin(boolean autoHideKeyboardTest) {
+        // only works from login screen.
+        handleWelcomeLoginView(autoHideKeyboardTest);
+        //Welcome screen of sorts
+        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res,APP_TIMEOUT_MS);
+    }
+
+    /**
+     * Logs user in
      * <p>
      *     <b>Test Sequence:</b><br>
      *     1) {@link #handleWelcomeLoginView Login}<br>
@@ -123,10 +139,7 @@ public abstract class TestBase {
      * </p>
      */
     protected void doLogin() {
-        // only works from login screen.
-        handleWelcomeLoginView();
-        //Welcome screen of sorts
-        findUiObj(R.id.activity_mdrecord_layout, UiObjIdType.Res, UiObjSelType.Res,APP_TIMEOUT_MS);
+        doLogin(false);
     }
 
     /**
@@ -138,11 +151,15 @@ public abstract class TestBase {
      *     3) Enter user name.<br>
      *     3) Click password field.<br>
      *     4) Enter password.<br>
-     *     5) Hide keyboard. (press back)<br>
+     *     5) <p>
+     *         a) Hide keyboard. (press back)<br>
+     *         b) Hide keyboard. (press away)<br>
+     *       </p>
      *     6) Click login.<br>
      * </p>
+     * @param autoHideKeyBoardTest test if keyboard hides automatically
      */
-    protected void handleWelcomeLoginView(){
+    protected void handleWelcomeLoginView(boolean autoHideKeyBoardTest){
         findUiObj(R.id.loginButton, UiObjIdType.Res, UiObjSelType.Res).click();
 
         //did the view load?
@@ -160,9 +177,32 @@ public abstract class TestBase {
                 UiObjSelType.Res);
         pWord.click();
         pWord.setText(PASSWORD1);
-        //hide the soft keyboard.
-        mDevice.pressBack();
+        if(autoHideKeyBoardTest) {
+            //hide the soft keyboard.
+            mDevice.click(250, 250);
+            sleep(UI_INTERACTION_DELAY_MS);
+        } else {
+            //click away expect keyboard gone.
+            mDevice.pressBack();
+        }
         findUiObj(R.id.loginButton, UiObjIdType.Res, UiObjSelType.Res).click();
+    }
+    /**
+     * Assumes welcome view as starting point and logs user in.
+     * <p>
+     *     <b>Test Sequence:</b><br>
+     *     1) Check if we're on welcome page, find login button.<br>
+     *     2) Click user name field.<br>
+     *     3) Enter user name.<br>
+     *     3) Click password field.<br>
+     *     4) Enter password.<br>
+     *     5)  Hide keyboard. (press back)<br>
+     *     6) Click login.<br>
+     * </p>
+     *
+     */
+    protected void handleWelcomeLoginView(){
+        handleWelcomeLoginView(false);
     }
     /**
      * Logs user out.

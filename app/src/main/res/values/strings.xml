@@ -104,7 +104,8 @@
         <item quantity="other">Likes</item>
     </plurals>
 
-    <string name="byAuthorGame">by %1$s &#183; %2$s</string>
+    <string name="byAuthorGame">%1$s &#183; %2$s</string>
+    <string name="author">%1$s</string>
     <string name="recordAndShare">My Games</string>
     <string name="alsoRecordThese">Popular Games</string>
 
@@ -158,4 +159,5 @@
     <string name="youWillLoseMonster">You will lose your video forever to the video monster!</string>
     <string name="errorPlayingVideo">Error Playing Video</string>
     <string name="thereWasAnError">There was an error trying to play that video. Please try again later.</string>
+    <string name="thereWasAnErrorProfile">There was an error fetching your profile information.</string>
 </resources>
