@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
@@ -21,6 +22,7 @@ import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.utils.KeyboardUtils;
 
 import butterknife.ButterKnife;
@@ -43,6 +45,7 @@ public class LoginFragment extends Fragment {
     TextView forgotPasswordTextView;
 
     private boolean viewsAreValid = true;
+    private Toast toast;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -74,9 +77,18 @@ public class LoginFragment extends Fragment {
 
     @OnClick(R.id.loginButton)
     public void login() {
-        String username = userNameEditText.getEditableText().toString().trim();
-        String password = passwordEditText.getEditableText().toString();
-        AppServerClient.getInstance().login(username, password, loginCallback);
+        if(Connectivity.isConnected()) {
+            String username = userNameEditText.getEditableText().toString().trim();
+            String password = passwordEditText.getEditableText().toString();
+            AppServerClient.getInstance().login(username, password, loginCallback);
+        } else {
+            if (toast == null) {
+                toast = Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_SHORT);
+            } else {
+                toast.setText(getResources().getString(R.string.failedToConnect));
+            }
+            toast.show();
+        }
     }
 
     @OnClick(R.id.forgotPasswordTextView)
