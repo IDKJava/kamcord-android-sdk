@@ -24,7 +24,7 @@
     </style>
 
     <style name="KamcordButton.HollowWhite" parent="KamcordButton">
-        <item name="android:background">@drawable/hollow_gray_button_background</item>
+        <item name="android:background">@drawable/hollow_white_button_background</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 

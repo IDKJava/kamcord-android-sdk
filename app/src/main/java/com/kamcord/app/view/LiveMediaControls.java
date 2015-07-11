@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,18 +20,24 @@ import android.widget.TextView;
 
 import com.kamcord.app.R;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
+import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.VideoUtils;
+import com.kamcord.app.utils.ViewUtils;
 
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
@@ -43,6 +50,7 @@ public class LiveMediaControls implements MediaControls {
 
     private Video video;
     private Stream stream;
+    private User owner;
     private MediaController.MediaPlayerControl playerControl;
 
     private boolean isScrubberTracking = false;
@@ -88,6 +96,11 @@ public class LiveMediaControls implements MediaControls {
         ButterKnife.inject(this, root);
         this.video = video;
         this.stream = stream;
+        if (video != null && video.user != null) {
+            owner = video.user;
+        } else if (stream != null && stream.user != null) {
+            owner = stream.user;
+        }
     }
 
     @Override
@@ -101,10 +114,8 @@ public class LiveMediaControls implements MediaControls {
 
             // We only display the user information if there is a user, and that user is not us.
             Account myAccount = AccountManager.getStoredAccount();
-            if (video != null && video.user != null
-                    && !(myAccount != null && video.user.id.equals(myAccount.id))) {
-                User owner = video.user;
 
+            if (owner != null && owner.id != null && !(myAccount != null && owner.id.equals(myAccount.id))) {
                 avatarImageView.setVisibility(View.GONE); // TODO: unhide this when we start receiving avatars from server
 
                 usernameTextView.setText(owner.username);
@@ -120,7 +131,21 @@ public class LiveMediaControls implements MediaControls {
                 } catch (Exception e) {
                 }
                 profileLetterTextView.getBackground().setColorFilter(profileColor, PorterDuff.Mode.MULTIPLY);
-            } else {
+
+                if(owner.is_user_following == null)
+                    owner.is_user_following = false;
+
+                followButton.setActivated(owner.is_user_following);
+                if(owner.is_user_following)
+                {
+                    followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
+                }
+                else
+                {
+                    followButton.setText(root.getContext().getResources().getString(R.string.videoFollow));
+                }
+            }
+            else {
                 ownerContainer.setVisibility(View.GONE);
             }
 
@@ -163,15 +188,38 @@ public class LiveMediaControls implements MediaControls {
                 });
             }
 
-            if( video == null || video.video_site_watch_page == null ) {
+            if( (video == null || video.video_site_watch_page == null) && (stream == null || stream.user == null || stream.user.username == null)) {
                 shareButton.setVisibility(View.GONE);
             }
         }
     }
 
+    private void toggleFollowButton() {
+        if (owner.is_user_following) {
+            owner.is_user_following = false;
+            followButton.setActivated(false);
+            followButton.setText(root.getContext().getResources().getString(R.string.videoFollow));
+            AppServerClient.getInstance().unfollow(owner.id, new UnfollowCallback());
+        } else {
+            owner.is_user_following = true;
+            followButton.setActivated(true);
+            followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
+            AppServerClient.getInstance().follow(owner.id, new FollowCallback());
+        }
+        ViewUtils.buttonCircularReveal(followButton);
+    }
+
+    @OnClick(R.id.follow_button)
+    public void onFollowButtonClick() {
+        toggleFollowButton();
+    }
+
     @OnClick(R.id.share_button)
     public void doExternalShare() {
-        VideoUtils.doExternalShare(root.getContext(), video);
+        if (video != null)
+            VideoUtils.doExternalShare(root.getContext(), video);
+        else if (stream != null)
+            VideoUtils.doExternalShare(root.getContext(), stream);
     }
 
     @OnClick(R.id.play_button)
@@ -314,5 +362,27 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
+    }
+
+    private class FollowCallback implements Callback<GenericResponse<?>> {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Failure", "  " + error.toString());
+        }
+    }
+
+    private class UnfollowCallback implements Callback<GenericResponse<?>> {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Failure", "  " + error.toString());
+        }
     }
 }
