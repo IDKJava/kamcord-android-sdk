@@ -36,6 +36,7 @@ import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
+import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.StringUtils;
@@ -231,19 +232,25 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
                 recordingSession.setShareSources(shareSourceHashMap);
             }
 
-            recordingSession.setState(RecordingSession.State.SHARED);
-            recordingSession.setShareAppSessionId(KamcordAnalytics.getCurrentAppSessionId());
-            ActiveRecordingSessionManager.updateActiveSession(recordingSession);
-
-            KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
-            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
-            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
-            getActivity().startService(uploadIntent);
-            if (getActivity() instanceof RecordActivity) {
-                ((RecordActivity) getActivity()).setCurrentItem(MainViewPagerAdapter.PROFILE_FRAGMENT_POSITION);
+            if(!(Connectivity.isConnectedWifi() && Connectivity.isConnectedFast())) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.doYouContinue)
+                        .setMessage(R.string.notConnectToFastNetwork)
+                        .setPositiveButton(R.string.continueUploadVideo, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                uploadRecordingSession();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialogInterface) {
+                            }
+                        }).show();
+            } else {
+                uploadRecordingSession();
             }
-            showDeleteDialogOnBack = false;
-            getActivity().onBackPressed();
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -433,5 +440,23 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
             return true;
         }
         return false;
+    }
+
+    public void uploadRecordingSession() {
+        if(recordingSession != null) {
+            recordingSession.setState(RecordingSession.State.SHARED);
+            recordingSession.setShareAppSessionId(KamcordAnalytics.getCurrentAppSessionId());
+            ActiveRecordingSessionManager.updateActiveSession(recordingSession);
+
+            KeyboardUtils.hideSoftKeyboard(titleEditText, getActivity().getApplicationContext());
+            Intent uploadIntent = new Intent(getActivity(), UploadService.class);
+            uploadIntent.putExtra(UploadService.ARG_SESSION_TO_SHARE, new Gson().toJson(recordingSession));
+            getActivity().startService(uploadIntent);
+            if (getActivity() instanceof RecordActivity) {
+                ((RecordActivity) getActivity()).setCurrentItem(MainViewPagerAdapter.PROFILE_FRAGMENT_POSITION);
+            }
+            showDeleteDialogOnBack = false;
+            getActivity().onBackPressed();
+        }
     }
 }
