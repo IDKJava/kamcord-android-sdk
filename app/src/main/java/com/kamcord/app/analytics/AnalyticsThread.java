@@ -307,6 +307,7 @@ public class AnalyticsThread extends HandlerThread implements
                     completeVideoViewEventFrom(event, when, extras);
                     completeVideoDetailViewEventFrom(event, extras);
                     if( extras != null ) {
+                        event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
                         event.profile_user_id = extras.getString(KamcordAnalytics.PROFILE_USER_ID_KEY, null);
                     }
                     break;

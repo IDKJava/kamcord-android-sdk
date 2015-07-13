@@ -56,8 +56,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         AudioCapabilitiesReceiver.Listener {
     private static final String TAG = VideoViewActivity.class.getSimpleName();
 
-    public static final String ARG_VIDEO = "video";
-    public static final String ARG_STREAM = "stream";
+    public static final String ARG_VIDEO = "arg_video";
+    public static final String ARG_STREAM = "arg_stream";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
@@ -174,12 +174,16 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         if( this.video != null && this.video.user != null ) {
             transferViewSourceExtras(extras);
-            extras.putString(KamcordAnalytics.PROFILE_USER_ID_KEY, this.video.user.id);
+            if( getIntent().getExtras().containsKey(KamcordAnalytics.PROFILE_USER_ID_KEY) ) {
+                extras.putString(KamcordAnalytics.PROFILE_USER_ID_KEY,
+                        getIntent().getExtras().getString(KamcordAnalytics.PROFILE_USER_ID_KEY));
+            }
+            extras.putString(KamcordAnalytics.VIDEO_ID_KEY, this.video.video_id);
 
         } else if( this.stream != null && this.stream.user != null ) {
             transferViewSourceExtras(extras);
             extras.putString(KamcordAnalytics.STREAM_USER_ID_KEY, this.stream.user.id);
-            extras.putInt(KamcordAnalytics.IS_LIVE_KEY, 1);
+            extras.putInt(KamcordAnalytics.IS_LIVE_KEY, this.stream.live ? 1 : 0);
 
         }
 
