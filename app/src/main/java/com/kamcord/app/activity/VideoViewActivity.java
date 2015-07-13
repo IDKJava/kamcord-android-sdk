@@ -127,6 +127,22 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -160,12 +176,6 @@ public class VideoViewActivity extends AppCompatActivity implements
             audioCapabilitiesReceiver.unregister();
             shutterView.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
     }
 
     @Override

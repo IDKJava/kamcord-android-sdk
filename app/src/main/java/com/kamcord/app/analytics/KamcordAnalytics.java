@@ -27,6 +27,9 @@ public class KamcordAnalytics {
     public static final String IS_UPLOAD_RETRY_KEY = "is_upload_retry";
     public static final String GAME_ID_KEY = "game_id";
     public static final String VIDEO_LENGTH_KEY = "video_length";
+    public static final String SOURCE_VIEW = "source_view";
+    public static final String VIDEO_LIST_ROW = "video_list_row";
+    public static final String VIDEO_LIST_COL = "video_list_col";
 
 
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";

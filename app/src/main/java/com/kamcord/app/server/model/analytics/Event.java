@@ -71,8 +71,10 @@ public class Event {
     // For navigational events.
     public Float event_duration = null;
     public transient Long eventDurationMs = null;
-    public SourceView source_view = null;
-    public enum SourceView {
+    public ViewSource view_source = null;
+    public enum ViewSource {
+        HOME_FEED,
+        PROFILE_FEED,
     }
 
 
