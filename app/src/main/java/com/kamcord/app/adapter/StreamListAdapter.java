@@ -48,9 +48,9 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         View itemLayoutView;
         FeedItem.Type type = FeedItem.Type.values()[viewType];
         switch (type) {
-            case HEADER: {
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed_header, null);
-                return new NotInstalledHeaderViewHolder(itemLayoutView);
+            case NORMAL_HEADER: {
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_installed_header, null);
+                return new InstalledHeaderViewHolder(itemLayoutView);
             }
             case STREAM: {
                 itemLayoutView = inflater.inflate(R.layout.fragment_stream_item, parent, false);
@@ -92,11 +92,11 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void bindInstalledHeaderViewHolder(InstalledHeaderViewHolder viewHolder) {
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.recordAndShareTextView, "fonts/proximanova_semibold.otf");
+        viewHolder.recordAndShareTextView.setText(mContext.getResources().getString(R.string.livestreamHeader));
     }
 
     private void bindNotInstalledHeaderViewHolder(NotInstalledHeaderViewHolder viewHolder) {
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.alsoRecordTheseTextView, "fonts/proximanova_semibold.otf");
-        viewHolder.alsoRecordTheseTextView.setText(mContext.getResources().getString(R.string.livestreamHeader));
     }
 
     private void bindRequestGameViewHolder(RequestGameViewHolder viewHolder) {
