@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.VideoViewActivity;
-import com.kamcord.app.adapter.viewholder.GameItemViewHolder;
+import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.InstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.RequestGameViewHolder;
@@ -50,38 +50,33 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-        View itemLayoutView = inflater.inflate(R.layout.view_game_item, null);
-        RecyclerView.ViewHolder viewHolder = new GameItemViewHolder(itemLayoutView);
-
+        View itemLayoutView;
         FeedItem.Type type = FeedItem.Type.values()[viewType];
         switch (type) {
             case HEADER: {
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_installed_header, null);
-                viewHolder = new InstalledHeaderViewHolder(itemLayoutView);
-                break;
+                itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed_header, null);
+                return new NotInstalledHeaderViewHolder(itemLayoutView);
             }
             case STREAM: {
-                itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stream_item, parent, false);
+                itemLayoutView = inflater.inflate(R.layout.fragment_stream_item, parent, false);
                 return new StreamItemViewHolder(itemLayoutView);
             }
             case VIDEO: {
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_request_game, null);
-                viewHolder = new RequestGameViewHolder(itemLayoutView);
-                break;
+                return new RequestGameViewHolder(itemLayoutView);
             }
             case FOOTER:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed_header, null);
-                viewHolder = new NotInstalledHeaderViewHolder(itemLayoutView);
-                break;
+                return new NotInstalledHeaderViewHolder(itemLayoutView);
+
             default:
                 break;
         }
-        return viewHolder;
+        return new FooterViewHolder(null);
     }
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
-        FeedItem item = mFeedItems.get(position);
 
         if (viewHolder instanceof InstalledHeaderViewHolder) {
             bindInstalledHeaderViewHolder((InstalledHeaderViewHolder) viewHolder);
@@ -91,7 +86,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         } else if (viewHolder instanceof StreamItemViewHolder) {
             Stream stream = getItem(position).getStream();
-            if( stream != null ) {
+            if (stream != null) {
                 bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream);
             }
 
@@ -106,6 +101,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void bindNotInstalledHeaderViewHolder(NotInstalledHeaderViewHolder viewHolder) {
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.alsoRecordTheseTextView, "fonts/proximanova_semibold.otf");
+        viewHolder.alsoRecordTheseTextView.setText(mContext.getResources().getString(R.string.livestreamHeader));
     }
 
     private void bindRequestGameViewHolder(RequestGameViewHolder viewHolder) {

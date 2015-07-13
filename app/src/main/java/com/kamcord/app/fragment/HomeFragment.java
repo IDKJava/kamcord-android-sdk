@@ -57,9 +57,7 @@ public class HomeFragment extends Fragment {
 
         ButterKnife.inject(this, root);
         viewsAreValid = true;
-
         initKamcordHomeFragment();
-
         return root;
     }
 
@@ -215,6 +213,10 @@ public class HomeFragment extends Fragment {
                     }
                     for (Card card : streamGroup.card_models) {
                         if (card.stream != null) {
+                            if (mStreamList.size() == 0) {
+                                FeedItem headerViewModel = new FeedItem<>(FeedItem.Type.FOOTER, null);
+                                mStreamList.add(headerViewModel);
+                            }
                             FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
                             mStreamList.add(profileViewModel);
                         }
