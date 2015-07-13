@@ -32,11 +32,13 @@ import com.google.android.exoplayer.text.SubtitleView;
 import com.google.android.exoplayer.util.Util;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
 import com.kamcord.app.player.Player;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.view.LiveMediaControls;
 import com.kamcord.app.view.MediaControls;
 
@@ -135,11 +137,44 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onStart() {
         super.onStart();
+
+        if( this.video != null ) {
+            if( this.video.user != null ) {
+                KamcordAnalytics.startSession(this, Event.Name.VIDEO_DETAIL_VIEW);
+            } else {
+                KamcordAnalytics.startSession(this, Event.Name.REPLAY_VIDEO_VIEW);
+            }
+        } else if( this.stream != null && this.stream.user != null ) {
+            KamcordAnalytics.startSession(this, Event.Name.STREAM_DETAIL_VIEW);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
+
+        if( this.video != null ) {
+            if( this.video.user != null ) {
+                KamcordAnalytics.endSession(this, Event.Name.VIDEO_DETAIL_VIEW);
+            } else {
+                KamcordAnalytics.endSession(this, Event.Name.REPLAY_VIDEO_VIEW);
+            }
+        } else if( this.stream != null && this.stream.user != null ) {
+            KamcordAnalytics.endSession(this, Event.Name.STREAM_DETAIL_VIEW);
+        }
+    }
+
+    private Bundle endSessionAnalyticsExtras() {
+        Bundle extras = new Bundle();
+        
+        if( this.video != null ) {
+            if( this.video.user != null ) {
+            } else {
+            }
+        } else if( this.stream != null && this.stream.user != null ) {
+        }
+
+        return extras;
     }
 
     @Override

@@ -298,6 +298,27 @@ public class AnalyticsThread extends HandlerThread implements
                     }
                 }
                 break;
+
+                case REPLAY_VIDEO_VIEW:
+                    completeVideoViewEventFrom(event, when, extras);
+                    break;
+
+                case VIDEO_DETAIL_VIEW:
+                    completeVideoViewEventFrom(event, when, extras);
+                    completeVideoDetailViewEventFrom(event, extras);
+                    if( extras != null ) {
+                        event.profile_user_id = extras.getString(KamcordAnalytics.PROFILE_USER_ID_KEY, null);
+                    }
+                    break;
+
+                case STREAM_DETAIL_VIEW:
+                    completeVideoViewEventFrom(event, when, extras);
+                    completeVideoDetailViewEventFrom(event, extras);
+                    if( extras != null ) {
+                        event.stream_user_id = extras.getString(KamcordAnalytics.STREAM_USER_ID_KEY, null);
+                        event.is_live = extras.getInt(KamcordAnalytics.IS_LIVE_KEY, 0);
+                    }
+                    break;
             }
 
             // If they put the app_session_id in themselves, we assume that they know what they're doing.
@@ -307,6 +328,39 @@ public class AnalyticsThread extends HandlerThread implements
             Account myAccount = AccountManager.getStoredAccount();
             if( myAccount != null ) {
                 event.user_registration_id = myAccount.id;
+            }
+        }
+    }
+
+    private void completeVideoViewEventFrom(Event event, long when, Bundle extras) {
+        event.setDurationFromStopTime(when);
+        if( extras != null ) {
+            event.num_play_starts = extras.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1);
+            event.buffering_duration = extras.getFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, 0f);
+            event.video_length = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
+            event.video_length_watched = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, 0f);
+        }
+    }
+
+    private void completeVideoDetailViewEventFrom(Event event, Bundle extras) {
+        if (extras != null) {
+            if( extras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
+                event.view_source = (Event.ViewSource) extras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY);
+            }
+            if( extras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
+                event.video_list_type = (Event.ListType) extras.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY);
+                if( extras.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY) ) {
+                    event.video_list_row = extras.getInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY);
+                }
+                if( extras.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
+                    event.video_list_col = extras.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY);
+                }
+            }
+            if( extras.containsKey(KamcordAnalytics.FEED_ID_KEY) ) {
+                event.feed_id = extras.getString(KamcordAnalytics.FEED_ID_KEY);
+            }
+            if( extras.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY) ) {
+                event.notification_sent_id = extras.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY);
             }
         }
     }

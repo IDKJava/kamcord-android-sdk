@@ -150,13 +150,19 @@ public class HomeFragment extends Fragment {
         AppServerClient.getInstance().getDiscoverFeed(nextPage, new GetDiscoverFeedCallBack());
     }
 
+    private void possiblyStopRefreshing() {
+        if( viewsAreValid ) {
+            discoverFeedRefreshLayout.setRefreshing(false);
+        }
+    }
+
     private class SwipeToRefreshDiscoverFeedCallBack implements Callback<GenericResponse<DiscoverFeed>> {
         @Override
         public void success(GenericResponse<DiscoverFeed> discoverFeedGenericResponse, Response response) {
+            possiblyStopRefreshing();
             if (discoverFeedGenericResponse != null
                     && discoverFeedGenericResponse.response != null
-                    && discoverFeedGenericResponse.response.group_set != null
-                    && viewsAreValid) {
+                    && discoverFeedGenericResponse.response.group_set != null) {
                 Group streamGroup = null;
                 for (Group group : discoverFeedGenericResponse.response.group_set.groups) {
                     if (group.group_type.equals(Group.STREAM_LIST)) {
@@ -180,7 +186,6 @@ public class HomeFragment extends Fragment {
                     }
                     footerVisible = false;
                     mProfileAdapter.notifyDataSetChanged();
-                    discoverFeedRefreshLayout.setRefreshing(false);
                 }
             }
         }
@@ -188,19 +193,17 @@ public class HomeFragment extends Fragment {
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if (viewsAreValid) {
-                discoverFeedRefreshLayout.setRefreshing(false);
-            }
+            possiblyStopRefreshing();
         }
     }
 
     private class GetDiscoverFeedCallBack implements Callback<GenericResponse<DiscoverFeed>> {
         @Override
         public void success(GenericResponse<DiscoverFeed> discoverFeedGenericResponse, Response response) {
+            possiblyStopRefreshing();
             if (discoverFeedGenericResponse != null
                     && discoverFeedGenericResponse.response != null
-                    && discoverFeedGenericResponse.response.group_set != null
-                    && viewsAreValid) {
+                    && discoverFeedGenericResponse.response.group_set != null) {
                 Group streamGroup = null;
                 for (Group group : discoverFeedGenericResponse.response.group_set.groups) {
                     if (group.group_type.equals(Group.STREAM_LIST)) {
@@ -221,7 +224,6 @@ public class HomeFragment extends Fragment {
                     }
                     footerVisible = false;
                     mProfileAdapter.notifyDataSetChanged();
-                    discoverFeedRefreshLayout.setRefreshing(false);
                     homefeedPromptContainer.setVisibility(View.GONE);
                 }
             }
@@ -230,9 +232,7 @@ public class HomeFragment extends Fragment {
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if (viewsAreValid) {
-                discoverFeedRefreshLayout.setRefreshing(false);
-            }
+            possiblyStopRefreshing();
         }
     }
 }

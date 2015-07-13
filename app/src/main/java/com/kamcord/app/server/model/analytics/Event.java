@@ -15,6 +15,9 @@ public class Event {
         UPLOAD_VIDEO,
         EXTERNAL_SHARE,
         RECORD_VIDEO,
+        REPLAY_VIDEO_VIEW,
+        STREAM_DETAIL_VIEW,
+        VIDEO_DETAIL_VIEW,
     }
 
     public Event(Name name, long whenMs, String appSessionId) {
@@ -75,6 +78,11 @@ public class Event {
     public enum ViewSource {
         HOME_FEED,
         PROFILE_FEED,
+        PUSH_NOTIFICATION,
+    }
+    public enum ListType {
+        PROFILE,
+        HOME,
     }
 
 
@@ -127,4 +135,25 @@ public class Event {
         }
         return false;
     }
+
+
+    // For REPLAY_VIDEO_VIEW, VIDEO_DETAIL_VIEW, and STREAM_DETAIL_VIEW
+    public Integer num_play_starts;
+    public Float buffering_duration;
+    public Float video_length;
+    public Float video_length_watched;
+
+    // For VIDEO_DETAIL_VIEW and STREAM_DETAIL_VIEW
+    public ListType video_list_type;
+    public String feed_id;
+    public String notification_sent_id;
+    public Integer video_list_row;
+    public Integer video_list_col;
+
+    // For VIDEO_DETAIL_VIEW
+    public String profile_user_id;
+
+    // For STREAM_DETAIL_VIEW
+    public String stream_user_id;
+    public Integer is_live;
 }

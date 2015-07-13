@@ -26,10 +26,19 @@ public class KamcordAnalytics {
     public static final String APP_SESSION_ID_KEY = "app_session_id";
     public static final String IS_UPLOAD_RETRY_KEY = "is_upload_retry";
     public static final String GAME_ID_KEY = "game_id";
+    public static final String VIEW_SOURCE_KEY = "view_source";
+    public static final String NUM_PLAY_STARTS_KEY = "num_play_starts";
+    public static final String BUFFERING_DURATION_KEY = "buffering_duration";
     public static final String VIDEO_LENGTH_KEY = "video_length";
-    public static final String SOURCE_VIEW = "source_view";
-    public static final String VIDEO_LIST_ROW = "video_list_row";
-    public static final String VIDEO_LIST_COL = "video_list_col";
+    public static final String VIDEO_LENGTH_WATCHED_KEY = "video_length_watched";
+    public static final String VIDEO_LIST_TYPE_KEY = "video_list_type";
+    public static final String FEED_ID_KEY = "feed_id";
+    public static final String NOTIFICATION_SENT_ID_KEY = "notification_sent_id";
+    public static final String VIDEO_LIST_ROW_KEY = "video_list_row";
+    public static final String VIDEO_LIST_COL_KEY = "video_list_col";
+    public static final String PROFILE_USER_ID_KEY = "profile_user_id";
+    public static final String STREAM_USER_ID_KEY = "stream_user_id";
+    public static final String IS_LIVE_KEY = "is_live";
 
 
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";
