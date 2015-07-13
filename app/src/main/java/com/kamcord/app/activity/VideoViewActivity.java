@@ -166,15 +166,52 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Bundle endSessionAnalyticsExtras() {
         Bundle extras = new Bundle();
-        
-        if( this.video != null ) {
-            if( this.video.user != null ) {
-            } else {
-            }
+
+        extras.putInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1); // TODO: adjust this is we ever start showing a replay button
+        extras.putFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, 0f);
+        extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
+        extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, 0f);
+
+        if( this.video != null && this.video.user != null ) {
+            transferViewSourceExtras(extras);
+            extras.putString(KamcordAnalytics.PROFILE_USER_ID_KEY, this.video.user.id);
+
         } else if( this.stream != null && this.stream.user != null ) {
+            transferViewSourceExtras(extras);
+            extras.putString(KamcordAnalytics.STREAM_USER_ID_KEY, this.stream.user.id);
+            extras.putInt(KamcordAnalytics.IS_LIVE_KEY, 1);
+
         }
 
         return extras;
+    }
+
+    private void transferViewSourceExtras(Bundle extras) {
+        Bundle myExtras = getIntent().getExtras();
+        if( myExtras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY,
+                    myExtras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY));
+        }
+        if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
+            extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY,
+                    myExtras.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY));
+            if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY) ) {
+                extras.putInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
+                        myExtras.getInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY));
+            }
+            if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
+                extras.putInt(KamcordAnalytics.VIDEO_LIST_COL_KEY,
+                        myExtras.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY));
+            }
+        }
+        if( myExtras.containsKey(KamcordAnalytics.FEED_ID_KEY) ) {
+            extras.putString(KamcordAnalytics.FEED_ID_KEY,
+                    myExtras.getString(KamcordAnalytics.FEED_ID_KEY));
+        }
+        if( myExtras.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY) ) {
+            extras.putString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY,
+                    myExtras.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY));
+        }
     }
 
     @Override
