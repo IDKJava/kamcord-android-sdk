@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 
 import com.kamcord.app.R;
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.Video;
 
 import java.io.File;
@@ -125,4 +126,33 @@ public class VideoUtils {
         }
     }
 
+    public static void doExternalShare(Context context, Stream stream) {
+        if (context instanceof Activity && stream.user != null && stream.user.username != null) {
+            Activity activity = (Activity) context;
+            String streamLink = "www.kamcord.com/live/" + stream.user.username;
+
+
+            String externalShareText = null;
+            if (stream.name != null) {
+                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextStream),
+                        stream.name, streamLink);
+                int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
+                if (diff > 0) {
+                    String truncatedTitle = StringUtils.ellipsize(stream.name, stream.name.length() - diff);
+                    externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextStream),
+                            truncatedTitle, streamLink);
+                }
+            } else {
+                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextNoTitleStream),
+                        streamLink);
+            }
+            externalShareText = StringUtils.ellipsize(externalShareText, MAX_EXTERNAL_SHARE_TEXT_LENGTH);
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, externalShareText);
+            shareIntent.setType("text/plain");
+            activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.shareTo)));
+        }
+    }
 }

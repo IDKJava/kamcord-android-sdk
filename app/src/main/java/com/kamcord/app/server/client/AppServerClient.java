@@ -113,6 +113,12 @@ public class AppServerClient {
 
         @DELETE("/app/v3/videos/{videoId}")
         void deleteVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
+
+        @POST("/app/v3/users/{userId}/follow")
+        void follow(@Path("userId") String userId, Callback<GenericResponse<?>> cb);
+
+        @POST("/app/v3/users/{userId}/unfollow")
+        void unfollow(@Path("userId") String userId, Callback<GenericResponse<?>> cb);
     }
 
     private static AppServer instance;

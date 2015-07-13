@@ -118,12 +118,11 @@
                 style="@style/KamcordButton.HollowWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="28dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:gravity="center"
-                android:paddingEnd="8dp"
+                android:paddingRight="8dp"
                 android:paddingLeft="8dp"
-                android:text="+ Follow"
+                android:text="@string/videoFollow"
                 android:textSize="16sp" />
         </LinearLayout>
 
@@ -136,7 +135,7 @@
 
             <TextView
                 android:id="@+id/current_time_textview"
-                android:layout_width="50sp"
+                android:layout_width="60sp"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textColor="@android:color/white"
@@ -153,13 +152,14 @@
                 android:minHeight="6dp"
                 android:paddingBottom="14dp"
                 android:paddingTop="14dp"
-                android:progress="20"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:progressDrawable="@drawable/scrubber_progress"
                 android:thumb="@drawable/solid_white_circle_12dp" />
 
             <TextView
                 android:id="@+id/total_time_textview"
-                android:layout_width="50sp"
+                android:layout_width="60sp"
                 android:layout_height="40dp"
                 android:gravity="center"
                 android:textColor="@android:color/white"

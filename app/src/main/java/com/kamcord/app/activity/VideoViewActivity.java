@@ -148,6 +148,10 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         configureSubtitleView();
 
+        if( player != null ) {
+            shutterView.setVisibility(View.GONE);
+        }
+
         // The player will be prepared on receiving audio capabilities.
         audioCapabilitiesReceiver.register();
     }
@@ -156,9 +160,11 @@ public class VideoViewActivity extends AppCompatActivity implements
     public void onPause() {
         super.onPause();
         if (player != null) {
-            player.setBackgrounded(true);
             audioCapabilitiesReceiver.unregister();
             shutterView.setVisibility(View.VISIBLE);
+            if( player.getPlayerControl().isPlaying() && player.getPlayerControl().canPause() ) {
+                player.getPlayerControl().pause();
+            }
         }
     }
 
