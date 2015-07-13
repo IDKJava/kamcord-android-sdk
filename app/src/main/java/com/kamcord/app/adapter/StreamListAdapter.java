@@ -33,11 +33,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
  */
 public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    public static final int VIEW_TYPE_LIVESTREAM_FEED = 0;
-    public static final int VIEW_TYPE_FIRST_LIVESTREAM = 1;
-    public static final int VIEW_TYPE_LAST_LIVESTREAM = 2;
-    public static final int VIEW_TYPE_RECORD_FEED = 3;
-
     private Context mContext;
     private List<FeedItem> mFeedItems;
 

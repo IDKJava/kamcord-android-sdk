@@ -241,8 +241,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
             //setting the description for the tab for UI automation.
             tabView.setContentDescription(adapter.getPageTitle(i));
         }
-
-
     }
 
     public void setContentDescription(int i, String desc) {
@@ -332,22 +330,24 @@ public class SlidingTabLayout extends HorizontalScrollView {
             for (int i = 0; i < mTabStrip.getChildCount(); i++) {
                 if (mViewPager != null && v == mTabStrip.getChildAt(i) && i == mViewPager.getCurrentItem()) {
                     DynamicRecyclerView view;
-                    Fragment fragment = MainViewPagerAdapter.viewPagerHashMap.get(i);
-                    if(fragment instanceof HomeFragment) {
-                        view = ((HomeFragment) fragment).getHomeRecyclerView();
-                        if(view != null) {
-                            view.scrollToPosition(0);
+                    Fragment fragment = ((MainViewPagerAdapter) mViewPager.getAdapter()).getViewPagerHashMap().get(i);
+                    if(fragment != null) {
+                        if(fragment instanceof HomeFragment) {
+                            view = ((HomeFragment) fragment).getHomeRecyclerView();
+                            if(view != null) {
+                                view.scrollToPosition(0);
+                            }
+                        } else if (fragment instanceof RecordFragment) {
+                            view = ((RecordFragment) fragment).getRecordRecyclerView();
+                            if(view != null) {
+                                view.scrollToPosition(0);
+                            }
                         }
-                    } else if (fragment instanceof RecordFragment) {
-                        view = ((RecordFragment) fragment).getRecordRecyclerView();
-                        if(view != null) {
-                            view.scrollToPosition(0);
-                        }
-                    }
-                    if(fragment instanceof ProfileFragment) {
-                        view = ((ProfileFragment) fragment).getProfileRecyclerView();
-                        if(view != null) {
-                            view.scrollToPosition(0);
+                        if(fragment instanceof ProfileFragment) {
+                            view = ((ProfileFragment) fragment).getProfileRecyclerView();
+                            if(view != null) {
+                                view.scrollToPosition(0);
+                            }
                         }
                     }
                 } else if (v == mTabStrip.getChildAt(i)) {

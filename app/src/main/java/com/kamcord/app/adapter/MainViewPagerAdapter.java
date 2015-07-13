@@ -20,7 +20,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     public static final int PROFILE_FRAGMENT_POSITION = 2;
     private int numberOfTabs;
     private CharSequence tabTitles[];
-    public static HashMap<Integer, Fragment> viewPagerHashMap = new HashMap<>();
+    public HashMap<Integer, Fragment> viewPagerHashMap = new HashMap<>();
 
     private int[] imageResId = {
             R.drawable.tabicon_home_selector,
@@ -77,4 +77,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         return tabTitles[position];
     }
 
+    public HashMap<Integer, Fragment> getViewPagerHashMap() {
+        return this.viewPagerHashMap;
+    }
 }
