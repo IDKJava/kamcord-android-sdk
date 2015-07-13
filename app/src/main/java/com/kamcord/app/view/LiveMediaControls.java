@@ -58,6 +58,7 @@ public class LiveMediaControls implements MediaControls {
 
     private boolean isScrubberTracking = false;
     private boolean isAnchored = false;
+    private boolean isEnded = false;
 
     @InjectView(R.id.live_indicator_textview)
     TextView liveIndicatorTextView;
@@ -235,10 +236,15 @@ public class LiveMediaControls implements MediaControls {
     @OnClick(R.id.play_button)
     public void onPlayButtonClick() {
         if( playerControl != null ) {
-            if( playerControl.isPlaying() && playerControl.canPause() ) {
-                playerControl.pause();
-            } else {
+            if( isEnded ) {
+                playerControl.seekTo(0);
                 playerControl.start();
+            } else {
+                if (playerControl.isPlaying() && playerControl.canPause()) {
+                    playerControl.pause();
+                } else {
+                    playerControl.start();
+                }
             }
         }
     }
@@ -333,10 +339,12 @@ public class LiveMediaControls implements MediaControls {
                     int currentPositionMs = playerControl.getCurrentPosition();
 
                     totalTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, durationMs));
-                    currentTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, currentPositionMs));
+                    if( !isEnded ) {
+                        currentTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, currentPositionMs));
 
-                    int progress = (int) ((float) scrubberSeekBar.getMax() * ((float) currentPositionMs / (float) durationMs));
-                    scrubberSeekBar.setProgress(progress);
+                        int progress = (int) ((float) scrubberSeekBar.getMax() * ((float) currentPositionMs / (float) durationMs));
+                        scrubberSeekBar.setProgress(progress);
+                    }
                 }
 
                 removeAllScrubberCallbacks();
@@ -348,6 +356,7 @@ public class LiveMediaControls implements MediaControls {
     // Player.Listener methods.
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
+        isEnded = false;
         if( playbackState == Player.STATE_READY ) {
             playButton.setVisibility(View.VISIBLE);
             bufferingProgressBar.setVisibility(View.GONE);
@@ -357,6 +366,14 @@ public class LiveMediaControls implements MediaControls {
                 || playbackState == Player.STATE_PREPARING ) {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.VISIBLE);
+        } else if( playbackState == Player.STATE_ENDED ) {
+            isEnded = true;
+            playButton.setVisibility(View.VISIBLE);
+            bufferingProgressBar.setVisibility(View.GONE);
+            currentTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, playerControl.getDuration()));
+            scrubberSeekBar.setProgress(scrubberSeekBar.getMax());
+            playButton.setImageResource(R.drawable.replay_white);
+            show(0, true);
         } else {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.GONE);
