@@ -108,7 +108,7 @@
     <string name="author">%1$s</string>
     <string name="recordAndShare">My Games</string>
     <string name="alsoRecordThese">Popular Games</string>
-    <string name="livestreamHeader">LiveStreams</string>
+    <string name="livestreamHeader">Live Streams</string>
     <string name="trendingVideos">Trending Videos</string>
 
     <plurals name="followersWithCount">
