@@ -237,4 +237,8 @@ public class HomeFragment extends Fragment {
             }
         }
     }
+
+    public DynamicRecyclerView getHomeRecyclerView() {
+        return this.homeRecyclerView;
+    }
 }

@@ -19,6 +19,7 @@ package com.kamcord.app.view;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -33,6 +34,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kamcord.app.adapter.MainViewPagerAdapter;
+import com.kamcord.app.fragment.HomeFragment;
+import com.kamcord.app.fragment.ProfileFragment;
+import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.utils.ViewUtils;
 
 /**
@@ -326,7 +330,27 @@ public class SlidingTabLayout extends HorizontalScrollView {
         @Override
         public void onClick(View v) {
             for (int i = 0; i < mTabStrip.getChildCount(); i++) {
-                if (v == mTabStrip.getChildAt(i)) {
+                if (mViewPager != null && v == mTabStrip.getChildAt(i) && i == mViewPager.getCurrentItem()) {
+                    DynamicRecyclerView view;
+                    Fragment fragment = MainViewPagerAdapter.viewPagerHashMap.get(i);
+                    if(fragment instanceof HomeFragment) {
+                        view = ((HomeFragment) fragment).getHomeRecyclerView();
+                        if(view != null) {
+                            view.scrollToPosition(0);
+                        }
+                    } else if (fragment instanceof RecordFragment) {
+                        view = ((RecordFragment) fragment).getRecordRecyclerView();
+                        if(view != null) {
+                            view.scrollToPosition(0);
+                        }
+                    }
+                    if(fragment instanceof ProfileFragment) {
+                        view = ((ProfileFragment) fragment).getProfileRecyclerView();
+                        if(view != null) {
+                            view.scrollToPosition(0);
+                        }
+                    }
+                } else if (v == mTabStrip.getChildAt(i)) {
                     mViewPager.setCurrentItem(i);
                     return;
                 }
