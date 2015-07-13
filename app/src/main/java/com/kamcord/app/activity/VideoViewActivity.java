@@ -250,7 +250,6 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
-        System.out.println("QQQQ " + playbackState);
         if (playbackState == Player.STATE_READY) {
             mediaControls.show(playWhenReady ? 3000 : 0, true);
         }
