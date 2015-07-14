@@ -21,6 +21,8 @@ public class Event {
         FOLLOW_USER,
         PROFILE_CREATION,
         PROFILE_CREATION_VIEW,
+        PROFILE_LOGIN,
+        PROFILE_LOGIN_VIEW,
     }
 
     public Event(Name name, long whenMs, String appSessionId) {
@@ -83,7 +85,8 @@ public class Event {
         PUSH_NOTIFICATION,
         VIDEO_DETAIL_VIEW,
         STREAM_DETAIL_VIEW,
-        PROFILE_CREATION_VIEW;
+        PROFILE_CREATION_VIEW,
+        PROFILE_LOGIN_VIEW,
     }
     public enum ListType {
         PROFILE,
@@ -162,4 +165,8 @@ public class Event {
     // For STREAM_DETAIL_VIEW
     public String stream_user_id;
     public Integer is_live;
+
+
+    // For PROFILE_LOGIN
+    public Integer is_login;
 }

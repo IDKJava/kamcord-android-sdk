@@ -327,6 +327,14 @@ public class AnalyticsThread extends HandlerThread implements
                 case PROFILE_CREATION: {
                     completeServerEventFrom(event, when, extras);
                 }
+                break;
+
+                case PROFILE_LOGIN: {
+                    completeServerEventFrom(event, when, extras);
+                    if( extras != null && extras.containsKey(KamcordAnalytics.IS_LOGIN_KEY)) {
+                        event.is_login = extras.getInt(KamcordAnalytics.IS_LOGIN_KEY);
+                    }
+                }
             }
 
             // If they put the app_session_id in themselves, we assume that they know what they're doing.
@@ -344,6 +352,9 @@ public class AnalyticsThread extends HandlerThread implements
         event.setRequestTimeFromStopTime(when);
         if( extras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
             event.view_source = (Event.ViewSource) extras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY);
+            if( event.view_source == Event.ViewSource.VIDEO_LIST_VIEW && extras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
+                event.video_list_type = (Event.ListType) extras.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY);
+            }
         }
         if( extras.containsKey(KamcordAnalytics.IS_SUCCESS_KEY) ) {
             event.is_success = extras.getInt(KamcordAnalytics.IS_SUCCESS_KEY);
