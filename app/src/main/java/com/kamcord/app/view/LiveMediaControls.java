@@ -53,6 +53,13 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 public class LiveMediaControls implements MediaControls {
     private static final int FADE_DURATION_MS = 150;
 
+    public interface ControlButtonClickListener {
+        void onPlayButtonClicked();
+        void onPauseButtonClicked();
+        void onReplayButtonClicked();
+    }
+    private ControlButtonClickListener controlButtonClickListener;
+
     private RelativeLayout root;
 
     private Video video;
@@ -201,6 +208,10 @@ public class LiveMediaControls implements MediaControls {
         }
     }
 
+    public void setControlButtonClickListener(ControlButtonClickListener controlButtonClickListener) {
+        this.controlButtonClickListener = controlButtonClickListener;
+    }
+
     private void toggleFollowButton() {
         if (AccountManager.isLoggedIn()) {
             Callback<?> callback = null;
@@ -250,11 +261,20 @@ public class LiveMediaControls implements MediaControls {
             if( isEnded ) {
                 playerControl.seekTo(0);
                 playerControl.start();
+                if( controlButtonClickListener != null ) {
+                    controlButtonClickListener.onReplayButtonClicked();
+                }
             } else {
                 if (playerControl.isPlaying() && playerControl.canPause()) {
                     playerControl.pause();
+                    if( controlButtonClickListener != null ) {
+                        controlButtonClickListener.onPauseButtonClicked();
+                    }
                 } else {
                     playerControl.start();
+                    if( controlButtonClickListener != null ) {
+                        controlButtonClickListener.onPlayButtonClicked();
+                    }
                 }
             }
         }

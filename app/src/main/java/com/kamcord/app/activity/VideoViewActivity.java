@@ -53,7 +53,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         Player.Listener,
         Player.TextListener,
         Player.Id3MetadataListener,
-        AudioCapabilitiesReceiver.Listener {
+        AudioCapabilitiesReceiver.Listener,
+        LiveMediaControls.ControlButtonClickListener {
     private static final String TAG = VideoViewActivity.class.getSimpleName();
 
     public static final String ARG_VIDEO = "arg_video";
@@ -81,11 +82,12 @@ public class VideoViewActivity extends AppCompatActivity implements
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
     private AudioCapabilities audioCapabilities;
 
+    // Analytics counters
     private long totalBufferingTimeMs = 0;
     private long lastBufferingStart = 0;
-
     private long totalPlayTimeMs = 0;
     private long lastPlayStart = 0;
+    private int playStarts = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -238,7 +240,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private Bundle endSessionAnalyticsExtras() {
         Bundle extras = new Bundle();
 
-        extras.putInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1); // TODO: adjust this is we ever start showing a replay button
+        extras.putInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, playStarts);
 
         if( lastPlayStart > 0 ) {
             totalPlayTimeMs += System.currentTimeMillis() - lastPlayStart;
@@ -253,6 +255,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         lastPlayStart = 0;
         totalBufferingTimeMs = 0;
         lastBufferingStart = 0;
+        playStarts = 1;
 
         if( this.video != null && this.video.user != null ) {
             transferViewSourceExtras(extras);
@@ -468,6 +471,21 @@ public class VideoViewActivity extends AppCompatActivity implements
         if (player != null) {
             player.blockingClearSurface();
         }
+    }
+
+    // LiveMediaControls.ControlButtonClickListener implementation
+
+    @Override
+    public void onPlayButtonClicked() {
+    }
+
+    @Override
+    public void onPauseButtonClicked() {
+    }
+
+    @Override
+    public void onReplayButtonClicked() {
+        playStarts++;
     }
 
     private void configureSubtitleView() {

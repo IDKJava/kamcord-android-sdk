@@ -31,7 +31,7 @@ import retrofit.client.Response;
 public class AnalyticsThread extends HandlerThread implements
         Handler.Callback,
         Application.ActivityLifecycleCallbacks {
-    private static final int SEND_EVERY_MS = 300000;
+    private static final int SEND_EVERY_MS = 0;//300000;
     private static final int MAX_UNSENT_EVENTS = 100;
     private static final int MAX_FAILED_SENDS = 4;
     private static final String WHEN_KEY = "when";
