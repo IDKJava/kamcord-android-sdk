@@ -1,6 +1,7 @@
 package com.kamcord.app.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
@@ -17,8 +18,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kamcord.app.R;
+import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.player.Player;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
@@ -55,6 +58,7 @@ public class LiveMediaControls implements MediaControls {
 
     private boolean isScrubberTracking = false;
     private boolean isAnchored = false;
+    private boolean isEnded = false;
 
     @InjectView(R.id.live_indicator_textview)
     TextView liveIndicatorTextView;
@@ -195,18 +199,25 @@ public class LiveMediaControls implements MediaControls {
     }
 
     private void toggleFollowButton() {
-        if (owner.is_user_following) {
-            owner.is_user_following = false;
-            followButton.setActivated(false);
-            followButton.setText(root.getContext().getResources().getString(R.string.videoFollow));
-            AppServerClient.getInstance().unfollow(owner.id, new UnfollowCallback());
-        } else {
-            owner.is_user_following = true;
-            followButton.setActivated(true);
-            followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
-            AppServerClient.getInstance().follow(owner.id, new FollowCallback());
+        if (AccountManager.isLoggedIn()) {
+            if (owner.is_user_following) {
+                owner.is_user_following = false;
+                followButton.setActivated(false);
+                followButton.setText(root.getContext().getResources().getString(R.string.videoFollow));
+                AppServerClient.getInstance().unfollow(owner.id, new UnfollowCallback());
+            } else {
+                owner.is_user_following = true;
+                followButton.setActivated(true);
+                followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
+                AppServerClient.getInstance().follow(owner.id, new FollowCallback());
+            }
+            ViewUtils.buttonCircularReveal(followButton);
         }
-        ViewUtils.buttonCircularReveal(followButton);
+        else {
+            Toast.makeText(root.getContext(), root.getContext().getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(root.getContext(), LoginActivity.class);
+            root.getContext().startActivity(intent);
+        }
     }
 
     @OnClick(R.id.follow_button)
@@ -225,10 +236,15 @@ public class LiveMediaControls implements MediaControls {
     @OnClick(R.id.play_button)
     public void onPlayButtonClick() {
         if( playerControl != null ) {
-            if( playerControl.isPlaying() && playerControl.canPause() ) {
-                playerControl.pause();
-            } else {
+            if( isEnded ) {
+                playerControl.seekTo(0);
                 playerControl.start();
+            } else {
+                if (playerControl.isPlaying() && playerControl.canPause()) {
+                    playerControl.pause();
+                } else {
+                    playerControl.start();
+                }
             }
         }
     }
@@ -323,10 +339,12 @@ public class LiveMediaControls implements MediaControls {
                     int currentPositionMs = playerControl.getCurrentPosition();
 
                     totalTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, durationMs));
-                    currentTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, currentPositionMs));
+                    if( !isEnded ) {
+                        currentTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, currentPositionMs));
 
-                    int progress = (int) ((float) scrubberSeekBar.getMax() * ((float) currentPositionMs / (float) durationMs));
-                    scrubberSeekBar.setProgress(progress);
+                        int progress = (int) ((float) scrubberSeekBar.getMax() * ((float) currentPositionMs / (float) durationMs));
+                        scrubberSeekBar.setProgress(progress);
+                    }
                 }
 
                 removeAllScrubberCallbacks();
@@ -338,6 +356,7 @@ public class LiveMediaControls implements MediaControls {
     // Player.Listener methods.
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
+        isEnded = false;
         if( playbackState == Player.STATE_READY ) {
             playButton.setVisibility(View.VISIBLE);
             bufferingProgressBar.setVisibility(View.GONE);
@@ -347,6 +366,14 @@ public class LiveMediaControls implements MediaControls {
                 || playbackState == Player.STATE_PREPARING ) {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.VISIBLE);
+        } else if( playbackState == Player.STATE_ENDED ) {
+            isEnded = true;
+            playButton.setVisibility(View.VISIBLE);
+            bufferingProgressBar.setVisibility(View.GONE);
+            currentTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, playerControl.getDuration()));
+            scrubberSeekBar.setProgress(scrubberSeekBar.getMax());
+            playButton.setImageResource(R.drawable.replay_white);
+            show(0, true);
         } else {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.GONE);
