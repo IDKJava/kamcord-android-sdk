@@ -142,6 +142,7 @@ public class CreateProfileFragment extends Fragment {
 
     @OnClick(R.id.createProfileButton)
     public void createProfile() {
+        this.createProfileButton.setEnabled(false);
         String username = usernameEditText.getEditableText().toString();
         String email = emailEditText.getEditableText().toString();
         String password = passwordEditText.getEditableText().toString();
@@ -194,6 +195,7 @@ public class CreateProfileFragment extends Fragment {
                 } else {
                     handleLoginFailure(accountWrapper);
                 }
+                createProfileButton.setEnabled(true);
             }
         }
 
@@ -201,6 +203,7 @@ public class CreateProfileFragment extends Fragment {
         public void failure(RetrofitError error) {
             if (viewsAreValid) {
                 handleLoginFailure(null);
+                createProfileButton.setEnabled(true);
             }
         }
     };
