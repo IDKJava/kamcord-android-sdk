@@ -257,85 +257,25 @@ public class AnalyticsThread extends HandlerThread implements
             Bundle extras = data.getBundle(EXTRAS_KEY);
 
             switch (name) {
-                case UPLOAD_VIDEO: {
+                // Server events
+                case UPLOAD_VIDEO:
+                case FOLLOW_USER:
+                case PROFILE_CREATION:
+                case PROFILE_LOGIN:
                     event.setRequestTimeFromStopTime(when);
-                    if (extras != null) {
-                        event.is_success = extras.getInt(KamcordAnalytics.SUCCESS_KEY, 0);
-                        if (extras.containsKey(KamcordAnalytics.FAILURE_REASON_KEY)) {
-                            event.failure_reason = extras.getString(KamcordAnalytics.FAILURE_REASON_KEY);
-                        }
-                        event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
-                        event.was_replayed = extras.getInt(KamcordAnalytics.WAS_REPLAYED_KEY, 0);
-                        event.is_retry = extras.getInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, 0);
-                    }
-                }
-                break;
+                    break;
 
-                case KAMCORD_APP_LAUNCH: {
+                // UI view events
+                case KAMCORD_APP_LAUNCH:
+                case REPLAY_VIDEO_VIEW:
+                case VIDEO_DETAIL_VIEW:
+                case STREAM_DETAIL_VIEW:
+                case PROFILE_INTERSTITIAL:
                     event.setDurationFromStopTime(when);
-                }
-                break;
-
-                case EXTERNAL_SHARE: {
-                    if (extras != null) {
-                        if( extras.containsKey(KamcordAnalytics.EXTERNAL_NETWORK_KEY) ) {
-                            event.external_network = Event.ExternalNetwork.valueOf(extras.getString(KamcordAnalytics.EXTERNAL_NETWORK_KEY));
-                        }
-                        event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
-                    }
-                }
-                break;
-
-                case RECORD_VIDEO: {
-                    if( extras != null ) {
-                        event.event_duration = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
-                        event.game_id = extras.getString(KamcordAnalytics.GAME_ID_KEY, null);
-                    }
-                }
-                break;
-
-                case REPLAY_VIDEO_VIEW: {
-                    completeVideoViewEventFrom(event, when, extras);
-                }
-                break;
-
-                case VIDEO_DETAIL_VIEW: {
-                    completeVideoViewEventFrom(event, when, extras);
-                    completeVideoDetailViewEventFrom(event, extras);
-                    if (extras != null) {
-                        event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
-                        event.profile_user_id = extras.getString(KamcordAnalytics.PROFILE_USER_ID_KEY, null);
-                    }
-                }
-                break;
-
-                case STREAM_DETAIL_VIEW: {
-                    completeVideoViewEventFrom(event, when, extras);
-                    completeVideoDetailViewEventFrom(event, extras);
-                    if (extras != null) {
-                        event.stream_user_id = extras.getString(KamcordAnalytics.STREAM_USER_ID_KEY, null);
-                        event.is_live = extras.getInt(KamcordAnalytics.IS_LIVE_KEY, 0);
-                    }
-                }
-                break;
-
-                case FOLLOW_USER: {
-                    completeServerEventFrom(event, when, extras);
-                }
-                break;
-
-                case PROFILE_CREATION: {
-                    completeServerEventFrom(event, when, extras);
-                }
-                break;
-
-                case PROFILE_LOGIN: {
-                    completeServerEventFrom(event, when, extras);
-                    if( extras != null && extras.containsKey(KamcordAnalytics.IS_LOGIN_KEY)) {
-                        event.is_login = extras.getInt(KamcordAnalytics.IS_LOGIN_KEY);
-                    }
-                }
+                    break;
             }
+
+            event.completeFromData(extras);
 
             // If they put the app_session_id in themselves, we assume that they know what they're doing.
             if( extras != null && extras.containsKey(KamcordAnalytics.APP_SESSION_ID_KEY) ) {
@@ -344,58 +284,6 @@ public class AnalyticsThread extends HandlerThread implements
             Account myAccount = AccountManager.getStoredAccount();
             if( myAccount != null ) {
                 event.user_registration_id = myAccount.id;
-            }
-        }
-    }
-
-    private void completeServerEventFrom(Event event, long when, Bundle extras) {
-        event.setRequestTimeFromStopTime(when);
-        if( extras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
-            event.view_source = (Event.ViewSource) extras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY);
-            if( event.view_source == Event.ViewSource.VIDEO_LIST_VIEW && extras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
-                event.video_list_type = (Event.ListType) extras.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY);
-            }
-        }
-        if( extras.containsKey(KamcordAnalytics.IS_SUCCESS_KEY) ) {
-            event.is_success = extras.getInt(KamcordAnalytics.IS_SUCCESS_KEY);
-        }
-        if( extras.containsKey(KamcordAnalytics.FAILURE_REASON_KEY) ) {
-            event.failure_reason = extras.getString(KamcordAnalytics.FAILURE_REASON_KEY);
-        }
-    }
-
-    private void completeVideoViewEventFrom(Event event, long when, Bundle extras) {
-        event.setDurationFromStopTime(when);
-        if( extras != null ) {
-            event.num_play_starts = extras.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1);
-            event.num_replays = extras.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1);
-            event.buffering_duration = extras.getFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, 0f);
-            event.video_length_watched = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, 0f);
-            if( extras.containsKey(KamcordAnalytics.VIDEO_LENGTH_KEY) ) {
-                event.video_length = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
-            }
-        }
-    }
-
-    private void completeVideoDetailViewEventFrom(Event event, Bundle extras) {
-        if (extras != null) {
-            if( extras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
-                event.view_source = (Event.ViewSource) extras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY);
-            }
-            if( extras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
-                event.video_list_type = (Event.ListType) extras.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY);
-                if( extras.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY) ) {
-                    event.video_list_row = extras.getInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY);
-                }
-                if( extras.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
-                    event.video_list_col = extras.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY);
-                }
-            }
-            if( extras.containsKey(KamcordAnalytics.FEED_ID_KEY) ) {
-                event.feed_id = extras.getString(KamcordAnalytics.FEED_ID_KEY);
-            }
-            if( extras.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY) ) {
-                event.notification_sent_id = extras.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY);
             }
         }
     }
@@ -448,7 +336,6 @@ public class AnalyticsThread extends HandlerThread implements
 
     @Override
     public void onActivityStarted(Activity activity) {
-        Log.v("FindMe", "onActivityStarted(" + activity.getLocalClassName() + ")");
         handler.sendMessage(newMessage(activity, What.ACTIVITY_STARTED, Event.Name.KAMCORD_APP_LAUNCH));
     }
 
@@ -462,7 +349,6 @@ public class AnalyticsThread extends HandlerThread implements
 
     @Override
     public void onActivityStopped(Activity activity) {
-        Log.v("FindMe", "onActivityStopped(" + activity.getLocalClassName() + ")");
         handler.sendMessage(newMessage(activity, What.ACTIVITY_STOPPED, Event.Name.KAMCORD_APP_LAUNCH));
     }
 

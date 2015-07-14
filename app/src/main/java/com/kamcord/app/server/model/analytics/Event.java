@@ -1,6 +1,9 @@
 package com.kamcord.app.server.model.analytics;
 
+import android.os.Bundle;
+
 import com.google.gson.annotations.SerializedName;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.utils.Connectivity;
 
 import java.util.UUID;
@@ -23,6 +26,7 @@ public class Event {
         PROFILE_CREATION_VIEW,
         PROFILE_LOGIN,
         PROFILE_LOGIN_VIEW,
+        PROFILE_INTERSTITIAL,
     }
 
     public Event(Name name, long whenMs, String appSessionId) {
@@ -169,4 +173,92 @@ public class Event {
 
     // For PROFILE_LOGIN
     public Integer is_login;
+
+
+    // For PROFILE_INTERSTITIAL
+    public enum InducingAction {
+        FOLLOW_USER,
+        COMMENT_VIDEO,
+        FOLLOWERS_LIST,
+        FOLLOWING_LIST,
+    }
+    public InducingAction inducing_action;
+
+    public void completeFromData(Bundle bundle) {
+
+        if( bundle == null ) {
+            return;
+        }
+
+        if( bundle.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
+            this.view_source = (ViewSource) bundle.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_SUCCESS_KEY) ) {
+            this.is_success = bundle.getInt(KamcordAnalytics.IS_SUCCESS_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_ID_KEY) ) {
+            this.video_global_id = bundle.getString(KamcordAnalytics.VIDEO_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.FAILURE_REASON_KEY) ) {
+            this.failure_reason = bundle.getString(KamcordAnalytics.FAILURE_REASON_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.WAS_REPLAYED_KEY) ) {
+            this.was_replayed = bundle.getInt(KamcordAnalytics.WAS_REPLAYED_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_UPLOAD_RETRY_KEY) ) {
+            this.is_retry = bundle.getInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.EXTERNAL_NETWORK_KEY) ) {
+            this.external_network = (ExternalNetwork) bundle.getSerializable(KamcordAnalytics.EXTERNAL_NETWORK_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.GAME_ID_KEY) ) {
+            this.game_id = bundle.getString(KamcordAnalytics.GAME_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.NUM_PLAY_STARTS_KEY) ) {
+            this.num_play_starts = bundle.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.NUM_PLAY_STARTS_KEY) ) {
+            this.num_replays = bundle.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.BUFFERING_DURATION_KEY) ) {
+            this.buffering_duration = bundle.getFloat(KamcordAnalytics.BUFFERING_DURATION_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY) ) {
+            this.video_length_watched = bundle.getFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LENGTH_KEY) ) {
+            this.video_length = bundle.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
+            this.video_list_type = (ListType) bundle.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.FEED_ID_KEY) ) {
+            this.feed_id = bundle.getString(KamcordAnalytics.FEED_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY) ) {
+            this.notification_sent_id = bundle.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY) ) {
+            this.video_list_row = bundle.getInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
+            this.video_list_col = bundle.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.PROFILE_USER_ID_KEY) ) {
+            this.profile_user_id = bundle.getString(KamcordAnalytics.PROFILE_USER_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.STREAM_USER_ID_KEY) ) {
+            this.stream_user_id = bundle.getString(KamcordAnalytics.STREAM_USER_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_LIVE_KEY) ) {
+            this.is_live = bundle.getInt(KamcordAnalytics.IS_LIVE_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_LOGIN_KEY) ) {
+            this.is_login = bundle.getInt(KamcordAnalytics.IS_LOGIN_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.INDUCING_ACTION_KEY) ) {
+            this.inducing_action = (InducingAction) bundle.getSerializable(KamcordAnalytics.INDUCING_ACTION_KEY);
+        }
+
+    }
 }

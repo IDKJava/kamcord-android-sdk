@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
+import com.kamcord.app.analytics.KamcordAnalytics;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
 
 import butterknife.ButterKnife;
@@ -29,17 +31,20 @@ public class WelcomeFragment extends Fragment {
 
     public static final int CLEAR_DELAY_MS = 1000;
 
-    @InjectView(R.id.subtitleTextView) TextView subtitleTextView;
-    @InjectView(R.id.skipButton) Button skipButton;
-    @InjectView(R.id.createProfileButton) Button createProfileButton;
-    @InjectView(R.id.loginButton) Button loginButton;
+    @InjectView(R.id.subtitleTextView)
+    TextView subtitleTextView;
+    @InjectView(R.id.skipButton)
+    Button skipButton;
+    @InjectView(R.id.createProfileButton)
+    Button createProfileButton;
+    @InjectView(R.id.loginButton)
+    Button loginButton;
 
     private Handler clearHandler;
-    private final Runnable clearRunnable = new Runnable()
-    {
+    private final Runnable clearRunnable = new Runnable() {
         @Override
         public void run() {
-            if( isResumed() ) {
+            if (isResumed()) {
                 Intent intent = new Intent(getActivity(), RecordActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -55,19 +60,15 @@ public class WelcomeFragment extends Fragment {
         ButterKnife.inject(this, root);
         initializeSubtitleText();
 
-        if( AccountManager.isLoggedIn() )
-        {
+        if (AccountManager.isLoggedIn()) {
             createProfileButton.setVisibility(View.GONE);
             loginButton.setVisibility(View.GONE);
             skipButton.setVisibility(View.GONE);
-            if( clearHandler == null )
-            {
+            if (clearHandler == null) {
                 clearHandler = new Handler();
             }
             clearHandler.postDelayed(clearRunnable, CLEAR_DELAY_MS);
-        }
-        else
-        {
+        } else {
             AccountManager.clearStoredAccount();
             createProfileButton.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.VISIBLE);
@@ -80,6 +81,18 @@ public class WelcomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        KamcordAnalytics.startSession(this, Event.Name.PROFILE_INTERSTITIAL);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        KamcordAnalytics.endSession(this, Event.Name.PROFILE_INTERSTITIAL, getArguments());
     }
 
     private void initializeSubtitleText() {

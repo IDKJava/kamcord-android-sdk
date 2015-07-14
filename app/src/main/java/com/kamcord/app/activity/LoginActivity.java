@@ -2,6 +2,7 @@ package com.kamcord.app.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,8 +26,10 @@ public class LoginActivity extends AppCompatActivity {
         contentView.setId(containerViewId);
         setContentView(contentView);
 
+        Fragment welcomeFragment = new WelcomeFragment();
+        welcomeFragment.setArguments(getIntent().getExtras());
         getSupportFragmentManager().beginTransaction()
-                .add(containerViewId, new WelcomeFragment())
+                .add(containerViewId, welcomeFragment)
                 .commit();
     }
 

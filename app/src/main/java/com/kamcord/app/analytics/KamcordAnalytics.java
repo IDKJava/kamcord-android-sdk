@@ -43,6 +43,7 @@ public class KamcordAnalytics {
     public static final String IS_FOLLOW_KEY = "is_follow";
     public static final String IS_SUCCESS_KEY = "is_success";
     public static final String IS_LOGIN_KEY = "is_login";
+    public static final String INDUCING_ACTION_KEY = "inducing_action";
 
 
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";
