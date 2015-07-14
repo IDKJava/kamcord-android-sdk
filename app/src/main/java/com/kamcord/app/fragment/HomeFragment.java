@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
-import com.kamcord.app.adapter.ProfileAdapter;
+import com.kamcord.app.adapter.StreamListAdapter;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Card;
@@ -24,6 +24,7 @@ import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -43,7 +44,7 @@ public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
     private List<FeedItem> mFeedItemList = new ArrayList<>();
-    private ProfileAdapter mProfileAdapter;
+    private StreamListAdapter mStreamAdapter;
     private String nextPage;
     private int totalItems = 0;
     private boolean footerVisible = false;
@@ -55,9 +56,7 @@ public class HomeFragment extends Fragment {
 
         ButterKnife.inject(this, root);
         viewsAreValid = true;
-
         initKamcordHomeFragment();
-
         return root;
     }
 
@@ -93,8 +92,8 @@ public class HomeFragment extends Fragment {
             homeFeedPromptContainer.setVisibility(View.VISIBLE);
         }
 
-        mProfileAdapter = new ProfileAdapter(getActivity(), mFeedItemList);
-        homeRecyclerView.setAdapter(mProfileAdapter);
+        mStreamAdapter = new StreamListAdapter(getActivity(), mFeedItemList);
+        homeRecyclerView.setAdapter(mStreamAdapter);
         homeRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(homeRecyclerView));
         homeRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
@@ -144,7 +143,7 @@ public class HomeFragment extends Fragment {
     public void loadMoreItems() {
         footerVisible = true;
         mFeedItemList.add(new FeedItem<>(FeedItem.Type.FOOTER, null));
-        mProfileAdapter.notifyItemInserted(mProfileAdapter.getItemCount());
+        mStreamAdapter.notifyItemInserted(mStreamAdapter.getItemCount());
         AppServerClient.getInstance().getHomeFeed(nextPage, new GetHomeFeedCallBack());
     }
 
@@ -154,6 +153,11 @@ public class HomeFragment extends Fragment {
             if (homeFeedGenericResponse != null
                     && homeFeedGenericResponse.response != null
                     && viewsAreValid) {
+                Iterator<FeedItem> iterator = mFeedItemList.iterator();
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                }
                 for (Card card : homeFeedGenericResponse.response.cardList) {
                     if (card.stream != null) {
                         FeedItem streamFeedItem = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
@@ -164,7 +168,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 footerVisible = false;
-                mProfileAdapter.notifyDataSetChanged();
+                mStreamAdapter.notifyDataSetChanged();
                 discoverFeedRefreshLayout.setRefreshing(false);
             }
         }
@@ -185,8 +189,8 @@ public class HomeFragment extends Fragment {
                     && homeFeedGenericResponse.response != null
                     && viewsAreValid) {
                 nextPage = homeFeedGenericResponse.response.next_page;
-                if (mFeedItemList.size() > 0 && (mFeedItemList.get(mProfileAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
-                    mFeedItemList.remove(mProfileAdapter.getItemCount() - 1);
+                if (mFeedItemList.size() > 0 && (mFeedItemList.get(mStreamAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
+                    mFeedItemList.remove(mStreamAdapter.getItemCount() - 1);
                 }
                 for (Card card : homeFeedGenericResponse.response.cardList) {
                     if (card.stream != null) {
@@ -195,7 +199,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 footerVisible = false;
-                mProfileAdapter.notifyDataSetChanged();
+                mStreamAdapter.notifyDataSetChanged();
                 discoverFeedRefreshLayout.setRefreshing(false);
                 homeFeedPromptContainer.setVisibility(View.GONE);
             }
@@ -208,5 +212,9 @@ public class HomeFragment extends Fragment {
                 discoverFeedRefreshLayout.setRefreshing(false);
             }
         }
+    }
+
+    public DynamicRecyclerView getHomeRecyclerView() {
+        return this.homeRecyclerView;
     }
 }
