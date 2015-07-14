@@ -7,5 +7,5 @@ import java.util.List;
  */
 public class CardList  {
     public String next_page;
-    public List<Card> cardList;
+    public List<Card> card_model_list;
 }

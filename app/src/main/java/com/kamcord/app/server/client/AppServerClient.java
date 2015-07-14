@@ -100,8 +100,8 @@ public class AppServerClient {
         @GET("/app/v4/feeds/discovery/?locale=en")
         void getDiscoverFeed(@Query("page") String page, Callback<GenericResponse<DiscoverFeed>> cb);
 
-        @GET("/app/v4/feeds/androidFeed/")
-        void getHomeFeed(@Query("page") String page, Callback<GenericResponse<CardList>> cb);
+        @GET("/app/v4/feeds/androidfeed/")
+        void getHomeFeed(@Query("page") String page, @Query("count") String count, Callback<GenericResponse<CardList>> cb);
 
         @GET("/app/v3/videos/{videoId}")
         void getVideoInfo(@Path("videoId") String videoId, Callback<GenericResponse<Video>> cb);

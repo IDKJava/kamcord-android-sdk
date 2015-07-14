@@ -452,7 +452,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @Override
         public void failure(RetrofitError error) {
-            Log.e("Retrofit Unlike Failure", "  " + error.toString());
+            Log.e("Retrofit Update Video Views Failure", "  " + error.toString());
         }
     }
 
