@@ -16,11 +16,13 @@ import android.widget.TextView;
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.RecordActivity;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.UserErrorCode;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.KeyboardUtils;
 import com.kamcord.app.utils.StringUtils;
@@ -146,6 +148,7 @@ public class CreateProfileFragment extends Fragment {
         String username = usernameEditText.getEditableText().toString();
         String email = emailEditText.getEditableText().toString();
         String password = passwordEditText.getEditableText().toString();
+        KamcordAnalytics.startSession(createProfileCallback, Event.Name.PROFILE_CREATION);
         AppServerClient.getInstance().createProfile(username, email, password, createProfileCallback);
     }
 
@@ -181,6 +184,12 @@ public class CreateProfileFragment extends Fragment {
     private Callback<GenericResponse<Account>> createProfileCallback = new Callback<GenericResponse<Account>>() {
         @Override
         public void success(GenericResponse<Account> accountWrapper, Response response) {
+            boolean isSuccess = accountWrapper != null && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK);
+            String failureReason = accountWrapper != null && accountWrapper.status != null && !accountWrapper.status.equals(StatusCode.OK)
+                    ? accountWrapper.status.status_reason : null;
+            Bundle extras = analyticsExtras(isSuccess, failureReason);
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_CREATION, extras);
+
             if (viewsAreValid) {
                 if (accountWrapper != null
                         && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
@@ -201,10 +210,22 @@ public class CreateProfileFragment extends Fragment {
 
         @Override
         public void failure(RetrofitError error) {
+            Bundle extras = analyticsExtras(false, null);
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_CREATION, extras);
+
             if (viewsAreValid) {
                 handleLoginFailure(null);
                 createProfileButton.setEnabled(true);
             }
+        }
+
+        private Bundle analyticsExtras(boolean isSuccess, String failureReason) {
+            Bundle extras = new Bundle();
+
+            extras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, isSuccess ? 1 : 0);
+            extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, failureReason);
+
+            return extras;
         }
     };
 

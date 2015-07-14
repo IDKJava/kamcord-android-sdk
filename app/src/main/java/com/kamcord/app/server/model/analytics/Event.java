@@ -19,6 +19,8 @@ public class Event {
         STREAM_DETAIL_VIEW,
         VIDEO_DETAIL_VIEW,
         FOLLOW_USER,
+        PROFILE_CREATION,
+        PROFILE_CREATION_VIEW,
     }
 
     public Event(Name name, long whenMs, String appSessionId) {

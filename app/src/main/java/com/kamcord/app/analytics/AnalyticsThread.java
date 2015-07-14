@@ -323,6 +323,10 @@ public class AnalyticsThread extends HandlerThread implements
                     event.setRequestTimeFromStopTime(when);
                 }
                 break;
+
+                case PROFILE_CREATION: {
+                    event.setRequestTimeFromStopTime(when);
+                }
             }
 
             // If they put the app_session_id in themselves, we assume that they know what they're doing.
