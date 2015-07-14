@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,12 +33,14 @@ import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.adapter.GameRecordListAdapter;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.Connectivity;
@@ -431,7 +434,7 @@ public class RecordFragment extends Fragment implements
     }
 
     @Override
-    public void onGameActionButtonClick(final Game game) {
+    public void onGameActionButtonClick(Game game, int position) {
 
         if (game.isInstalled && !recordingServiceConnection.isServiceRecording()) {
             mSelectedGame = game;
@@ -439,6 +442,20 @@ public class RecordFragment extends Fragment implements
 
         } else {
             mSelectedGame = null;
+
+            Bundle extras = new Bundle();
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.RECORD_TAB);
+            if( mRecyclerView.getLayoutManager() instanceof GridLayoutManager ) {
+                GridLayoutManager manager = (GridLayoutManager) mRecyclerView.getLayoutManager();
+                int spanCount = manager.getSpanCount();
+                int row = manager.getSpanSizeLookup().getSpanGroupIndex(position, spanCount);
+                int col = manager.getSpanSizeLookup().getSpanIndex(position, spanCount);
+                extras.putInt(KamcordAnalytics.ENTRY_ROW_KEY, row+1);
+                extras.putInt(KamcordAnalytics.ENTRY_COL_KEY, col+1);
+            }
+            extras.putString(KamcordAnalytics.CLICKED_GAME_ID_KEY, game.game_primary_id);
+            KamcordAnalytics.fireEvent(Event.Name.STORE_CLICK, extras);
+
             Intent intent = new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("market://details?id=" + game.play_store_id));

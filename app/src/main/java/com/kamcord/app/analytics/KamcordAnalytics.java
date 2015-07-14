@@ -26,6 +26,7 @@ public class KamcordAnalytics {
     public static final String APP_SESSION_ID_KEY = "app_session_id";
     public static final String IS_UPLOAD_RETRY_KEY = "is_upload_retry";
     public static final String GAME_ID_KEY = "game_id";
+    public static final String CLICKED_GAME_ID_KEY = "clicked_game_id";
     public static final String VIEW_SOURCE_KEY = "view_source";
     public static final String NUM_PLAY_STARTS_KEY = "num_play_starts";
     public static final String BUFFERING_DURATION_KEY = "buffering_duration";
@@ -36,6 +37,8 @@ public class KamcordAnalytics {
     public static final String NOTIFICATION_SENT_ID_KEY = "notification_sent_id";
     public static final String VIDEO_LIST_ROW_KEY = "video_list_row";
     public static final String VIDEO_LIST_COL_KEY = "video_list_col";
+    public static final String ENTRY_ROW_KEY = "entry_row";
+    public static final String ENTRY_COL_KEY = "entry_col";
     public static final String PROFILE_USER_ID_KEY = "profile_user_id";
     public static final String STREAM_USER_ID_KEY = "stream_user_id";
     public static final String IS_LIVE_KEY = "is_live";

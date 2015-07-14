@@ -28,6 +28,7 @@ public class Event {
         PROFILE_LOGIN_VIEW,
         PROFILE_INTERSTITIAL,
         EXTERNAL_RESHARE,
+        STORE_CLICK,
     }
 
     public enum ViewSource {
@@ -41,6 +42,7 @@ public class Event {
         PROFILE_CREATION_VIEW,
         PROFILE_LOGIN_VIEW,
         SHARE_VIEW,
+        RECORD_TAB,
     }
 
     public enum ListType {
@@ -151,6 +153,7 @@ public class Event {
 
     // For RECORD_VIDEO events.
     public String game_id = null;
+    public String clicked_game_id = null;
 
     @Override
     public int hashCode() {
@@ -197,6 +200,11 @@ public class Event {
     // For PROFILE_INTERSTITIAL
     public InducingAction inducing_action;
 
+
+    // For events originating from a row/col layout
+    public Integer entry_row;
+    public Integer entry_col;
+
     public void completeFromData(Bundle bundle) {
 
         if( bundle == null ) {
@@ -223,6 +231,9 @@ public class Event {
         }
         if( bundle.containsKey(KamcordAnalytics.EXTERNAL_NETWORK_KEY) ) {
             this.external_network = (ExternalNetwork) bundle.getSerializable(KamcordAnalytics.EXTERNAL_NETWORK_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.CLICKED_GAME_ID_KEY) ) {
+            this.clicked_game_id = bundle.getString(KamcordAnalytics.CLICKED_GAME_ID_KEY);
         }
         if( bundle.containsKey(KamcordAnalytics.GAME_ID_KEY) ) {
             this.game_id = bundle.getString(KamcordAnalytics.GAME_ID_KEY);
@@ -256,6 +267,12 @@ public class Event {
         }
         if( bundle.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
             this.video_list_col = bundle.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.ENTRY_ROW_KEY) ) {
+            this.entry_row = bundle.getInt(KamcordAnalytics.ENTRY_ROW_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.ENTRY_COL_KEY) ) {
+            this.entry_col = bundle.getInt(KamcordAnalytics.ENTRY_COL_KEY);
         }
         if( bundle.containsKey(KamcordAnalytics.PROFILE_USER_ID_KEY) ) {
             this.profile_user_id = bundle.getString(KamcordAnalytics.PROFILE_USER_ID_KEY);
