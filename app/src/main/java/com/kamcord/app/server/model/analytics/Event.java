@@ -18,6 +18,7 @@ public class Event {
         REPLAY_VIDEO_VIEW,
         STREAM_DETAIL_VIEW,
         VIDEO_DETAIL_VIEW,
+        FOLLOW_USER,
     }
 
     public Event(Name name, long whenMs, String appSessionId) {
@@ -78,6 +79,8 @@ public class Event {
     public enum ViewSource {
         VIDEO_LIST_VIEW,
         PUSH_NOTIFICATION,
+        VIDEO_DETAIL_VIEW,
+        STREAM_DETAIL_VIEW,
     }
     public enum ListType {
         PROFILE,

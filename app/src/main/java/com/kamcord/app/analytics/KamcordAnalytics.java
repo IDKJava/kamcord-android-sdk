@@ -39,6 +39,9 @@ public class KamcordAnalytics {
     public static final String PROFILE_USER_ID_KEY = "profile_user_id";
     public static final String STREAM_USER_ID_KEY = "stream_user_id";
     public static final String IS_LIVE_KEY = "is_live";
+    public static final String FOLLOWED_USER_ID_KEY = "followed_user_id";
+    public static final String IS_FOLLOW_KEY = "is_follow";
+    public static final String IS_SUCCESS_KEY = "is_success";
 
 
     private static final String ANALYTICS_PREFS = "KAMCORD_ANALYTICS_PREFS";

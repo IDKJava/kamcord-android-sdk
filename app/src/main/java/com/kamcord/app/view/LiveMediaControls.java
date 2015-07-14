@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,13 +23,16 @@ import android.widget.Toast;
 
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.player.Player;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
+import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.utils.ViewUtils;
@@ -163,7 +167,6 @@ public class LiveMediaControls implements MediaControls {
                     private boolean wasPlaying = false;
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
                     }
 
                     @Override
@@ -200,17 +203,21 @@ public class LiveMediaControls implements MediaControls {
 
     private void toggleFollowButton() {
         if (AccountManager.isLoggedIn()) {
+            Callback<?> callback = null;
             if (owner.is_user_following) {
                 owner.is_user_following = false;
                 followButton.setActivated(false);
                 followButton.setText(root.getContext().getResources().getString(R.string.videoFollow));
-                AppServerClient.getInstance().unfollow(owner.id, new UnfollowCallback());
+                callback = new UnfollowCallback(owner.id);
+                AppServerClient.getInstance().unfollow(owner.id, (UnfollowCallback) callback);
             } else {
                 owner.is_user_following = true;
                 followButton.setActivated(true);
                 followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
-                AppServerClient.getInstance().follow(owner.id, new FollowCallback());
+                callback = new FollowCallback(owner.id);
+                AppServerClient.getInstance().follow(owner.id, (FollowCallback) callback);
             }
+            KamcordAnalytics.startSession(callback, Event.Name.FOLLOW_USER);
             ViewUtils.buttonCircularReveal(followButton);
         }
         else {
@@ -391,7 +398,53 @@ public class LiveMediaControls implements MediaControls {
     public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
     }
 
-    private class FollowCallback implements Callback<GenericResponse<?>> {
+    private static class FollowCallback implements Callback<GenericResponse<?>> {
+        private String receivingUserId = null;
+        private String videoId = null;
+        private Event.ViewSource viewSource;
+
+        public FollowCallback(String receivingUserId, String videoId, Event.ViewSource viewSource) {
+            this.receivingUserId = receivingUserId;
+            this.videoId = videoId;
+            this.viewSource = viewSource
+        }
+
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+            Bundle analyticsExtras = new Bundle();
+            analyticsExtras.putString(KamcordAnalytics.FOLLOWED_USER_ID_KEY, receivingUserId);
+            analyticsExtras.putInt(KamcordAnalytics.IS_FOLLOW_KEY, 1);
+            analyticsExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, videoId);
+
+            if( responseWrapper != null && responseWrapper.status.equals(StatusCode.OK) ) {
+                analyticsExtras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, 1);
+            } else {
+                analyticsExtras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, 0);
+                if( responseWrapper != null && responseWrapper.status != null ) {
+                    analyticsExtras.putString(KamcordAnalytics.FAILURE_REASON_KEY,
+                            responseWrapper.status.status_reason);
+                }
+            }
+            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER);
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Failure", "  " + error.toString());
+        }
+    }
+
+    private static class UnfollowCallback implements Callback<GenericResponse<?>> {
+        private String receivingUserId = null;
+        private String videoId = null;
+        private Event.ViewSource viewSource;
+
+        public UnfollowCallback(String receivingUserId, String videoId, Event.ViewSource viewSource) {
+            this.receivingUserId = receivingUserId;
+            this.videoId = videoId;
+            this.viewSource = viewSource;
+        }
+
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
         }
@@ -402,14 +455,7 @@ public class LiveMediaControls implements MediaControls {
         }
     }
 
-    private class UnfollowCallback implements Callback<GenericResponse<?>> {
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-        }
+    private static Bundle analyticsFollowExtras(String receivingUserId, int isFollow, String videoId, int isSuccess, String failureReason) {
 
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e("Retrofit Failure", "  " + error.toString());
-        }
     }
 }
