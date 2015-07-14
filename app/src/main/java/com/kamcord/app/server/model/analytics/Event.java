@@ -27,6 +27,7 @@ public class Event {
         PROFILE_LOGIN,
         PROFILE_LOGIN_VIEW,
         PROFILE_INTERSTITIAL,
+        EXTERNAL_RESHARE,
     }
 
     public enum ViewSource {

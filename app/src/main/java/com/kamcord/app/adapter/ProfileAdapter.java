@@ -276,6 +276,24 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.action_external_share:
+                                Bundle extras = new Bundle();
+                                extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.VIDEO_LIST_VIEW);
+                                extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY, Event.ListType.PROFILE);
+                                if( mRecyclerView.getLayoutManager() instanceof GridLayoutManager ) {
+                                    GridLayoutManager gridLayoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
+                                    int spanCount = gridLayoutManager.getSpanCount();
+                                    if( gridLayoutManager.getSpanSizeLookup() instanceof ProfileLayoutSpanSizeLookup ) {
+                                        ProfileLayoutSpanSizeLookup lookup = (ProfileLayoutSpanSizeLookup) gridLayoutManager.getSpanSizeLookup();
+
+                                        extras.putInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
+                                                lookup.getSpanGroupIndex(position, spanCount)+1);
+                                        extras.putInt(KamcordAnalytics.VIDEO_LIST_COL_KEY,
+                                                lookup.getSpanIndex(position, spanCount)+1);
+                                    }
+                                }
+                                extras.putString(KamcordAnalytics.VIDEO_ID_KEY, video.video_id);
+                                KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_RESHARE, extras);
+
                                 VideoUtils.doExternalShare(mContext, video);
                                 break;
 

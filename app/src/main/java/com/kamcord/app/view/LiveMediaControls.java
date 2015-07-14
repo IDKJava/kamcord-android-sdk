@@ -252,10 +252,19 @@ public class LiveMediaControls implements MediaControls {
 
     @OnClick(R.id.share_button)
     public void doExternalShare() {
-        if (video != null)
+        Bundle extras = new Bundle();
+        if (video != null) {
             VideoUtils.doExternalShare(root.getContext(), video);
-        else if (stream != null)
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, video.video_id != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.REPLAY_VIDEO_VIEW);
+            extras.putString(KamcordAnalytics.VIDEO_ID_KEY, video.video_id);
+        } else if (stream != null) {
             VideoUtils.doExternalShare(root.getContext(), stream);
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.STREAM_DETAIL_VIEW);
+            if( stream.user != null ) {
+                extras.putString(KamcordAnalytics.STREAM_USER_ID_KEY, stream.user.id);
+            }
+        }
+        KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_RESHARE, extras);
     }
 
     @OnClick(R.id.play_button)
