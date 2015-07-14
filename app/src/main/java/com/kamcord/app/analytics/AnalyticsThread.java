@@ -340,8 +340,12 @@ public class AnalyticsThread extends HandlerThread implements
         event.setDurationFromStopTime(when);
         if( extras != null ) {
             event.num_play_starts = extras.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1);
+            event.num_replays = extras.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1);
             event.buffering_duration = extras.getFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, 0f);
             event.video_length_watched = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, 0f);
+            if( extras.containsKey(KamcordAnalytics.VIDEO_LENGTH_KEY) ) {
+                event.video_length = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
+            }
         }
     }
 

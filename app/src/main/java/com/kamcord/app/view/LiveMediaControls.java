@@ -53,12 +53,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 public class LiveMediaControls implements MediaControls {
     private static final int FADE_DURATION_MS = 150;
 
-    public interface ControlButtonClickListener {
-        void onPlayButtonClicked();
-        void onPauseButtonClicked();
-        void onReplayButtonClicked();
-    }
-    private ControlButtonClickListener controlButtonClickListener;
+    private MediaControls.ControlButtonClickListener controlButtonClickListener;
 
     private RelativeLayout root;
 
@@ -208,7 +203,7 @@ public class LiveMediaControls implements MediaControls {
         }
     }
 
-    public void setControlButtonClickListener(ControlButtonClickListener controlButtonClickListener) {
+    public void setControlButtonClickListener(MediaControls.ControlButtonClickListener controlButtonClickListener) {
         this.controlButtonClickListener = controlButtonClickListener;
     }
 

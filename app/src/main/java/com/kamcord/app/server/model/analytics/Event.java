@@ -141,8 +141,10 @@ public class Event {
 
     // For REPLAY_VIDEO_VIEW, VIDEO_DETAIL_VIEW, and STREAM_DETAIL_VIEW
     public Integer num_play_starts;
+    public Integer num_replays;
     public Float buffering_duration;
     public Float video_length_watched;
+    public Float video_length;
 
     // For VIDEO_DETAIL_VIEW and STREAM_DETAIL_VIEW
     public ListType video_list_type;

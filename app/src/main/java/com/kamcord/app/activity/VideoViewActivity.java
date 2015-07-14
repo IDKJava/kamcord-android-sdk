@@ -54,7 +54,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         Player.TextListener,
         Player.Id3MetadataListener,
         AudioCapabilitiesReceiver.Listener,
-        LiveMediaControls.ControlButtonClickListener {
+        MediaControls.ControlButtonClickListener {
     private static final String TAG = VideoViewActivity.class.getSimpleName();
 
     public static final String ARG_VIDEO = "arg_video";
@@ -134,6 +134,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         mediaControls = new LiveMediaControls(this, video, stream);
         mediaControls.hide(false);
         mediaControls.setAnchorView(root);
+        mediaControls.setControlButtonClickListener(this);
     }
 
     @Override
@@ -250,6 +251,13 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         extras.putFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, (float) totalBufferingTimeMs / 1000f);
         extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, (float) totalPlayTimeMs / 1000f);
+
+        if( player != null ) {
+            long videoLengthMs = player.getDuration();
+            if( videoLengthMs > 0 ) {
+                extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, (float) videoLengthMs / 1000f);
+            }
+        }
 
         totalPlayTimeMs = 0;
         lastPlayStart = 0;
