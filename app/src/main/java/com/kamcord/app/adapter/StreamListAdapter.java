@@ -21,6 +21,7 @@ import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.utils.StringUtils;
+import com.kamcord.app.utils.VideoUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -108,6 +109,8 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         viewHolder.getStreamItemTitle().setText(stream.name);
         final TextView streamViewsTextView = viewHolder.getStreamViews();
         streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+        final TextView streamLenghtTextView = viewHolder.getStreamLengthViews();
+        streamLenghtTextView.setText(VideoUtils.getStreamDurationString(stream.started_at));
         final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
         if (stream.thumbnails != null && stream.thumbnails.medium != null) {
             Picasso.with(mContext)
