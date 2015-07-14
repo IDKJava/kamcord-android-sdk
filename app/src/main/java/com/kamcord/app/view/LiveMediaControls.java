@@ -233,6 +233,14 @@ public class LiveMediaControls implements MediaControls {
         else {
             Toast.makeText(root.getContext(), root.getContext().getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(root.getContext(), LoginActivity.class);
+            Event.ViewSource source = video != null ?
+                    (video.video_id != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.REPLAY_VIDEO_VIEW)
+                    : Event.ViewSource.STREAM_DETAIL_VIEW;
+            intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, source);
+            if( source == Event.ViewSource.VIDEO_DETAIL_VIEW ) {
+                intent.putExtra(KamcordAnalytics.VIDEO_ID_KEY, video.video_id);
+            }
+            intent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.FOLLOW_USER);
             root.getContext().startActivity(intent);
         }
     }

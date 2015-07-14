@@ -29,6 +29,56 @@ public class Event {
         PROFILE_INTERSTITIAL,
     }
 
+    public enum ViewSource {
+        VIDEO_LIST_VIEW,
+        PUSH_NOTIFICATION,
+        VIDEO_DETAIL_VIEW,
+        STREAM_DETAIL_VIEW,
+        REPLAY_VIDEO_VIEW,
+        PROFILE_DETAIL_VIEW,
+        PROFILE_CREATION_VIEW,
+        PROFILE_LOGIN_VIEW,
+        SHARE_VIEW,
+    }
+
+    public enum ListType {
+        PROFILE,
+        HOME,
+    }
+
+    public enum UploadFailureReason {
+        RESERVE_VIDEO,
+        UPLOAD_TO_S3,
+        UPLOAD_COMPLETION,
+    }
+
+    public enum ConnectionType {
+        @SerializedName("wifi")
+        WIFI,
+        @SerializedName("mobile")
+        MOBILE,
+    }
+
+    public enum ExternalNetwork {
+        EMAIL,
+        FACEBOOK,
+        KAKAO,
+        LINE,
+        NICONICO,
+        TWITTER,
+        WECHAT,
+        YOUTUBE,
+    }
+
+    public enum InducingAction {
+        FOLLOW_USER,
+        COMMENT_VIDEO,
+        FOLLOWERS_LIST,
+        FOLLOWING_LIST,
+        PROFILE_LOGOUT,
+        SHARE_VIDEO,
+    }
+
     public Event(Name name, long whenMs, String appSessionId) {
         this.name = name;
         this.event_id = UUID.randomUUID().toString();
@@ -72,30 +122,12 @@ public class Event {
     public String event_id;
     public ConnectionType connection_type;
 
-    public enum ConnectionType {
-        @SerializedName("wifi")
-        WIFI,
-        @SerializedName("mobile")
-        MOBILE,
-    }
 
 
     // For navigational events.
     public Float event_duration = null;
     public transient Long eventDurationMs = null;
     public ViewSource view_source = null;
-    public enum ViewSource {
-        VIDEO_LIST_VIEW,
-        PUSH_NOTIFICATION,
-        VIDEO_DETAIL_VIEW,
-        STREAM_DETAIL_VIEW,
-        PROFILE_CREATION_VIEW,
-        PROFILE_LOGIN_VIEW,
-    }
-    public enum ListType {
-        PROFILE,
-        HOME,
-    }
 
 
     // For server events.
@@ -109,25 +141,10 @@ public class Event {
     public String failure_reason = null;
     public Integer was_replayed = null;
     public Integer is_retry = null;
-    public enum UploadFailureReason {
-        RESERVE_VIDEO,
-        UPLOAD_TO_S3,
-        UPLOAD_COMPLETION,
-    }
 
 
     // For EXTERNAL_SHARE events.
     public ExternalNetwork external_network = null;
-    public enum ExternalNetwork {
-        EMAIL,
-        FACEBOOK,
-        KAKAO,
-        LINE,
-        NICONICO,
-        TWITTER,
-        WECHAT,
-        YOUTUBE,
-    }
 
 
     // For RECORD_VIDEO events.
@@ -176,12 +193,6 @@ public class Event {
 
 
     // For PROFILE_INTERSTITIAL
-    public enum InducingAction {
-        FOLLOW_USER,
-        COMMENT_VIDEO,
-        FOLLOWERS_LIST,
-        FOLLOWING_LIST,
-    }
     public InducingAction inducing_action;
 
     public void completeFromData(Bundle bundle) {

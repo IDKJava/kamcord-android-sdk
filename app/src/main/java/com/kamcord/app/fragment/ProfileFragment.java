@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.adapter.ProfileAdapter;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
@@ -25,6 +26,7 @@ import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.Uploader;
 import com.kamcord.app.utils.AccountListener;
@@ -449,6 +451,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
     @OnClick(R.id.signInPromptButton)
     public void showSignInPrompt() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_DETAIL_VIEW);
         startActivity(intent);
         getActivity().finish();
     }

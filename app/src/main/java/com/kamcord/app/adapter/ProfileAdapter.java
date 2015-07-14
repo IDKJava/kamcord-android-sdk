@@ -528,6 +528,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             AccountManager.clearStoredAccount();
             if (mContext != null) {
                 Intent loginIntent = new Intent(mContext, LoginActivity.class);
+                loginIntent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_DETAIL_VIEW);
+                loginIntent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.PROFILE_LOGOUT);
                 mContext.startActivity(loginIntent);
                 ((Activity) mContext).finish();
             }
@@ -541,6 +543,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             AccountManager.clearStoredAccount();
             if (mContext != null) {
                 Intent loginIntent = new Intent(mContext, LoginActivity.class);
+                loginIntent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_DETAIL_VIEW);
+                loginIntent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.PROFILE_LOGOUT);
                 mContext.startActivity(loginIntent);
                 ((Activity) mContext).finish();
             }
@@ -551,8 +555,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             extras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, isSuccess ? 1 : 0);
             extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, failureReason);
-            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.VIDEO_LIST_VIEW);
-            extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY, Event.ListType.PROFILE);
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_DETAIL_VIEW);
             extras.putInt(KamcordAnalytics.IS_LOGIN_KEY, 0);
 
             return extras;

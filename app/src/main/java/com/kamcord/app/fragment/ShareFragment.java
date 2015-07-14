@@ -32,6 +32,7 @@ import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
@@ -248,6 +249,8 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.SHARE_VIEW);
+            intent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.SHARE_VIDEO);
             getActivity().startActivity(intent);
         }
 
