@@ -48,7 +48,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         View itemLayoutView;
         FeedItem.Type type = FeedItem.Type.values()[viewType];
         switch (type) {
-            case NORMAL_HEADER: {
+            case TEXT_HEADER: {
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_installed_header, null);
                 return new InstalledHeaderViewHolder(itemLayoutView);
             }

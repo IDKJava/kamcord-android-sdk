@@ -214,7 +214,7 @@ public class HomeFragment extends Fragment {
                     for (Card card : streamGroup.card_models) {
                         if (card.stream != null) {
                             if (mStreamList.size() == 0) {
-                                FeedItem headerViewModel = new FeedItem<>(FeedItem.Type.NORMAL_HEADER, null);
+                                FeedItem headerViewModel = new FeedItem<>(FeedItem.Type.TEXT_HEADER, null);
                                 mStreamList.add(headerViewModel);
                             }
                             FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
