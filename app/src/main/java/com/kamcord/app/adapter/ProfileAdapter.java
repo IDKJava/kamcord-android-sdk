@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
+import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
@@ -177,6 +179,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         switch (item.getItemId()) {
                             case R.id.action_signout: {
                                 if (AccountManager.isLoggedIn()) {
+                                    KamcordAnalytics.startSession(logoutCallback, Event.Name.PROFILE_LOGIN);
                                     AppServerClient.getInstance().logout(logoutCallback);
                                 }
                                 break;
@@ -516,6 +519,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
+            boolean isSuccess = responseWrapper != null && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK);
+            String failureReason = responseWrapper != null && responseWrapper.status != null && !responseWrapper.status.equals(StatusCode.OK)
+                    ? responseWrapper.status.status_reason : null;
+            Bundle extras = analyticsExtras(isSuccess, failureReason);
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_LOGIN, extras);
+
             AccountManager.clearStoredAccount();
             if (mContext != null) {
                 Intent loginIntent = new Intent(mContext, LoginActivity.class);
@@ -526,12 +535,27 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @Override
         public void failure(RetrofitError error) {
+            Bundle extras = analyticsExtras(false, null);
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_LOGIN, extras);
+
             AccountManager.clearStoredAccount();
             if (mContext != null) {
                 Intent loginIntent = new Intent(mContext, LoginActivity.class);
                 mContext.startActivity(loginIntent);
                 ((Activity) mContext).finish();
             }
+        }
+
+        private Bundle analyticsExtras(boolean isSuccess, String failureReason) {
+            Bundle extras = new Bundle();
+
+            extras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, isSuccess ? 1 : 0);
+            extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, failureReason);
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.VIDEO_LIST_VIEW);
+            extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY, Event.ListType.PROFILE);
+            extras.putInt(KamcordAnalytics.IS_LOGIN_KEY, 0);
+
+            return extras;
         }
     };
 }
