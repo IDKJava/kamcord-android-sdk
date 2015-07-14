@@ -31,7 +31,7 @@ import retrofit.client.Response;
 public class AnalyticsThread extends HandlerThread implements
         Handler.Callback,
         Application.ActivityLifecycleCallbacks {
-    private static final int SEND_EVERY_MS = 0;
+    private static final int SEND_EVERY_MS = 300000;
     private static final int MAX_UNSENT_EVENTS = 100;
     private static final int MAX_FAILED_SENDS = 4;
     private static final String WHEN_KEY = "when";
@@ -196,11 +196,6 @@ public class AnalyticsThread extends HandlerThread implements
 
     private void sendEvents() {
         sendingEvents = true;
-        String userRegistrationId = null;
-        Account myAccount = AccountManager.getStoredAccount();
-        if (myAccount != null) {
-            userRegistrationId = myAccount.id;
-        }
 
         TrackEventEntity.Builder builder = new TrackEventEntity.Builder()
                 .setAppDeviceId(DeviceManager.getDeviceToken());
@@ -321,6 +316,11 @@ public class AnalyticsThread extends HandlerThread implements
                         event.stream_user_id = extras.getString(KamcordAnalytics.STREAM_USER_ID_KEY, null);
                         event.is_live = extras.getInt(KamcordAnalytics.IS_LIVE_KEY, 0);
                     }
+                }
+                break;
+
+                case FOLLOW_USER: {
+                    event.setRequestTimeFromStopTime(when);
                 }
                 break;
             }

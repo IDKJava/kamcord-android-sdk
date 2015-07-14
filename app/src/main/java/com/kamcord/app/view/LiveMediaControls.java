@@ -208,13 +208,17 @@ public class LiveMediaControls implements MediaControls {
                 owner.is_user_following = false;
                 followButton.setActivated(false);
                 followButton.setText(root.getContext().getResources().getString(R.string.videoFollow));
-                callback = new UnfollowCallback(owner.id);
+                callback = new UnfollowCallback(owner.id,
+                        video != null ? video.video_id : null,
+                        video != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.STREAM_DETAIL_VIEW);
                 AppServerClient.getInstance().unfollow(owner.id, (UnfollowCallback) callback);
             } else {
                 owner.is_user_following = true;
                 followButton.setActivated(true);
                 followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
-                callback = new FollowCallback(owner.id);
+                callback = new FollowCallback(owner.id,
+                        video != null ? video.video_id : null,
+                        video != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.STREAM_DETAIL_VIEW);
                 AppServerClient.getInstance().follow(owner.id, (FollowCallback) callback);
             }
             KamcordAnalytics.startSession(callback, Event.Name.FOLLOW_USER);
@@ -406,31 +410,26 @@ public class LiveMediaControls implements MediaControls {
         public FollowCallback(String receivingUserId, String videoId, Event.ViewSource viewSource) {
             this.receivingUserId = receivingUserId;
             this.videoId = videoId;
-            this.viewSource = viewSource
+            this.viewSource = viewSource;
         }
 
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
-            Bundle analyticsExtras = new Bundle();
-            analyticsExtras.putString(KamcordAnalytics.FOLLOWED_USER_ID_KEY, receivingUserId);
-            analyticsExtras.putInt(KamcordAnalytics.IS_FOLLOW_KEY, 1);
-            analyticsExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, videoId);
+            boolean isSuccess =
+                    responseWrapper != null && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK);
+            String failureReason =
+                    responseWrapper != null && responseWrapper.status != null && !responseWrapper.status.equals(StatusCode.OK) ?
+                            responseWrapper.status.status_reason : null;
 
-            if( responseWrapper != null && responseWrapper.status.equals(StatusCode.OK) ) {
-                analyticsExtras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, 1);
-            } else {
-                analyticsExtras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, 0);
-                if( responseWrapper != null && responseWrapper.status != null ) {
-                    analyticsExtras.putString(KamcordAnalytics.FAILURE_REASON_KEY,
-                            responseWrapper.status.status_reason);
-                }
-            }
-            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER);
+            Bundle extras = analyticsFollowExtras(receivingUserId, 1, videoId, isSuccess ? 1 : 0, failureReason, viewSource);
+            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER, extras);
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.e("Retrofit Failure", "  " + error.toString());
+            Bundle extras = analyticsFollowExtras(receivingUserId, 1, videoId, 0, null, viewSource);
+            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER, extras);
         }
     }
 
@@ -447,15 +446,34 @@ public class LiveMediaControls implements MediaControls {
 
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
+            boolean isSuccess =
+                    responseWrapper != null && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK);
+            String failureReason =
+                    responseWrapper != null && responseWrapper.status != null && !responseWrapper.status.equals(StatusCode.OK) ?
+                            responseWrapper.status.status_reason : null;
+
+            Bundle extras = analyticsFollowExtras(receivingUserId, 0, videoId, isSuccess ? 1 : 0, failureReason, viewSource);
+            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER, extras);
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.e("Retrofit Failure", "  " + error.toString());
+            Bundle extras = analyticsFollowExtras(receivingUserId, 0, videoId, 0, null, viewSource);
+            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER, extras);
         }
     }
 
-    private static Bundle analyticsFollowExtras(String receivingUserId, int isFollow, String videoId, int isSuccess, String failureReason) {
+    private static Bundle analyticsFollowExtras(String receivingUserId, int isFollow, String videoId, int isSuccess, String failureReason, Event.ViewSource source) {
+        Bundle analyticsExtras = new Bundle();
 
+        analyticsExtras.putString(KamcordAnalytics.FOLLOWED_USER_ID_KEY, receivingUserId);
+        analyticsExtras.putInt(KamcordAnalytics.IS_FOLLOW_KEY, isFollow);
+        analyticsExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, videoId);
+        analyticsExtras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, isSuccess);
+        analyticsExtras.putString(KamcordAnalytics.FAILURE_REASON_KEY, failureReason);
+        analyticsExtras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, source);
+
+        return analyticsExtras;
     }
 }
