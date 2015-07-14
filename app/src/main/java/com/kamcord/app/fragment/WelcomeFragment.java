@@ -86,13 +86,17 @@ public class WelcomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        KamcordAnalytics.startSession(this, Event.Name.PROFILE_INTERSTITIAL);
+        if( !AccountManager.isLoggedIn() ) {
+            KamcordAnalytics.startSession(this, Event.Name.PROFILE_INTERSTITIAL);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        KamcordAnalytics.endSession(this, Event.Name.PROFILE_INTERSTITIAL, getArguments());
+        if( !AccountManager.isLoggedIn() ) {
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_INTERSTITIAL, getArguments());
+        }
     }
 
     private void initializeSubtitleText() {
