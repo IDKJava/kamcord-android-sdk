@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment {
             homefeedPromptContainer.setVisibility(View.VISIBLE);
         }
 
-        mProfileAdapter = new ProfileAdapter(getActivity(), mStreamList);
+        mProfileAdapter = new ProfileAdapter(getActivity(), homeRecyclerView, mStreamList);
         homeRecyclerView.setAdapter(mProfileAdapter);
         homeRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(homeRecyclerView));
         homeRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));

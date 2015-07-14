@@ -76,8 +76,7 @@ public class Event {
     public transient Long eventDurationMs = null;
     public ViewSource view_source = null;
     public enum ViewSource {
-        HOME_FEED,
-        PROFILE_FEED,
+        VIDEO_LIST_VIEW,
         PUSH_NOTIFICATION,
     }
     public enum ListType {
@@ -140,7 +139,6 @@ public class Event {
     // For REPLAY_VIDEO_VIEW, VIDEO_DETAIL_VIEW, and STREAM_DETAIL_VIEW
     public Integer num_play_starts;
     public Float buffering_duration;
-    public Float video_length;
     public Float video_length_watched;
 
     // For VIDEO_DETAIL_VIEW and STREAM_DETAIL_VIEW

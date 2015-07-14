@@ -81,6 +81,12 @@ public class VideoViewActivity extends AppCompatActivity implements
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
     private AudioCapabilities audioCapabilities;
 
+    private long totalBufferingTimeMs = 0;
+    private long lastBufferingStart = 0;
+
+    private long totalPlayTimeMs = 0;
+    private long lastPlayStart = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,68 +159,16 @@ public class VideoViewActivity extends AppCompatActivity implements
     public void onStop() {
         super.onStop();
 
+        Bundle extras = endSessionAnalyticsExtras();
+
         if( this.video != null ) {
             if( this.video.user != null ) {
-                KamcordAnalytics.endSession(this, Event.Name.VIDEO_DETAIL_VIEW);
+                KamcordAnalytics.endSession(this, Event.Name.VIDEO_DETAIL_VIEW, extras);
             } else {
-                KamcordAnalytics.endSession(this, Event.Name.REPLAY_VIDEO_VIEW);
+                KamcordAnalytics.endSession(this, Event.Name.REPLAY_VIDEO_VIEW, extras);
             }
         } else if( this.stream != null && this.stream.user != null ) {
-            KamcordAnalytics.endSession(this, Event.Name.STREAM_DETAIL_VIEW);
-        }
-    }
-
-    private Bundle endSessionAnalyticsExtras() {
-        Bundle extras = new Bundle();
-
-        extras.putInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1); // TODO: adjust this is we ever start showing a replay button
-        extras.putFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, 0f);
-        extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
-        extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, 0f);
-
-        if( this.video != null && this.video.user != null ) {
-            transferViewSourceExtras(extras);
-            if( getIntent().getExtras().containsKey(KamcordAnalytics.PROFILE_USER_ID_KEY) ) {
-                extras.putString(KamcordAnalytics.PROFILE_USER_ID_KEY,
-                        getIntent().getExtras().getString(KamcordAnalytics.PROFILE_USER_ID_KEY));
-            }
-            extras.putString(KamcordAnalytics.VIDEO_ID_KEY, this.video.video_id);
-
-        } else if( this.stream != null && this.stream.user != null ) {
-            transferViewSourceExtras(extras);
-            extras.putString(KamcordAnalytics.STREAM_USER_ID_KEY, this.stream.user.id);
-            extras.putInt(KamcordAnalytics.IS_LIVE_KEY, this.stream.live ? 1 : 0);
-
-        }
-
-        return extras;
-    }
-
-    private void transferViewSourceExtras(Bundle extras) {
-        Bundle myExtras = getIntent().getExtras();
-        if( myExtras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
-            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY,
-                    myExtras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY));
-        }
-        if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
-            extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY,
-                    myExtras.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY));
-            if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY) ) {
-                extras.putInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
-                        myExtras.getInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY));
-            }
-            if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
-                extras.putInt(KamcordAnalytics.VIDEO_LIST_COL_KEY,
-                        myExtras.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY));
-            }
-        }
-        if( myExtras.containsKey(KamcordAnalytics.FEED_ID_KEY) ) {
-            extras.putString(KamcordAnalytics.FEED_ID_KEY,
-                    myExtras.getString(KamcordAnalytics.FEED_ID_KEY));
-        }
-        if( myExtras.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY) ) {
-            extras.putString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY,
-                    myExtras.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY));
+            KamcordAnalytics.endSession(this, Event.Name.STREAM_DETAIL_VIEW, extras);
         }
     }
 
@@ -275,6 +229,73 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     // Internal methods
 
+    private Bundle endSessionAnalyticsExtras() {
+        Bundle extras = new Bundle();
+
+        extras.putInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1); // TODO: adjust this is we ever start showing a replay button
+
+        if( lastPlayStart > 0 ) {
+            totalPlayTimeMs += System.currentTimeMillis() - lastPlayStart;
+        }
+        if( lastBufferingStart > 0 ) {
+            totalBufferingTimeMs += System.currentTimeMillis() - lastPlayStart;
+        }
+        extras.putFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, (float) totalBufferingTimeMs / 1000f);
+        extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, (float) totalPlayTimeMs / 1000f);
+
+        totalPlayTimeMs = 0;
+        lastPlayStart = 0;
+        totalBufferingTimeMs = 0;
+        lastBufferingStart = 0;
+
+        if( this.video != null && this.video.user != null ) {
+            transferViewSourceExtras(extras);
+            if( getIntent().getExtras().containsKey(KamcordAnalytics.PROFILE_USER_ID_KEY) ) {
+                extras.putString(KamcordAnalytics.PROFILE_USER_ID_KEY,
+                        getIntent().getExtras().getString(KamcordAnalytics.PROFILE_USER_ID_KEY));
+            }
+            extras.putString(KamcordAnalytics.VIDEO_ID_KEY, this.video.video_id);
+
+        } else if( this.stream != null && this.stream.user != null ) {
+            transferViewSourceExtras(extras);
+            extras.putString(KamcordAnalytics.STREAM_USER_ID_KEY, this.stream.user.id);
+            extras.putInt(KamcordAnalytics.IS_LIVE_KEY, this.stream.live ? 1 : 0);
+            if( !this.stream.live ) {
+                extras.putString(KamcordAnalytics.VIDEO_ID_KEY, this.stream.video_id);
+            }
+        }
+
+        return extras;
+    }
+
+    private void transferViewSourceExtras(Bundle extras) {
+        Bundle myExtras = getIntent().getExtras();
+        if( myExtras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY,
+                    myExtras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY));
+        }
+        if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
+            extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY,
+                    myExtras.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY));
+            if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY) ) {
+                extras.putInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
+                        myExtras.getInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY));
+            }
+            if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
+                extras.putInt(KamcordAnalytics.VIDEO_LIST_COL_KEY,
+                        myExtras.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY));
+            }
+        }
+        if( myExtras.containsKey(KamcordAnalytics.FEED_ID_KEY) ) {
+            extras.putString(KamcordAnalytics.FEED_ID_KEY,
+                    myExtras.getString(KamcordAnalytics.FEED_ID_KEY));
+        }
+        if( myExtras.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY) ) {
+            extras.putString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY,
+                    myExtras.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY));
+        }
+    }
+
     private Player.RendererBuilder getRendererBuilder() {
         Player.RendererBuilder rendererBuilder = null;
         String userAgent = Util.getUserAgent(this, getString(R.string.app_name));
@@ -332,6 +353,20 @@ public class VideoViewActivity extends AppCompatActivity implements
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == Player.STATE_READY) {
             mediaControls.show(playWhenReady ? 3000 : 0, true);
+        }
+
+        if( playbackState == Player.STATE_BUFFERING ) {
+            lastBufferingStart = System.currentTimeMillis();
+        } else if( lastBufferingStart > 0 ) {
+            totalBufferingTimeMs += System.currentTimeMillis() - lastBufferingStart;
+            lastBufferingStart = 0;
+        }
+
+        if( playbackState == Player.STATE_READY && playWhenReady ) {
+            lastPlayStart = System.currentTimeMillis();
+        } else if( lastPlayStart > 0 ) {
+            totalPlayTimeMs += System.currentTimeMillis() - lastPlayStart;
+            lastPlayStart = 0;
         }
     }
 

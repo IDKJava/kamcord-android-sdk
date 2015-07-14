@@ -65,4 +65,5 @@ public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
     public ImageButton getMoreVideoActions() {
         return this.moreVideoActions;
     }
+
 }

@@ -135,7 +135,12 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             videoFeedRefreshLayout.setVisibility(View.GONE);
         }
 
-        mProfileAdapter = new ProfileAdapter(getActivity(), mProfileList);
+        mProfileAdapter = new ProfileAdapter(getActivity(), profileRecyclerView, mProfileList);
+        if( AccountManager.isLoggedIn() ) {
+            mProfileAdapter.setOwner(new User.Builder()
+                    .fromAccount(AccountManager.getStoredAccount())
+                    .build()); // TODO: change this to the user passed into the intent, once we start doing that.
+        }
         profileRecyclerView.setAdapter(mProfileAdapter);
         profileRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(profileRecyclerView));
         profileRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,12 +38,14 @@ import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.utils.ViewUtils;
+import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -58,11 +61,18 @@ import retrofit.client.Response;
 public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
+    private RecyclerView mRecyclerView;
     private List<FeedItem> mProfileList;
+    private User owner;
 
-    public ProfileAdapter(Context context, List<FeedItem> mProfileList) {
+    public ProfileAdapter(Context context, RecyclerView recyclerView, List<FeedItem> mProfileList) {
         this.mContext = context;
+        this.mRecyclerView = recyclerView;
         this.mProfileList = mProfileList;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     @Override
@@ -109,7 +119,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof ProfileVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
             if (video != null) {
-                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
+                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video, position);
             }
 
         } else if (viewHolder instanceof StreamItemViewHolder) {
@@ -179,7 +189,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video) {
+    private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video, final int position) {
 
         viewHolder.getProfileItemTitle().setText(video.title);
         final TextView videoViewsButton = viewHolder.getVideoViews();
@@ -197,6 +207,26 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
+
+                // Add analytics extras
+                intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.VIDEO_LIST_VIEW);
+                intent.putExtra(KamcordAnalytics.VIDEO_LIST_TYPE_KEY, Event.ListType.PROFILE);
+                if( mRecyclerView.getLayoutManager() instanceof GridLayoutManager ) {
+                    GridLayoutManager gridLayoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
+                    int spanCount = gridLayoutManager.getSpanCount();
+                    if( gridLayoutManager.getSpanSizeLookup() instanceof ProfileLayoutSpanSizeLookup ) {
+                        ProfileLayoutSpanSizeLookup lookup = (ProfileLayoutSpanSizeLookup) gridLayoutManager.getSpanSizeLookup();
+
+                        intent.putExtra(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
+                                lookup.getSpanGroupIndex(position, spanCount)+1);
+                        intent.putExtra(KamcordAnalytics.VIDEO_LIST_COL_KEY,
+                                lookup.getSpanIndex(position, spanCount)+1);
+                    }
+                }
+                if( owner != null ) {
+                    intent.putExtra(KamcordAnalytics.PROFILE_USER_ID_KEY, owner.id);
+                }
+
                 mContext.startActivity(intent);
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }

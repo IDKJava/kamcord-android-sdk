@@ -31,7 +31,7 @@ import retrofit.client.Response;
 public class AnalyticsThread extends HandlerThread implements
         Handler.Callback,
         Application.ActivityLifecycleCallbacks {
-    private static final int SEND_EVERY_MS = 300000;
+    private static final int SEND_EVERY_MS = 0;
     private static final int MAX_UNSENT_EVENTS = 100;
     private static final int MAX_FAILED_SENDS = 4;
     private static final String WHEN_KEY = "when";
@@ -299,27 +299,30 @@ public class AnalyticsThread extends HandlerThread implements
                 }
                 break;
 
-                case REPLAY_VIDEO_VIEW:
+                case REPLAY_VIDEO_VIEW: {
                     completeVideoViewEventFrom(event, when, extras);
-                    break;
+                }
+                break;
 
-                case VIDEO_DETAIL_VIEW:
+                case VIDEO_DETAIL_VIEW: {
                     completeVideoViewEventFrom(event, when, extras);
                     completeVideoDetailViewEventFrom(event, extras);
-                    if( extras != null ) {
+                    if (extras != null) {
                         event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
                         event.profile_user_id = extras.getString(KamcordAnalytics.PROFILE_USER_ID_KEY, null);
                     }
-                    break;
+                }
+                break;
 
-                case STREAM_DETAIL_VIEW:
+                case STREAM_DETAIL_VIEW: {
                     completeVideoViewEventFrom(event, when, extras);
                     completeVideoDetailViewEventFrom(event, extras);
-                    if( extras != null ) {
+                    if (extras != null) {
                         event.stream_user_id = extras.getString(KamcordAnalytics.STREAM_USER_ID_KEY, null);
                         event.is_live = extras.getInt(KamcordAnalytics.IS_LIVE_KEY, 0);
                     }
-                    break;
+                }
+                break;
             }
 
             // If they put the app_session_id in themselves, we assume that they know what they're doing.
@@ -338,7 +341,6 @@ public class AnalyticsThread extends HandlerThread implements
         if( extras != null ) {
             event.num_play_starts = extras.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, 1);
             event.buffering_duration = extras.getFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, 0f);
-            event.video_length = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
             event.video_length_watched = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, 0f);
         }
     }
@@ -414,6 +416,7 @@ public class AnalyticsThread extends HandlerThread implements
 
     @Override
     public void onActivityStarted(Activity activity) {
+        Log.v("FindMe", "onActivityStarted(" + activity.getLocalClassName() + ")");
         handler.sendMessage(newMessage(activity, What.ACTIVITY_STARTED, Event.Name.KAMCORD_APP_LAUNCH));
     }
 
@@ -427,6 +430,7 @@ public class AnalyticsThread extends HandlerThread implements
 
     @Override
     public void onActivityStopped(Activity activity) {
+        Log.v("FindMe", "onActivityStopped(" + activity.getLocalClassName() + ")");
         handler.sendMessage(newMessage(activity, What.ACTIVITY_STOPPED, Event.Name.KAMCORD_APP_LAUNCH));
     }
 
