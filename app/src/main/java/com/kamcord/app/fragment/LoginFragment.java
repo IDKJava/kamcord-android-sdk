@@ -62,6 +62,18 @@ public class LoginFragment extends Fragment {
         ButterKnife.reset(this);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        KamcordAnalytics.startSession(this, Event.Name.PROFILE_LOGIN_VIEW);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        KamcordAnalytics.endSession(this, Event.Name.PROFILE_LOGIN_VIEW, getArguments());
+    }
+
     private int getContainerViewId() {
         if (getActivity() instanceof LoginActivity) {
             return ((LoginActivity) getActivity()).getContainerViewId();

@@ -83,6 +83,18 @@ public class CreateProfileFragment extends Fragment {
         ButterKnife.reset(this);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        KamcordAnalytics.startSession(this, Event.Name.PROFILE_CREATION_VIEW);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        KamcordAnalytics.endSession(this, Event.Name.PROFILE_CREATION_VIEW, getArguments());
+    }
+
     @OnFocusChange({R.id.usernameEditText, R.id.emailEditText, R.id.passwordEditText})
     public void editTextFocusChange(View v, boolean hasFocus) {
         if (isResumed()) {

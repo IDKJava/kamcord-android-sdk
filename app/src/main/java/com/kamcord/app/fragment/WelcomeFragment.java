@@ -129,17 +129,27 @@ public class WelcomeFragment extends Fragment {
 
     @OnClick(R.id.createProfileButton)
     public void pushCreateProfileFragment() {
+        Fragment fragment = new CreateProfileFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_INTERSTITIAL);
+        fragment.setArguments(args);
+
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                .replace(getContainerViewId(), new CreateProfileFragment())
+                .replace(getContainerViewId(), fragment)
                 .addToBackStack("CreateProfileFragment").commit();
     }
 
     @OnClick(R.id.loginButton)
     public void pushLoginFragment() {
+        Fragment fragment = new LoginFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_INTERSTITIAL);
+        fragment.setArguments(args);
+
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(R.anim.slide_up, R.anim.slide_down, R.anim.slide_up, R.anim.slide_down)
-                .replace(getContainerViewId(), new LoginFragment())
+                .replace(getContainerViewId(), fragment)
                 .addToBackStack("LoginFragment").commit();
 
     }

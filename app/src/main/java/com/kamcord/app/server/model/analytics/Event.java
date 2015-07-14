@@ -36,6 +36,7 @@ public class Event {
         STREAM_DETAIL_VIEW,
         REPLAY_VIDEO_VIEW,
         PROFILE_DETAIL_VIEW,
+        PROFILE_INTERSTITIAL,
         PROFILE_CREATION_VIEW,
         PROFILE_LOGIN_VIEW,
         SHARE_VIEW,

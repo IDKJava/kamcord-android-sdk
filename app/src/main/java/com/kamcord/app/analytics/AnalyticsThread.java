@@ -271,6 +271,8 @@ public class AnalyticsThread extends HandlerThread implements
                 case VIDEO_DETAIL_VIEW:
                 case STREAM_DETAIL_VIEW:
                 case PROFILE_INTERSTITIAL:
+                case PROFILE_CREATION_VIEW:
+                case PROFILE_LOGIN_VIEW:
                     event.setDurationFromStopTime(when);
                     break;
             }
