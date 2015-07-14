@@ -16,16 +16,14 @@ import com.kamcord.app.adapter.ProfileAdapter;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Card;
-import com.kamcord.app.server.model.DiscoverFeed;
+import com.kamcord.app.server.model.CardList;
 import com.kamcord.app.server.model.GenericResponse;
-import com.kamcord.app.server.model.Group;
 import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.view.DynamicRecyclerView;
 import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -36,15 +34,15 @@ import retrofit.client.Response;
 
 public class HomeFragment extends Fragment {
 
-    @InjectView(R.id.homefeedPromptContainer)
-    ViewGroup homefeedPromptContainer;
+    @InjectView(R.id.homeFeedPromptContainer)
+    ViewGroup homeFeedPromptContainer;
     @InjectView(R.id.homefragment_refreshlayout)
     SwipeRefreshLayout discoverFeedRefreshLayout;
     @InjectView(R.id.home_recyclerview)
     DynamicRecyclerView homeRecyclerView;
 
     private static final String TAG = HomeFragment.class.getSimpleName();
-    private List<FeedItem> mStreamList = new ArrayList<>();
+    private List<FeedItem> mFeedItemList = new ArrayList<>();
     private ProfileAdapter mProfileAdapter;
     private String nextPage;
     private int totalItems = 0;
@@ -89,13 +87,13 @@ public class HomeFragment extends Fragment {
                     discoverFeedRefreshLayout.setRefreshing(true);
                 }
             });
-            AppServerClient.getInstance().getDiscoverFeed(null, new GetDiscoverFeedCallBack());
+            AppServerClient.getInstance().getHomeFeed(null, new GetHomeFeedCallBack());
         } else {
             discoverFeedRefreshLayout.setEnabled(false);
-            homefeedPromptContainer.setVisibility(View.VISIBLE);
+            homeFeedPromptContainer.setVisibility(View.VISIBLE);
         }
 
-        mProfileAdapter = new ProfileAdapter(getActivity(), mStreamList);
+        mProfileAdapter = new ProfileAdapter(getActivity(), mFeedItemList);
         homeRecyclerView.setAdapter(mProfileAdapter);
         homeRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(homeRecyclerView));
         homeRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
@@ -108,7 +106,7 @@ public class HomeFragment extends Fragment {
                 if (Connectivity.isConnected()) {
                     discoverFeedRefreshLayout.setRefreshing(true);
                     AppServerClient.AppServer client = AppServerClient.getInstance();
-                    client.getDiscoverFeed(null, new SwipeToRefreshDiscoverFeedCallBack());
+                    client.getHomeFeed(null, new SwipeToRefreshHomeFeedCallBack());
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_SHORT).show();
                     discoverFeedRefreshLayout.setRefreshing(false);
@@ -133,9 +131,9 @@ public class HomeFragment extends Fragment {
                     discoverFeedRefreshLayout.setEnabled(true);
                 }
 
-                if ((mStreamList.size() - 1) < totalItems
+                if ((mFeedItemList.size() - 1) < totalItems
                         && nextPage != null
-                        && ((GridLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition() == (mStreamList.size() - 1)
+                        && ((GridLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition() == (mFeedItemList.size() - 1)
                         && !footerVisible) {
                     loadMoreItems();
                 }
@@ -145,43 +143,29 @@ public class HomeFragment extends Fragment {
 
     public void loadMoreItems() {
         footerVisible = true;
-        mStreamList.add(new FeedItem<>(FeedItem.Type.FOOTER, null));
+        mFeedItemList.add(new FeedItem<>(FeedItem.Type.FOOTER, null));
         mProfileAdapter.notifyItemInserted(mProfileAdapter.getItemCount());
-        AppServerClient.getInstance().getDiscoverFeed(nextPage, new GetDiscoverFeedCallBack());
+        AppServerClient.getInstance().getHomeFeed(nextPage, new GetHomeFeedCallBack());
     }
 
-    private class SwipeToRefreshDiscoverFeedCallBack implements Callback<GenericResponse<DiscoverFeed>> {
+    private class SwipeToRefreshHomeFeedCallBack implements Callback<GenericResponse<CardList>> {
         @Override
-        public void success(GenericResponse<DiscoverFeed> discoverFeedGenericResponse, Response response) {
-            if (discoverFeedGenericResponse != null
-                    && discoverFeedGenericResponse.response != null
-                    && discoverFeedGenericResponse.response.group_set != null
+        public void success(GenericResponse<CardList> homeFeedGenericResponse, Response response) {
+            if (homeFeedGenericResponse != null
+                    && homeFeedGenericResponse.response != null
                     && viewsAreValid) {
-                Group streamGroup = null;
-                for (Group group : discoverFeedGenericResponse.response.group_set.groups) {
-                    if (group.group_type.equals(Group.STREAM_LIST)) {
-                        streamGroup = group;
-                        break;
+                for (Card card : homeFeedGenericResponse.response.cardList) {
+                    if (card.stream != null) {
+                        FeedItem streamFeedItem = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
+                        mFeedItemList.add(streamFeedItem);
+                    } else if (card.video != null) {
+                        FeedItem videoFeedItem = new FeedItem<>(FeedItem.Type.VIDEO, card.video);
+                        mFeedItemList.add(videoFeedItem);
                     }
                 }
-                if (streamGroup != null) {
-                    Iterator<FeedItem> iterator = mStreamList.iterator();
-                    while (iterator.hasNext()) {
-                        if (iterator.next().getType() == FeedItem.Type.STREAM) {
-                            iterator.remove();
-                        }
-                    }
-                    nextPage = streamGroup.next_page;
-                    for (Card card : streamGroup.card_models) {
-                        if (card.stream != null) {
-                            FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
-                            mStreamList.add(profileViewModel);
-                        }
-                    }
-                    footerVisible = false;
-                    mProfileAdapter.notifyDataSetChanged();
-                    discoverFeedRefreshLayout.setRefreshing(false);
-                }
+                footerVisible = false;
+                mProfileAdapter.notifyDataSetChanged();
+                discoverFeedRefreshLayout.setRefreshing(false);
             }
         }
 
@@ -194,36 +178,26 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private class GetDiscoverFeedCallBack implements Callback<GenericResponse<DiscoverFeed>> {
+    private class GetHomeFeedCallBack implements Callback<GenericResponse<CardList>> {
         @Override
-        public void success(GenericResponse<DiscoverFeed> discoverFeedGenericResponse, Response response) {
-            if (discoverFeedGenericResponse != null
-                    && discoverFeedGenericResponse.response != null
-                    && discoverFeedGenericResponse.response.group_set != null
+        public void success(GenericResponse<CardList> homeFeedGenericResponse, Response response) {
+            if (homeFeedGenericResponse != null
+                    && homeFeedGenericResponse.response != null
                     && viewsAreValid) {
-                Group streamGroup = null;
-                for (Group group : discoverFeedGenericResponse.response.group_set.groups) {
-                    if (group.group_type.equals(Group.STREAM_LIST)) {
-                        streamGroup = group;
-                        break;
+                nextPage = homeFeedGenericResponse.response.next_page;
+                if (mFeedItemList.size() > 0 && (mFeedItemList.get(mProfileAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
+                    mFeedItemList.remove(mProfileAdapter.getItemCount() - 1);
+                }
+                for (Card card : homeFeedGenericResponse.response.cardList) {
+                    if (card.stream != null) {
+                        FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
+                        mFeedItemList.add(profileViewModel);
                     }
                 }
-                if (streamGroup != null) {
-                    nextPage = streamGroup.next_page;
-                    if (mStreamList.size() > 0 && (mStreamList.get(mProfileAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
-                        mStreamList.remove(mProfileAdapter.getItemCount() - 1);
-                    }
-                    for (Card card : streamGroup.card_models) {
-                        if (card.stream != null) {
-                            FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
-                            mStreamList.add(profileViewModel);
-                        }
-                    }
-                    footerVisible = false;
-                    mProfileAdapter.notifyDataSetChanged();
-                    discoverFeedRefreshLayout.setRefreshing(false);
-                    homefeedPromptContainer.setVisibility(View.GONE);
-                }
+                footerVisible = false;
+                mProfileAdapter.notifyDataSetChanged();
+                discoverFeedRefreshLayout.setRefreshing(false);
+                homeFeedPromptContainer.setVisibility(View.GONE);
             }
         }
 
