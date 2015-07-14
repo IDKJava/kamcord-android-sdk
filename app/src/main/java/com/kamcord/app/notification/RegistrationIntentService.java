@@ -7,6 +7,12 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.kamcord.app.server.client.AppServerClient;
+import com.kamcord.app.server.model.GenericResponse;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class RegistrationIntentService extends IntentService {
 
@@ -27,9 +33,11 @@ public class RegistrationIntentService extends IntentService {
                     null
             );
             Log.d("RegisterToken", token);
-            // Send Token to Server
-            // sendRegistrationToServer()
 
+            // Send Token to Server
+            if (token != null) {
+                sendRegistrationToServer(token);
+            }
         } catch (Exception e) {
             Log.d("Registration Service", "onHandleIntent");
         }
@@ -39,5 +47,21 @@ public class RegistrationIntentService extends IntentService {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void sendRegistrationToServer(String token) {
+        AppServerClient.getInstance().registerPushNotif(token, new regPushNotifCallback());
+    }
+
+    private class regPushNotifCallback implements Callback<GenericResponse<?>> {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+            Log.d("Push Notif Success", "  " + "Oh hi");
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Push Notif Failure", "  " + error.toString());
+        }
     }
 }

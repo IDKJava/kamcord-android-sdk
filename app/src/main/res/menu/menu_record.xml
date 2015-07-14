@@ -10,4 +10,10 @@
         android:title="@string/action_signout"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_regnotif"
+        android:orderInCategory="2"
+        android:title="Require Notif"
+        app:showAsAction="never" />
+
 </menu>

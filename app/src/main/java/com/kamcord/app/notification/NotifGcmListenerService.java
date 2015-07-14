@@ -32,7 +32,6 @@ public class NotifGcmListenerService extends GcmListenerService {
             Log.d("data", "is null");
         }
 
-        // Display Message as a notification
         sendNotification("LiveStreaming", message);
     }
 
@@ -40,7 +39,7 @@ public class NotifGcmListenerService extends GcmListenerService {
         notificationBuilder = new Notification.Builder(this)
                 .setContentTitle(liveStreamer)
                 .setContentText(message)
-                .setSmallIcon(R.drawable.app_icon)
+                .setSmallIcon(R.drawable.notif_logo_small)
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setAutoCancel(true);
 

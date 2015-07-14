@@ -32,6 +32,7 @@ import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
 import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.ProfileItem;
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.notification.RegistrationIntentService;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.User;
@@ -159,6 +160,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                     AppServerClient.getInstance().logout(logoutCallback);
                                 }
                                 break;
+                            }
+                            case R.id.action_regnotif: {
+                                if (AccountManager.isLoggedIn()) {
+                                    Intent intent = new Intent(mContext, RegistrationIntentService.class);
+                                    mContext.startService(intent);
+                                }
                             }
                         }
                         return false;
