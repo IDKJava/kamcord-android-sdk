@@ -195,13 +195,25 @@ public class HomeFragment extends Fragment {
                 if (mFeedItemList.size() > 0 && (mFeedItemList.get(mStreamAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
                     mFeedItemList.remove(mStreamAdapter.getItemCount() - 1);
                 }
+                boolean trendHeader = false;
                 for (Card card : homeFeedGenericResponse.response.card_model_list) {
-                    if (card.stream != null) {
-                        FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
-                        mFeedItemList.add(profileViewModel);
-                    } else if (card.video != null) {
-                        FeedItem videoFeedItem = new FeedItem<>(FeedItem.Type.VIDEO, card.video);
-                        mFeedItemList.add(videoFeedItem);
+                    if(homeFeedGenericResponse.response.card_model_list != null) {
+                        if(mFeedItemList.size() == 0) {
+                            FeedItem liveStreamHeaderModel = new FeedItem<>(FeedItem.Type.NORMAL_HEADER, card.stream);
+                            mFeedItemList.add(liveStreamHeaderModel);
+                        }
+                        if (card.stream != null) {
+                            FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
+                            mFeedItemList.add(profileViewModel);
+                        } else if (card.video != null) {
+                            if(!trendHeader) {
+                                FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.NORMAL_HEADER, card.stream);
+                                mFeedItemList.add(trendingHeaderModel);
+                                trendHeader = true;
+                            }
+                            FeedItem videoFeedItem = new FeedItem<>(FeedItem.Type.VIDEO, card.video);
+                            mFeedItemList.add(videoFeedItem);
+                        }
                     }
                 }
                 footerVisible = false;
