@@ -83,6 +83,7 @@ public class Event {
         PUSH_NOTIFICATION,
         VIDEO_DETAIL_VIEW,
         STREAM_DETAIL_VIEW,
+        PROFILE_CREATION_VIEW;
     }
     public enum ListType {
         PROFILE,
@@ -98,7 +99,7 @@ public class Event {
 
     // For UPLOAD events.
     public String video_global_id = null;
-    public UploadFailureReason failure_reason = null;
+    public String failure_reason = null;
     public Integer was_replayed = null;
     public Integer is_retry = null;
     public enum UploadFailureReason {

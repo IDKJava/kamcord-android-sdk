@@ -224,6 +224,7 @@ public class CreateProfileFragment extends Fragment {
 
             extras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, isSuccess ? 1 : 0);
             extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, failureReason);
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_CREATION_VIEW);
 
             return extras;
         }

@@ -262,7 +262,7 @@ public class AnalyticsThread extends HandlerThread implements
                     if (extras != null) {
                         event.is_success = extras.getInt(KamcordAnalytics.SUCCESS_KEY, 0);
                         if (extras.containsKey(KamcordAnalytics.FAILURE_REASON_KEY)) {
-                            event.failure_reason = Event.UploadFailureReason.valueOf(extras.getString(KamcordAnalytics.FAILURE_REASON_KEY));
+                            event.failure_reason = extras.getString(KamcordAnalytics.FAILURE_REASON_KEY);
                         }
                         event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
                         event.was_replayed = extras.getInt(KamcordAnalytics.WAS_REPLAYED_KEY, 0);
@@ -320,12 +320,12 @@ public class AnalyticsThread extends HandlerThread implements
                 break;
 
                 case FOLLOW_USER: {
-                    event.setRequestTimeFromStopTime(when);
+                    completeServerEventFrom(event, when, extras);
                 }
                 break;
 
                 case PROFILE_CREATION: {
-                    event.setRequestTimeFromStopTime(when);
+                    completeServerEventFrom(event, when, extras);
                 }
             }
 
@@ -337,6 +337,19 @@ public class AnalyticsThread extends HandlerThread implements
             if( myAccount != null ) {
                 event.user_registration_id = myAccount.id;
             }
+        }
+    }
+
+    private void completeServerEventFrom(Event event, long when, Bundle extras) {
+        event.setRequestTimeFromStopTime(when);
+        if( extras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
+            event.view_source = (Event.ViewSource) extras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY);
+        }
+        if( extras.containsKey(KamcordAnalytics.IS_SUCCESS_KEY) ) {
+            event.is_success = extras.getInt(KamcordAnalytics.IS_SUCCESS_KEY);
+        }
+        if( extras.containsKey(KamcordAnalytics.FAILURE_REASON_KEY) ) {
+            event.failure_reason = extras.getString(KamcordAnalytics.FAILURE_REASON_KEY);
         }
     }
 
