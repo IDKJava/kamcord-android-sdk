@@ -494,4 +494,8 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
             }
         }
     }
+
+    public DynamicRecyclerView getProfileRecyclerView() {
+        return this.profileRecyclerView;
+    }
 }

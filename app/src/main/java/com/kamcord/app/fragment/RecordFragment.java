@@ -536,4 +536,8 @@ public class RecordFragment extends Fragment implements
     }
 
     private RecordingServiceConnection recordingServiceConnection = new RecordingServiceConnection();
+
+    public DynamicRecyclerView getRecordRecyclerView() {
+        return this.mRecyclerView;
+    }
 }

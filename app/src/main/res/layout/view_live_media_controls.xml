@@ -44,6 +44,7 @@
         layout="@layout/live_indicator"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp" />
@@ -52,6 +53,7 @@
         android:id="@+id/share_button"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="0dp"
@@ -148,12 +150,10 @@
                 android:max="1000"
                 android:maxHeight="6dp"
                 android:minHeight="6dp"
-                android:paddingBottom="14dp"
-                android:paddingTop="14dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 android:progressDrawable="@drawable/scrubber_progress"
-                android:thumb="@drawable/solid_white_circle_12dp" />
+                android:thumb="@drawable/solid_white_circle_24dp" />
 
             <TextView
                 android:id="@+id/total_time_textview"
