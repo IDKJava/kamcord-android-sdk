@@ -13,7 +13,7 @@ import com.kamcord.app.fragment.RecordFragment;
 import java.util.HashMap;
 
 
-public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
+public class  MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     public static final int HOME_FRAGMENT_POSITION = 0;
     public static final int RECORD_FRAGMENT_POSITION = 1;
