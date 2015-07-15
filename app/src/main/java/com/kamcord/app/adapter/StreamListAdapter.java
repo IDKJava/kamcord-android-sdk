@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.kamcord.app.R;
+import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.LiveStreamHeaderViewHolder;
@@ -25,7 +27,9 @@ import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
+import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.utils.ViewUtils;
@@ -141,6 +145,14 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 video.username, video.game_name));
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
+        final Button trendFollowButton = viewHolder.getTrendFollowButton();
+        trendFollowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFollowButton(trendFollowButton, video.user);
+            }
+        });
+
         final Button videoLikesButton = viewHolder.getTrendVideoLikesButton();
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
@@ -165,35 +177,61 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             @Override
             public void onClick(View v) {
                 toggleLikeButton(videoLikesButton, video);
+                Log.d("follow button clicked", "clicked!");
             }
         });
     }
 
-    private void toggleLikeButton(Button likeButton, Video video) {
-        if (video.is_user_liking) {
-            video.is_user_liking = false;
-            if (video.likes > 0) {
-                video.likes = video.likes - 1;
+    private void toggleFollowButton(Button followButton, User user) {
+        if (AccountManager.isLoggedIn()) {
+            if (user.is_user_following) {
+                user.is_user_following = false;
+                followButton.setActivated(false);
+                AppServerClient.getInstance().unfollow(user.id, new UnfollowCallback());
+            } else {
+                user.is_user_following = true;
+                followButton.setActivated(true);
+                AppServerClient.getInstance().follow(user.id, new FollowCallback());
             }
-            likeButton.setText(StringUtils.abbreviatedCount(video.likes));
-            likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGray));
-            likeButton.setActivated(false);
-            likeButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGray),
-                    null, null, null);
-            AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
+            ViewUtils.buttonCircularReveal(followButton);
         } else {
-            video.is_user_liking = true;
-            video.likes = video.likes + 1;
-            likeButton.setText(StringUtils.abbreviatedCount(video.likes));
-            likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGreen));
-            likeButton.setActivated(true);
-            likeButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
-                    null, null, null);
-            AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            mContext.startActivity(intent);
         }
-        ViewUtils.buttonCircularReveal(likeButton);
+    }
+
+    private void toggleLikeButton(Button likeButton, Video video) {
+        if (AccountManager.isLoggedIn()) {
+            if (video.is_user_liking) {
+                video.is_user_liking = false;
+                if (video.likes > 0) {
+                    video.likes = video.likes - 1;
+                }
+                likeButton.setText(StringUtils.abbreviatedCount(video.likes));
+                likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGray));
+                likeButton.setActivated(false);
+                likeButton.setCompoundDrawablesWithIntrinsicBounds(
+                        ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGray),
+                        null, null, null);
+                AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
+            } else {
+                video.is_user_liking = true;
+                video.likes = video.likes + 1;
+                likeButton.setText(StringUtils.abbreviatedCount(video.likes));
+                likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGreen));
+                likeButton.setActivated(true);
+                likeButton.setCompoundDrawablesWithIntrinsicBounds(
+                        ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
+                        null, null, null);
+                AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
+            }
+            ViewUtils.buttonCircularReveal(likeButton);
+        } else {
+            Toast.makeText(mContext, mContext.getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            mContext.startActivity(intent);
+        }
     }
 
     @TargetApi(21)
@@ -220,6 +258,14 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         new Gson().toJson(stream));
 
                 mContext.startActivity(intent);
+            }
+        });
+
+        final Button streamFollowButton = viewHolder.getStreamFollowButton();
+        streamFollowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFollowButton(streamFollowButton, stream.user);
             }
         });
 
@@ -278,6 +324,28 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemViewType(int position) {
         FeedItem item = mFeedItems.get(position);
         return item.getType().ordinal();
+    }
+
+    private class FollowCallback implements Callback<GenericResponse<?>> {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Failure", "  " + error.toString());
+        }
+    }
+
+    private class UnfollowCallback implements Callback<GenericResponse<?>> {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Failure", "  " + error.toString());
+        }
     }
 }
 

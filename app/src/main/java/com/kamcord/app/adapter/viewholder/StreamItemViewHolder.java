@@ -2,6 +2,7 @@ package com.kamcord.app.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,6 +26,8 @@ public class StreamItemViewHolder extends RecyclerView.ViewHolder {
     TextView videoViews;
     @InjectView(R.id.stream_length_views)
     TextView streamLengthViews;
+    @InjectView(R.id.stream_follow_button)
+    Button streamFollowButton;
 
     public StreamItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
@@ -49,5 +52,9 @@ public class StreamItemViewHolder extends RecyclerView.ViewHolder {
 
     public TextView getStreamLengthViews() {
         return this.streamLengthViews;
+    }
+
+    public Button getStreamFollowButton() {
+        return this.streamFollowButton;
     }
 }

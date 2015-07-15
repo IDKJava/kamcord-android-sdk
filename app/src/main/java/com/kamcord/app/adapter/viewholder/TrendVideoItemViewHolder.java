@@ -29,6 +29,8 @@ public class TrendVideoItemViewHolder extends RecyclerView.ViewHolder {
     TextView videoComments;*/
     @InjectView(R.id.trend_video_views)
     TextView videoViews;
+    @InjectView(R.id.trend_follow_button)
+    Button trendFollowButton;
 
     public TrendVideoItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
@@ -49,6 +51,10 @@ public class TrendVideoItemViewHolder extends RecyclerView.ViewHolder {
 
     public Button getTrendVideoLikesButton() {
         return this.videoLikes;
+    }
+
+    public Button getTrendFollowButton() {
+        return this.trendFollowButton;
     }
 
     /*public TextView getVideoComments() {
