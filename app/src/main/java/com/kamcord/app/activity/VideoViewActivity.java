@@ -287,6 +287,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         // If we're not preparing or idle, we've successfully connected to the stream/video
         if( playbackState != Player.STATE_IDLE && playbackState != Player.STATE_PREPARING ) {
             reconnectAttemptCount = 0;
+            playerError = false;
         }
     }
 
