@@ -211,18 +211,20 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
         if (video.is_user_liking) {
-            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(
-                            mContext,
-                            mContext.getResources().getDrawable(R.drawable.likes_white),
-                            R.color.ColorPrimary),
-                    null, null, null);
-        } else {
+            videoLikesButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGreen));
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
                     ViewUtils.getTintedDrawable(
                             mContext,
                             mContext.getResources().getDrawable(R.drawable.likes_white),
                             R.color.kamcordGreen),
+                    null, null, null);
+        } else {
+            videoLikesButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGray));
+            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(
+                            mContext,
+                            mContext.getResources().getDrawable(R.drawable.likes_white),
+                            R.color.kamcordGray),
                     null, null, null);
         }
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
@@ -375,18 +377,20 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 video.likes = video.likes - 1;
             }
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
+            likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGray));
             likeButton.setActivated(false);
             likeButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGray),
                     null, null, null);
             AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
         } else {
             video.is_user_liking = true;
             video.likes = video.likes + 1;
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
+            likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGreen));
             likeButton.setActivated(true);
             likeButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.ColorPrimary),
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
                     null, null, null);
             AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
         }

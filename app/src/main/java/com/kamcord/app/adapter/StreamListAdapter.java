@@ -6,23 +6,21 @@ import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
-import com.kamcord.app.adapter.viewholder.InstalledHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.LiveStreamHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
-import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
-import com.kamcord.app.adapter.viewholder.RequestGameViewHolder;
 import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
+import com.kamcord.app.adapter.viewholder.TrendVideoItemViewHolder;
+import com.kamcord.app.adapter.viewholder.TrendVideoViewHolder;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
@@ -61,17 +59,21 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         View itemLayoutView;
         FeedItem.Type type = FeedItem.Type.values()[viewType];
         switch (type) {
-            case NORMAL_HEADER: {
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_installed_header, null);
-                return new InstalledHeaderViewHolder(itemLayoutView);
+            case LIVESTREAM_HEADER: {
+                itemLayoutView = inflater.inflate(R.layout.view_livestream_header, null);
+                return new LiveStreamHeaderViewHolder(itemLayoutView);
             }
             case STREAM: {
                 itemLayoutView = inflater.inflate(R.layout.fragment_stream_item, parent, false);
                 return new StreamItemViewHolder(itemLayoutView);
             }
+            case TRENDVIDEO_HEADER: {
+                itemLayoutView = inflater.inflate(R.layout.view_trendvideo_header, null);
+                return new TrendVideoViewHolder(itemLayoutView);
+            }
             case VIDEO: {
-                itemLayoutView = inflater.inflate(R.layout.fragment_profile_item, parent, false);
-                return new ProfileVideoItemViewHolder(itemLayoutView);
+                itemLayoutView = inflater.inflate(R.layout.fragment_trend_item, parent, false);
+                return new TrendVideoItemViewHolder(itemLayoutView);
             }
             case FOOTER:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed_header, null);
@@ -86,41 +88,37 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
 
-        if (viewHolder instanceof InstalledHeaderViewHolder) {
-            bindInstalledHeaderViewHolder((InstalledHeaderViewHolder) viewHolder);
+        if (viewHolder instanceof LiveStreamHeaderViewHolder) {
+            bindLiveStreamHeaderViewHolder((LiveStreamHeaderViewHolder) viewHolder);
 
-        } else if (viewHolder instanceof RequestGameViewHolder) {
-            bindRequestGameViewHolder((RequestGameViewHolder) viewHolder);
+        } else if (viewHolder instanceof TrendVideoViewHolder) {
+            bindTrendVideoViewHolder((TrendVideoViewHolder) viewHolder);
 
         } else if (viewHolder instanceof StreamItemViewHolder) {
             Stream stream = getItem(position).getStream();
             if (stream != null) {
                 bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream);
             }
-        } else if (viewHolder instanceof ProfileVideoItemViewHolder ) {
+        } else if (viewHolder instanceof TrendVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
-            bindVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
+            bindVideoItemViewHolder((TrendVideoItemViewHolder) viewHolder, video);
         }
     }
 
-    private void bindInstalledHeaderViewHolder(InstalledHeaderViewHolder viewHolder) {
-        CalligraphyUtils.applyFontToTextView(mContext, viewHolder.recordAndShareTextView, "fonts/proximanova_semibold.otf");
-        viewHolder.recordAndShareTextView.setText(mContext.getResources().getString(R.string.livestreamHeader));
+    private void bindLiveStreamHeaderViewHolder(LiveStreamHeaderViewHolder viewHolder) {
+        CalligraphyUtils.applyFontToTextView(mContext, viewHolder.livestreamHeaderTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindNotInstalledHeaderViewHolder(NotInstalledHeaderViewHolder viewHolder) {
-        CalligraphyUtils.applyFontToTextView(mContext, viewHolder.alsoRecordTheseTextView, "fonts/proximanova_semibold.otf");
+    private void bindTrendVideoViewHolder(TrendVideoViewHolder viewHolder) {
+        CalligraphyUtils.applyFontToTextView(mContext, viewHolder.trendvideoHeaderTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindRequestGameViewHolder(RequestGameViewHolder viewHolder) {
-    }
+    private void bindVideoItemViewHolder(TrendVideoItemViewHolder viewHolder, final Video video) {
 
-    private void bindVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video) {
-
-        viewHolder.getProfileItemTitle().setText(video.title);
-        final TextView videoViewsButton = viewHolder.getVideoViews();
+        viewHolder.getTrendItemTitle().setText(video.title);
+        final TextView videoViewsButton = viewHolder.getTrendVideoViews();
         videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
-        final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
+        final ImageView videoImageView = viewHolder.getTrendItemThumbnail();
         if (video.thumbnails != null && video.thumbnails.regular != null) {
             Picasso.with(mContext)
                     .load(video.thumbnails.regular)
@@ -138,27 +136,29 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         });
 
-        viewHolder.getProfileItemAuthor().setText(String.format(Locale.ENGLISH,
+        viewHolder.getTrendItemAuthor().setText(String.format(Locale.ENGLISH,
                 mContext.getResources().getString(R.string.byAuthorGame),
                 video.username, video.game_name));
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
-        final Button videoLikesButton = viewHolder.getVideoLikesButton();
+        final Button videoLikesButton = viewHolder.getTrendVideoLikesButton();
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
         if (video.is_user_liking) {
-            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(
-                            mContext,
-                            mContext.getResources().getDrawable(R.drawable.likes_white),
-                            R.color.ColorPrimary),
-                    null, null, null);
-        } else {
+            videoLikesButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGreen));
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
                     ViewUtils.getTintedDrawable(
                             mContext,
                             mContext.getResources().getDrawable(R.drawable.likes_white),
                             R.color.kamcordGreen),
+                    null, null, null);
+        } else {
+            videoLikesButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGray));
+            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(
+                            mContext,
+                            mContext.getResources().getDrawable(R.drawable.likes_white),
+                            R.color.kamcordGray),
                     null, null, null);
         }
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
@@ -176,18 +176,20 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 video.likes = video.likes - 1;
             }
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
+            likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGray));
             likeButton.setActivated(false);
             likeButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGray),
                     null, null, null);
             AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
         } else {
             video.is_user_liking = true;
             video.likes = video.likes + 1;
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
+            likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGreen));
             likeButton.setActivated(true);
             likeButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.ColorPrimary),
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
                     null, null, null);
             AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
         }
@@ -201,7 +203,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         final TextView streamViewsTextView = viewHolder.getStreamViews();
         streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
         final TextView streamLenghtTextView = viewHolder.getStreamLengthViews();
-//        streamLenghtTextView.setText(VideoUtils.getStreamDurationString(stream.started_at));
+        streamLenghtTextView.setText(VideoUtils.getStreamDurationString(stream.started_at));
         final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
         if (stream.thumbnails != null && stream.thumbnails.medium != null) {
             Picasso.with(mContext)
@@ -237,7 +239,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         @Override
         public void failure(RetrofitError error) {
-            Log.e("Retrofit Update Video Views Failure", "  " + error.toString());
+            Log.e("Retrofit UpVid Fail", "  " + error.toString());
         }
     }
 

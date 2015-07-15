@@ -160,13 +160,25 @@ public class HomeFragment extends Fragment {
                     iterator.next();
                     iterator.remove();
                 }
+                boolean trendHeader = false;
                 for (Card card : homeFeedGenericResponse.response.card_model_list) {
-                    if (card.stream != null) {
-                        FeedItem streamFeedItem = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
-                        mFeedItemList.add(streamFeedItem);
-                    } else if (card.video != null) {
-                        FeedItem videoFeedItem = new FeedItem<>(FeedItem.Type.VIDEO, card.video);
-                        mFeedItemList.add(videoFeedItem);
+                    if(homeFeedGenericResponse.response.card_model_list != null) {
+                        if(mFeedItemList.size() == 0) {
+                            FeedItem liveStreamHeaderModel = new FeedItem<>(FeedItem.Type.LIVESTREAM_HEADER, card.stream);
+                            mFeedItemList.add(liveStreamHeaderModel);
+                        }
+                        if (card.stream != null) {
+                            FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
+                            mFeedItemList.add(profileViewModel);
+                        } else if (card.video != null) {
+                            if(!trendHeader) {
+                                FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.TRENDVIDEO_HEADER, card.stream);
+                                mFeedItemList.add(trendingHeaderModel);
+                                trendHeader = true;
+                            }
+                            FeedItem videoFeedItem = new FeedItem<>(FeedItem.Type.VIDEO, card.video);
+                            mFeedItemList.add(videoFeedItem);
+                        }
                     }
                 }
                 footerVisible = false;
@@ -199,7 +211,7 @@ public class HomeFragment extends Fragment {
                 for (Card card : homeFeedGenericResponse.response.card_model_list) {
                     if(homeFeedGenericResponse.response.card_model_list != null) {
                         if(mFeedItemList.size() == 0) {
-                            FeedItem liveStreamHeaderModel = new FeedItem<>(FeedItem.Type.NORMAL_HEADER, card.stream);
+                            FeedItem liveStreamHeaderModel = new FeedItem<>(FeedItem.Type.LIVESTREAM_HEADER, card.stream);
                             mFeedItemList.add(liveStreamHeaderModel);
                         }
                         if (card.stream != null) {
@@ -207,7 +219,7 @@ public class HomeFragment extends Fragment {
                             mFeedItemList.add(profileViewModel);
                         } else if (card.video != null) {
                             if(!trendHeader) {
-                                FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.NORMAL_HEADER, card.stream);
+                                FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.TRENDVIDEO_HEADER, card.stream);
                                 mFeedItemList.add(trendingHeaderModel);
                                 trendHeader = true;
                             }

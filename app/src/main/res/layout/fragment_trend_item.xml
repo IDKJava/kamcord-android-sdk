@@ -12,33 +12,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/trend_item_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/stream_item_thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:background="@drawable/default_video_thumb"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/live_indicator"
-                style="@style/KamcordLiveStreamIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_gravity="top"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:drawableStart="@drawable/white_circle"
-                android:enabled="false"
-                android:text="@string/live" />
-
-        </RelativeLayout>
+            android:layout_height="180dp"
+            android:background="@drawable/default_video_thumb"
+            android:scaleType="centerCrop" />
 
         <LinearLayout
-            android:id="@+id/stream_info_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/cardview_lightermargin"
@@ -50,11 +31,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingBottom="0dp">
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/stream_item_title"
+                    android:id="@+id/trend_item_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/cardview_standardmargin"
@@ -65,20 +45,20 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/stream_item_author"
+                    android:id="@+id/trend_item_author"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/cardview_standardmargin"
                     android:layout_marginRight="@dimen/cardview_standardmargin"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="@string/author"
-                    android:textColor="@color/kamcordGray"
+                    android:text="@string/byAuthorGame"
+                    android:textColor="@color/kamcordLightText"
                     android:textSize="16sp" />
             </LinearLayout>
 
             <Button
-                android:id="@+id/stream_follow_button"
+                android:id="@+id/trend_follow_button"
                 style="@style/KamcordVideoCardCountButton"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/materialDefaultButtonHeight"
@@ -106,8 +86,24 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
+            <Button
+                android:id="@+id/trend_video_likes_button"
+                style="@style/KamcordStreamCardCountButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_centerHorizontal="true"
+                android:drawableStart="@drawable/likes_icon_selector"
+                android:enabled="true"
+                android:gravity="center"
+                android:text="@string/defaultNumber" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2" />
+
             <TextView
-                android:id="@+id/stream_views"
+                android:id="@+id/trend_video_views"
                 style="@style/KamcordStreamCardCountButton"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
@@ -120,27 +116,9 @@
             <View
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="2" />
-
-            <TextView
-                android:id="@+id/stream_length_views"
-                style="@style/KamcordStreamCardCountButton"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_centerHorizontal="true"
-                android:drawableStart="@drawable/clock_gray_24dp"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="@string/defaultNumber" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
                 android:layout_weight="1" />
 
         </LinearLayout>
-
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
-
