@@ -148,12 +148,10 @@
                 android:max="1000"
                 android:maxHeight="6dp"
                 android:minHeight="6dp"
-                android:paddingBottom="14dp"
-                android:paddingTop="14dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 android:progressDrawable="@drawable/scrubber_progress"
-                android:thumb="@drawable/solid_white_circle_12dp" />
+                android:thumb="@drawable/solid_white_circle_24dp" />
 
             <TextView
                 android:id="@+id/total_time_textview"
