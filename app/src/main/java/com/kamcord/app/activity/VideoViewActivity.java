@@ -247,7 +247,7 @@ public class VideoViewActivity extends AppCompatActivity implements
             totalPlayTimeMs += System.currentTimeMillis() - lastPlayStart;
         }
         if( lastBufferingStart > 0 ) {
-            totalBufferingTimeMs += System.currentTimeMillis() - lastPlayStart;
+            totalBufferingTimeMs += System.currentTimeMillis() - lastBufferingStart;
         }
         extras.putFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, (float) totalBufferingTimeMs / 1000f);
         extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, (float) totalPlayTimeMs / 1000f);
