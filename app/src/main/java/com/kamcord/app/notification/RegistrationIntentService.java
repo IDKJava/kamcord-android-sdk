@@ -10,6 +10,8 @@ import com.google.android.gms.iid.InstanceID;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 
+import java.io.IOException;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -27,12 +29,17 @@ public class RegistrationIntentService extends IntentService {
     public void onHandleIntent(Intent intent) {
         try {
             InstanceID instanceID = InstanceID.getInstance(this);
+            try{
+                instanceID.deleteInstanceID();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             String token = instanceID.getToken(
                     senderID,
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE,
                     null
             );
-            Log.d("RegisterToken", token);
+            Log.d("Register ID", token);
 
             // Send Token to Server
             if (token != null) {

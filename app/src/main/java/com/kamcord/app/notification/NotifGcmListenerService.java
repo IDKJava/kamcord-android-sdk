@@ -25,7 +25,8 @@ public class NotifGcmListenerService extends GcmListenerService {
     public void onMessageReceived(String from, Bundle data) {
         String message = "";
         if (data != null) {
-            message = data.getString("kamcord");
+            Log.d("Data Title: ", data.getString("title"));
+            message = data.getString("streamUserId");
             Log.d("Message sender:", "From: " + from);
             Log.d("Message content:", "Message: " + message);
         } else {
