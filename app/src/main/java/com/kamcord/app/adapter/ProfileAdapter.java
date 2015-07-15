@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -29,12 +28,14 @@ import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
+import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
 import com.kamcord.app.analytics.KamcordAnalytics;
-import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.notification.RegistrationIntentService;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
+import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.service.UploadService;
@@ -58,9 +59,9 @@ import retrofit.client.Response;
 public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<ProfileItem> mProfileList;
+    private List<FeedItem> mProfileList;
 
-    public ProfileAdapter(Context context, List<ProfileItem> mProfileList) {
+    public ProfileAdapter(Context context, List<FeedItem> mProfileList) {
         this.mContext = context;
         this.mProfileList = mProfileList;
     }
@@ -68,7 +69,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayoutView;
-        ProfileItem.Type type = ProfileItem.Type.values()[viewType];
+        FeedItem.Type type = FeedItem.Type.values()[viewType];
         switch (type) {
             case HEADER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_header, parent, false);
@@ -77,6 +78,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case VIDEO: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_item, parent, false);
                 return new ProfileVideoItemViewHolder(itemLayoutView);
+            }
+            case STREAM: {
+                itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stream_item, parent, false);
+                return new StreamItemViewHolder(itemLayoutView);
             }
             case FOOTER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
@@ -106,6 +111,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             Video video = getItem(position).getVideo();
             if (video != null) {
                 bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
+            }
+
+        } else if (viewHolder instanceof StreamItemViewHolder) {
+            Stream stream = getItem(position).getStream();
+            if( stream != null ) {
+                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream);
             }
 
         } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
@@ -178,8 +189,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video) {
 
         viewHolder.getProfileItemTitle().setText(video.title);
-        final TextView videoViewsTextView = viewHolder.getVideoViews();
-        videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
+        final TextView videoViewsButton = viewHolder.getVideoViews();
+        videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
         final ImageView videoImageView = viewHolder.getProfileItemThumbnail();
         if (video.thumbnails != null && video.thumbnails.regular != null) {
             Picasso.with(mContext)
@@ -190,11 +201,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             @Override
             public void onClick(View v) {
                 video.views = video.views + 1;
-                videoViewsTextView.setText(StringUtils.abbreviatedCount(video.views));
+                videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
-                intent.setData(Uri.parse(video.video_url));
-                intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
-                        VideoViewActivity.VideoType.HLS);
+                intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
                 mContext.startActivity(intent);
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }
@@ -208,19 +217,19 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         final Button videoLikesButton = viewHolder.getVideoLikesButton();
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
-        if (!video.is_user_liking) {
+        if (video.is_user_liking) {
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
                     ViewUtils.getTintedDrawable(
                             mContext,
                             mContext.getResources().getDrawable(R.drawable.likes_white),
-                            R.color.kamcordGreen),
+                            R.color.ColorPrimary),
                     null, null, null);
         } else {
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
                     ViewUtils.getTintedDrawable(
                             mContext,
                             mContext.getResources().getDrawable(R.drawable.likes_white),
-                            R.color.ColorPrimary),
+                            R.color.kamcordGreen),
                     null, null, null);
         }
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
@@ -241,7 +250,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.action_external_share:
-                                doExternalShare(video);
+                                VideoUtils.doExternalShare(mContext, video);
                                 break;
 
                             case R.id.action_delete:
@@ -253,6 +262,41 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 });
             }
         });
+    }
+
+    @TargetApi(21)
+    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream) {
+
+        viewHolder.getStreamItemTitle().setText(stream.name);
+        final TextView streamViewsTextView = viewHolder.getStreamViews();
+        streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+        final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
+        if (stream.thumbnails != null && stream.thumbnails.medium != null) {
+            Picasso.with(mContext)
+                    .load(stream.thumbnails.medium.unsecure_url)
+                    .into(streamImageView);
+        }
+        streamImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stream.current_viewers_count = stream.current_viewers_count + 1;
+                streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+                Intent intent = new Intent(mContext, VideoViewActivity.class);
+                intent.putExtra(VideoViewActivity.ARG_STREAM,
+                        new Gson().toJson(stream));
+
+                mContext.startActivity(intent);
+                //AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback()); //DQTODO update server views?
+            }
+        });
+
+        String username = "";
+
+        if (stream.user != null && stream.user.username != null)
+            username = stream.user.username;
+
+        viewHolder.getStreamItemAuthor().setText(String.format(Locale.ENGLISH,
+                mContext.getResources().getString(R.string.author), username));
     }
 
     @TargetApi(21)
@@ -334,7 +378,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void toggleLikeButton(Button likeButton, Video video) {
         if (video.is_user_liking) {
             video.is_user_liking = false;
-            video.likes = video.likes - 1;
+            if (video.likes > 0) {
+                video.likes = video.likes - 1;
+            }
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
             likeButton.setActivated(false);
             likeButton.setCompoundDrawablesWithIntrinsicBounds(
@@ -356,7 +402,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        ProfileItem viewModel = mProfileList.get(position);
+        FeedItem viewModel = mProfileList.get(position);
         return viewModel.getType().ordinal();
     }
 
@@ -365,40 +411,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return mProfileList.size();
     }
 
-    public ProfileItem getItem(int position) {
+    public FeedItem getItem(int position) {
         return mProfileList.get(position);
-    }
-
-    private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
-
-    private void doExternalShare(Video video) {
-        if (mContext instanceof Activity && video.video_id != null) {
-            Activity activity = (Activity) mContext;
-            String watchPageLink = "www.kamcord.com/v/" + video.video_id;
-
-
-            String externalShareText = null;
-            if (video.title != null) {
-                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                        video.title, watchPageLink);
-                int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
-                if (diff > 0) {
-                    String truncatedTitle = StringUtils.ellipsize(video.title, video.title.length() - diff);
-                    externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                            truncatedTitle, video.video_site_watch_page);
-                }
-            } else {
-                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextNoTitle),
-                        watchPageLink);
-            }
-            externalShareText = StringUtils.ellipsize(externalShareText, MAX_EXTERNAL_SHARE_TEXT_LENGTH);
-
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, externalShareText);
-            shareIntent.setType("text/plain");
-            activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.shareTo)));
-        }
     }
 
     private void showDeleteVideoDialog(final Video video) {
@@ -459,9 +473,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public void success(GenericResponse<?> genericResponse, Response response) {
             int index = 0;
-            for (ProfileItem item : mProfileList) {
-                if (item.getType() == ProfileItem.Type.VIDEO
-                        && item.getVideo().video_id.equals(video.video_id)) {
+            for( FeedItem item : mProfileList ) {
+                if( item.getType() == FeedItem.Type.VIDEO
+                    && item.getVideo().video_id.equals(video.video_id) ) {
                     mProfileList.remove(index);
                     notifyItemRemoved(index);
                     break;

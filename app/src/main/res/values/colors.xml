@@ -10,6 +10,7 @@
     <color name="gridTextColor">#353e44</color>
 
     <color name="kamcordGreen">#47d894</color>
+    <color name="kamcordLightGreen">#9047d894</color>
     <color name="kamcordDarkText">#353e44</color>
     <color name="kamcordLightText">#aab</color>
     <color name="kamcordHintText">#40000000</color>

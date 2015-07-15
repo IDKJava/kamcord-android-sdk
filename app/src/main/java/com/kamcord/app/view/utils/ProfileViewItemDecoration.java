@@ -4,7 +4,7 @@ import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.FeedItem;
 
 /**
  * Created by pplunkett on 6/5/15.
@@ -24,8 +24,8 @@ public class ProfileViewItemDecoration extends GridViewItemDecoration {
         }
 
         int viewType = parent.getAdapter().getItemViewType(adapterPosition);
-        ProfileItem.Type type = ProfileItem.Type.values()[viewType];
-        if( type == ProfileItem.Type.HEADER || type == ProfileItem.Type.UPLOAD_PROGRESS ) {
+        FeedItem.Type type = FeedItem.Type.values()[viewType];
+        if( type == FeedItem.Type.HEADER || type == FeedItem.Type.UPLOAD_PROGRESS ) {
             outRect.top = 0;
             outRect.left = 0;
             outRect.right = 0;

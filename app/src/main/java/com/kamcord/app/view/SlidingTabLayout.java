@@ -19,6 +19,7 @@ package com.kamcord.app.view;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -33,6 +34,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kamcord.app.adapter.MainViewPagerAdapter;
+import com.kamcord.app.fragment.HomeFragment;
+import com.kamcord.app.fragment.ProfileFragment;
+import com.kamcord.app.fragment.RecordFragment;
 import com.kamcord.app.utils.ViewUtils;
 
 /**
@@ -192,13 +196,11 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         for (int i = 0; i < adapter.getCount(); i++) {
             View tabView = null;
-            TextView tabTitleView = null;
             ImageView tabIconView = null;
 
             if (mTabViewLayoutId != 0) {
                 // If there is a custom tab view layout id set, try and inflate it
                 tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip, false);
-                tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
             }
 
             if (tabView == null) {
@@ -239,8 +241,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
             //setting the description for the tab for UI automation.
             tabView.setContentDescription(adapter.getPageTitle(i));
         }
-
-
     }
 
     public void setContentDescription(int i, String desc) {
@@ -328,7 +328,29 @@ public class SlidingTabLayout extends HorizontalScrollView {
         @Override
         public void onClick(View v) {
             for (int i = 0; i < mTabStrip.getChildCount(); i++) {
-                if (v == mTabStrip.getChildAt(i)) {
+                if (mViewPager != null && v == mTabStrip.getChildAt(i) && i == mViewPager.getCurrentItem()) {
+                    DynamicRecyclerView view;
+                    Fragment fragment = ((MainViewPagerAdapter) mViewPager.getAdapter()).getViewPagerHashMap().get(i);
+                    if(fragment != null) {
+                        if(fragment instanceof HomeFragment) {
+                            view = ((HomeFragment) fragment).getHomeRecyclerView();
+                            if(view != null) {
+                                view.scrollToPosition(0);
+                            }
+                        } else if (fragment instanceof RecordFragment) {
+                            view = ((RecordFragment) fragment).getRecordRecyclerView();
+                            if(view != null) {
+                                view.scrollToPosition(0);
+                            }
+                        }
+                        if(fragment instanceof ProfileFragment) {
+                            view = ((ProfileFragment) fragment).getProfileRecyclerView();
+                            if(view != null) {
+                                view.scrollToPosition(0);
+                            }
+                        }
+                    }
+                } else if (v == mTabStrip.getChildAt(i)) {
                     mViewPager.setCurrentItem(i);
                     return;
                 }

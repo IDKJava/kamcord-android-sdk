@@ -41,13 +41,13 @@ public class NotifGcmListenerService extends GcmListenerService {
                 .setContentTitle(liveStreamer)
                 .setContentText(message)
                 .setSmallIcon(R.drawable.notif_logo_small)
-                .setDefaults(Notification.DEFAULT_SOUND)
+                .setDefaults(Notification.DEFAULT_VIBRATE)
                 .setAutoCancel(true);
 
         Intent resultIntent = new Intent(this, VideoViewActivity.class);
         resultIntent.setData(Uri.parse("http://content.kamcord.com/live/377125/playlist.m3u8"));
-        resultIntent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
-                VideoViewActivity.VideoType.HLS);
+        resultIntent.putExtra(VideoViewActivity.ARG_STREAM,
+                "hi");
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(VideoViewActivity.class);
         stackBuilder.addNextIntent(resultIntent);

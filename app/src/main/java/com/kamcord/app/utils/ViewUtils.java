@@ -6,12 +6,16 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.TypedValue;
+import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
 
 import com.kamcord.app.R;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ViewUtils {
 
@@ -46,5 +50,24 @@ public class ViewUtils {
         DrawableCompat.setTint(tintedDrawable, resources.getColor(color));
         DrawableCompat.setTintMode(tintedDrawable.mutate(), PorterDuff.Mode.MULTIPLY);
         return tintedDrawable;
+    }
+
+    private static final AtomicInteger nextGeneratedId = new AtomicInteger(1);
+
+    public static int generateViewId() {
+        if (Build.VERSION.SDK_INT < 17) {
+            for (; ; ) {
+                final int result = nextGeneratedId.get();
+                int newValue = result + 1;
+                if (newValue > 0x00FFFFFF) newValue = 1; // Roll over to 1, not 0.
+                if (nextGeneratedId.compareAndSet(result, newValue)) {
+                    return result;
+                }
+            }
+        } else {
+
+            return View.generateViewId();
+
+        }
     }
 }

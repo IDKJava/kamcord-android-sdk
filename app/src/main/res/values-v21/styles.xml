@@ -14,6 +14,32 @@
         <item name="android:minWidth">0dp</item>
     </style>
 
+    <style name="KamcordStreamCardCountButton">
+        <item name="android:background">@drawable/stream_card_count_button_background</item>
+        <item name="android:textColor">@color/video_card_count_button_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="KamcordLiveStreamIndicator">
+        <item name="android:background">@drawable/live_stream_indicator_background</item>
+        <item name="android:textColor">@color/live_stream_indicator</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
     <style name="ExternalShareButton">
         <item name="android:background">@drawable/external_share_button_background</item>
         <item name="android:textColor">@color/ColorPrimaryDark</item>

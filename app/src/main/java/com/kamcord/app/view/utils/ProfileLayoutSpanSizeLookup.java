@@ -3,7 +3,7 @@ package com.kamcord.app.view.utils;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.FeedItem;
 
 /**
  * Created by pplunkett on 6/5/15.
@@ -22,7 +22,7 @@ public class ProfileLayoutSpanSizeLookup extends GridLayoutManager.SpanSizeLooku
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
             int viewType = recyclerView.getAdapter().getItemViewType(position);
-            ProfileItem.Type type = ProfileItem.Type.values()[viewType];
+            FeedItem.Type type = FeedItem.Type.values()[viewType];
             switch(type) {
                 case HEADER:
                 case FOOTER:

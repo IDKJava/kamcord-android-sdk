@@ -466,7 +466,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 UI_TIMEOUT_MS);
         UiObject2 listItemObj = videoTitleObj.getParent();
         UiObject2 obj = findUiObjInObj(listItemObj,
-                R.id.profile_item_author,
+                R.id.stream_item_author,
                 UiObjIdType.Res,
                 UiObjSelType.Res,
                 UI_TIMEOUT_MS);
