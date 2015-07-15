@@ -25,6 +25,7 @@ import com.kamcord.app.adapter.viewholder.TrendVideoItemViewHolder;
 import com.kamcord.app.adapter.viewholder.TrendVideoViewHolder;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.client.AppServerClient;
+import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
@@ -146,6 +147,15 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button trendFollowButton = viewHolder.getTrendFollowButton();
+        if(AccountManager.isLoggedIn()) {
+            if(video.user.is_user_following) {
+                video.user.is_user_following = true;
+                trendFollowButton.setActivated(true);
+            } else {
+                video.user.is_user_following = false;
+                trendFollowButton.setActivated(false);
+            }
+        }
         trendFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,6 +272,15 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
 
         final Button streamFollowButton = viewHolder.getStreamFollowButton();
+        if (AccountManager.isLoggedIn()) {
+            if (stream.user.is_user_following) {
+                stream.user.is_user_following = true;
+                streamFollowButton.setActivated(true);
+            } else {
+                stream.user.is_user_following = false;
+                streamFollowButton.setActivated(false);
+            }
+        }
         streamFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

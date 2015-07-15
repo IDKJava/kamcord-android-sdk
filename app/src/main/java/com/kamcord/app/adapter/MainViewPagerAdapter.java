@@ -41,17 +41,17 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case HOME_FRAGMENT_POSITION:
                 fragment = new HomeFragment();
-                viewPagerHashMap.put(position,fragment);
+                viewPagerHashMap.put(position, fragment);
                 break;
 
             case RECORD_FRAGMENT_POSITION:
                 fragment = new RecordFragment();
-                viewPagerHashMap.put(position,fragment);
+                viewPagerHashMap.put(position, fragment);
                 break;
 
             case PROFILE_FRAGMENT_POSITION:
                 fragment = new ProfileFragment();
-                viewPagerHashMap.put(position,fragment);
+                viewPagerHashMap.put(position, fragment);
                 break;
 
             default:

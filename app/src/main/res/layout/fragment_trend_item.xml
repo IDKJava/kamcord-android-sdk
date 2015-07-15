@@ -63,6 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/materialDefaultButtonHeight"
                 android:layout_marginRight="@dimen/cardview_standardmargin"
+                android:drawablePadding="@dimen/cardview_default_radius"
                 android:drawableLeft="@drawable/follow_icon_selector"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
@@ -92,7 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:layout_centerHorizontal="true"
-                android:drawableStart="@drawable/likes_icon_selector"
+                android:drawableLeft="@drawable/likes_icon_selector"
                 android:enabled="true"
                 android:gravity="center"
                 android:text="@string/defaultNumber" />
@@ -108,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:layout_centerHorizontal="true"
-                android:drawableStart="@drawable/eye_gray_24dp"
+                android:drawableLeft="@drawable/eye_gray_24dp"
                 android:enabled="false"
                 android:gravity="center"
                 android:text="@string/defaultNumber" />

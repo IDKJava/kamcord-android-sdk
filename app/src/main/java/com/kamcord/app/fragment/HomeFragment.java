@@ -215,6 +215,10 @@ public class HomeFragment extends Fragment {
                             mFeedItemList.add(liveStreamHeaderModel);
                         }
                         if (card.stream != null) {
+                            if (mFeedItemList.size() == 0) {
+                                FeedItem headerViewModel = new FeedItem<>(FeedItem.Type.LIVESTREAM_HEADER, null);
+                                mFeedItemList.add(headerViewModel);
+                            }
                             FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
                             mFeedItemList.add(profileViewModel);
                         } else if (card.video != null) {
