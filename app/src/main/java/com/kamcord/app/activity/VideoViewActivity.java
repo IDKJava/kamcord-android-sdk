@@ -72,6 +72,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private Player player;
     private boolean playerNeedsPrepare;
     private float qualityMultiplier = 2f;
+    private boolean playerError = false;
 
     private long playerPosition;
 
@@ -258,6 +259,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onError(Exception e) {
         playerNeedsPrepare = true;
+        playerError = true;
         showControls();
     }
 
@@ -281,7 +283,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     private void toggleControlsVisibility() {
-        if (mediaControls.isShowing()) {
+        if (mediaControls.isShowing() && !playerError) {
             mediaControls.hide(true);
         } else {
             showControls();
