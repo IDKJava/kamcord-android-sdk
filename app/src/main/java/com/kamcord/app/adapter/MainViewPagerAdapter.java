@@ -10,6 +10,8 @@ import com.kamcord.app.fragment.HomeFragment;
 import com.kamcord.app.fragment.ProfileFragment;
 import com.kamcord.app.fragment.RecordFragment;
 
+import java.util.HashMap;
+
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
@@ -18,6 +20,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     public static final int PROFILE_FRAGMENT_POSITION = 2;
     private int numberOfTabs;
     private CharSequence tabTitles[];
+    public HashMap<Integer, Fragment> viewPagerHashMap = new HashMap<>();
 
     private int[] imageResId = {
             R.drawable.tabicon_home_selector,
@@ -38,14 +41,17 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case HOME_FRAGMENT_POSITION:
                 fragment = new HomeFragment();
+                viewPagerHashMap.put(position, fragment);
                 break;
 
             case RECORD_FRAGMENT_POSITION:
                 fragment = new RecordFragment();
+                viewPagerHashMap.put(position, fragment);
                 break;
 
             case PROFILE_FRAGMENT_POSITION:
                 fragment = new ProfileFragment();
+                viewPagerHashMap.put(position, fragment);
                 break;
 
             default:
@@ -69,5 +75,9 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         return tabTitles[position];
+    }
+
+    public HashMap<Integer, Fragment> getViewPagerHashMap() {
+        return this.viewPagerHashMap;
     }
 }
