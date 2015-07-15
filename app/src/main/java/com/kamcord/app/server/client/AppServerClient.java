@@ -14,6 +14,7 @@ import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.server.model.PaginatedVideoList;
 import com.kamcord.app.server.model.ReserveVideoEntity;
 import com.kamcord.app.server.model.ReserveVideoResponse;
+import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.UserErrorCode;
 import com.kamcord.app.server.model.Video;
@@ -119,6 +120,9 @@ public class AppServerClient {
 
         @POST("/app/v3/users/{userId}/unfollow")
         void unfollow(@Path("userId") String userId, Callback<GenericResponse<?>> cb);
+
+        @GET("/app/v4/streams/{streamId}")
+        void getStream(@Path("streamId") String streamId, Callback<GenericResponse<Stream>> cb);
     }
 
     private static AppServer instance;
