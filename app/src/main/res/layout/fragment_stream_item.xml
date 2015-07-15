@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/ColorPrimary"
     android:elevation="2dp"
-    android:foreground="?android:attr/selectableItemBackground" >
+    card_view:cardBackgroundColor="@color/ColorPrimary">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,44 +25,44 @@
 
             <TextView
                 android:id="@+id/live_indicator"
-                android:layout_gravity="top"
+                style="@style/KamcordLiveStreamIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="16dp"
+                android:layout_gravity="top"
                 android:layout_marginLeft="16dp"
-                android:text="@string/live"
-                style="@style/KamcordLiveStreamIndicator"
-                android:drawableStart="@drawable/white_circle"
+                android:layout_marginTop="16dp"
                 android:drawableLeft="@drawable/white_circle"
-                android:enabled="false" />
+                android:enabled="false"
+                android:text="@string/live" />
 
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/stream_info_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/cardview_lightermargin"
             android:layout_marginTop="@dimen/cardview_lightermargin"
-            android:layout_marginBottom="@dimen/cardview_standardmargin"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingBottom="0dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="0dp">
+
                 <TextView
                     android:id="@+id/stream_item_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/cardview_standardmargin"
                     android:layout_marginRight="@dimen/cardview_standardmargin"
-                    android:maxLines="1"
                     android:ellipsize="end"
-                    android:textSize="20sp"
-                    android:textColor="@color/kamcordDarkText" />
+                    android:maxLines="1"
+                    android:textColor="@color/kamcordDarkText"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/stream_item_author"
@@ -70,28 +70,78 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/cardview_standardmargin"
                     android:layout_marginRight="@dimen/cardview_standardmargin"
-                    android:textSize="16sp"
-                    android:text="@string/author"
-                    android:textColor="@color/kamcordLightText"
+                    android:ellipsize="end"
                     android:maxLines="1"
-                    android:ellipsize="end"/>
+                    android:text="@string/author"
+                    android:textColor="@color/kamcordGray"
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <Button
-                android:id="@+id/video_views"
-                android:layout_gravity="top"
+                android:id="@+id/stream_follow_button"
+                style="@style/KamcordVideoCardCountButton"
                 android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/defaultNumber"
+                android:layout_height="@dimen/materialDefaultButtonHeight"
+                android:layout_marginRight="@dimen/cardview_standardmargin"
+                android:drawablePadding="@dimen/cardview_default_radius"
+                android:drawableLeft="@drawable/follow_icon_selector"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text=""/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/defaultDividerColor" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/stream_info_layout"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/stream_views"
                 style="@style/KamcordStreamCardCountButton"
-                android:drawableStart="@drawable/stream_view_count"
-                android:drawableLeft="@drawable/stream_view_count"
-                android:enabled="false" />
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_centerHorizontal="true"
+                android:drawableLeft="@drawable/eye_gray_24dp"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/defaultNumber" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2" />
+
+            <TextView
+                android:id="@+id/stream_length_views"
+                style="@style/KamcordStreamCardCountButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_centerHorizontal="true"
+                android:drawableLeft="@drawable/clock_gray_24dp"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="@string/defaultNumber" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
         </LinearLayout>
 
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
+
