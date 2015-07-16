@@ -163,8 +163,8 @@ public class HomeFragment extends Fragment {
                 }
                 boolean trendHeader = false;
                 for (Card card : homeFeedGenericResponse.response.card_model_list) {
-                    if(homeFeedGenericResponse.response.card_model_list != null) {
-                        if(mFeedItemList.size() == 0) {
+                    if (homeFeedGenericResponse.response.card_model_list != null) {
+                        if (mFeedItemList.size() == 0) {
                             FeedItem liveStreamHeaderModel = new FeedItem<>(FeedItem.Type.LIVESTREAM_HEADER, card.stream);
                             mFeedItemList.add(liveStreamHeaderModel);
                         }
@@ -172,7 +172,10 @@ public class HomeFragment extends Fragment {
                             FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
                             mFeedItemList.add(profileViewModel);
                         } else if (card.video != null) {
-                            if(!trendHeader) {
+                            if (!trendHeader) {
+                                if (mFeedItemList.size() != 0 && mFeedItemList.get(0).getType() == FeedItem.Type.LIVESTREAM_HEADER && mFeedItemList.size() == 1) {
+                                    mFeedItemList.remove(0);
+                                }
                                 FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.TRENDVIDEO_HEADER, card.stream);
                                 mFeedItemList.add(trendingHeaderModel);
                                 trendHeader = true;
@@ -210,7 +213,7 @@ public class HomeFragment extends Fragment {
                 }
                 boolean trendHeader = false;
                 for (Card card : homeFeedGenericResponse.response.card_model_list) {
-                    if(homeFeedGenericResponse.response.card_model_list != null) {
+                    if (homeFeedGenericResponse.response.card_model_list != null) {
                         if (card.stream != null) {
                             if (mFeedItemList.size() == 0) {
                                 FeedItem headerViewModel = new FeedItem<>(FeedItem.Type.LIVESTREAM_HEADER, null);
@@ -219,8 +222,10 @@ public class HomeFragment extends Fragment {
                             FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
                             mFeedItemList.add(profileViewModel);
                         } else if (card.video != null) {
-                            if(!trendHeader) {
-                                if(mFeedItemList.get(0).getType() == FeedItem.Type.LIVESTREAM_HEADER && mFeedItemList.size() == 1) {
+                            if (!trendHeader) {
+                                if (mFeedItemList.size() != 0
+                                        && mFeedItemList.get(0).getType() == FeedItem.Type.LIVESTREAM_HEADER
+                                        && mFeedItemList.size() == 1) {
                                     mFeedItemList.remove(0);
                                 }
                                 FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.TRENDVIDEO_HEADER, card.stream);

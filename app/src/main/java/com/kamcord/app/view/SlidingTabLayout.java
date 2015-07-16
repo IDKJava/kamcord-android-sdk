@@ -331,8 +331,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 if (mViewPager != null && i == mViewPager.getCurrentItem()) {
                     if (i == mViewPager.getCurrentItem()) {
                         scrollToTop(i);
-                    } else if(Build.VERSION.SDK_INT < 21 && mViewPager.getCurrentItem() == i++) {
-                        scrollToTop(i);
                     }
                 } else if (v == mTabStrip.getChildAt(i)) {
                     mViewPager.setCurrentItem(i);
