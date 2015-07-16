@@ -22,8 +22,12 @@ public class StreamItemViewHolder extends RecyclerView.ViewHolder {
     TextView streamItemAuthor;
     @InjectView(R.id.stream_item_thumbnail)
     ImageView streamItemThumbnail;
-    @InjectView(R.id.video_views)
-    TextView videoViews;
+    @InjectView(R.id.stream_views)
+    TextView streamViews;
+    @InjectView(R.id.stream_length_views)
+    TextView streamLengthViews;
+    @InjectView(R.id.stream_follow_button)
+    Button streamFollowButton;
 
     public StreamItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
@@ -43,6 +47,14 @@ public class StreamItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public TextView getStreamViews() {
-        return this.videoViews;
+        return this.streamViews;
+    }
+
+    public TextView getStreamLengthViews() {
+        return this.streamLengthViews;
+    }
+
+    public Button getStreamFollowButton() {
+        return this.streamFollowButton;
     }
 }

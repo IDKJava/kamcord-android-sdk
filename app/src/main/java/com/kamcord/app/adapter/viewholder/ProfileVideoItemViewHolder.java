@@ -24,7 +24,7 @@ public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.profile_item_thumbnail)
     ImageView profileItemThumbnail;
     @InjectView(R.id.profile_video_likes_button)
-    Button videoLikes;
+    Button videoLikesButton;
     // No comments for now, but we'll be back!
     /*@InjectView(R.id.video_comments)
     TextView videoComments;*/
@@ -51,7 +51,7 @@ public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public Button getVideoLikesButton() {
-        return this.videoLikes;
+        return this.videoLikesButton;
     }
 
     /*public TextView getVideoComments() {

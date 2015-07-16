@@ -16,6 +16,8 @@ import com.kamcord.app.server.model.Video;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -51,6 +53,13 @@ public class VideoUtils {
         }
 
         return time;
+    }
+
+    public static String getStreamDurationString(Date date) {
+        Date endDate = Calendar.getInstance().getTime();
+        long duration = endDate.getTime() - date.getTime();
+
+        return VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, duration);
     }
 
     public static String videoDurationString(TimeUnit unit, long duration) {
