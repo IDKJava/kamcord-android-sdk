@@ -1,5 +1,6 @@
 package com.kamcord.app.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.kamcord.app.R;
+import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.StreamListAdapter;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.client.AppServerClient;
@@ -255,7 +257,22 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mStreamAdapter.updateItem(resultCode, data);
+        if (resultCode == Activity.RESULT_OK && data != null) {
+
+            String user_id = null;
+            boolean is_user_following = false;
+
+            if (data.hasExtra(VideoViewActivity.ARG_USER_ID)) {
+                user_id = data.getStringExtra(VideoViewActivity.ARG_USER_ID);
+            }
+            if (data.hasExtra(VideoViewActivity.ARG_FOLLOWED)) {
+                is_user_following = data.getBooleanExtra(VideoViewActivity.ARG_FOLLOWED, false);
+            }
+
+            if (user_id != null) {
+                mStreamAdapter.updateItem(user_id, is_user_following);
+            }
+        }
     }
 
     public DynamicRecyclerView getHomeRecyclerView() {

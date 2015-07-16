@@ -163,6 +163,8 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             @Override
             public void onClick(View v) {
                 toggleFollowButton(trendFollowButton, video.user);
+                if (video.user != null && video.user.is_user_following != null)
+                    updateItem(video.user_id, video.user.is_user_following);
             }
         });
 
@@ -288,6 +290,8 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             @Override
             public void onClick(View v) {
                 toggleFollowButton(streamFollowButton, stream.user);
+                if (stream.user != null && stream.user.is_user_following != null)
+                    updateItem(stream.user_id, stream.user.is_user_following);
             }
         });
 
@@ -300,39 +304,25 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 mContext.getResources().getString(R.string.author), username));
     }
 
-    public void updateItem(int resultCode, Intent intent) {
-        if (resultCode == Activity.RESULT_OK && intent != null) {
+    public void updateItem(String user_id, boolean is_user_following) {
+        if (user_id != null) {
 
+            boolean changed = false;
 
-            String user_id = null;
-            boolean is_user_following = false;
-
-            if (intent.hasExtra(VideoViewActivity.ARG_USER_ID)) {
-                user_id = intent.getStringExtra(VideoViewActivity.ARG_USER_ID);
-            }
-            if (intent.hasExtra(VideoViewActivity.ARG_FOLLOWED)) {
-                is_user_following = intent.getBooleanExtra(VideoViewActivity.ARG_FOLLOWED, false);
-            }
-
-            if (user_id != null) {
-
-                boolean changed = false;
-
-                for (FeedItem item : mFeedItems) {
-                    Stream feedStream = item.getStream();
-                    Video feedVideo = item.getVideo();
-                    if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id) && feedStream.user.is_user_following != is_user_following) {
-                        feedStream.user.is_user_following = is_user_following;
-                        changed = true;
-                    }
-                    if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id) && feedVideo.user.is_user_following != is_user_following) {
-                        feedVideo.user.is_user_following = is_user_following;
-                        changed = true;
-                    }
+            for (FeedItem item : mFeedItems) {
+                Stream feedStream = item.getStream();
+                Video feedVideo = item.getVideo();
+                if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id) && feedStream.user.is_user_following != is_user_following) {
+                    feedStream.user.is_user_following = is_user_following;
+                    changed = true;
                 }
-                if (changed)
-                    notifyDataSetChanged();
+                if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id) && feedVideo.user.is_user_following != is_user_following) {
+                    feedVideo.user.is_user_following = is_user_following;
+                    changed = true;
+                }
             }
+            if (changed)
+                notifyDataSetChanged();
         }
     }
 
