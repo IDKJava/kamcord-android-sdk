@@ -139,7 +139,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
-                intent.putExtra(VideoViewActivity.ARG_POSITION, position);
                 if (mContext instanceof Activity) {
                     ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
                 } else {
@@ -273,7 +272,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
-                intent.putExtra(VideoViewActivity.ARG_POSITION, position);
 
                 if (mContext instanceof Activity) {
                     ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
@@ -310,34 +308,32 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public void updateItem(int resultCode, Intent intent) {
-        if (resultCode == Activity.RESULT_OK && intent != null)
-        {
-            Video video = null;
-            Stream stream = null;
-            int position;
+        if (resultCode == Activity.RESULT_OK && intent != null) {
 
-            if (intent.hasExtra(VideoViewActivity.ARG_VIDEO)) {
-                video = new Gson().fromJson(intent.getStringExtra(VideoViewActivity.ARG_VIDEO), Video.class);
+            String user_id = null;
+            boolean is_user_following = false;
+
+            if (intent.hasExtra(VideoViewActivity.ARG_USER_ID)) {
+                user_id = intent.getStringExtra(VideoViewActivity.ARG_USER_ID);
             }
             if (intent.hasExtra(VideoViewActivity.ARG_STREAM)) {
-                stream = new Gson().fromJson(intent.getStringExtra(VideoViewActivity.ARG_STREAM), Stream.class);
+                is_user_following = intent.getBooleanExtra(VideoViewActivity.ARG_FOLLOWED, false);
             }
-            position = intent.getIntExtra(VideoViewActivity.ARG_POSITION, -1);
 
-            if (position >= 0) {
-                Stream feedStream = getItem(position).getStream();
-                Video feedVideo = getItem(position).getVideo();
-                if (feedStream != null && feedStream.user != null && stream != null && stream.user != null)
-                    feedStream.user.is_user_following = stream.user.is_user_following;
-                if (feedVideo != null && feedVideo.user != null && video != null && video.user != null)
-                    feedVideo.user.is_user_following = video.user.is_user_following;
+            if (user_id != null) {
 
-                notifyItemChanged(position);
+                for (FeedItem item : mFeedItems) {
+                    Stream feedStream = item.getStream();
+                    Video feedVideo = item.getVideo();
+                    if (feedStream != null && feedStream.user != null && feedStream.user_id == user_id) {
+                        feedStream.user.is_user_following = is_user_following;
+                    }
+                    if (feedVideo != null && feedVideo.user != null && feedVideo.user_id == user_id) {
+                        feedVideo.user.is_user_following = is_user_following;
+                    }
 
-                if (feedStream != null && feedStream.user != null && stream != null && stream.user != null)
-                    System.out.println(feedStream.user.is_user_following);
-                if (feedVideo != null && feedVideo.user != null && video != null && video.user != null)
-                    System.out.println(feedVideo.user.is_user_following);
+                    notifyDataSetChanged();
+                }
             }
         }
     }

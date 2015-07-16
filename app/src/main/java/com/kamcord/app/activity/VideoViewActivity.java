@@ -57,7 +57,8 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     public static final String ARG_VIDEO = "video";
     public static final String ARG_STREAM = "stream";
-    public static final String ARG_POSITION = "position";
+    public static final String ARG_USER_ID = "user_id";
+    public static final String ARG_FOLLOWED = "followed";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
@@ -99,9 +100,6 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (intent.hasExtra(ARG_STREAM)) {
             stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
-        }
-        if (intent.hasExtra(ARG_POSITION)) {
-            position = intent.getIntExtra(ARG_POSITION, -1);
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -178,12 +176,14 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void finish() {
         Intent intent = new Intent();
-        if (video != null) {
-            intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
-        } else if (stream != null) {
-            intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
+        if (video != null && video.user_id != null && video.user != null) {
+            intent.putExtra(VideoViewActivity.ARG_USER_ID, video.user_id);
+            intent.putExtra(VideoViewActivity.ARG_FOLLOWED, video.user.is_user_following);
+        } else if (stream != null && stream.user_id != null && stream.user != null) {
+            intent.putExtra(VideoViewActivity.ARG_USER_ID, stream.user_id);
+            intent.putExtra(VideoViewActivity.ARG_FOLLOWED, stream.user.is_user_following);
         }
-        intent.putExtra(VideoViewActivity.ARG_POSITION, position);
+
         setResult(Activity.RESULT_OK, intent);
 
         super.finish();
