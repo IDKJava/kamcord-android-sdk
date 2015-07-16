@@ -328,27 +328,11 @@ public class SlidingTabLayout extends HorizontalScrollView {
         @Override
         public void onClick(View v) {
             for (int i = 0; i < mTabStrip.getChildCount(); i++) {
-                if (mViewPager != null && v == mTabStrip.getChildAt(i) && i == mViewPager.getCurrentItem()) {
-                    DynamicRecyclerView view;
-                    Fragment fragment = ((MainViewPagerAdapter) mViewPager.getAdapter()).getViewPagerHashMap().get(i);
-                    if(fragment != null) {
-                        if(fragment instanceof HomeFragment) {
-                            view = ((HomeFragment) fragment).getHomeRecyclerView();
-                            if(view != null) {
-                                view.scrollToPosition(0);
-                            }
-                        } else if (fragment instanceof RecordFragment) {
-                            view = ((RecordFragment) fragment).getRecordRecyclerView();
-                            if(view != null) {
-                                view.scrollToPosition(0);
-                            }
-                        }
-                        if(fragment instanceof ProfileFragment) {
-                            view = ((ProfileFragment) fragment).getProfileRecyclerView();
-                            if(view != null) {
-                                view.scrollToPosition(0);
-                            }
-                        }
+                if (mViewPager != null && i == mViewPager.getCurrentItem()) {
+                    if (i == mViewPager.getCurrentItem()) {
+                        scrollToTop(i);
+                    } else if(Build.VERSION.SDK_INT < 21 && mViewPager.getCurrentItem() == i++) {
+                        scrollToTop(i);
                     }
                 } else if (v == mTabStrip.getChildAt(i)) {
                     mViewPager.setCurrentItem(i);
@@ -358,4 +342,26 @@ public class SlidingTabLayout extends HorizontalScrollView {
         }
     }
 
+    private void scrollToTop(int position) {
+        DynamicRecyclerView view;
+        Fragment fragment = ((MainViewPagerAdapter) mViewPager.getAdapter()).getViewPagerHashMap().get(position);
+        if (fragment != null) {
+            if (fragment instanceof HomeFragment) {
+                view = ((HomeFragment) fragment).getHomeRecyclerView();
+                if (view != null) {
+                    view.scrollToPosition(0);
+                }
+            } else if (fragment instanceof RecordFragment) {
+                view = ((RecordFragment) fragment).getRecordRecyclerView();
+                if (view != null) {
+                    view.scrollToPosition(0);
+                }
+            } else if (fragment instanceof ProfileFragment) {
+                view = ((ProfileFragment) fragment).getProfileRecyclerView();
+                if (view != null) {
+                    view.scrollToPosition(0);
+                }
+            }
+        }
+    }
 }
