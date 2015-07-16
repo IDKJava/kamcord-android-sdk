@@ -46,7 +46,6 @@ import com.kamcord.app.view.LiveMediaControls;
 import com.kamcord.app.view.MediaControls;
 
 import java.util.Map;
-import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -94,7 +93,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private AudioCapabilities audioCapabilities;
 
     private int reconnectAttemptCount = 0;
-    private
+    private Handler streamStatusChecker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -112,6 +111,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (intent.hasExtra(ARG_STREAM)) {
             stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
+            streamStatusChecker = new Handler(Looper.getMainLooper());
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -356,6 +356,13 @@ public class VideoViewActivity extends AppCompatActivity implements
         mediaControls.show(0, true);
     }
 
+    private void streamEnded() {
+        if( stream != null ) {
+            releasePlayer();
+            ((LiveMediaControls) mediaControls).streamEnded(stream);
+        }
+    }
+
     // Player.TextListener implementation
 
     @Override
@@ -469,6 +476,33 @@ public class VideoViewActivity extends AppCompatActivity implements
             // Try, try again
             if( player != null && player.getPlaybackState() == Player.STATE_IDLE ) {
                 preparePlayer();
+            }
+        }
+    };
+
+    private Callback<GenericResponse<Stream>> streamStatusCallback = new Callback<GenericResponse<Stream>>() {
+        @Override
+        public void success(GenericResponse<com.kamcord.app.server.model.Stream> streamGenericResponse, Response response) {
+            if( streamGenericResponse != null && streamGenericResponse.response != null && !streamGenericResponse.response.live ) {
+                // TODO: show the user the "stream ended" state
+                stream = streamGenericResponse.response;
+            } else {
+                streamStatusChecker.removeCallbacks(streamStatusCheckerRunnable);
+                streamStatusChecker.postDelayed(streamStatusCheckerRunnable, 60 * 1000);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            // TODO: show the user the "stream ended" state
+        }
+    };
+
+    private Runnable streamStatusCheckerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if( stream != null ) {
+                AppServerClient.getInstance().getStream(stream.stream_id, streamStatusCallback);
             }
         }
     };

@@ -30,6 +30,7 @@ import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.utils.ViewUtils;
 
@@ -57,8 +58,8 @@ public class LiveMediaControls implements MediaControls {
     private MediaController.MediaPlayerControl playerControl;
 
     private boolean isScrubberTracking = false;
-    private boolean isAnchored = false;
     private boolean isEnded = false;
+    private int lastState = -1;
 
     @InjectView(R.id.live_indicator_textview)
     TextView liveIndicatorTextView;
@@ -94,6 +95,15 @@ public class LiveMediaControls implements MediaControls {
 
     @InjectView(R.id.error_container)
     ViewGroup errorContainer;
+
+    @InjectView(R.id.ended_container)
+    ViewGroup endedContainer;
+    @InjectView(R.id.stream_views)
+    TextView streamViewsTextView;
+    @InjectView(R.id.stream_hearts)
+    TextView streamHeartsTextView;
+    @InjectView(R.id.stream_length)
+    TextView streamLengthTextView;
 
     public LiveMediaControls(Context context, Video video, Stream stream) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
@@ -360,12 +370,13 @@ public class LiveMediaControls implements MediaControls {
         if( playbackState == Player.STATE_READY ) {
             playButton.setVisibility(View.VISIBLE);
             bufferingProgressBar.setVisibility(View.GONE);
-
             playButton.setImageResource(playWhenReady ? R.drawable.pause_white : R.drawable.play_white);
+
         } else if( playbackState == Player.STATE_BUFFERING
                 || playbackState == Player.STATE_PREPARING ) {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.VISIBLE);
+
         } else if( playbackState == Player.STATE_ENDED ) {
             isEnded = true;
             playButton.setVisibility(View.VISIBLE);
@@ -374,10 +385,13 @@ public class LiveMediaControls implements MediaControls {
             scrubberSeekBar.setProgress(scrubberSeekBar.getMax());
             playButton.setImageResource(R.drawable.replay_white);
             show(0, true);
+
         } else {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.GONE);
         }
+
+        lastState = playbackState;
     }
 
     @Override
@@ -385,6 +399,13 @@ public class LiveMediaControls implements MediaControls {
         if( stream != null ) {
             errorContainer.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void streamEnded(Stream stream) {
+        endedContainer.setVisibility(View.VISIBLE);
+        streamViewsTextView.setText(StringUtils.commatizedCount(stream.max_viewers_count));
+        streamHeartsTextView.setText(StringUtils.commatizedCount(stream.heart_count));
+        streamLengthTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, stream.ended_at.getTime() - stream.started_at.getTime()));
     }
 
     @Override
