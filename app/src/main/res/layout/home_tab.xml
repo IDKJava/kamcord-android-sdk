@@ -27,7 +27,7 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <LinearLayout
-        android:id="@+id/homefeedPromptContainer"
+        android:id="@+id/homeFeedPromptContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
