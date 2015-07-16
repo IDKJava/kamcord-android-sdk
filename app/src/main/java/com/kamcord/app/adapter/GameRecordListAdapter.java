@@ -3,7 +3,6 @@ package com.kamcord.app.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.util.SortedListAdapterCallback;
@@ -22,7 +21,11 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
@@ -34,41 +37,28 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     public static final int VIEW_TYPE_NOT_INSTALLED = 3;
 
     private Context mContext;
-    private SortedList<RecordItem> mRecordItems;
+    private List<RecordItem> mRecordItems;
     private OnGameActionButtonClickListener mOnGameActionButtonClickListener;
+
+    Set<String> installedGameIds = new HashSet<>();
 
     public GameRecordListAdapter(Context context, OnGameActionButtonClickListener recordButtonClickListener) {
         this.mContext = context;
         this.mOnGameActionButtonClickListener = recordButtonClickListener;
 
-        mRecordItems = new SortedList<>(RecordItem.class, new SortedRecordItemListCallback(this));
+        mRecordItems = new ArrayList<>();
         mRecordItems.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
-        mRecordItems.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
         mRecordItems.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
+        mRecordItems.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
+        this.notifyItemRangeChanged(0,3);
     }
 
     public void addGame(Game game) {
+        if( installedGameIds.contains(game.game_primary_id) && !game.isInstalled ) {
+
+        }
         RecordItem gameRecordItem = new RecordItem(RecordItem.Type.GAME, game);
 
-        mRecordItems.beginBatchedUpdates();
-
-        // Update the item if it's already there.
-        int oldIndex = mRecordItems.indexOf(gameRecordItem);
-        if( oldIndex != SortedList.INVALID_POSITION) {
-            mRecordItems.updateItemAt(oldIndex, gameRecordItem);
-        } else {
-            mRecordItems.add(gameRecordItem);
-        }
-
-        // Remove the stale item if the installed state changed.
-        game.isInstalled = !game.isInstalled;
-        int oldInvertedIndex = mRecordItems.indexOf(gameRecordItem);
-        game.isInstalled = !game.isInstalled;
-        if( oldInvertedIndex != SortedList.INVALID_POSITION ) {
-            mRecordItems.removeItemAt(oldInvertedIndex);
-        }
-
-        mRecordItems.endBatchedUpdates();
     }
 
     public int size() {
