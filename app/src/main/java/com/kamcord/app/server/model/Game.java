@@ -24,7 +24,6 @@ public class Game {
     // Client-specific fields
     public boolean isInstalled = false;
     public boolean isRecording = false;
-    public int serverIndex = -1;
 
     @Override
     public boolean equals(Object other) {

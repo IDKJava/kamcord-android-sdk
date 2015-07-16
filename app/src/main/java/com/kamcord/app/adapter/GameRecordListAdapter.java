@@ -53,75 +53,86 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public void reset() {
         mRecordItems.clear();
+        installedGameIds.clear();
+        uninstalledGameIds.clear();
         mRecordItems.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
 //        mRecordItems.add(new RecordItem(RecordItem.Type.FETCH_INSTALLED, null));
         mRecordItems.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
         mRecordItems.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
-//        mRecordItems.add(new RecordItem(RecordItem.Type.FETCH_MORE, null));
+        mRecordItems.add(new RecordItem(RecordItem.Type.FETCH_MORE, null));
         this.notifyDataSetChanged();
     }
 
-    public void addGame(Game game) {
-        if( installedGameIds.contains(game.game_primary_id) ) {
-            int index = findGameItemIndex(game);
-            if( game.isInstalled ) {
-                if( index != GAME_NOT_FOUND ) {
-                    mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
-                    notifyItemChanged(index);
-                }
 
-            } else {
-                installedGameIds.remove(game.game_primary_id);
-                uninstalledGameIds.add(game.game_primary_id);
-                if( index != GAME_NOT_FOUND ) {
-                    mRecordItems.remove(index);
-                    int newIndex = installedGameIds.size() + 3;
-                    mRecordItems.add(newIndex, new RecordItem(RecordItem.Type.GAME, game));
-                    notifyItemMoved(index, newIndex);
-                }
-
-            }
-
-        } else if( uninstalledGameIds.contains(game.game_primary_id) ) {
-            int index = findGameItemIndex(game);
-            if( game.isInstalled ) {
-                installedGameIds.add(game.game_primary_id);
-                uninstalledGameIds.remove(game.game_primary_id);
-                if( index != GAME_NOT_FOUND ) {
-                    mRecordItems.remove(index);
-                    int newIndex = 1;
-                    mRecordItems.add(newIndex, new RecordItem(RecordItem.Type.GAME, game));
-                    notifyItemMoved(index, newIndex);
-                }
-
-            } else {
-                if( index != GAME_NOT_FOUND ) {
-                    mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
-                    notifyItemChanged(index);
-                }
-
-            }
-
-        } else {
-            if( game.isInstalled ) {
-                installedGameIds.add(game.game_primary_id);
-                int index = 0;
-                for( RecordItem item : mRecordItems ) {
-                    index++;
-                    if( item.getType() == RecordItem.Type.NOT_INSTALLED_HEADER ) {
-                        break;
+    public void addGames(List<Game> games) {
+        int minIndex = mRecordItems.size();
+        int maxIndex = 0;
+        for( Game game : games ) {
+            if( installedGameIds.contains(game.game_primary_id) ) {
+                int index = findGameItemIndex(game);
+                if( game.isInstalled ) {
+                    if( index != GAME_NOT_FOUND ) {
+                        mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
                     }
+
+                } else {
+                    installedGameIds.remove(game.game_primary_id);
+                    uninstalledGameIds.add(game.game_primary_id);
+                    if( index != GAME_NOT_FOUND ) {
+                        mRecordItems.remove(index);
+                        int newIndex = installedGameIds.size() + 3;
+                        mRecordItems.add(newIndex, new RecordItem(RecordItem.Type.GAME, game));
+                    }
+
                 }
-                mRecordItems.add(index, new RecordItem(RecordItem.Type.GAME, game));
-                notifyItemInserted(index);
+
+            } else if( uninstalledGameIds.contains(game.game_primary_id) ) {
+                int index = findGameItemIndex(game);
+                if( game.isInstalled ) {
+                    installedGameIds.add(game.game_primary_id);
+                    uninstalledGameIds.remove(game.game_primary_id);
+                    if( index != GAME_NOT_FOUND ) {
+                        mRecordItems.remove(index);
+                        int newIndex = 1;
+                        mRecordItems.add(newIndex, new RecordItem(RecordItem.Type.GAME, game));
+                    }
+
+                } else {
+                    if( index != GAME_NOT_FOUND ) {
+                        mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
+                    }
+
+                }
 
             } else {
-                uninstalledGameIds.add(game.game_primary_id);
-                int size = mRecordItems.size();
-                mRecordItems.add(size, new RecordItem(RecordItem.Type.GAME, game));
-                notifyItemInserted(size);
+                if( game.isInstalled ) {
+                    installedGameIds.add(game.game_primary_id);
+                    int index = 0;
+                    for( RecordItem item : mRecordItems ) {
+                        if( item.getType() == RecordItem.Type.REQUEST_GAME ) {
+                            break;
+                        }
+                        index++;
+                    }
+                    mRecordItems.add(index, new RecordItem(RecordItem.Type.GAME, game));
 
+                } else {
+                    uninstalledGameIds.add(game.game_primary_id);
+                    int index = mRecordItems.get(mRecordItems.size() - 1).getType() == RecordItem.Type.FETCH_MORE ?
+                            mRecordItems.size() - 1 : mRecordItems.size();
+                    mRecordItems.add(index, new RecordItem(RecordItem.Type.GAME, game));
+
+                }
             }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void removeMoreSpinner() {
+        int size = mRecordItems.size();
+        if( mRecordItems.get(size-1).getType() == RecordItem.Type.FETCH_MORE) {
+            mRecordItems.remove(size-1);
+            notifyItemRemoved(size-1);
         }
     }
 

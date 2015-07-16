@@ -26,6 +26,7 @@ public class RecordLayoutSpanSizeLookup extends GridLayoutManager.SpanSizeLookup
             switch (type) {
                 case INSTALLED_HEADER:
                 case NOT_INSTALLED_HEADER:
+                case FETCH_MORE:
                     spanSize = ((GridLayoutManager) recyclerView.getLayoutManager()).getSpanCount();
                     break;
 
