@@ -103,12 +103,12 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else if (viewHolder instanceof StreamItemViewHolder) {
             Stream stream = getItem(position).getStream();
             if (stream != null) {
-                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream, position);
+                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream);
             }
         } else if (viewHolder instanceof TrendingVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
             if (video != null) {
-                bindVideoItemViewHolder((TrendingVideoItemViewHolder) viewHolder, video, position);
+                bindVideoItemViewHolder((TrendingVideoItemViewHolder) viewHolder, video);
             }
         }
     }
@@ -121,7 +121,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.trendvideoHeaderTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindVideoItemViewHolder(TrendingVideoItemViewHolder viewHolder, final Video video, final int position) {
+    private void bindVideoItemViewHolder(TrendingVideoItemViewHolder viewHolder, final Video video) {
 
         viewHolder.getTrendItemTitle().setText(video.title);
         final TextView videoViewsButton = viewHolder.getTrendVideoViews();
@@ -154,14 +154,10 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button trendFollowButton = viewHolder.getTrendFollowButton();
-        if(AccountManager.isLoggedIn()) {
-            if(video.user.is_user_following) {
-                video.user.is_user_following = true;
-                trendFollowButton.setActivated(true);
-            } else {
-                video.user.is_user_following = false;
-                trendFollowButton.setActivated(false);
-            }
+        if(AccountManager.isLoggedIn() && video.user != null && video.user.is_user_following != null) {
+            trendFollowButton.setActivated(video.user.is_user_following);
+        } else {
+            trendFollowButton.setActivated(false);
         }
         trendFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,7 +190,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             @Override
             public void onClick(View v) {
                 toggleLikeButton(videoLikesButton, video);
-                Log.d("follow button clicked", "clicked!");
             }
         });
     }
@@ -254,7 +249,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @TargetApi(21)
-    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream, final int position) {
+    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream) {
 
         viewHolder.getStreamItemTitle().setText(stream.name);
         final TextView streamViewsTextView = viewHolder.getStreamViews();
@@ -284,14 +279,10 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
 
         final Button streamFollowButton = viewHolder.getStreamFollowButton();
-        if (AccountManager.isLoggedIn()) {
-            if (stream.user.is_user_following) {
-                stream.user.is_user_following = true;
-                streamFollowButton.setActivated(true);
-            } else {
-                stream.user.is_user_following = false;
-                streamFollowButton.setActivated(false);
-            }
+        if (AccountManager.isLoggedIn() && stream.user != null && stream.user.is_user_following != null) {
+            streamFollowButton.setActivated(stream.user.is_user_following);
+        } else {
+            streamFollowButton.setActivated(false);
         }
         streamFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -323,26 +314,27 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 is_user_following = intent.getBooleanExtra(VideoViewActivity.ARG_FOLLOWED, false);
             }
 
-            System.out.println("QQQQ " + user_id + " " + is_user_following );
-
             if (user_id != null) {
+
+                boolean changed = false;
 
                 for (FeedItem item : mFeedItems) {
                     Stream feedStream = item.getStream();
                     Video feedVideo = item.getVideo();
-                    if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id)) {
+                    if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id) && feedStream.user.is_user_following != is_user_following) {
                         feedStream.user.is_user_following = is_user_following;
+                        changed = true;
                     }
-                    if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id)) {
+                    if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id) && feedVideo.user.is_user_following != is_user_following) {
                         feedVideo.user.is_user_following = is_user_following;
+                        changed = true;
                     }
-
-                    notifyDataSetChanged();
                 }
+                if (changed)
+                    notifyDataSetChanged();
             }
         }
     }
-
 
     private class UpdateVideoViewsCallback implements Callback<GenericResponse<?>> {
         @Override

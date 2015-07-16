@@ -201,7 +201,7 @@ public class RecordActivity extends AppCompatActivity implements
         android.support.v4.app.Fragment fragment;
 
         if (requestCode == HOME_FRAGMENT_RESULT_CODE && mainViewPagerAdapter.viewPagerHashMap != null) {
-            fragment = mainViewPagerAdapter.viewPagerHashMap.get(mainViewPagerAdapter.HOME_FRAGMENT_POSITION);
+            fragment = mainViewPagerAdapter.viewPagerHashMap.get(MainViewPagerAdapter.HOME_FRAGMENT_POSITION);
         } else {
             fragment = getSupportFragmentManager().findFragmentByTag(ShareFragment.TAG);
         }
