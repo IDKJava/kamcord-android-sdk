@@ -155,13 +155,9 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button trendFollowButton = viewHolder.getTrendFollowButton();
-        if(AccountManager.isLoggedIn()) {
-            if(video.user.is_user_following) {
-                video.user.is_user_following = true;
-                trendFollowButton.setActivated(true);
-            } else {
-                video.user.is_user_following = false;
-                trendFollowButton.setActivated(false);
+        if (AccountManager.isLoggedIn()) {
+            if (video.user != null) {
+                trendFollowButton.setActivated(video.user.is_user_following);
             }
         }
         trendFollowButton.setOnClickListener(new View.OnClickListener() {
@@ -195,7 +191,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             @Override
             public void onClick(View v) {
                 toggleLikeButton(videoLikesButton, video);
-                Log.d("follow button clicked", "clicked!");
             }
         });
     }
@@ -285,13 +280,9 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         final Button streamFollowButton = viewHolder.getStreamFollowButton();
         if (AccountManager.isLoggedIn()) {
-            if (stream.user.is_user_following) {
-                stream.user.is_user_following = true;
-                streamFollowButton.setActivated(true);
-            } else {
-                stream.user.is_user_following = false;
-                streamFollowButton.setActivated(false);
-            }
+            streamFollowButton.setActivated(stream.user.is_user_following);
+            stream.user.is_user_following = !stream.user.is_user_following;
+
         }
         streamFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -310,8 +301,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public void updateItem(int resultCode, Intent intent) {
-        if (resultCode == Activity.RESULT_OK && intent != null)
-        {
+        if (resultCode == Activity.RESULT_OK && intent != null) {
             Video video = null;
             Stream stream = null;
             int position;
