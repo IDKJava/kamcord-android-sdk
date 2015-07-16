@@ -310,25 +310,28 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void updateItem(int resultCode, Intent intent) {
         if (resultCode == Activity.RESULT_OK && intent != null) {
 
+
             String user_id = null;
             boolean is_user_following = false;
 
             if (intent.hasExtra(VideoViewActivity.ARG_USER_ID)) {
                 user_id = intent.getStringExtra(VideoViewActivity.ARG_USER_ID);
             }
-            if (intent.hasExtra(VideoViewActivity.ARG_STREAM)) {
+            if (intent.hasExtra(VideoViewActivity.ARG_FOLLOWED)) {
                 is_user_following = intent.getBooleanExtra(VideoViewActivity.ARG_FOLLOWED, false);
             }
+
+            System.out.println("QQQQ " + user_id + " " + is_user_following );
 
             if (user_id != null) {
 
                 for (FeedItem item : mFeedItems) {
                     Stream feedStream = item.getStream();
                     Video feedVideo = item.getVideo();
-                    if (feedStream != null && feedStream.user != null && feedStream.user_id == user_id) {
+                    if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id)) {
                         feedStream.user.is_user_following = is_user_following;
                     }
-                    if (feedVideo != null && feedVideo.user != null && feedVideo.user_id == user_id) {
+                    if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id)) {
                         feedVideo.user.is_user_following = is_user_following;
                     }
 
