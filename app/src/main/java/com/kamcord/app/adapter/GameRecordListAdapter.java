@@ -41,6 +41,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     private OnGameActionButtonClickListener mOnGameActionButtonClickListener;
 
     Set<String> installedGameIds = new HashSet<>();
+    Set<String> uninstalledGameIds = new HashSet<>();
 
     public GameRecordListAdapter(Context context, OnGameActionButtonClickListener recordButtonClickListener) {
         this.mContext = context;
@@ -54,12 +55,34 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     public void addGame(Game game) {
-        if( installedGameIds.contains(game.game_primary_id) && !game.isInstalled ) {
+        if( installedGameIds.contains(game.game_primary_id) ) {
+            if( game.isInstalled ) {
 
+
+            } else {
+
+            }
+
+        } else if( uninstalledGameIds.contains(game.game_primary_id) ) {
+            if( game.isInstalled ) {
+
+            } else {
+
+            }
+
+        } else {
+            if( game.isInstalled ) {
+
+            } else {
+
+            }
         }
-        RecordItem gameRecordItem = new RecordItem(RecordItem.Type.GAME, game);
+    }
+
+    private RecordItem findInstalledGameItem(Game game) {
 
     }
+
 
     public int size() {
         return mRecordItems.size();
