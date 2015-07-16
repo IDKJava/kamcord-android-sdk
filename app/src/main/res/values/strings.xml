@@ -165,6 +165,7 @@
     <string name="thereWasAnErrorProfile">There was an error fetching your profile information.</string>
     <string name="live">LIVE</string>
     <string name="weveLostTheStream">We\'ve lost the stream. Stand by&#8230;</string>
+    <string name="thankYouForWatching">Thank you for watching this live stream. The stream has ended!</string>
     <string name="videoFollow">+ Follow</string>
     <string name="videoFollowing">Following</string>
 </resources>

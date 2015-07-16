@@ -45,6 +45,7 @@ import com.kamcord.app.view.LiveMediaControls;
 import com.kamcord.app.view.MediaControls;
 
 import java.util.Map;
+import java.util.TimerTask;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -89,6 +90,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private AudioCapabilities audioCapabilities;
 
     private int reconnectAttemptCount = 0;
+    private
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -429,7 +431,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Callback<GenericResponse<Stream>> attemptStreamReconnectCallback = new Callback<GenericResponse<Stream>>() {
         @Override
-        public void success(GenericResponse<Stream> streamGenericResponse, Response response) {
+        public void success(GenericResponse<com.kamcord.app.server.model.Stream> streamGenericResponse, Response response) {
             if( streamGenericResponse != null && streamGenericResponse.response != null ) {
                 if( !streamGenericResponse.response.live ) {
                     // TODO: show the user the "stream ended" state
