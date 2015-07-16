@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
+import com.kamcord.app.fragment.HomeFragment;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;
@@ -43,6 +44,8 @@ public class RecordActivity extends AppCompatActivity implements
     private static final int HIDE_THRESHOLD = 20;
     private boolean controlsVisible = true;
     private int recyclerViewScrolledDistance = 0;
+
+    public static final int HOME_FRAGMENT_RESULT_CODE = 0x0000d00d;
 
     private OnBackPressedListener onBackPressedListener = null;
 
@@ -195,7 +198,14 @@ public class RecordActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        android.support.v4.app.Fragment fragment = getSupportFragmentManager().findFragmentByTag(ShareFragment.TAG);
+        android.support.v4.app.Fragment fragment;
+
+        if (requestCode == HOME_FRAGMENT_RESULT_CODE && mainViewPagerAdapter.viewPagerHashMap != null) {
+            fragment = mainViewPagerAdapter.viewPagerHashMap.get(mainViewPagerAdapter.HOME_FRAGMENT_POSITION);
+        } else {
+            fragment = getSupportFragmentManager().findFragmentByTag(ShareFragment.TAG);
+        }
+
         if (fragment != null) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }

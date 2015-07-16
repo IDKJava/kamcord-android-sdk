@@ -1,6 +1,7 @@
 package com.kamcord.app.activity;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,6 +57,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     public static final String ARG_VIDEO = "video";
     public static final String ARG_STREAM = "stream";
+    public static final String ARG_POSITION = "position";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
 
@@ -68,6 +70,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Video video = null;
     private Stream stream = null;
+    private int position = -1;
 
     private Player player;
     private boolean playerNeedsPrepare;
@@ -96,6 +99,9 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (intent.hasExtra(ARG_STREAM)) {
             stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
+        }
+        if (intent.hasExtra(ARG_POSITION)) {
+            position = intent.getIntExtra(ARG_POSITION, -1);
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -167,6 +173,20 @@ public class VideoViewActivity extends AppCompatActivity implements
                 player.getPlayerControl().pause();
             }
         }
+    }
+
+    @Override
+    public void finish() {
+        Intent intent = new Intent();
+        if (video != null) {
+            intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
+        } else if (stream != null) {
+            intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
+        }
+        intent.putExtra(VideoViewActivity.ARG_POSITION, position);
+        setResult(Activity.RESULT_OK, intent);
+
+        super.finish();
     }
 
     @Override
