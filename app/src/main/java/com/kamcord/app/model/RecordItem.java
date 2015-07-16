@@ -28,28 +28,7 @@ public class RecordItem {
         GAME,
         NOT_INSTALLED_HEADER,
         REQUEST_GAME,
-    }
-
-    public int getListOrdinal() {
-        int ordinal = 0;
-
-        if( type == Type.INSTALLED_HEADER ) {
-            ordinal = 0;
-
-        } else if( type == Type.GAME && game != null && game.isInstalled ) {
-            ordinal = 1;
-
-        } else if(type == Type.REQUEST_GAME ) {
-            ordinal = 2;
-
-        } else if( type == Type.NOT_INSTALLED_HEADER ) {
-            ordinal = 3;
-
-        } else if( type == Type.GAME && game != null ) {
-            ordinal = 4;
-
-        }
-
-        return ordinal;
+        FETCH_INSTALLED,
+        FETCH_MORE,
     }
 }

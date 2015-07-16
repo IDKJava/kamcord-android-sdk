@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
-import android.support.v7.widget.util.SortedListAdapterCallback;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.viewholder.GameItemViewHolder;
@@ -48,39 +48,98 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         this.mOnGameActionButtonClickListener = recordButtonClickListener;
 
         mRecordItems = new ArrayList<>();
+        reset();
+    }
+
+    public void reset() {
+        mRecordItems.clear();
         mRecordItems.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
+//        mRecordItems.add(new RecordItem(RecordItem.Type.FETCH_INSTALLED, null));
         mRecordItems.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
         mRecordItems.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
-        this.notifyItemRangeChanged(0,3);
+//        mRecordItems.add(new RecordItem(RecordItem.Type.FETCH_MORE, null));
+        this.notifyDataSetChanged();
     }
 
     public void addGame(Game game) {
         if( installedGameIds.contains(game.game_primary_id) ) {
+            int index = findGameItemIndex(game);
             if( game.isInstalled ) {
-
+                if( index != GAME_NOT_FOUND ) {
+                    mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
+                    notifyItemChanged(index);
+                }
 
             } else {
+                installedGameIds.remove(game.game_primary_id);
+                uninstalledGameIds.add(game.game_primary_id);
+                if( index != GAME_NOT_FOUND ) {
+                    mRecordItems.remove(index);
+                    int newIndex = installedGameIds.size() + 3;
+                    mRecordItems.add(newIndex, new RecordItem(RecordItem.Type.GAME, game));
+                    notifyItemMoved(index, newIndex);
+                }
 
             }
 
         } else if( uninstalledGameIds.contains(game.game_primary_id) ) {
+            int index = findGameItemIndex(game);
             if( game.isInstalled ) {
+                installedGameIds.add(game.game_primary_id);
+                uninstalledGameIds.remove(game.game_primary_id);
+                if( index != GAME_NOT_FOUND ) {
+                    mRecordItems.remove(index);
+                    int newIndex = 1;
+                    mRecordItems.add(newIndex, new RecordItem(RecordItem.Type.GAME, game));
+                    notifyItemMoved(index, newIndex);
+                }
 
             } else {
+                if( index != GAME_NOT_FOUND ) {
+                    mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
+                    notifyItemChanged(index);
+                }
 
             }
 
         } else {
             if( game.isInstalled ) {
+                installedGameIds.add(game.game_primary_id);
+                int index = 0;
+                for( RecordItem item : mRecordItems ) {
+                    index++;
+                    if( item.getType() == RecordItem.Type.NOT_INSTALLED_HEADER ) {
+                        break;
+                    }
+                }
+                mRecordItems.add(index, new RecordItem(RecordItem.Type.GAME, game));
+                notifyItemInserted(index);
 
             } else {
+                uninstalledGameIds.add(game.game_primary_id);
+                int size = mRecordItems.size();
+                mRecordItems.add(size, new RecordItem(RecordItem.Type.GAME, game));
+                notifyItemInserted(size);
 
             }
         }
     }
 
-    private RecordItem findInstalledGameItem(Game game) {
-
+    private static final int GAME_NOT_FOUND = -1;
+    private int findGameItemIndex(Game game) {
+        int index = 0;
+        boolean foundGame = false;
+        for( RecordItem item : mRecordItems ) {
+            if( item.getType() == RecordItem.Type.GAME
+                    && item.getGame() != null
+                    && item.getGame().game_primary_id != null
+                    && item.getGame().game_primary_id.equals(game.game_primary_id) ) {
+                foundGame = true;
+                break;
+            }
+            index++;
+        }
+        return foundGame ? index : GAME_NOT_FOUND;
     }
 
 
@@ -117,10 +176,16 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                 viewHolder = new NotInstalledHeaderViewHolder(itemLayoutView);
                 break;
 
+            case FETCH_INSTALLED:
+            case FETCH_MORE:
+                ProgressBar progressSpinner = new ProgressBar(parent.getContext());
+                progressSpinner.setIndeterminate(true);
+                viewHolder = new ViewHolder(progressSpinner) {};
+                break;
+
             default:
                 break;
         }
-
 
         return viewHolder;
     }
@@ -223,62 +288,5 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public interface OnGameActionButtonClickListener {
         void onGameActionButtonClick(Game game);
-    }
-
-    private class SortedRecordItemListCallback extends SortedListAdapterCallback<RecordItem> {
-
-        public SortedRecordItemListCallback(RecyclerView.Adapter adapter) {
-            super(adapter);
-        }
-
-        @Override
-        public int compare(RecordItem item1, RecordItem item2) {
-            int ordinal1 = item1.getListOrdinal();
-            int ordinal2 = item2.getListOrdinal();
-
-            if( ordinal1 == ordinal2
-                    && item1.getType() == RecordItem.Type.GAME && item2.getType() == RecordItem.Type.GAME
-                    && item1.getGame() != null
-                    && item2.getGame() != null ) {
-                return item1.getGame().serverIndex - item2.getGame().serverIndex;
-            }
-
-            return ordinal1 - ordinal2;
-        }
-
-        @Override
-        public boolean areContentsTheSame(RecordItem oldItem, RecordItem newItem) {
-            if( oldItem.getType() != newItem.getType() ) {
-                return false;
-            }
-
-            if( oldItem.getType() != RecordItem.Type.GAME ) {
-                return true;
-            }
-
-            Game oldGame = oldItem.getGame();
-            Game newGame = newItem.getGame();
-            return oldGame != null && oldGame.equals(newGame)
-                    && oldGame.isInstalled == newGame.isInstalled
-                    && oldGame.number_of_followers == newGame.number_of_followers
-                    && oldGame.number_of_players == newGame.number_of_players
-                    && oldGame.number_of_videos == newGame.number_of_videos;
-        }
-
-        @Override
-        public boolean areItemsTheSame(RecordItem item1, RecordItem item2) {
-            if( item1.getType() != item2.getType() ) {
-                return false;
-            }
-
-            if( item1.getType() != RecordItem.Type.GAME ) {
-                return true;
-            }
-
-            Game oldGame = item1.getGame();
-            Game newGame = item2.getGame();
-            return oldGame != null && oldGame.equals(newGame)
-            && oldGame.isInstalled == newGame.isInstalled;
-        }
     }
 }
