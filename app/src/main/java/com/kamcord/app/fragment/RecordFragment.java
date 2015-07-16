@@ -32,7 +32,6 @@ import com.kamcord.app.BuildConfig;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.adapter.GameRecordListAdapter;
-import com.kamcord.app.model.RecordItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Game;
@@ -52,10 +51,10 @@ import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -91,9 +90,10 @@ public class RecordFragment extends Fragment implements
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
 
-    private List<RecordItem> mRecordItemList = new ArrayList<>();
     private List<Game> mGameList = new ArrayList<>();
+    private Set<Game> mInstalledGames = new HashSet<>();
     private boolean viewsAreValid = false;
+    private boolean wasPaused = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -101,6 +101,7 @@ public class RecordFragment extends Fragment implements
 
         ButterKnife.inject(this, v);
         viewsAreValid = true;
+        wasPaused = false;
 
         initKamcordRecordFragment(v);
 
@@ -117,6 +118,7 @@ public class RecordFragment extends Fragment implements
 
     @Override
     public void onDestroyView() {
+        Log.v("FindMe", "onDestroyView()");
         super.onDestroyView();
         viewsAreValid = false;
         ButterKnife.reset(this);
@@ -132,42 +134,56 @@ public class RecordFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         handleServiceRunning();
-        boolean gameListChanged = false;
-        for (RecordItem item : mRecordItemList) {
-            Game game = item.getGame();
-            if (game != null) {
-                boolean isNowInstalled = isAppInstalled(game.play_store_id);
-                if (isNowInstalled && !game.isInstalled) {
-                    game.isInstalled = true;
-                    gameListChanged = true;
-                } else if (!isNowInstalled && game.isInstalled) {
-                    game.isInstalled = false;
-                    gameListChanged = true;
+
+        if (wasPaused) {
+            /*
+            boolean gameListChanged = false;
+            for (RecordItem item : mRecordItemList) {
+                Game game = item.getGame();
+                if (game != null) {
+                    boolean isNowInstalled = isAppInstalled(game.play_store_id);
+                    if (isNowInstalled && !game.isInstalled) {
+                        game.isInstalled = true;
+                        gameListChanged = true;
+                    } else if (!isNowInstalled && game.isInstalled) {
+                        game.isInstalled = false;
+                        gameListChanged = true;
+                    }
                 }
             }
-        }
-        if (gameListChanged) {
+            if (gameListChanged) {
+                updateRecordItemList();
+                mRecyclerAdapter.notifyDataSetChanged();
+            }
+            */
+            Log.v("FindMe", "updating from onResume()");
             updateRecordItemList();
-            mRecyclerAdapter.notifyDataSetChanged();
+            wasPaused = false;
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        wasPaused = true;
+    }
+
     public void initKamcordRecordFragment(View v) {
+        mRecyclerView.addItemDecoration(new GridViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), this);
+        mRecyclerView.setAdapter(mRecyclerAdapter);
+        mRecyclerView.setSpanSizeLookup(new RecordLayoutSpanSizeLookup(mRecyclerView));
 
         mGameList = GameListUtils.getCachedGameList();
         if (mGameList == null) {
             mGameList = new ArrayList<>();
         }
+        Log.v("FindMe", "updating from init");
         updateRecordItemList();
-
-        mRecyclerView.addItemDecoration(new GridViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mRecordItemList, this);
-        mRecyclerView.setAdapter(mRecyclerAdapter);
-        mRecyclerView.setSpanSizeLookup(new RecordLayoutSpanSizeLookup(mRecyclerView));
 
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        if (mRecordItemList.size() == 0 && !Connectivity.isConnected()) {
+        if (mRecyclerAdapter.size() > 3 && !Connectivity.isConnected()) {
             refreshRecordTab.setVisibility(View.VISIBLE);
         } else {
             mSwipeRefreshLayout.post(new Runnable() {
@@ -353,30 +369,17 @@ public class RecordFragment extends Fragment implements
 
 
     public void updateRecordItemList() {
-        Collections.sort(mGameList, new Comparator<Game>() {
-            @Override
-            public int compare(Game g1, Game g2) {
-                return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
-            }
-        });
-        mRecordItemList.clear();
-        boolean lastGameInstalled = false;
-        if (mGameList.size() > 0 && !mGameList.get(0).isInstalled) {
-            mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
-            mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
-            mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
-        }
+        boolean didChange = false;
         for (Game game : mGameList) {
-            if (game.isInstalled && !lastGameInstalled) {
-                mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
-
-            } else if (!game.isInstalled && lastGameInstalled) {
-                mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
-                mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
+            boolean installed = isAppInstalled(game.play_store_id);
+            if( game.isInstalled != installed ) {
+                game.isInstalled = installed;
+                didChange = true;
             }
-            mRecordItemList.add(new RecordItem(RecordItem.Type.GAME, game));
-            lastGameInstalled = game.isInstalled;
+            mRecyclerAdapter.addGame(game);
         }
+
+        mRecyclerAdapter.notifyDataSetChanged();
     }
 
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
@@ -396,13 +399,17 @@ public class RecordFragment extends Fragment implements
                     if (isAppInstalled(ripples.play_store_id)) {
                         ripples.isInstalled = true;
                     }
+                    ripples.serverIndex = mGameList.size();
                     mGameList.add(ripples);
                 }
                 for (Game game : gamesListWrapper.response.game_list) {
                     if (game.play_store_id != null) {
                         if (isAppInstalled(game.play_store_id)) {
                             game.isInstalled = true;
+                        } else {
+                            game.isInstalled = false;
                         }
+                        game.serverIndex = mGameList.size();
                         mGameList.add(game);
                     }
                 }
@@ -412,8 +419,8 @@ public class RecordFragment extends Fragment implements
                     if (refreshRecordTab.getVisibility() == View.VISIBLE) {
                         refreshRecordTab.setVisibility(View.INVISIBLE);
                     }
+                    Log.v("FindMe", "updating from callback");
                     updateRecordItemList();
-                    mRecyclerAdapter.notifyDataSetChanged();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -451,6 +458,7 @@ public class RecordFragment extends Fragment implements
         for (Game game : mGameList) {
             game.isRecording = false;
         }
+        Log.v("FindMe", "updating from stopRecording");
         updateRecordItemList();
         mRecyclerAdapter.notifyDataSetChanged();
     }

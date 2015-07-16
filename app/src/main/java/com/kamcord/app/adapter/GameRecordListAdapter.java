@@ -3,8 +3,10 @@ package com.kamcord.app.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.util.SortedListAdapterCallback;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +18,10 @@ import com.kamcord.app.adapter.viewholder.InstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.RequestGameViewHolder;
 import com.kamcord.app.model.RecordItem;
-import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.Game;
-import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
 import java.util.Locale;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
@@ -35,13 +34,45 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     public static final int VIEW_TYPE_NOT_INSTALLED = 3;
 
     private Context mContext;
-    private List<RecordItem> mRecordItems;
+    private SortedList<RecordItem> mRecordItems;
     private OnGameActionButtonClickListener mOnGameActionButtonClickListener;
 
-    public GameRecordListAdapter(Context context, List<RecordItem> recordItems, OnGameActionButtonClickListener recordButtonClickListener) {
+    public GameRecordListAdapter(Context context, OnGameActionButtonClickListener recordButtonClickListener) {
         this.mContext = context;
-        this.mRecordItems = recordItems;
         this.mOnGameActionButtonClickListener = recordButtonClickListener;
+
+        mRecordItems = new SortedList<>(RecordItem.class, new SortedRecordItemListCallback(this));
+        mRecordItems.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
+        mRecordItems.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
+        mRecordItems.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
+    }
+
+    public void addGame(Game game) {
+        RecordItem gameRecordItem = new RecordItem(RecordItem.Type.GAME, game);
+
+        mRecordItems.beginBatchedUpdates();
+
+        // Update the item if it's already there.
+        int oldIndex = mRecordItems.indexOf(gameRecordItem);
+        if( oldIndex != SortedList.INVALID_POSITION) {
+            mRecordItems.updateItemAt(oldIndex, gameRecordItem);
+        } else {
+            mRecordItems.add(gameRecordItem);
+        }
+
+        // Remove the stale item if the installed state changed.
+        game.isInstalled = !game.isInstalled;
+        int oldInvertedIndex = mRecordItems.indexOf(gameRecordItem);
+        game.isInstalled = !game.isInstalled;
+        if( oldInvertedIndex != SortedList.INVALID_POSITION ) {
+            mRecordItems.removeItemAt(oldInvertedIndex);
+        }
+
+        mRecordItems.endBatchedUpdates();
+    }
+
+    public int size() {
+        return mRecordItems.size();
     }
 
     @Override
@@ -179,5 +210,62 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     public interface OnGameActionButtonClickListener {
         void onGameActionButtonClick(Game game);
+    }
+
+    private class SortedRecordItemListCallback extends SortedListAdapterCallback<RecordItem> {
+
+        public SortedRecordItemListCallback(RecyclerView.Adapter adapter) {
+            super(adapter);
+        }
+
+        @Override
+        public int compare(RecordItem item1, RecordItem item2) {
+            int ordinal1 = item1.getListOrdinal();
+            int ordinal2 = item2.getListOrdinal();
+
+            if( ordinal1 == ordinal2
+                    && item1.getType() == RecordItem.Type.GAME && item2.getType() == RecordItem.Type.GAME
+                    && item1.getGame() != null
+                    && item2.getGame() != null ) {
+                return item1.getGame().serverIndex - item2.getGame().serverIndex;
+            }
+
+            return ordinal1 - ordinal2;
+        }
+
+        @Override
+        public boolean areContentsTheSame(RecordItem oldItem, RecordItem newItem) {
+            if( oldItem.getType() != newItem.getType() ) {
+                return false;
+            }
+
+            if( oldItem.getType() != RecordItem.Type.GAME ) {
+                return true;
+            }
+
+            Game oldGame = oldItem.getGame();
+            Game newGame = newItem.getGame();
+            return oldGame != null && oldGame.equals(newGame)
+                    && oldGame.isInstalled == newGame.isInstalled
+                    && oldGame.number_of_followers == newGame.number_of_followers
+                    && oldGame.number_of_players == newGame.number_of_players
+                    && oldGame.number_of_videos == newGame.number_of_videos;
+        }
+
+        @Override
+        public boolean areItemsTheSame(RecordItem item1, RecordItem item2) {
+            if( item1.getType() != item2.getType() ) {
+                return false;
+            }
+
+            if( item1.getType() != RecordItem.Type.GAME ) {
+                return true;
+            }
+
+            Game oldGame = item1.getGame();
+            Game newGame = item2.getGame();
+            return oldGame != null && oldGame.equals(newGame)
+            && oldGame.isInstalled == newGame.isInstalled;
+        }
     }
 }
