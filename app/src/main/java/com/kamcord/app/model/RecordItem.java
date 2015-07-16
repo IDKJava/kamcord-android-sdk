@@ -28,7 +28,6 @@ public class RecordItem {
         GAME,
         NOT_INSTALLED_HEADER,
         REQUEST_GAME,
-        FETCH_INSTALLED,
         FETCH_MORE,
     }
 }

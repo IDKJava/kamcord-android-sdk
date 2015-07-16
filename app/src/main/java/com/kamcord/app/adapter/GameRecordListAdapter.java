@@ -31,11 +31,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-    public static final int VIEW_TYPE_INSTALLED = 0;
-    public static final int VIEW_TYPE_FIRST_INSTALLED = 1;
-    public static final int VIEW_TYPE_LAST_INSTALLED = 2;
-    public static final int VIEW_TYPE_NOT_INSTALLED = 3;
-
     private Context mContext;
     private List<RecordItem> mRecordItems;
     private OnGameActionButtonClickListener mOnGameActionButtonClickListener;
@@ -56,7 +51,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         installedGameIds.clear();
         uninstalledGameIds.clear();
         mRecordItems.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
-//        mRecordItems.add(new RecordItem(RecordItem.Type.FETCH_INSTALLED, null));
         mRecordItems.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
         mRecordItems.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
         mRecordItems.add(new RecordItem(RecordItem.Type.FETCH_MORE, null));
@@ -65,8 +59,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
 
     public void addGames(List<Game> games) {
-        int minIndex = mRecordItems.size();
-        int maxIndex = 0;
         for( Game game : games ) {
             if( installedGameIds.contains(game.game_primary_id) ) {
                 int index = findGameItemIndex(game);
@@ -187,7 +179,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                 viewHolder = new NotInstalledHeaderViewHolder(itemLayoutView);
                 break;
 
-            case FETCH_INSTALLED:
             case FETCH_MORE:
                 ProgressBar progressSpinner = new ProgressBar(parent.getContext());
                 progressSpinner.setIndeterminate(true);

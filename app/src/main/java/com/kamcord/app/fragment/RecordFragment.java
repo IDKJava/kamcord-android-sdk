@@ -196,7 +196,6 @@ public class RecordFragment extends Fragment implements
                     if (mInstalledGameList == null) {
                         mInstalledGameList = new ArrayList<>();
                     }
-                    Log.v("FindMe", "mInstalledGameList.size(): " + mInstalledGameList.size());
                     mGameList.clear();
                     mGameList.addAll(mInstalledGameList);
                     updateRecordItemList();
@@ -225,9 +224,11 @@ public class RecordFragment extends Fragment implements
                 }
 
                 int lastPosition = ((GridLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-                RecordItem.Type type = RecordItem.Type.values()[mRecyclerAdapter.getItemViewType(lastPosition)];
-                if( type == RecordItem.Type.FETCH_MORE ) {
-                    loadMoreItems();
+                if( lastPosition != RecyclerView.NO_POSITION ) {
+                    RecordItem.Type type = RecordItem.Type.values()[mRecyclerAdapter.getItemViewType(lastPosition)];
+                    if (type == RecordItem.Type.FETCH_MORE) {
+                        loadMoreItems();
+                    }
                 }
             }
         });
