@@ -201,6 +201,8 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void toggleFollowButton(Button followButton, User user) {
         if (AccountManager.isLoggedIn()) {
+            if (user.is_user_following == null)
+                user.is_user_following = false;
             if (user.is_user_following) {
                 user.is_user_following = false;
                 followButton.setActivated(false);
