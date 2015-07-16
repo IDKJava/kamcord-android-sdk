@@ -1,6 +1,7 @@
 package com.kamcord.app.adapter;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -16,16 +17,16 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
+import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.LiveStreamHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
-import com.kamcord.app.adapter.viewholder.TrendVideoItemViewHolder;
-import com.kamcord.app.adapter.viewholder.TrendVideoViewHolder;
+import com.kamcord.app.adapter.viewholder.TrendingVideoItemViewHolder;
+import com.kamcord.app.adapter.viewholder.TrendingVideoHeaderViewHolder;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.server.client.AppServerClient;
-import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
@@ -74,11 +75,11 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
             case TRENDVIDEO_HEADER: {
                 itemLayoutView = inflater.inflate(R.layout.view_trendvideo_header, null);
-                return new TrendVideoViewHolder(itemLayoutView);
+                return new TrendingVideoHeaderViewHolder(itemLayoutView);
             }
             case VIDEO: {
                 itemLayoutView = inflater.inflate(R.layout.fragment_trend_item, parent, false);
-                return new TrendVideoItemViewHolder(itemLayoutView);
+                return new TrendingVideoItemViewHolder(itemLayoutView);
             }
             case FOOTER:
                 itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed_header, null);
@@ -96,17 +97,19 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (viewHolder instanceof LiveStreamHeaderViewHolder) {
             bindLiveStreamHeaderViewHolder((LiveStreamHeaderViewHolder) viewHolder);
 
-        } else if (viewHolder instanceof TrendVideoViewHolder) {
-            bindTrendVideoViewHolder((TrendVideoViewHolder) viewHolder);
+        } else if (viewHolder instanceof TrendingVideoHeaderViewHolder) {
+            bindTrendVideoViewHolder((TrendingVideoHeaderViewHolder) viewHolder);
 
         } else if (viewHolder instanceof StreamItemViewHolder) {
             Stream stream = getItem(position).getStream();
             if (stream != null) {
-                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream);
+                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream, position);
             }
-        } else if (viewHolder instanceof TrendVideoItemViewHolder) {
+        } else if (viewHolder instanceof TrendingVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
-            bindVideoItemViewHolder((TrendVideoItemViewHolder) viewHolder, video);
+            if (video != null) {
+                bindVideoItemViewHolder((TrendingVideoItemViewHolder) viewHolder, video, position);
+            }
         }
     }
 
@@ -114,11 +117,11 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.livestreamHeaderTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindTrendVideoViewHolder(TrendVideoViewHolder viewHolder) {
+    private void bindTrendVideoViewHolder(TrendingVideoHeaderViewHolder viewHolder) {
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.trendvideoHeaderTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindVideoItemViewHolder(TrendVideoItemViewHolder viewHolder, final Video video) {
+    private void bindVideoItemViewHolder(TrendingVideoItemViewHolder viewHolder, final Video video, final int position) {
 
         viewHolder.getTrendItemTitle().setText(video.title);
         final TextView videoViewsButton = viewHolder.getTrendVideoViews();
@@ -136,7 +139,12 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
-                mContext.startActivity(intent);
+                intent.putExtra(VideoViewActivity.ARG_POSITION, position);
+                if (mContext instanceof Activity) {
+                    ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
+                } else {
+                    mContext.startActivity(intent);
+                }
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }
         });
@@ -245,13 +253,13 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @TargetApi(21)
-    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream) {
+    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream, final int position) {
 
         viewHolder.getStreamItemTitle().setText(stream.name);
         final TextView streamViewsTextView = viewHolder.getStreamViews();
         streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
-        final TextView streamLenghtTextView = viewHolder.getStreamLengthViews();
-        streamLenghtTextView.setText(VideoUtils.getStreamDurationString(stream.started_at));
+        final TextView streamLengthTextView = viewHolder.getStreamLengthViews();
+        streamLengthTextView.setText(VideoUtils.getStreamDurationString(stream.started_at));
         final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
         if (stream.thumbnails != null && stream.thumbnails.medium != null) {
             Picasso.with(mContext)
@@ -264,10 +272,14 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 stream.current_viewers_count = stream.current_viewers_count + 1;
                 streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
-                intent.putExtra(VideoViewActivity.ARG_STREAM,
-                        new Gson().toJson(stream));
+                intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
+                intent.putExtra(VideoViewActivity.ARG_POSITION, position);
 
-                mContext.startActivity(intent);
+                if (mContext instanceof Activity) {
+                    ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
+                } else {
+                    mContext.startActivity(intent);
+                }
             }
         });
 
@@ -296,6 +308,40 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         viewHolder.getStreamItemAuthor().setText(String.format(Locale.ENGLISH,
                 mContext.getResources().getString(R.string.author), username));
     }
+
+    public void updateItem(int resultCode, Intent intent) {
+        if (resultCode == Activity.RESULT_OK && intent != null)
+        {
+            Video video = null;
+            Stream stream = null;
+            int position;
+
+            if (intent.hasExtra(VideoViewActivity.ARG_VIDEO)) {
+                video = new Gson().fromJson(intent.getStringExtra(VideoViewActivity.ARG_VIDEO), Video.class);
+            }
+            if (intent.hasExtra(VideoViewActivity.ARG_STREAM)) {
+                stream = new Gson().fromJson(intent.getStringExtra(VideoViewActivity.ARG_STREAM), Stream.class);
+            }
+            position = intent.getIntExtra(VideoViewActivity.ARG_POSITION, -1);
+
+            if (position >= 0) {
+                Stream feedStream = getItem(position).getStream();
+                Video feedVideo = getItem(position).getVideo();
+                if (feedStream != null && feedStream.user != null && stream != null && stream.user != null)
+                    feedStream.user.is_user_following = stream.user.is_user_following;
+                if (feedVideo != null && feedVideo.user != null && video != null && video.user != null)
+                    feedVideo.user.is_user_following = video.user.is_user_following;
+
+                notifyItemChanged(position);
+
+                if (feedStream != null && feedStream.user != null && stream != null && stream.user != null)
+                    System.out.println(feedStream.user.is_user_following);
+                if (feedVideo != null && feedVideo.user != null && video != null && video.user != null)
+                    System.out.println(feedVideo.user.is_user_following);
+            }
+        }
+    }
+
 
     private class UpdateVideoViewsCallback implements Callback<GenericResponse<?>> {
         @Override

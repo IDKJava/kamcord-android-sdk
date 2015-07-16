@@ -1,5 +1,6 @@
 package com.kamcord.app.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -248,15 +249,9 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private class UpdateVideoViewsCallback implements Callback<GenericResponse<?>> {
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e("Retrofit Update Video Views Failure", "  " + error.toString());
-        }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mStreamAdapter.updateItem(resultCode, data);
     }
 
     public DynamicRecyclerView getHomeRecyclerView() {

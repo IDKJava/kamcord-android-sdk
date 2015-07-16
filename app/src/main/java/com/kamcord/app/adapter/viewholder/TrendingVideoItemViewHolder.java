@@ -14,7 +14,7 @@ import butterknife.InjectView;
 /**
  * Created by donliang1 on 15/7/14.
  */
-public class TrendVideoItemViewHolder extends RecyclerView.ViewHolder {
+public class TrendingVideoItemViewHolder extends RecyclerView.ViewHolder {
 
     @InjectView(R.id.trend_item_title)
     TextView trendItemTitle;
@@ -32,7 +32,7 @@ public class TrendVideoItemViewHolder extends RecyclerView.ViewHolder {
     @InjectView(R.id.trend_follow_button)
     Button trendFollowButton;
 
-    public TrendVideoItemViewHolder(final View itemLayoutView) {
+    public TrendingVideoItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
     }
