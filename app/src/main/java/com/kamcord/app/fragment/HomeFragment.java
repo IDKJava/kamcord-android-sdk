@@ -172,6 +172,9 @@ public class HomeFragment extends Fragment {
                             mFeedItemList.add(profileViewModel);
                         } else if (card.video != null) {
                             if(!trendHeader) {
+                                if(mFeedItemList.get(0).getType() == FeedItem.Type.LIVESTREAM_HEADER && mFeedItemList.size() == 1) {
+                                    mFeedItemList.remove(0);
+                                }
                                 FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.TRENDVIDEO_HEADER, card.stream);
                                 mFeedItemList.add(trendingHeaderModel);
                                 trendHeader = true;
@@ -219,7 +222,9 @@ public class HomeFragment extends Fragment {
                             mFeedItemList.add(profileViewModel);
                         } else if (card.video != null) {
                             if(!trendHeader) {
-                                if(mFeedItemList.get(0).getType() == FeedItem.Type.LIVESTREAM_HEADER && mFeedItemList.size() == 1) {
+                                if(mFeedItemList.size() != 0
+                                        && mFeedItemList.get(0).getType() == FeedItem.Type.LIVESTREAM_HEADER
+                                        && mFeedItemList.size() == 1) {
                                     mFeedItemList.remove(0);
                                 }
                                 FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.TRENDVIDEO_HEADER, card.stream);
