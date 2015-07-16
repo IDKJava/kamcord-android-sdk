@@ -96,6 +96,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (intent.hasExtra(ARG_STREAM)) {
             stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
+            Log.d("oh hi stream:", stream.stream_id);
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
