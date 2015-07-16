@@ -103,12 +103,12 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else if (viewHolder instanceof StreamItemViewHolder) {
             Stream stream = getItem(position).getStream();
             if (stream != null) {
-                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream, position);
+                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream);
             }
         } else if (viewHolder instanceof TrendingVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
             if (video != null) {
-                bindVideoItemViewHolder((TrendingVideoItemViewHolder) viewHolder, video, position);
+                bindVideoItemViewHolder((TrendingVideoItemViewHolder) viewHolder, video);
             }
         }
     }
@@ -121,7 +121,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.trendvideoHeaderTextView, "fonts/proximanova_semibold.otf");
     }
 
-    private void bindVideoItemViewHolder(TrendingVideoItemViewHolder viewHolder, final Video video, final int position) {
+    private void bindVideoItemViewHolder(TrendingVideoItemViewHolder viewHolder, final Video video) {
 
         viewHolder.getTrendItemTitle().setText(video.title);
         final TextView videoViewsButton = viewHolder.getTrendVideoViews();
@@ -139,7 +139,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
-                intent.putExtra(VideoViewActivity.ARG_POSITION, position);
                 if (mContext instanceof Activity) {
                     ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
                 } else {
@@ -155,10 +154,10 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button trendFollowButton = viewHolder.getTrendFollowButton();
-        if (AccountManager.isLoggedIn()) {
-            if (video.user != null) {
-                trendFollowButton.setActivated(video.user.is_user_following);
-            }
+        if(AccountManager.isLoggedIn() && video.user != null && video.user.is_user_following != null) {
+            trendFollowButton.setActivated(video.user.is_user_following);
+        } else {
+            trendFollowButton.setActivated(false);
         }
         trendFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,6 +196,8 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void toggleFollowButton(Button followButton, User user) {
         if (AccountManager.isLoggedIn()) {
+            if (user.is_user_following == null)
+                user.is_user_following = false;
             if (user.is_user_following) {
                 user.is_user_following = false;
                 followButton.setActivated(false);
@@ -248,7 +249,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     @TargetApi(21)
-    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream, final int position) {
+    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream) {
 
         viewHolder.getStreamItemTitle().setText(stream.name);
         final TextView streamViewsTextView = viewHolder.getStreamViews();
@@ -268,7 +269,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
-                intent.putExtra(VideoViewActivity.ARG_POSITION, position);
 
                 if (mContext instanceof Activity) {
                     ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
@@ -279,10 +279,10 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
 
         final Button streamFollowButton = viewHolder.getStreamFollowButton();
-        if (AccountManager.isLoggedIn()) {
+        if (AccountManager.isLoggedIn() && stream.user != null && stream.user.is_user_following != null) {
             streamFollowButton.setActivated(stream.user.is_user_following);
-            stream.user.is_user_following = !stream.user.is_user_following;
-
+        } else {
+            streamFollowButton.setActivated(false);
         }
         streamFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,36 +302,39 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public void updateItem(int resultCode, Intent intent) {
         if (resultCode == Activity.RESULT_OK && intent != null) {
-            Video video = null;
-            Stream stream = null;
-            int position;
 
-            if (intent.hasExtra(VideoViewActivity.ARG_VIDEO)) {
-                video = new Gson().fromJson(intent.getStringExtra(VideoViewActivity.ARG_VIDEO), Video.class);
+
+            String user_id = null;
+            boolean is_user_following = false;
+
+            if (intent.hasExtra(VideoViewActivity.ARG_USER_ID)) {
+                user_id = intent.getStringExtra(VideoViewActivity.ARG_USER_ID);
             }
-            if (intent.hasExtra(VideoViewActivity.ARG_STREAM)) {
-                stream = new Gson().fromJson(intent.getStringExtra(VideoViewActivity.ARG_STREAM), Stream.class);
+            if (intent.hasExtra(VideoViewActivity.ARG_FOLLOWED)) {
+                is_user_following = intent.getBooleanExtra(VideoViewActivity.ARG_FOLLOWED, false);
             }
-            position = intent.getIntExtra(VideoViewActivity.ARG_POSITION, -1);
 
-            if (position >= 0) {
-                Stream feedStream = getItem(position).getStream();
-                Video feedVideo = getItem(position).getVideo();
-                if (feedStream != null && feedStream.user != null && stream != null && stream.user != null)
-                    feedStream.user.is_user_following = stream.user.is_user_following;
-                if (feedVideo != null && feedVideo.user != null && video != null && video.user != null)
-                    feedVideo.user.is_user_following = video.user.is_user_following;
+            if (user_id != null) {
 
-                notifyItemChanged(position);
+                boolean changed = false;
 
-                if (feedStream != null && feedStream.user != null && stream != null && stream.user != null)
-                    System.out.println(feedStream.user.is_user_following);
-                if (feedVideo != null && feedVideo.user != null && video != null && video.user != null)
-                    System.out.println(feedVideo.user.is_user_following);
+                for (FeedItem item : mFeedItems) {
+                    Stream feedStream = item.getStream();
+                    Video feedVideo = item.getVideo();
+                    if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id) && feedStream.user.is_user_following != is_user_following) {
+                        feedStream.user.is_user_following = is_user_following;
+                        changed = true;
+                    }
+                    if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id) && feedVideo.user.is_user_following != is_user_following) {
+                        feedVideo.user.is_user_following = is_user_following;
+                        changed = true;
+                    }
+                }
+                if (changed)
+                    notifyDataSetChanged();
             }
         }
     }
-
 
     private class UpdateVideoViewsCallback implements Callback<GenericResponse<?>> {
         @Override
@@ -403,5 +406,4 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
     }
 }
-
 
