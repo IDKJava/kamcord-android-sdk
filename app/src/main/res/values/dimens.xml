@@ -23,6 +23,7 @@
     <dimen name="view_extraspace">30dp</dimen>
 
     <dimen name="actionbutton_width">100dp</dimen>
+    <dimen name="materialDefaultButtonHeight">36dp</dimen>
     <dimen name="button_gap">1dp</dimen>
     <dimen name="shareButtonHeight">56dp</dimen>
     <dimen name="buttonPadding">16dp</dimen>

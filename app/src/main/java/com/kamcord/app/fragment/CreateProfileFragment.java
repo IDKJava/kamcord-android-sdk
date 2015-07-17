@@ -73,6 +73,14 @@ public class CreateProfileFragment extends Fragment {
         viewsAreValid = true;
         initializeTermsAndPolicyString();
 
+        usernameEditText.requestFocus();
+        usernameEditText.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                KeyboardUtils.showSoftKeyboard(usernameEditText, getActivity());
+            }
+        }, 50);
+
         return root;
     }
 

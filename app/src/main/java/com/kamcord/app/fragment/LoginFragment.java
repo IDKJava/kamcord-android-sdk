@@ -36,7 +36,7 @@ import retrofit.client.Response;
 public class LoginFragment extends Fragment {
 
     @InjectView(R.id.usernameEditText)
-    EditText userNameEditText;
+    EditText usernameEditText;
     @InjectView(R.id.passwordEditText)
     EditText passwordEditText;
     @InjectView(R.id.loginButton)
@@ -52,6 +52,13 @@ public class LoginFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.inject(this, root);
         viewsAreValid = true;
+        usernameEditText.requestFocus();
+        usernameEditText.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                KeyboardUtils.showSoftKeyboard(usernameEditText, getActivity());
+            }
+        }, 50);
         return root;
     }
 
@@ -89,7 +96,7 @@ public class LoginFragment extends Fragment {
     @OnClick(R.id.loginButton)
     public void login() {
         loginButton.setEnabled(false);
-        String username = userNameEditText.getEditableText().toString().trim();
+        String username = usernameEditText.getEditableText().toString().trim();
         String password = passwordEditText.getEditableText().toString();
         KamcordAnalytics.startSession(loginCallback, Event.Name.PROFILE_LOGIN);
         AppServerClient.getInstance().login(username, password, loginCallback);

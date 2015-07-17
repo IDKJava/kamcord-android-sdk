@@ -1,6 +1,7 @@
 package com.kamcord.app.activity;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,6 +9,8 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -36,6 +39,8 @@ import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.player.ExtractorRendererBuilder;
 import com.kamcord.app.player.HlsRendererBuilder;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.server.client.AppServerClient;
+import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.server.model.analytics.Event;
@@ -46,6 +51,9 @@ import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class VideoViewActivity extends AppCompatActivity implements
@@ -59,8 +67,11 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     public static final String ARG_VIDEO = "arg_video";
     public static final String ARG_STREAM = "arg_stream";
+    public static final String ARG_USER_ID = "arg_user_id";
+    public static final String ARG_FOLLOWED = "arg_followed";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
+    private static final int MAX_RECONNECT_ATTEMPTS = 4;
 
     @InjectView(R.id.surface_view)
     VideoSurfaceView surfaceView;
@@ -71,6 +82,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Video video = null;
     private Stream stream = null;
+    private int position = -1;
 
     private Player player;
     private boolean playerNeedsPrepare;
@@ -82,6 +94,8 @@ public class VideoViewActivity extends AppCompatActivity implements
     private MediaControls mediaControls;
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
     private AudioCapabilities audioCapabilities;
+
+    private int reconnectAttemptCount = 0;
 
     // Analytics counters
     private long totalBufferingTimeMs = 0;
@@ -219,6 +233,22 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void finish() {
+        Intent intent = new Intent();
+        if (video != null && video.user_id != null && video.user != null) {
+            intent.putExtra(VideoViewActivity.ARG_USER_ID, video.user_id);
+            intent.putExtra(VideoViewActivity.ARG_FOLLOWED, video.user.is_user_following);
+        } else if (stream != null && stream.user_id != null && stream.user != null) {
+            intent.putExtra(VideoViewActivity.ARG_USER_ID, stream.user_id);
+            intent.putExtra(VideoViewActivity.ARG_FOLLOWED, stream.user.is_user_following);
+        }
+
+        setResult(Activity.RESULT_OK, intent);
+
+        super.finish();
+    }
+
+    @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
@@ -234,6 +264,9 @@ public class VideoViewActivity extends AppCompatActivity implements
             preparePlayer();
         } else if (player != null) {
             player.setBackgrounded(false);
+            if( stream != null && stream.live ) {
+                player.getPlayerControl().start();
+            }
         }
     }
 
@@ -365,12 +398,34 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
     }
 
+    private void attemptReconnect() {
+        reconnectAttemptCount++;
+
+        if( reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS ) {
+            // If we exceed the maximum number of attempts, we give up and assume the stream has ended.
+            // TODO: show the user the "stream ended" state
+        } else {
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    AppServerClient.getInstance().getStream(stream.stream_id, attemptStreamReconnectCallback);
+                }
+            }, (long) (Math.pow(2.0, reconnectAttemptCount - 1) * 1000));
+        }
+    }
+
     // Player.Listener implementation
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == Player.STATE_READY) {
             mediaControls.show(playWhenReady ? 3000 : 0, true);
+        }
+
+        // If we're not preparing or idle, we've successfully connected to the stream/video
+        if( playbackState != Player.STATE_IDLE && playbackState != Player.STATE_PREPARING ) {
+            reconnectAttemptCount = 0;
+            playerError = false;
         }
 
         if( playbackState == Player.STATE_BUFFERING ) {
@@ -393,6 +448,11 @@ public class VideoViewActivity extends AppCompatActivity implements
         playerNeedsPrepare = true;
         playerError = true;
         showControls();
+
+        // Only attempt a reconnect if we're viewing a stream.
+        if( stream != null ) {
+            attemptReconnect();
+        }
     }
 
     @Override
@@ -533,4 +593,28 @@ public class VideoViewActivity extends AppCompatActivity implements
                 (CaptioningManager) getSystemService(Context.CAPTIONING_SERVICE);
         return CaptionStyleCompat.createFromCaptionStyle(captioningManager.getUserStyle());
     }
+
+    private Callback<GenericResponse<Stream>> attemptStreamReconnectCallback = new Callback<GenericResponse<Stream>>() {
+        @Override
+        public void success(GenericResponse<Stream> streamGenericResponse, Response response) {
+            if( streamGenericResponse != null && streamGenericResponse.response != null ) {
+                if( !streamGenericResponse.response.live ) {
+                    // TODO: show the user the "stream ended" state
+                } else {
+                    // Try, try again
+                    if( player != null && player.getPlaybackState() == Player.STATE_IDLE ) {
+                        preparePlayer();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            // Try, try again
+            if( player != null && player.getPlaybackState() == Player.STATE_IDLE ) {
+                preparePlayer();
+            }
+        }
+    };
 }
