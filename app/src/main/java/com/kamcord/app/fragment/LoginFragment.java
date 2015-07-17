@@ -98,9 +98,6 @@ public class LoginFragment extends Fragment {
 
     @OnClick(R.id.loginButton)
     public void login() {
-
-        String username = usernameEditText.getEditableText().toString().trim();
-        String password = passwordEditText.getEditableText().toString();
         if(Connectivity.isConnected()) {
             loginButton.setEnabled(false);
             String username = userNameEditText.getEditableText().toString().trim();
