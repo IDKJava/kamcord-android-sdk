@@ -320,11 +320,13 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             for (FeedItem item : mFeedItems) {
                 Stream feedStream = item.getStream();
                 Video feedVideo = item.getVideo();
-                if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id) && feedStream.user.is_user_following != is_user_following) {
+                if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id) &&
+                        (feedStream.user.is_user_following == null || feedStream.user.is_user_following != is_user_following)) {
                     feedStream.user.is_user_following = is_user_following;
                     changed = true;
                 }
-                if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id) && feedVideo.user.is_user_following != is_user_following) {
+                if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id) &&
+                        (feedVideo.user.is_user_following == null || feedVideo.user.is_user_following != is_user_following)) {
                     feedVideo.user.is_user_following = is_user_following;
                     changed = true;
                 }
