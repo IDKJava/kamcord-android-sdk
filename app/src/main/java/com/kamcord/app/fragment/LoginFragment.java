@@ -100,7 +100,7 @@ public class LoginFragment extends Fragment {
     public void login() {
         if(Connectivity.isConnected()) {
             loginButton.setEnabled(false);
-            String username = userNameEditText.getEditableText().toString().trim();
+            String username = usernameEditText.getEditableText().toString().trim();
             String password = passwordEditText.getEditableText().toString();
             KamcordAnalytics.startSession(loginCallback, Event.Name.PROFILE_LOGIN);
             AppServerClient.getInstance().login(username, password, loginCallback);
