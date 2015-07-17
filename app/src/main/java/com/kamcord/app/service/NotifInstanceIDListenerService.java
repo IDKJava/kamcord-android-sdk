@@ -1,8 +1,9 @@
-package com.kamcord.app.notification;
+package com.kamcord.app.service;
 
 import android.content.Intent;
 
 import com.google.android.gms.iid.InstanceIDListenerService;
+
 /**
  * Created by donliang1 on 15/7/9.
  */

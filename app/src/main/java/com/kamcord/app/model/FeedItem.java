@@ -47,6 +47,7 @@ public class FeedItem<T> {
         VIDEO,
         STREAM,
         UPLOAD_PROGRESS,
-        TEXT_HEADER,
+        LIVESTREAM_HEADER,
+        TRENDVIDEO_HEADER,
     }
 }

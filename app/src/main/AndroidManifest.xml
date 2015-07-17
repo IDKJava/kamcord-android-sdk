@@ -64,7 +64,7 @@
             </intent-filter>
         </receiver>
         <service
-            android:name=".notification.NotifGcmListenerService"
+            android:name=".service.NotifGcmListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -72,14 +72,14 @@
         </service>
         <!-- Handles the registration token change -->
         <service
-            android:name=".notification.NotifInstanceIDListenerService"
+            android:name=".service.NotifInstanceIDListenerService"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <service
-            android:name=".notification.RegistrationIntentService"
+            android:name=".service.RegistrationIntentService"
             android:enabled="true"
             android:exported="true" >
         </service>

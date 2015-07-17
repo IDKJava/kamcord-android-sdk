@@ -1,6 +1,7 @@
 package com.kamcord.app.activity;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -65,6 +66,8 @@ public class VideoViewActivity extends AppCompatActivity implements
     public static final String ARG_STREAM = "stream";
     public static final String STREAM_ID = "streamID";
     public static final String VIDEO_ID = "videoID";
+    public static final String ARG_USER_ID = "user_id";
+    public static final String ARG_FOLLOWED = "followed";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
     private static final int MAX_RECONNECT_ATTEMPTS = 4;
@@ -78,6 +81,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Video video = null;
     private Stream stream = null;
+    private int position = -1;
 
     private Player player;
     private boolean playerNeedsPrepare;
@@ -104,17 +108,10 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         if (intent.hasExtra(ARG_VIDEO)) {
-            if (intent.hasExtra(VIDEO_ID) && intent.getStringExtra(VIDEO_ID) != null) {
-            } else {
-                video = new Gson().fromJson(intent.getStringExtra(ARG_VIDEO), Video.class);
-            }
+            video = new Gson().fromJson(intent.getStringExtra(ARG_VIDEO), Video.class);
         }
         if (intent.hasExtra(ARG_STREAM)) {
-            if (intent.hasExtra(STREAM_ID) && intent.getStringExtra(STREAM_ID) != null) {
-                AppServerClient.getInstance().getStream(intent.getStringExtra(STREAM_ID), attemptStreamReconnectCallback);
-            } else {
-                stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
-            }
+            stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -186,6 +183,22 @@ public class VideoViewActivity extends AppCompatActivity implements
                 player.getPlayerControl().pause();
             }
         }
+    }
+
+    @Override
+    public void finish() {
+        Intent intent = new Intent();
+        if (video != null && video.user_id != null && video.user != null) {
+            intent.putExtra(VideoViewActivity.ARG_USER_ID, video.user_id);
+            intent.putExtra(VideoViewActivity.ARG_FOLLOWED, video.user.is_user_following);
+        } else if (stream != null && stream.user_id != null && stream.user != null) {
+            intent.putExtra(VideoViewActivity.ARG_USER_ID, stream.user_id);
+            intent.putExtra(VideoViewActivity.ARG_FOLLOWED, stream.user.is_user_following);
+        }
+
+        setResult(Activity.RESULT_OK, intent);
+
+        super.finish();
     }
 
     @Override

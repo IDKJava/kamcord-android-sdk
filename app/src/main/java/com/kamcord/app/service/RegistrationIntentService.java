@@ -1,4 +1,4 @@
-package com.kamcord.app.notification;
+package com.kamcord.app.service;
 
 import android.app.IntentService;
 import android.content.Intent;

@@ -26,17 +26,12 @@ public class StringUtils {
     private static final String TAG = StringUtils.class.getSimpleName();
 
     public static URLSpan newURLSpan(final String url) {
-        URLSpan urlSpan = new URLSpan(url)
-        {
+        URLSpan urlSpan = new URLSpan(url) {
             @Override
-            public void onClick(View v)
-            {
-                try
-                {
+            public void onClick(View v) {
+                try {
                     v.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                }
-                catch( Exception e )
-                {
+                } catch (Exception e) {
                     Log.w(TAG, "Could not launch activity for URL " + url, e);
                 }
             }
@@ -44,17 +39,13 @@ public class StringUtils {
         return urlSpan;
     }
 
-    public static SpannableStringBuilder linkify(String sourceText, String[] linkTexts, String[] linkURLs)
-    {
+    public static SpannableStringBuilder linkify(String sourceText, String[] linkTexts, String[] linkURLs) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(sourceText);
 
-        if( linkTexts.length == linkURLs.length )
-        {
-            for( int i=0; i<linkTexts.length; i++ )
-            {
+        if (linkTexts.length == linkURLs.length) {
+            for (int i = 0; i < linkTexts.length; i++) {
                 int index = sourceText.indexOf(linkTexts[i]);
-                if( index >= 0 )
-                {
+                if (index >= 0) {
                     spannableStringBuilder.setSpan(newURLSpan(linkURLs[i]),
                             index, index + linkTexts[i].length(),
                             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -81,18 +72,17 @@ public class StringUtils {
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
     }
 
-    public static boolean compare(String first, String second)
-    {
+    public static boolean compare(String first, String second) {
         return (first == null && second == null)
                 || (first != null && second != null && first.equals(second));
     }
 
     public static String abbreviatedCount(long count) {
-        if( count < 1000 ) {
+        if (count < 1000) {
             return Long.toString(count);
-        } else if( count < 1000000 ) {
+        } else if (count < 1000000) {
             return String.format(Locale.ENGLISH, "%.1fK", ((double) count) / 1e3);
-        } else if( count < 1000000000 ) {
+        } else if (count < 1000000000) {
             return String.format(Locale.ENGLISH, "%.1fM", ((double) count) / 1e6);
         } else {
             return String.format(Locale.ENGLISH, "%.1fB", ((double) count) / 1e9);
@@ -105,15 +95,16 @@ public class StringUtils {
     }
 
     private static final String ELLIPSIS = "...";
+
     public static String ellipsize(String input, int maxLength) {
         if (input == null || input.length() <= maxLength
                 || input.length() < ELLIPSIS.length()) {
             return input;
         }
-        if( maxLength < 0 ) {
+        if (maxLength < 0) {
             return "";
         }
-        if( maxLength < ELLIPSIS.length() ) {
+        if (maxLength < ELLIPSIS.length()) {
             return input.substring(0, maxLength);
         }
         return input.substring(0, maxLength - ELLIPSIS.length()).concat(ELLIPSIS);
