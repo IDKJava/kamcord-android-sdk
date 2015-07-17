@@ -184,7 +184,7 @@ public class Uploader extends Thread {
             mRecordingSession.setGlobalId(mServerVideoId);
             ActiveRecordingSessionManager.updateActiveSession(mRecordingSession);
 
-            eventExtras.putInt(KamcordAnalytics.SUCCESS_KEY, 1);
+            eventExtras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, 1);
             eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, mServerVideoId);
             KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, eventExtras);
 
@@ -200,7 +200,7 @@ public class Uploader extends Thread {
             e.printStackTrace();
         }
 
-        eventExtras.putInt(KamcordAnalytics.SUCCESS_KEY, 0);
+        eventExtras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, 0);
         eventExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, StringUtils.compare("", mServerVideoId) ? null : mServerVideoId);
         eventExtras.putString(KamcordAnalytics.FAILURE_REASON_KEY, reason.name());
         KamcordAnalytics.endSession(this, Event.Name.UPLOAD_VIDEO, eventExtras);

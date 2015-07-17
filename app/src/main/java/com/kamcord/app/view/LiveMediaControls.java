@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,13 +22,16 @@ import android.widget.Toast;
 
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.server.callbacks.FollowCallback;
+import com.kamcord.app.server.callbacks.UnfollowCallback;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
-import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.utils.ViewUtils;
@@ -39,8 +42,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
@@ -48,6 +49,8 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
  */
 public class LiveMediaControls implements MediaControls {
     private static final int FADE_DURATION_MS = 150;
+
+    private MediaControls.ControlButtonClickListener controlButtonClickListener;
 
     private RelativeLayout root;
 
@@ -163,7 +166,6 @@ public class LiveMediaControls implements MediaControls {
                     private boolean wasPlaying = false;
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-
                     }
 
                     @Override
@@ -198,24 +200,44 @@ public class LiveMediaControls implements MediaControls {
         }
     }
 
+    public void setControlButtonClickListener(MediaControls.ControlButtonClickListener controlButtonClickListener) {
+        this.controlButtonClickListener = controlButtonClickListener;
+    }
+
     private void toggleFollowButton() {
         if (AccountManager.isLoggedIn()) {
+            Callback<?> callback = null;
             if (owner.is_user_following) {
                 owner.is_user_following = false;
                 followButton.setActivated(false);
                 followButton.setText(root.getContext().getResources().getString(R.string.videoFollow));
-                AppServerClient.getInstance().unfollow(owner.id, new UnfollowCallback());
+                callback = new UnfollowCallback(owner.id,
+                        video != null ? video.video_id : null,
+                        video != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.STREAM_DETAIL_VIEW);
+                AppServerClient.getInstance().unfollow(owner.id, (UnfollowCallback) callback);
             } else {
                 owner.is_user_following = true;
                 followButton.setActivated(true);
                 followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
-                AppServerClient.getInstance().follow(owner.id, new FollowCallback());
+                callback = new FollowCallback(owner.id,
+                        video != null ? video.video_id : null,
+                        video != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.STREAM_DETAIL_VIEW);
+                AppServerClient.getInstance().follow(owner.id, (FollowCallback) callback);
             }
+            KamcordAnalytics.startSession(callback, Event.Name.FOLLOW_USER);
             ViewUtils.buttonCircularReveal(followButton);
         }
         else {
             Toast.makeText(root.getContext(), root.getContext().getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(root.getContext(), LoginActivity.class);
+            Event.ViewSource source = video != null ?
+                    (video.video_id != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.REPLAY_VIDEO_VIEW)
+                    : Event.ViewSource.STREAM_DETAIL_VIEW;
+            intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, source);
+            if( source == Event.ViewSource.VIDEO_DETAIL_VIEW ) {
+                intent.putExtra(KamcordAnalytics.VIDEO_ID_KEY, video.video_id);
+            }
+            intent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.FOLLOW_USER);
             root.getContext().startActivity(intent);
         }
     }
@@ -227,10 +249,19 @@ public class LiveMediaControls implements MediaControls {
 
     @OnClick(R.id.share_button)
     public void doExternalShare() {
-        if (video != null)
+        Bundle extras = new Bundle();
+        if (video != null) {
             VideoUtils.doExternalShare(root.getContext(), video);
-        else if (stream != null)
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, video.video_id != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.REPLAY_VIDEO_VIEW);
+            extras.putString(KamcordAnalytics.VIDEO_ID_KEY, video.video_id);
+        } else if (stream != null) {
             VideoUtils.doExternalShare(root.getContext(), stream);
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.STREAM_DETAIL_VIEW);
+            if( stream.user != null ) {
+                extras.putString(KamcordAnalytics.STREAM_USER_ID_KEY, stream.user.id);
+            }
+        }
+        KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_RESHARE, extras);
     }
 
     @OnClick(R.id.play_button)
@@ -239,11 +270,20 @@ public class LiveMediaControls implements MediaControls {
             if( isEnded ) {
                 playerControl.seekTo(0);
                 playerControl.start();
+                if( controlButtonClickListener != null ) {
+                    controlButtonClickListener.onReplayButtonClicked();
+                }
             } else {
                 if (playerControl.isPlaying() && playerControl.canPause()) {
                     playerControl.pause();
+                    if( controlButtonClickListener != null ) {
+                        controlButtonClickListener.onPauseButtonClicked();
+                    }
                 } else {
                     playerControl.start();
+                    if( controlButtonClickListener != null ) {
+                        controlButtonClickListener.onPlayButtonClicked();
+                    }
                 }
             }
         }
@@ -389,27 +429,5 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
-    }
-
-    private class FollowCallback implements Callback<GenericResponse<?>> {
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e("Retrofit Failure", "  " + error.toString());
-        }
-    }
-
-    private class UnfollowCallback implements Callback<GenericResponse<?>> {
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e("Retrofit Failure", "  " + error.toString());
-        }
     }
 }

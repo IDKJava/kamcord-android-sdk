@@ -1,6 +1,9 @@
 package com.kamcord.app.server.model.analytics;
 
+import android.os.Bundle;
+
 import com.google.gson.annotations.SerializedName;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.utils.Connectivity;
 
 import java.util.UUID;
@@ -15,6 +18,69 @@ public class Event {
         UPLOAD_VIDEO,
         EXTERNAL_SHARE,
         RECORD_VIDEO,
+        REPLAY_VIDEO_VIEW,
+        STREAM_DETAIL_VIEW,
+        VIDEO_DETAIL_VIEW,
+        FOLLOW_USER,
+        PROFILE_CREATION,
+        PROFILE_CREATION_VIEW,
+        PROFILE_LOGIN,
+        PROFILE_LOGIN_VIEW,
+        PROFILE_INTERSTITIAL,
+        EXTERNAL_RESHARE,
+        STORE_CLICK,
+    }
+
+    public enum ViewSource {
+        VIDEO_LIST_VIEW,
+        PUSH_NOTIFICATION,
+        VIDEO_DETAIL_VIEW,
+        STREAM_DETAIL_VIEW,
+        REPLAY_VIDEO_VIEW,
+        PROFILE_DETAIL_VIEW,
+        PROFILE_INTERSTITIAL,
+        PROFILE_CREATION_VIEW,
+        PROFILE_LOGIN_VIEW,
+        SHARE_VIEW,
+        RECORD_TAB,
+    }
+
+    public enum ListType {
+        PROFILE,
+        HOME,
+    }
+
+    public enum UploadFailureReason {
+        RESERVE_VIDEO,
+        UPLOAD_TO_S3,
+        UPLOAD_COMPLETION,
+    }
+
+    public enum ConnectionType {
+        @SerializedName("wifi")
+        WIFI,
+        @SerializedName("mobile")
+        MOBILE,
+    }
+
+    public enum ExternalNetwork {
+        EMAIL,
+        FACEBOOK,
+        KAKAO,
+        LINE,
+        NICONICO,
+        TWITTER,
+        WECHAT,
+        YOUTUBE,
+    }
+
+    public enum InducingAction {
+        FOLLOW_USER,
+        COMMENT_VIDEO,
+        FOLLOWERS_LIST,
+        FOLLOWING_LIST,
+        PROFILE_LOGOUT,
+        SHARE_VIDEO,
     }
 
     public Event(Name name, long whenMs, String appSessionId) {
@@ -60,20 +126,12 @@ public class Event {
     public String event_id;
     public ConnectionType connection_type;
 
-    public enum ConnectionType {
-        @SerializedName("wifi")
-        WIFI,
-        @SerializedName("mobile")
-        MOBILE,
-    }
 
 
     // For navigational events.
     public Float event_duration = null;
     public transient Long eventDurationMs = null;
-    public SourceView source_view = null;
-    public enum SourceView {
-    }
+    public ViewSource view_source = null;
 
 
     // For server events.
@@ -84,32 +142,21 @@ public class Event {
 
     // For UPLOAD events.
     public String video_global_id = null;
-    public UploadFailureReason failure_reason = null;
+    public String failure_reason = null;
     public Integer was_replayed = null;
     public Integer is_retry = null;
-    public enum UploadFailureReason {
-        RESERVE_VIDEO,
-        UPLOAD_TO_S3,
-        UPLOAD_COMPLETION,
-    }
 
 
     // For EXTERNAL_SHARE events.
     public ExternalNetwork external_network = null;
-    public enum ExternalNetwork {
-        EMAIL,
-        FACEBOOK,
-        KAKAO,
-        LINE,
-        NICONICO,
-        TWITTER,
-        WECHAT,
-        YOUTUBE,
-    }
 
 
     // For RECORD_VIDEO events.
     public String game_id = null;
+
+
+    // For STORE_CLICK events
+    public String clicked_game_id = null;
 
     @Override
     public int hashCode() {
@@ -124,5 +171,138 @@ public class Event {
             return true;
         }
         return false;
+    }
+
+
+    // For REPLAY_VIDEO_VIEW, VIDEO_DETAIL_VIEW, and STREAM_DETAIL_VIEW
+    public Integer num_play_starts;
+    public Integer num_replays;
+    public Float buffering_duration;
+    public Float video_length_watched;
+    public Float video_length;
+
+    // For VIDEO_DETAIL_VIEW and STREAM_DETAIL_VIEW
+    public ListType video_list_type;
+    public String feed_id;
+    public String notification_sent_id;
+    public Integer video_list_row;
+    public Integer video_list_col;
+
+    // For VIDEO_DETAIL_VIEW
+    public String profile_user_id;
+
+    // For STREAM_DETAIL_VIEW
+    public String stream_user_id;
+    public Integer is_live;
+
+
+    // For PROFILE_LOGIN
+    public Integer is_login;
+
+
+    // For PROFILE_INTERSTITIAL
+    public InducingAction inducing_action;
+
+
+    // For events originating from a row/col layout
+    public Integer entry_row;
+    public Integer entry_col;
+
+
+    // For FOLLOW_USER events.
+    public String followed_user_id = null;
+    public Integer is_follow = null;
+
+    public void completeFromData(Bundle bundle) {
+
+        if( bundle == null ) {
+            return;
+        }
+
+        if( bundle.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
+            this.view_source = (ViewSource) bundle.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_SUCCESS_KEY) ) {
+            this.is_success = bundle.getInt(KamcordAnalytics.IS_SUCCESS_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_ID_KEY) ) {
+            this.video_global_id = bundle.getString(KamcordAnalytics.VIDEO_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.FAILURE_REASON_KEY) ) {
+            this.failure_reason = bundle.getString(KamcordAnalytics.FAILURE_REASON_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.WAS_REPLAYED_KEY) ) {
+            this.was_replayed = bundle.getInt(KamcordAnalytics.WAS_REPLAYED_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_UPLOAD_RETRY_KEY) ) {
+            this.is_retry = bundle.getInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.EXTERNAL_NETWORK_KEY) ) {
+            this.external_network = (ExternalNetwork) bundle.getSerializable(KamcordAnalytics.EXTERNAL_NETWORK_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.CLICKED_GAME_ID_KEY) ) {
+            this.clicked_game_id = bundle.getString(KamcordAnalytics.CLICKED_GAME_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.GAME_ID_KEY) ) {
+            this.game_id = bundle.getString(KamcordAnalytics.GAME_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.NUM_PLAY_STARTS_KEY) ) {
+            this.num_play_starts = bundle.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.NUM_PLAY_STARTS_KEY) ) {
+            this.num_replays = bundle.getInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.BUFFERING_DURATION_KEY) ) {
+            this.buffering_duration = bundle.getFloat(KamcordAnalytics.BUFFERING_DURATION_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY) ) {
+            this.video_length_watched = bundle.getFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LENGTH_KEY) ) {
+            this.video_length = bundle.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
+            this.video_list_type = (ListType) bundle.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.FEED_ID_KEY) ) {
+            this.feed_id = bundle.getString(KamcordAnalytics.FEED_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY) ) {
+            this.notification_sent_id = bundle.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY) ) {
+            this.video_list_row = bundle.getInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
+            this.video_list_col = bundle.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.ENTRY_ROW_KEY) ) {
+            this.entry_row = bundle.getInt(KamcordAnalytics.ENTRY_ROW_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.ENTRY_COL_KEY) ) {
+            this.entry_col = bundle.getInt(KamcordAnalytics.ENTRY_COL_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.PROFILE_USER_ID_KEY) ) {
+            this.profile_user_id = bundle.getString(KamcordAnalytics.PROFILE_USER_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.STREAM_USER_ID_KEY) ) {
+            this.stream_user_id = bundle.getString(KamcordAnalytics.STREAM_USER_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_LIVE_KEY) ) {
+            this.is_live = bundle.getInt(KamcordAnalytics.IS_LIVE_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_LOGIN_KEY) ) {
+            this.is_login = bundle.getInt(KamcordAnalytics.IS_LOGIN_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.INDUCING_ACTION_KEY) ) {
+            this.inducing_action = (InducingAction) bundle.getSerializable(KamcordAnalytics.INDUCING_ACTION_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.FOLLOWED_USER_ID_KEY) ) {
+            this.followed_user_id = bundle.getString(KamcordAnalytics.FOLLOWED_USER_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_FOLLOW_KEY) ) {
+            this.is_follow = bundle.getInt(KamcordAnalytics.IS_FOLLOW_KEY);
+        }
+
     }
 }

@@ -86,7 +86,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         } else if (viewHolder instanceof GameItemViewHolder) {
             Game game = item.getGame();
-            bindGameItemViewHolder((GameItemViewHolder) viewHolder, game);
+            bindGameItemViewHolder((GameItemViewHolder) viewHolder, game, position);
 
         } else if (viewHolder instanceof NotInstalledHeaderViewHolder) {
             bindNotInstalledHeaderViewHolder((NotInstalledHeaderViewHolder) viewHolder);
@@ -121,7 +121,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         });
     }
 
-    private void bindGameItemViewHolder(GameItemViewHolder viewHolder, final Game game) {
+    private void bindGameItemViewHolder(GameItemViewHolder viewHolder, final Game game, final int position) {
         if (game.icons != null && game.icons.regular != null) {
             Picasso.with(mContext)
                     .load(game.icons.regular)
@@ -140,7 +140,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
             @Override
             public void onClick(View view) {
                 if (mOnGameActionButtonClickListener != null) {
-                    mOnGameActionButtonClickListener.onGameActionButtonClick(game);
+                    mOnGameActionButtonClickListener.onGameActionButtonClick(game, position);
                 }
             }
         });
@@ -171,6 +171,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     public interface OnGameActionButtonClickListener {
-        void onGameActionButtonClick(Game game);
+        void onGameActionButtonClick(Game game, int position);
     }
 }
