@@ -18,7 +18,6 @@ import java.util.Set;
  */
 public class KamcordAnalytics {
     static final String TAG = KamcordAnalytics.class.getSimpleName();
-    public static final String SUCCESS_KEY = "success";
     public static final String VIDEO_ID_KEY = "video_id";
     public static final String FAILURE_REASON_KEY = "failure_reason";
     public static final String WAS_REPLAYED_KEY = "was_replayed";

@@ -153,8 +153,10 @@ public class Event {
 
     // For RECORD_VIDEO events.
     public String game_id = null;
-    public String clicked_game_id = null;
 
+
+    // For STORE_CLICK events
+    public String clicked_game_id = null;
 
     @Override
     public int hashCode() {
