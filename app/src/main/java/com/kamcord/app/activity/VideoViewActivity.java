@@ -69,6 +69,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
     private static final int MAX_RECONNECT_ATTEMPTS = 4;
+    private static final long STREAM_STATUS_CHECK_INTERVAL_MS = 30 * 1000;
 
     @InjectView(R.id.surface_view)
     VideoSurfaceView surfaceView;
@@ -94,6 +95,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private int reconnectAttemptCount = 0;
     private Handler streamStatusChecker;
+    private boolean streamEnded;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -350,7 +352,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     private void toggleControlsVisibility() {
-        if (mediaControls.isShowing() && !playerError) {
+        if (mediaControls.isShowing() && !playerError && !streamEnded) {
             mediaControls.hide(true);
         } else {
             showControls();
@@ -365,6 +367,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         if( stream != null ) {
             releasePlayer();
             ((LiveMediaControls) mediaControls).streamEnded(stream);
+            streamEnded = true;
         }
     }
 
@@ -494,7 +497,7 @@ public class VideoViewActivity extends AppCompatActivity implements
                 streamEnded();
             } else {
                 streamStatusChecker.removeCallbacks(streamStatusCheckerRunnable);
-                streamStatusChecker.postDelayed(streamStatusCheckerRunnable, 60 * 1000);
+                streamStatusChecker.postDelayed(streamStatusCheckerRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
             }
         }
 
@@ -508,7 +511,6 @@ public class VideoViewActivity extends AppCompatActivity implements
         @Override
         public void run() {
             if( stream != null ) {
-                Log.v("FindMe", "checking stream state...");
                 AppServerClient.getInstance().getStream(stream.stream_id, streamStatusCallback);
             }
         }
