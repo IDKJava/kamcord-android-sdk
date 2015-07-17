@@ -155,6 +155,7 @@ public class Event {
     public String game_id = null;
     public String clicked_game_id = null;
 
+
     @Override
     public int hashCode() {
         return event_id != null ? event_id.hashCode() : 0;
@@ -204,6 +205,11 @@ public class Event {
     // For events originating from a row/col layout
     public Integer entry_row;
     public Integer entry_col;
+
+
+    // For FOLLOW_USER events.
+    public String followed_user_id = null;
+    public Integer is_follow = null;
 
     public void completeFromData(Bundle bundle) {
 
@@ -288,6 +294,12 @@ public class Event {
         }
         if( bundle.containsKey(KamcordAnalytics.INDUCING_ACTION_KEY) ) {
             this.inducing_action = (InducingAction) bundle.getSerializable(KamcordAnalytics.INDUCING_ACTION_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.FOLLOWED_USER_ID_KEY) ) {
+            this.followed_user_id = bundle.getString(KamcordAnalytics.FOLLOWED_USER_ID_KEY);
+        }
+        if( bundle.containsKey(KamcordAnalytics.IS_FOLLOW_KEY) ) {
+            this.is_follow = bundle.getInt(KamcordAnalytics.IS_FOLLOW_KEY);
         }
 
     }

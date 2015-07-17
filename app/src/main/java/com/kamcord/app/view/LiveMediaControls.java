@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +24,10 @@ import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.player.Player;
+import com.kamcord.app.server.callbacks.FollowCallback;
+import com.kamcord.app.server.callbacks.UnfollowCallback;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
-import com.kamcord.app.server.model.GenericResponse;
-import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
@@ -43,8 +42,6 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
@@ -432,80 +429,5 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
-    }
-
-    private static class FollowCallback implements Callback<GenericResponse<?>> {
-        private String receivingUserId = null;
-        private String videoId = null;
-        private Event.ViewSource viewSource;
-
-        public FollowCallback(String receivingUserId, String videoId, Event.ViewSource viewSource) {
-            this.receivingUserId = receivingUserId;
-            this.videoId = videoId;
-            this.viewSource = viewSource;
-        }
-
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-            boolean isSuccess =
-                    responseWrapper != null && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK);
-            String failureReason =
-                    responseWrapper != null && responseWrapper.status != null && !responseWrapper.status.equals(StatusCode.OK) ?
-                            responseWrapper.status.status_reason : null;
-
-            Bundle extras = analyticsFollowExtras(receivingUserId, 1, videoId, isSuccess ? 1 : 0, failureReason, viewSource);
-            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER, extras);
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e("Retrofit Failure", "  " + error.toString());
-            Bundle extras = analyticsFollowExtras(receivingUserId, 1, videoId, 0, null, viewSource);
-            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER, extras);
-        }
-    }
-
-    private static class UnfollowCallback implements Callback<GenericResponse<?>> {
-        private String receivingUserId = null;
-        private String videoId = null;
-        private Event.ViewSource viewSource;
-
-        public UnfollowCallback(String receivingUserId, String videoId, Event.ViewSource viewSource) {
-            this.receivingUserId = receivingUserId;
-            this.videoId = videoId;
-            this.viewSource = viewSource;
-        }
-
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-            boolean isSuccess =
-                    responseWrapper != null && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK);
-            String failureReason =
-                    responseWrapper != null && responseWrapper.status != null && !responseWrapper.status.equals(StatusCode.OK) ?
-                            responseWrapper.status.status_reason : null;
-
-            Bundle extras = analyticsFollowExtras(receivingUserId, 0, videoId, isSuccess ? 1 : 0, failureReason, viewSource);
-            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER, extras);
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e("Retrofit Failure", "  " + error.toString());
-            Bundle extras = analyticsFollowExtras(receivingUserId, 0, videoId, 0, null, viewSource);
-            KamcordAnalytics.endSession(this, Event.Name.FOLLOW_USER, extras);
-        }
-    }
-
-    private static Bundle analyticsFollowExtras(String receivingUserId, int isFollow, String videoId, int isSuccess, String failureReason, Event.ViewSource source) {
-        Bundle analyticsExtras = new Bundle();
-
-        analyticsExtras.putString(KamcordAnalytics.FOLLOWED_USER_ID_KEY, receivingUserId);
-        analyticsExtras.putInt(KamcordAnalytics.IS_FOLLOW_KEY, isFollow);
-        analyticsExtras.putString(KamcordAnalytics.VIDEO_ID_KEY, videoId);
-        analyticsExtras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, isSuccess);
-        analyticsExtras.putString(KamcordAnalytics.FAILURE_REASON_KEY, failureReason);
-        analyticsExtras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, source);
-
-        return analyticsExtras;
     }
 }
