@@ -61,36 +61,40 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     public void addGames(List<Game> games) {
         for( Game game : games ) {
             if( installedGameIds.contains(game.game_primary_id) ) {
-                int index = findGameItemIndex(game);
+                int index = findItemIndex(RecordItem.Type.GAME, game);
                 if( game.isInstalled ) {
-                    if( index != GAME_NOT_FOUND ) {
+                    if( index != ITEM_NOT_FOUND) {
                         mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
                     }
 
                 } else {
                     installedGameIds.remove(game.game_primary_id);
                     uninstalledGameIds.add(game.game_primary_id);
-                    if( index != GAME_NOT_FOUND ) {
+                    if( index != ITEM_NOT_FOUND) {
                         mRecordItems.remove(index);
-                        int newIndex = installedGameIds.size() + 3;
-                        mRecordItems.add(newIndex, new RecordItem(RecordItem.Type.GAME, game));
+                        int notInstalledHeaderIndex = findItemIndex(RecordItem.Type.NOT_INSTALLED_HEADER, null);
+                        if( notInstalledHeaderIndex != ITEM_NOT_FOUND ) {
+                            mRecordItems.add(notInstalledHeaderIndex + 1, new RecordItem(RecordItem.Type.GAME, game));
+                        }
                     }
 
                 }
 
             } else if( uninstalledGameIds.contains(game.game_primary_id) ) {
-                int index = findGameItemIndex(game);
+                int index = findItemIndex(RecordItem.Type.GAME, game);
                 if( game.isInstalled ) {
                     installedGameIds.add(game.game_primary_id);
                     uninstalledGameIds.remove(game.game_primary_id);
-                    if( index != GAME_NOT_FOUND ) {
+                    if( index != ITEM_NOT_FOUND) {
                         mRecordItems.remove(index);
-                        int newIndex = 1;
-                        mRecordItems.add(newIndex, new RecordItem(RecordItem.Type.GAME, game));
+                        int installedHeaderIndex = findItemIndex(RecordItem.Type.INSTALLED_HEADER, null);
+                        if( installedHeaderIndex != ITEM_NOT_FOUND ) {
+                            mRecordItems.add(installedHeaderIndex + 1, new RecordItem(RecordItem.Type.GAME, game));
+                        }
                     }
 
                 } else {
-                    if( index != GAME_NOT_FOUND ) {
+                    if( index != ITEM_NOT_FOUND) {
                         mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
                     }
 
@@ -128,7 +132,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         }
     }
 
-    private static final int GAME_NOT_FOUND = -1;
+    private static final int ITEM_NOT_FOUND = -1;
     private int findGameItemIndex(Game game) {
         int index = 0;
         boolean foundGame = false;
@@ -142,7 +146,22 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
             }
             index++;
         }
-        return foundGame ? index : GAME_NOT_FOUND;
+        return foundGame ? index : ITEM_NOT_FOUND;
+    }
+
+    private int findItemIndex(RecordItem.Type type, Game game) {
+        if( type == RecordItem.Type.GAME ) {
+            return findGameItemIndex(game);
+        } else {
+            int index = 0;
+            for( RecordItem item : mRecordItems ) {
+                if( item.getType() == type ) {
+                    return index;
+                }
+                index++;
+            }
+        }
+        return ITEM_NOT_FOUND;
     }
 
 

@@ -169,7 +169,7 @@ public class RecordFragment extends Fragment implements
 
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        if (mRecyclerAdapter.size() == 3 && !Connectivity.isConnected()) {
+        if (mGameList.size() == 0 && !Connectivity.isConnected()) {
             refreshRecordTab.setVisibility(View.VISIBLE);
         } else {
             mSwipeRefreshLayout.post(new Runnable() {
