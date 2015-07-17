@@ -29,6 +29,8 @@ public class NotifGcmListenerService extends GcmListenerService {
     private final static String VIDEO_ID = "videoId";
     private final static String NOTIF_TEXT = "text";
     private final static String NOTIF_TITLE = "Kamcord";
+    private final static String NOTIF_CATEGORY = "category";
+    private final static String NOTIF_USER_ID = "userId";
     private String streamID = "";
     private String videoID = "";
     private String notifText = "";
