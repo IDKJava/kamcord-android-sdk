@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.google.gson.Gson;
@@ -41,6 +42,7 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.PaginatedGameList;
 import com.kamcord.app.server.model.analytics.Event;
+import com.kamcord.app.server.model.StatusCode;
 import com.kamcord.app.service.RecordingService;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.Connectivity;
@@ -55,8 +57,6 @@ import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -72,6 +72,7 @@ public class RecordFragment extends Fragment implements
         OnBackPressedListener {
     private static final String TAG = RecordFragment.class.getSimpleName();
     private static final int MEDIA_PROJECTION_MANAGER_PERMISSION_CODE = 1;
+    private static final int GAME_PAGE_SIZE = 20;
 
     @InjectView(R.id.refreshRecordTab)
     TextView refreshRecordTab;
@@ -94,9 +95,15 @@ public class RecordFragment extends Fragment implements
     private GameRecordListAdapter mRecyclerAdapter;
     private Game mSelectedGame = null;
 
-    private List<RecordItem> mRecordItemList = new ArrayList<>();
     private List<Game> mGameList = new ArrayList<>();
+    private List<Game> mInstalledGameList = new ArrayList<>();
     private boolean viewsAreValid = false;
+    private boolean wasPaused = false;
+
+    private int currentPageStart = 0;
+    private boolean fetchingInstalledGames = false;
+    private boolean fetchingGamePage = false;
+    private boolean morePages = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,8 +111,9 @@ public class RecordFragment extends Fragment implements
 
         ButterKnife.inject(this, v);
         viewsAreValid = true;
+        wasPaused = false;
 
-        initKamcordRecordFragment(v);
+        initKamcordRecordFragment();
 
         Activity myActivity = getActivity();
         if (!recordingServiceConnection.isBound()) {
@@ -135,57 +143,68 @@ public class RecordFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         handleServiceRunning();
-        boolean gameListChanged = false;
-        for (RecordItem item : mRecordItemList) {
-            Game game = item.getGame();
-            if (game != null) {
-                boolean isNowInstalled = isAppInstalled(game.play_store_id);
-                if (isNowInstalled && !game.isInstalled) {
-                    game.isInstalled = true;
-                    gameListChanged = true;
-                } else if (!isNowInstalled && game.isInstalled) {
-                    game.isInstalled = false;
-                    gameListChanged = true;
-                }
-            }
-        }
-        if (gameListChanged) {
+
+        if (wasPaused) {
             updateRecordItemList();
-            mRecyclerAdapter.notifyDataSetChanged();
+            wasPaused = false;
         }
     }
 
-    public void initKamcordRecordFragment(View v) {
+    @Override
+    public void onPause() {
+        super.onPause();
+        wasPaused = true;
+    }
 
-        mGameList = GameListUtils.getCachedGameList();
-        if (mGameList == null) {
-            mGameList = new ArrayList<>();
-        }
-        updateRecordItemList();
-
+    public void initKamcordRecordFragment() {
         mRecyclerView.addItemDecoration(new GridViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
-        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), mRecordItemList, this);
+        mRecyclerAdapter = new GameRecordListAdapter(getActivity(), this);
         mRecyclerView.setAdapter(mRecyclerAdapter);
         mRecyclerView.setSpanSizeLookup(new RecordLayoutSpanSizeLookup(mRecyclerView));
 
+        mInstalledGameList = GameListUtils.getCachedInstalledGameList();
+        if (mInstalledGameList == null) {
+            mInstalledGameList = new ArrayList<>();
+        }
+        mGameList.addAll(mInstalledGameList);
+        updateRecordItemList();
+
         mSwipeRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.refreshColor));
-        if (mRecordItemList.size() == 0 && !Connectivity.isConnected()) {
+        if (mGameList.size() == 0 && !Connectivity.isConnected()) {
             refreshRecordTab.setVisibility(View.VISIBLE);
         } else {
             mSwipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                    AppServerClient.getInstance().getGamesList(true, false, new GetGamesListCallback());
+                    if (!(fetchingGamePage || fetchingInstalledGames)) {
+                        mSwipeRefreshLayout.setRefreshing(true);
+                        mSwipeRefreshLayout.setEnabled(false);
+                        fetchingInstalledGames = true;
+                        AppServerClient.getInstance().getClientGamesList(GameListUtils.getInstalledPackages(), new GetClientGamesListCallback());
+                    }
                 }
             });
         }
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(true);
-                AppServerClient.getInstance().getGamesList(true, false, new GetGamesListCallback());
+                if( !(fetchingGamePage || fetchingInstalledGames) ) {
+                    mSwipeRefreshLayout.setRefreshing(true);
+                    mSwipeRefreshLayout.setEnabled(false);
+
+                    mRecyclerAdapter.reset();
+                    mInstalledGameList = GameListUtils.getCachedInstalledGameList();
+                    if (mInstalledGameList == null) {
+                        mInstalledGameList = new ArrayList<>();
+                    }
+                    mGameList.clear();
+                    mGameList.addAll(mInstalledGameList);
+                    updateRecordItemList();
+
+                    fetchingInstalledGames = true;
+                    AppServerClient.getInstance().getClientGamesList(GameListUtils.getInstalledPackages(), new GetClientGamesListCallback());
+                }
             }
         });
 
@@ -205,6 +224,14 @@ public class RecordFragment extends Fragment implements
                 } else {
                     mSwipeRefreshLayout.setEnabled(true);
                 }
+
+                int lastPosition = ((GridLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+                if( lastPosition != RecyclerView.NO_POSITION ) {
+                    RecordItem.Type type = RecordItem.Type.values()[mRecyclerAdapter.getItemViewType(lastPosition)];
+                    if (type == RecordItem.Type.FETCH_MORE) {
+                        loadMoreItems();
+                    }
+                }
             }
         });
     }
@@ -219,7 +246,7 @@ public class RecordFragment extends Fragment implements
             final RecordingSession recordingSession = recordingServiceConnection.getRecordingSession();
             if (recordingSession != null) {
                 Game game = null;
-                for (Game g : mGameList) {
+                for (Game g : mInstalledGameList) {
                     if (g.play_store_id.equals(recordingSession.getGamePackageName())) {
                         game = g;
                         break;
@@ -313,6 +340,12 @@ public class RecordFragment extends Fragment implements
         return appIsInstalled;
     }
 
+    public void loadMoreItems() {
+        fetchingGamePage = true;
+        AppServerClient.getInstance().getGamesList(false, false, currentPageStart, GAME_PAGE_SIZE, new GetGamesListCallback());
+    }
+
+
     @Override
     public boolean onBackPressed() {
         handleServiceRunning();
@@ -356,30 +389,15 @@ public class RecordFragment extends Fragment implements
 
 
     public void updateRecordItemList() {
-        Collections.sort(mGameList, new Comparator<Game>() {
-            @Override
-            public int compare(Game g1, Game g2) {
-                return (g2.isInstalled ? 1 : 0) - (g1.isInstalled ? 1 : 0);
-            }
-        });
-        mRecordItemList.clear();
-        boolean lastGameInstalled = false;
-        if (mGameList.size() > 0 && !mGameList.get(0).isInstalled) {
-            mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
-            mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
-            mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
-        }
+        boolean didChange = false;
         for (Game game : mGameList) {
-            if (game.isInstalled && !lastGameInstalled) {
-                mRecordItemList.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
-
-            } else if (!game.isInstalled && lastGameInstalled) {
-                mRecordItemList.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
-                mRecordItemList.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
+            boolean installed = isAppInstalled(game.play_store_id);
+            if( game.isInstalled != installed ) {
+                game.isInstalled = installed;
+                didChange = true;
             }
-            mRecordItemList.add(new RecordItem(RecordItem.Type.GAME, game));
-            lastGameInstalled = game.isInstalled;
         }
+        mRecyclerAdapter.addGames(mGameList);
     }
 
     private class GetGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
@@ -388,38 +406,33 @@ public class RecordFragment extends Fragment implements
             if (gamesListWrapper != null
                     && gamesListWrapper.response != null
                     && gamesListWrapper.response.game_list != null) {
-                mGameList.clear();
-                if (BuildConfig.DEBUG) {
-                    Game ripples = new Game();
-                    ripples.name = "Ripple Test";
-                    ripples.game_primary_id = "3047";
-                    ripples.play_store_id = "com.kamcord.ripples";
-                    ripples.icons = new Game.Icons();
-                    ripples.icons.regular = "https://www.kamcord.com/images/core/logo-kamcord@2x.png";
-                    if (isAppInstalled(ripples.play_store_id)) {
-                        ripples.isInstalled = true;
-                    }
-                    mGameList.add(ripples);
+
+                if( gamesListWrapper.response.game_list.size() == 0 ) {
+                    morePages = false;
+                    mRecyclerAdapter.removeMoreSpinner();
                 }
+
+                currentPageStart += gamesListWrapper.response.game_list.size();
                 for (Game game : gamesListWrapper.response.game_list) {
                     if (game.play_store_id != null) {
                         if (isAppInstalled(game.play_store_id)) {
                             game.isInstalled = true;
+                        } else {
+                            game.isInstalled = false;
                         }
                         mGameList.add(game);
                     }
                 }
-                GameListUtils.saveGameList(mGameList);
 
                 if (viewsAreValid) {
                     if (refreshRecordTab.getVisibility() == View.VISIBLE) {
                         refreshRecordTab.setVisibility(View.INVISIBLE);
                     }
                     updateRecordItemList();
-                    mRecyclerAdapter.notifyDataSetChanged();
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
+            fetchingGamePage = false;
         }
 
         @Override
@@ -430,6 +443,71 @@ public class RecordFragment extends Fragment implements
                 mSwipeRefreshLayout.setRefreshing(false);
                 // TODO: show the user something about this.
             }
+            fetchingGamePage = false;
+        }
+    }
+
+    private class GetClientGamesListCallback implements Callback<GenericResponse<PaginatedGameList>> {
+        @Override
+        public void success(GenericResponse<PaginatedGameList> wrappedResponse, Response response) {
+            if( wrappedResponse != null
+                    && wrappedResponse.status != null && wrappedResponse.status.equals(StatusCode.OK)
+                    && wrappedResponse.response != null && wrappedResponse.response.game_list != null ) {
+                mInstalledGameList.clear();
+
+                if (BuildConfig.DEBUG) {
+                    Game ripples = new Game();
+                    ripples.name = "Ripple Test";
+                    ripples.game_primary_id = "3047";
+                    ripples.play_store_id = "com.kamcord.ripples";
+                    ripples.icons = new Game.Icons();
+                    ripples.icons.regular = "https://www.kamcord.com/images/core/logo-kamcord@2x.png";
+                    if (isAppInstalled(ripples.play_store_id)) {
+                        ripples.isInstalled = true;
+                        mInstalledGameList.add(ripples);
+                    }
+                }
+
+                for( Game installedGame : wrappedResponse.response.game_list ) {
+                    installedGame.isInstalled = true;
+                    mInstalledGameList.add(installedGame);
+                }
+                GameListUtils.saveInstalledGameList(mInstalledGameList);
+
+                mGameList.clear();
+                mGameList.addAll(mInstalledGameList);
+                updateRecordItemList();
+
+                if (viewsAreValid) {
+                    if (refreshRecordTab.getVisibility() == View.VISIBLE) {
+                        refreshRecordTab.setVisibility(View.INVISIBLE);
+                    }
+                    mSwipeRefreshLayout.setRefreshing(false);
+                }
+
+                morePages = true;
+                currentPageStart = 0;
+                fetchingGamePage = true;
+                AppServerClient.getInstance().getGamesList(false, false, currentPageStart, GAME_PAGE_SIZE, new GetGamesListCallback());
+
+            } else {
+                if( viewsAreValid ) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mSwipeRefreshLayout.setEnabled(true);
+                    Toast.makeText(getActivity(), R.string.errorGettingGameList, Toast.LENGTH_SHORT).show();
+                }
+            }
+            fetchingInstalledGames = false;
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            if( viewsAreValid ) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                mSwipeRefreshLayout.setEnabled(true);
+                Toast.makeText(getActivity(), R.string.errorGettingGameList, Toast.LENGTH_SHORT).show();
+            }
+            fetchingInstalledGames = false;
         }
     }
 
@@ -465,7 +543,7 @@ public class RecordFragment extends Fragment implements
 
     private void stopRecording() {
         recordingServiceConnection.stopRecording();
-        for (Game game : mGameList) {
+        for (Game game : mInstalledGameList) {
             game.isRecording = false;
         }
         updateRecordItemList();
