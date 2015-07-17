@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.viewholder.GameItemViewHolder;
@@ -20,8 +21,11 @@ import com.kamcord.app.server.model.Game;
 import com.kamcord.app.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
@@ -31,10 +35,138 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     private List<RecordItem> mRecordItems;
     private OnGameActionButtonClickListener mOnGameActionButtonClickListener;
 
-    public GameRecordListAdapter(Context context, List<RecordItem> recordItems, OnGameActionButtonClickListener recordButtonClickListener) {
+    Set<String> installedGameIds = new HashSet<>();
+    Set<String> uninstalledGameIds = new HashSet<>();
+
+    public GameRecordListAdapter(Context context, OnGameActionButtonClickListener recordButtonClickListener) {
         this.mContext = context;
-        this.mRecordItems = recordItems;
         this.mOnGameActionButtonClickListener = recordButtonClickListener;
+
+        mRecordItems = new ArrayList<>();
+        reset();
+    }
+
+    public void reset() {
+        mRecordItems.clear();
+        installedGameIds.clear();
+        uninstalledGameIds.clear();
+        mRecordItems.add(new RecordItem(RecordItem.Type.INSTALLED_HEADER, null));
+        mRecordItems.add(new RecordItem(RecordItem.Type.REQUEST_GAME, null));
+        mRecordItems.add(new RecordItem(RecordItem.Type.NOT_INSTALLED_HEADER, null));
+        mRecordItems.add(new RecordItem(RecordItem.Type.FETCH_MORE, null));
+        this.notifyDataSetChanged();
+    }
+
+
+    public void addGames(List<Game> games) {
+        for( Game game : games ) {
+            if( installedGameIds.contains(game.game_primary_id) ) {
+                int index = findItemIndex(RecordItem.Type.GAME, game);
+                if( game.isInstalled ) {
+                    if( index != ITEM_NOT_FOUND) {
+                        mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
+                    }
+
+                } else {
+                    installedGameIds.remove(game.game_primary_id);
+                    uninstalledGameIds.add(game.game_primary_id);
+                    if( index != ITEM_NOT_FOUND) {
+                        mRecordItems.remove(index);
+                        int notInstalledHeaderIndex = findItemIndex(RecordItem.Type.NOT_INSTALLED_HEADER, null);
+                        if( notInstalledHeaderIndex != ITEM_NOT_FOUND ) {
+                            mRecordItems.add(notInstalledHeaderIndex + 1, new RecordItem(RecordItem.Type.GAME, game));
+                        }
+                    }
+
+                }
+
+            } else if( uninstalledGameIds.contains(game.game_primary_id) ) {
+                int index = findItemIndex(RecordItem.Type.GAME, game);
+                if( game.isInstalled ) {
+                    installedGameIds.add(game.game_primary_id);
+                    uninstalledGameIds.remove(game.game_primary_id);
+                    if( index != ITEM_NOT_FOUND) {
+                        mRecordItems.remove(index);
+                        int installedHeaderIndex = findItemIndex(RecordItem.Type.INSTALLED_HEADER, null);
+                        if( installedHeaderIndex != ITEM_NOT_FOUND ) {
+                            mRecordItems.add(installedHeaderIndex + 1, new RecordItem(RecordItem.Type.GAME, game));
+                        }
+                    }
+
+                } else {
+                    if( index != ITEM_NOT_FOUND) {
+                        mRecordItems.set(index, new RecordItem(RecordItem.Type.GAME, game));
+                    }
+
+                }
+
+            } else {
+                if( game.isInstalled ) {
+                    installedGameIds.add(game.game_primary_id);
+                    int index = 0;
+                    for( RecordItem item : mRecordItems ) {
+                        if( item.getType() == RecordItem.Type.REQUEST_GAME ) {
+                            break;
+                        }
+                        index++;
+                    }
+                    mRecordItems.add(index, new RecordItem(RecordItem.Type.GAME, game));
+
+                } else {
+                    uninstalledGameIds.add(game.game_primary_id);
+                    int index = mRecordItems.get(mRecordItems.size() - 1).getType() == RecordItem.Type.FETCH_MORE ?
+                            mRecordItems.size() - 1 : mRecordItems.size();
+                    mRecordItems.add(index, new RecordItem(RecordItem.Type.GAME, game));
+
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
+    public void removeMoreSpinner() {
+        int size = mRecordItems.size();
+        if( mRecordItems.get(size-1).getType() == RecordItem.Type.FETCH_MORE) {
+            mRecordItems.remove(size-1);
+            notifyItemRemoved(size-1);
+        }
+    }
+
+    private static final int ITEM_NOT_FOUND = -1;
+    private int findGameItemIndex(Game game) {
+        int index = 0;
+        boolean foundGame = false;
+        for( RecordItem item : mRecordItems ) {
+            if( item.getType() == RecordItem.Type.GAME
+                    && item.getGame() != null
+                    && item.getGame().game_primary_id != null
+                    && item.getGame().game_primary_id.equals(game.game_primary_id) ) {
+                foundGame = true;
+                break;
+            }
+            index++;
+        }
+        return foundGame ? index : ITEM_NOT_FOUND;
+    }
+
+    private int findItemIndex(RecordItem.Type type, Game game) {
+        if( type == RecordItem.Type.GAME ) {
+            return findGameItemIndex(game);
+        } else {
+            int index = 0;
+            for( RecordItem item : mRecordItems ) {
+                if( item.getType() == type ) {
+                    return index;
+                }
+                index++;
+            }
+        }
+        return ITEM_NOT_FOUND;
+    }
+
+
+    public int size() {
+        return mRecordItems.size();
     }
 
     @Override
@@ -66,10 +198,15 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
                 viewHolder = new NotInstalledHeaderViewHolder(itemLayoutView);
                 break;
 
+            case FETCH_MORE:
+                ProgressBar progressSpinner = new ProgressBar(parent.getContext());
+                progressSpinner.setIndeterminate(true);
+                viewHolder = new ViewHolder(progressSpinner) {};
+                break;
+
             default:
                 break;
         }
-
 
         return viewHolder;
     }
@@ -86,7 +223,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         } else if (viewHolder instanceof GameItemViewHolder) {
             Game game = item.getGame();
-            bindGameItemViewHolder((GameItemViewHolder) viewHolder, game);
+            bindGameItemViewHolder((GameItemViewHolder) viewHolder, game, position);
 
         } else if (viewHolder instanceof NotInstalledHeaderViewHolder) {
             bindNotInstalledHeaderViewHolder((NotInstalledHeaderViewHolder) viewHolder);
@@ -121,7 +258,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
         });
     }
 
-    private void bindGameItemViewHolder(GameItemViewHolder viewHolder, final Game game) {
+    private void bindGameItemViewHolder(GameItemViewHolder viewHolder, final Game game, final int position) {
         if (game.icons != null && game.icons.regular != null) {
             Picasso.with(mContext)
                     .load(game.icons.regular)
@@ -140,7 +277,7 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
             @Override
             public void onClick(View view) {
                 if (mOnGameActionButtonClickListener != null) {
-                    mOnGameActionButtonClickListener.onGameActionButtonClick(game);
+                    mOnGameActionButtonClickListener.onGameActionButtonClick(game, position);
                 }
             }
         });
@@ -171,6 +308,6 @@ public class GameRecordListAdapter extends RecyclerView.Adapter<ViewHolder> {
     }
 
     public interface OnGameActionButtonClickListener {
-        void onGameActionButtonClick(Game game);
+        void onGameActionButtonClick(Game game, int position);
     }
 }

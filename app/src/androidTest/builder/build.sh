@@ -2,7 +2,7 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 TESTDOC_FOLDER="/Library/WebServer/Documents/documentation/android-app"
 REPORT_FOLDER="/Library/WebServer/Documents/reports/"$BUILD_TAG
-SPOON_FOLDER="app/build/spoon/debug"
+SPOON_FOLDER="app/build/spoon/defaultTestConfig/debug"
 DOXYGEN_FOLDER="app/build/testDocs/html"
 ADB_BIN=$ANDROID_SDK"/platform-tools/adb"
 GRADLE_EXCLUDE="-x processDefaultConfigDebugAndroidTestManifest -x processDefaultConfigDebugAndroidTestResources -x packageDefaultConfigDebugAndroidTest -x spoonDefaultConfigDebugAndroidTest"

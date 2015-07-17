@@ -27,6 +27,7 @@ import com.kamcord.app.utils.DeviceManager;
 
 import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.Set;
 
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
@@ -52,6 +53,13 @@ public class AppServerClient {
         void getGamesList(
                 @Query("isAndroidOnly") boolean isAndroidOnly,
                 @Query("isIOSOnly") boolean isIOSOnly,
+                @Query("start") Integer start,
+                @Query("count") Integer count,
+                Callback<GenericResponse<PaginatedGameList>> cb);
+
+        @POST("/app/v3/kcp/clientgames")
+        void getClientGamesList(
+                @Body Set<String> packages,
                 Callback<GenericResponse<PaginatedGameList>> cb);
 
         @FormUrlEncoded

@@ -23,14 +23,18 @@ import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.LiveStreamHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
-import com.kamcord.app.adapter.viewholder.TrendingVideoItemViewHolder;
 import com.kamcord.app.adapter.viewholder.TrendingVideoHeaderViewHolder;
+import com.kamcord.app.adapter.viewholder.TrendingVideoItemViewHolder;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.FeedItem;
+import com.kamcord.app.server.callbacks.FollowCallback;
+import com.kamcord.app.server.callbacks.UnfollowCallback;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
@@ -252,17 +256,21 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private void toggleFollowButton(Button followButton, User user) {
         if (AccountManager.isLoggedIn()) {
+            Callback<?> callback = null;
             if (user.is_user_following == null)
                 user.is_user_following = false;
             if (user.is_user_following) {
                 user.is_user_following = false;
                 followButton.setActivated(false);
-                AppServerClient.getInstance().unfollow(user.id, new UnfollowCallback());
+                callback = new UnfollowCallback(user.id, null, Event.ViewSource.STREAM_DETAIL_VIEW);
+                AppServerClient.getInstance().unfollow(user.id, (UnfollowCallback) callback);
             } else {
                 user.is_user_following = true;
                 followButton.setActivated(true);
-                AppServerClient.getInstance().follow(user.id, new FollowCallback());
+                callback = new FollowCallback(user.id, null, Event.ViewSource.STREAM_DETAIL_VIEW);
+                AppServerClient.getInstance().follow(user.id, (FollowCallback) callback);
             }
+            KamcordAnalytics.startSession(callback, Event.Name.FOLLOW_USER);
             ViewUtils.buttonCircularReveal(followButton);
         } else {
             Toast.makeText(mContext, mContext.getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
@@ -312,11 +320,13 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             for (FeedItem item : mFeedItems) {
                 Stream feedStream = item.getStream();
                 Video feedVideo = item.getVideo();
-                if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id) && feedStream.user.is_user_following != is_user_following) {
+                if (feedStream != null && feedStream.user != null && user_id.equals(feedStream.user_id) &&
+                        (feedStream.user.is_user_following == null || feedStream.user.is_user_following != is_user_following)) {
                     feedStream.user.is_user_following = is_user_following;
                     changed = true;
                 }
-                if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id) && feedVideo.user.is_user_following != is_user_following) {
+                if (feedVideo != null && feedVideo.user != null && user_id.equals(feedVideo.user_id) &&
+                        (feedVideo.user.is_user_following == null || feedVideo.user.is_user_following != is_user_following)) {
                     feedVideo.user.is_user_following = is_user_following;
                     changed = true;
                 }
@@ -372,28 +382,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemViewType(int position) {
         FeedItem item = mFeedItems.get(position);
         return item.getType().ordinal();
-    }
-
-    private class FollowCallback implements Callback<GenericResponse<?>> {
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e("Retrofit Failure", "  " + error.toString());
-        }
-    }
-
-    private class UnfollowCallback implements Callback<GenericResponse<?>> {
-        @Override
-        public void success(GenericResponse<?> responseWrapper, Response response) {
-        }
-
-        @Override
-        public void failure(RetrofitError error) {
-            Log.e("Retrofit Failure", "  " + error.toString());
-        }
     }
 }
 
