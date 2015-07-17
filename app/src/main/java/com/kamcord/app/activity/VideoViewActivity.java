@@ -306,6 +306,11 @@ public class VideoViewActivity extends AppCompatActivity implements
             mediaControls.show(playWhenReady ? 3000 : 0, true);
         }
 
+        if( playbackState == Player.STATE_PREPARING  && stream != null ) {
+            streamStatusChecker.removeCallbacks(streamStatusCheckerRunnable);
+            streamStatusChecker.post(streamStatusCheckerRunnable);
+        }
+
         // If we're not preparing or idle, we've successfully connected to the stream/video
         if( playbackState != Player.STATE_IDLE && playbackState != Player.STATE_PREPARING ) {
             reconnectAttemptCount = 0;
@@ -461,7 +466,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         public void success(GenericResponse<com.kamcord.app.server.model.Stream> streamGenericResponse, Response response) {
             if( streamGenericResponse != null && streamGenericResponse.response != null ) {
                 if( !streamGenericResponse.response.live ) {
-                    // TODO: show the user the "stream ended" state
+                    stream = streamGenericResponse.response;
+                    streamEnded();
                 } else {
                     // Try, try again
                     if( player != null && player.getPlaybackState() == Player.STATE_IDLE ) {
@@ -484,8 +490,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         @Override
         public void success(GenericResponse<com.kamcord.app.server.model.Stream> streamGenericResponse, Response response) {
             if( streamGenericResponse != null && streamGenericResponse.response != null && !streamGenericResponse.response.live ) {
-                // TODO: show the user the "stream ended" state
                 stream = streamGenericResponse.response;
+                streamEnded();
             } else {
                 streamStatusChecker.removeCallbacks(streamStatusCheckerRunnable);
                 streamStatusChecker.postDelayed(streamStatusCheckerRunnable, 60 * 1000);
@@ -494,7 +500,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         @Override
         public void failure(RetrofitError error) {
-            // TODO: show the user the "stream ended" state
+            streamEnded();
         }
     };
 
@@ -502,6 +508,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         @Override
         public void run() {
             if( stream != null ) {
+                Log.v("FindMe", "checking stream state...");
                 AppServerClient.getInstance().getStream(stream.stream_id, streamStatusCallback);
             }
         }
