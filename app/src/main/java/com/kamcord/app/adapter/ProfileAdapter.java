@@ -172,12 +172,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 }
                                 break;
                             }
-                            case R.id.action_regnotif: {
-                                if (AccountManager.isLoggedIn()) {
-                                    Intent intent = new Intent(mContext, RegistrationIntentService.class);
-                                    mContext.startService(intent);
-                                }
-                            }
                         }
                         return false;
                     }

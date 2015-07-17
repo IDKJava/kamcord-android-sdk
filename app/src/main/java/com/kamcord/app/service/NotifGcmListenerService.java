@@ -14,6 +14,7 @@ import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
+import com.kamcord.app.server.model.Video;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -25,22 +26,28 @@ public class NotifGcmListenerService extends GcmListenerService {
     private static int NOTIFICATION_ID = 3141592;
     private static Notification.Builder notificationBuilder;
     private final static String STREAM_ID = "streamId";
+    private final static String VIDEO_ID = "videoId";
     private final static String NOTIF_TEXT = "text";
     private final static String NOTIF_TITLE = "Kamcord";
     private String streamID = "";
+    private String videoID = "";
     private String notifText = "";
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
         if (data != null) {
             streamID = data.getString(STREAM_ID);
+            videoID = data.getString(VIDEO_ID);
             notifText = data.getString(NOTIF_TEXT);
         }
-        AppServerClient.getInstance().getStream(streamID, new notificationVideoCallBack());
+        if (streamID != null) {
+            AppServerClient.getInstance().getStream(streamID, new notificationStreamCallBack());
+        } else {
+            AppServerClient.getInstance().getVideoInfo(videoID, new notificationVideoCallback());
+        }
     }
 
-
-    public void sendNotification(Stream stream, String text) {
+    public void sendNotification(Object object, String text) {
         notificationBuilder = new Notification.Builder(this)
                 .setContentTitle(NOTIF_TITLE)
                 .setContentText(text)
@@ -49,13 +56,18 @@ public class NotifGcmListenerService extends GcmListenerService {
                 .setAutoCancel(true);
 
         Intent resultIntent = new Intent(this, VideoViewActivity.class);
-        resultIntent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
+        if (object instanceof Stream) {
+            resultIntent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(object));
+        } else if (object instanceof Video) {
+            resultIntent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(object));
+        }
+
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         notificationBuilder.setContentIntent(resultPendingIntent);
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    private class notificationVideoCallBack implements Callback<GenericResponse<Stream>> {
+    private class notificationStreamCallBack implements Callback<GenericResponse<Stream>> {
         @Override
         public void success(GenericResponse<Stream> streamGenericResponse, Response response) {
             if (streamGenericResponse != null && streamGenericResponse.response != null) {
@@ -70,6 +82,26 @@ public class NotifGcmListenerService extends GcmListenerService {
 
         @Override
         public void failure(RetrofitError error) {
+            streamID = "";
+            notifText = "";
+        }
+    }
+
+    private class notificationVideoCallback implements Callback<GenericResponse<Video>> {
+        @Override
+        public void success(GenericResponse<Video> streamGenericResponse, Response response) {
+            if (streamGenericResponse != null && streamGenericResponse.response != null) {
+                Video video = streamGenericResponse.response;
+                sendNotification(video, notifText);
+                videoID = "";
+                notifText = "";
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            videoID = "";
+            notifText = "";
         }
     }
 }
