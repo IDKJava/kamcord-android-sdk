@@ -24,4 +24,19 @@ public class Game {
     // Client-specific fields
     public boolean isInstalled = false;
     public boolean isRecording = false;
+
+    @Override
+    public boolean equals(Object other) {
+        if( other == null || !(other instanceof Game) ) {
+            return false;
+        }
+
+        Game otherGame = (Game) other;
+        return game_primary_id != null && game_primary_id.equals(otherGame.game_primary_id);
+    }
+
+    @Override
+    public int hashCode() {
+        return game_primary_id != null ? game_primary_id.hashCode() : 0;
+    }
 }

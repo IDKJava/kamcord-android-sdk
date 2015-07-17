@@ -24,9 +24,10 @@ public class RecordItem {
     }
 
     public enum Type {
-        GAME,
         INSTALLED_HEADER,
+        GAME,
         NOT_INSTALLED_HEADER,
         REQUEST_GAME,
+        FETCH_MORE,
     }
 }
