@@ -64,8 +64,6 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     public static final String ARG_VIDEO = "video";
     public static final String ARG_STREAM = "stream";
-    public static final String STREAM_ID = "streamID";
-    public static final String VIDEO_ID = "videoID";
     public static final String ARG_USER_ID = "user_id";
     public static final String ARG_FOLLOWED = "followed";
 
