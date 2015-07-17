@@ -35,8 +35,8 @@
 
         <activity
             android:name=".activity.VideoViewActivity"
-            android:label="@string/app_name">
-        </activity>
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize" />
 
         <service android:name=".service.RecordingService" />
         <service android:name=".service.UploadService" />

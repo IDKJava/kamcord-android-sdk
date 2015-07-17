@@ -6,53 +6,50 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.kamcord.app.R;
+import com.kamcord.app.fragment.HomeFragment;
 import com.kamcord.app.fragment.ProfileFragment;
 import com.kamcord.app.fragment.RecordFragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private static final HashMap<Integer, Class<?>> POSITION_FRAGMENT_MAP = new HashMap<Integer, Class<?>>() {{
-        if(Build.VERSION.SDK_INT >= 21) {
-            put(0, RecordFragment.class);
-            put(1, ProfileFragment.class);
-        } else {
-            put(0, ProfileFragment.class);
-        }
-    }};
-
-    private static final HashMap<Integer, Integer> POSITION_DRAWABLE_MAP = new HashMap<Integer, Integer>() {{
-        if(Build.VERSION.SDK_INT >= 21) {
-            put(0, R.drawable.tabicon_record_selector);
-            put(1, R.drawable.tabicon_profile_selector);
-        } else {
-            put(0, R.drawable.tabicon_profile_selector);
-        }
-    }};
-
-    public static final int PROFILE_FRAGMENT_POSITION = 1;
+    public static final int HOME_FRAGMENT_POSITION = 0;
+    public static final int RECORD_FRAGMENT_POSITION =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 1 : -1;
+    public static final int PROFILE_FRAGMENT_POSITION =
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 2 : 1;
     private int numberOfTabs;
     private CharSequence tabTitles[];
+    public HashMap<Integer, Fragment> viewPagerHashMap = new HashMap<>();
+    private List<Integer> imageResId = new ArrayList<>();
+
 
     public MainViewPagerAdapter(FragmentManager fm, CharSequence tabTitles[], int numberOfTabs) {
         super(fm);
         this.numberOfTabs = numberOfTabs;
         this.tabTitles = tabTitles;
+        initSlideTabIcon();
     }
 
     @Override
     public Fragment getItem(int position) {
-
         Fragment fragment;
-        Class fragmentClass = POSITION_FRAGMENT_MAP.get(position);
-        if( fragmentClass != null && fragmentClass.equals(RecordFragment.class) ) {
+
+        if (position == HOME_FRAGMENT_POSITION) {
+            fragment = new HomeFragment();
+            viewPagerHashMap.put(position, fragment);
+        } else if (position == RECORD_FRAGMENT_POSITION) {
             fragment = new RecordFragment();
-        } else if( fragmentClass != null && fragmentClass.equals(ProfileFragment.class) ) {
+            viewPagerHashMap.put(position, fragment);
+        } else if (position == PROFILE_FRAGMENT_POSITION) {
             fragment = new ProfileFragment();
+            viewPagerHashMap.put(position, fragment);
         } else {
-            fragment = new RecordFragment();
+            fragment = new HomeFragment();
         }
         return fragment;
     }
@@ -63,14 +60,23 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public int getDrawableId(int position) {
-        if(POSITION_DRAWABLE_MAP.get(position) != null) {
-            return POSITION_DRAWABLE_MAP.get(position);
-        }
-        return POSITION_DRAWABLE_MAP.get(0);
+        return imageResId.get(position);
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         return tabTitles[position];
+    }
+
+    public HashMap<Integer, Fragment> getViewPagerHashMap() {
+        return this.viewPagerHashMap;
+    }
+
+    private void initSlideTabIcon() {
+        imageResId.add(R.drawable.tabicon_home_selector);
+        imageResId.add(R.drawable.tabicon_profile_selector);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageResId.add(1, R.drawable.tabicon_record_selector);
+        }
     }
 }

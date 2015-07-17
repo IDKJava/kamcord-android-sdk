@@ -6,9 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,19 +30,24 @@ import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileUploadProgressViewHolder;
 import com.kamcord.app.adapter.viewholder.ProfileVideoItemViewHolder;
+import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
 import com.kamcord.app.analytics.KamcordAnalytics;
-import com.kamcord.app.model.ProfileItem;
+import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
+import com.kamcord.app.server.model.StatusCode;
+import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.utils.ViewUtils;
+import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -57,17 +63,24 @@ import retrofit.client.Response;
 public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private List<ProfileItem> mProfileList;
+    private RecyclerView mRecyclerView;
+    private List<FeedItem> mProfileList;
+    private User owner;
 
-    public ProfileAdapter(Context context, List<ProfileItem> mProfileList) {
+    public ProfileAdapter(Context context, RecyclerView recyclerView, List<FeedItem> mProfileList) {
         this.mContext = context;
+        this.mRecyclerView = recyclerView;
         this.mProfileList = mProfileList;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemLayoutView;
-        ProfileItem.Type type = ProfileItem.Type.values()[viewType];
+        FeedItem.Type type = FeedItem.Type.values()[viewType];
         switch (type) {
             case HEADER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_header, parent, false);
@@ -76,6 +89,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case VIDEO: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_item, parent, false);
                 return new ProfileVideoItemViewHolder(itemLayoutView);
+            }
+            case STREAM: {
+                itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stream_item, parent, false);
+                return new StreamItemViewHolder(itemLayoutView);
             }
             case FOOTER: {
                 itemLayoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_profile_footer, parent, false);
@@ -104,7 +121,13 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (viewHolder instanceof ProfileVideoItemViewHolder) {
             Video video = getItem(position).getVideo();
             if (video != null) {
-                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video);
+                bindProfileVideoItemViewHolder((ProfileVideoItemViewHolder) viewHolder, video, position);
+            }
+
+        } else if (viewHolder instanceof StreamItemViewHolder) {
+            Stream stream = getItem(position).getStream();
+            if( stream != null ) {
+                bindStreamVideoItemViewHolder((StreamItemViewHolder) viewHolder, stream);
             }
 
         } else if (viewHolder instanceof ProfileUploadProgressViewHolder) {
@@ -156,6 +179,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         switch (item.getItemId()) {
                             case R.id.action_signout: {
                                 if (AccountManager.isLoggedIn()) {
+                                    KamcordAnalytics.startSession(logoutCallback, Event.Name.PROFILE_LOGIN);
                                     AppServerClient.getInstance().logout(logoutCallback);
                                 }
                                 break;
@@ -168,7 +192,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video) {
+    private void bindProfileVideoItemViewHolder(ProfileVideoItemViewHolder viewHolder, final Video video, final int position) {
 
         viewHolder.getProfileItemTitle().setText(video.title);
         final TextView videoViewsButton = viewHolder.getVideoViews();
@@ -185,9 +209,27 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 video.views = video.views + 1;
                 videoViewsButton.setText(StringUtils.abbreviatedCount(video.views));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
-                intent.setData(Uri.parse(video.video_url));
-                intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE,
-                        VideoViewActivity.VideoType.HLS);
+                intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
+
+                // Add analytics extras
+                intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.VIDEO_LIST_VIEW);
+                intent.putExtra(KamcordAnalytics.VIDEO_LIST_TYPE_KEY, Event.ListType.PROFILE);
+                if( mRecyclerView.getLayoutManager() instanceof GridLayoutManager ) {
+                    GridLayoutManager gridLayoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
+                    int spanCount = gridLayoutManager.getSpanCount();
+                    if( gridLayoutManager.getSpanSizeLookup() instanceof ProfileLayoutSpanSizeLookup ) {
+                        ProfileLayoutSpanSizeLookup lookup = (ProfileLayoutSpanSizeLookup) gridLayoutManager.getSpanSizeLookup();
+
+                        intent.putExtra(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
+                                lookup.getSpanGroupIndex(position, spanCount)+1);
+                        intent.putExtra(KamcordAnalytics.VIDEO_LIST_COL_KEY,
+                                lookup.getSpanIndex(position, spanCount)+1);
+                    }
+                }
+                if( owner != null ) {
+                    intent.putExtra(KamcordAnalytics.PROFILE_USER_ID_KEY, owner.id);
+                }
+
                 mContext.startActivity(intent);
                 AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback());
             }
@@ -202,18 +244,20 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         videoLikesButton.setText(StringUtils.abbreviatedCount(video.likes));
         videoLikesButton.setActivated(video.is_user_liking);
         if (video.is_user_liking) {
-            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(
-                            mContext,
-                            mContext.getResources().getDrawable(R.drawable.likes_white),
-                            R.color.ColorPrimary),
-                    null, null, null);
-        } else {
+            videoLikesButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGreen));
             videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
                     ViewUtils.getTintedDrawable(
                             mContext,
                             mContext.getResources().getDrawable(R.drawable.likes_white),
                             R.color.kamcordGreen),
+                    null, null, null);
+        } else {
+            videoLikesButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGray));
+            videoLikesButton.setCompoundDrawablesWithIntrinsicBounds(
+                    ViewUtils.getTintedDrawable(
+                            mContext,
+                            mContext.getResources().getDrawable(R.drawable.likes_white),
+                            R.color.kamcordGray),
                     null, null, null);
         }
         videoLikesButton.setOnClickListener(new View.OnClickListener() {
@@ -234,7 +278,25 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.action_external_share:
-                                doExternalShare(video);
+                                Bundle extras = new Bundle();
+                                extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.VIDEO_LIST_VIEW);
+                                extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY, Event.ListType.PROFILE);
+                                if( mRecyclerView.getLayoutManager() instanceof GridLayoutManager ) {
+                                    GridLayoutManager gridLayoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
+                                    int spanCount = gridLayoutManager.getSpanCount();
+                                    if( gridLayoutManager.getSpanSizeLookup() instanceof ProfileLayoutSpanSizeLookup ) {
+                                        ProfileLayoutSpanSizeLookup lookup = (ProfileLayoutSpanSizeLookup) gridLayoutManager.getSpanSizeLookup();
+
+                                        extras.putInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
+                                                lookup.getSpanGroupIndex(position, spanCount)+1);
+                                        extras.putInt(KamcordAnalytics.VIDEO_LIST_COL_KEY,
+                                                lookup.getSpanIndex(position, spanCount)+1);
+                                    }
+                                }
+                                extras.putString(KamcordAnalytics.VIDEO_ID_KEY, video.video_id);
+                                KamcordAnalytics.fireEvent(Event.Name.EXTERNAL_RESHARE, extras);
+
+                                VideoUtils.doExternalShare(mContext, video);
                                 break;
 
                             case R.id.action_delete:
@@ -246,6 +308,41 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 });
             }
         });
+    }
+
+    @TargetApi(21)
+    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream) {
+
+        viewHolder.getStreamItemTitle().setText(stream.name);
+        final TextView streamViewsTextView = viewHolder.getStreamViews();
+        streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+        final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
+        if (stream.thumbnails != null && stream.thumbnails.medium != null) {
+            Picasso.with(mContext)
+                    .load(stream.thumbnails.medium.unsecure_url)
+                    .into(streamImageView);
+        }
+        streamImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stream.current_viewers_count = stream.current_viewers_count + 1;
+                streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+                Intent intent = new Intent(mContext, VideoViewActivity.class);
+                intent.putExtra(VideoViewActivity.ARG_STREAM,
+                        new Gson().toJson(stream));
+
+                mContext.startActivity(intent);
+                //AppServerClient.getInstance().updateVideoViews(video.video_id, new UpdateVideoViewsCallback()); //DQTODO update server views?
+            }
+        });
+
+        String username = "";
+
+        if (stream.user != null && stream.user.username != null)
+            username = stream.user.username;
+
+        viewHolder.getStreamItemAuthor().setText(String.format(Locale.ENGLISH,
+                mContext.getResources().getString(R.string.author), username));
     }
 
     @TargetApi(21)
@@ -331,18 +428,20 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 video.likes = video.likes - 1;
             }
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
+            likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGray));
             likeButton.setActivated(false);
             likeButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGray),
                     null, null, null);
             AppServerClient.getInstance().unLikeVideo(video.video_id, new UnLikeVideosCallback());
         } else {
             video.is_user_liking = true;
             video.likes = video.likes + 1;
             likeButton.setText(StringUtils.abbreviatedCount(video.likes));
+            likeButton.setTextColor(mContext.getResources().getColor(R.color.kamcordGreen));
             likeButton.setActivated(true);
             likeButton.setCompoundDrawablesWithIntrinsicBounds(
-                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.ColorPrimary),
+                    ViewUtils.getTintedDrawable(mContext, mContext.getResources().getDrawable(R.drawable.likes_white), R.color.kamcordGreen),
                     null, null, null);
             AppServerClient.getInstance().likeVideo(video.video_id, new LikeVideosCallback());
         }
@@ -351,7 +450,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        ProfileItem viewModel = mProfileList.get(position);
+        FeedItem viewModel = mProfileList.get(position);
         return viewModel.getType().ordinal();
     }
 
@@ -360,40 +459,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         return mProfileList.size();
     }
 
-    public ProfileItem getItem(int position) {
+    public FeedItem getItem(int position) {
         return mProfileList.get(position);
-    }
-
-    private static final int MAX_EXTERNAL_SHARE_TEXT_LENGTH = 140;
-
-    private void doExternalShare(Video video) {
-        if (mContext instanceof Activity && video.video_id != null) {
-            Activity activity = (Activity) mContext;
-            String watchPageLink = "www.kamcord.com/v/" + video.video_id;
-
-
-            String externalShareText = null;
-            if (video.title != null) {
-                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                        video.title, watchPageLink);
-                int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
-                if (diff > 0) {
-                    String truncatedTitle = StringUtils.ellipsize(video.title, video.title.length() - diff);
-                    externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareText),
-                            truncatedTitle, video.video_site_watch_page);
-                }
-            } else {
-                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextNoTitle),
-                        watchPageLink);
-            }
-            externalShareText = StringUtils.ellipsize(externalShareText, MAX_EXTERNAL_SHARE_TEXT_LENGTH);
-
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.putExtra(Intent.EXTRA_TEXT, externalShareText);
-            shareIntent.setType("text/plain");
-            activity.startActivity(Intent.createChooser(shareIntent, activity.getString(R.string.shareTo)));
-        }
     }
 
     private void showDeleteVideoDialog(final Video video) {
@@ -440,7 +507,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @Override
         public void failure(RetrofitError error) {
-            Log.e("Retrofit Unlike Failure", "  " + error.toString());
+            Log.e("Retrofit Update Video Views Failure", "  " + error.toString());
         }
     }
 
@@ -454,9 +521,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         @Override
         public void success(GenericResponse<?> genericResponse, Response response) {
             int index = 0;
-            for (ProfileItem item : mProfileList) {
-                if (item.getType() == ProfileItem.Type.VIDEO
-                        && item.getVideo().video_id.equals(video.video_id)) {
+            for( FeedItem item : mProfileList ) {
+                if( item.getType() == FeedItem.Type.VIDEO
+                    && item.getVideo().video_id.equals(video.video_id) ) {
                     mProfileList.remove(index);
                     notifyItemRemoved(index);
                     break;
@@ -474,9 +541,17 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private final Callback<GenericResponse<?>> logoutCallback = new Callback<GenericResponse<?>>() {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
+            boolean isSuccess = responseWrapper != null && responseWrapper.status != null && responseWrapper.status.equals(StatusCode.OK);
+            String failureReason = responseWrapper != null && responseWrapper.status != null && !responseWrapper.status.equals(StatusCode.OK)
+                    ? responseWrapper.status.status_reason : null;
+            Bundle extras = analyticsExtras(isSuccess, failureReason);
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_LOGIN, extras);
+
             AccountManager.clearStoredAccount();
             if (mContext != null) {
                 Intent loginIntent = new Intent(mContext, LoginActivity.class);
+                loginIntent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_DETAIL_VIEW);
+                loginIntent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.PROFILE_LOGOUT);
                 mContext.startActivity(loginIntent);
                 ((Activity) mContext).finish();
             }
@@ -484,12 +559,28 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         @Override
         public void failure(RetrofitError error) {
+            Bundle extras = analyticsExtras(false, null);
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_LOGIN, extras);
+
             AccountManager.clearStoredAccount();
             if (mContext != null) {
                 Intent loginIntent = new Intent(mContext, LoginActivity.class);
+                loginIntent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_DETAIL_VIEW);
+                loginIntent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.PROFILE_LOGOUT);
                 mContext.startActivity(loginIntent);
                 ((Activity) mContext).finish();
             }
+        }
+
+        private Bundle analyticsExtras(boolean isSuccess, String failureReason) {
+            Bundle extras = new Bundle();
+
+            extras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, isSuccess ? 1 : 0);
+            extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, failureReason);
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_DETAIL_VIEW);
+            extras.putInt(KamcordAnalytics.IS_LOGIN_KEY, 0);
+
+            return extras;
         }
     };
 }

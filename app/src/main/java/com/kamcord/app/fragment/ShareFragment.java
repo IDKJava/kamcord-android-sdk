@@ -31,6 +31,8 @@ import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
 import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.service.UploadService;
 import com.kamcord.app.thread.StitchClipsThread;
 import com.kamcord.app.thread.StitchClipsThread.StitchSuccessListener;
@@ -254,6 +256,8 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
         } else {
             Toast.makeText(getActivity(), getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.SHARE_VIEW);
+            intent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.SHARE_VIDEO);
             getActivity().startActivity(intent);
         }
 
@@ -335,8 +339,8 @@ public class ShareFragment extends Fragment implements OnBackPressedListener {
 
         Uri uri = Uri.parse(new File(FileSystemManager.getRecordingSessionCacheDirectory(recordingSession)
                 , FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath());
-        intent.setData(uri);
-        intent.putExtra(VideoViewActivity.ARG_VIDEO_TYPE, VideoViewActivity.VideoType.MP4);
+        Video video = new Video.Builder().fromRecordingSession(recordingSession).build();
+        intent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(video));
         startActivity(intent);
 
         recordingSession.setWasReplayed(true);

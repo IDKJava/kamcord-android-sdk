@@ -10,6 +10,7 @@
     <color name="gridTextColor">#353e44</color>
 
     <color name="kamcordGreen">#47d894</color>
+    <color name="kamcordLightGreen">#9047d894</color>
     <color name="kamcordDarkText">#353e44</color>
     <color name="kamcordLightText">#aab</color>
     <color name="kamcordHintText">#40000000</color>
@@ -26,7 +27,8 @@
     <color name="EditTextColor">#a4a4a4</color>
 
     <color name="DefaultBackgroundColor">#F1C40F</color>
-    <color name="ShareBackgroundColor">#e8e8e8</color>
+    <color name="ShareBackgroundColor">#eeeeee</color>
+    <color name="defaultDividerColor">#f5f5f5</color>
     <color name="defaultProfileColor">#bbbbbb</color>
     <color name="kamcordBlue">#00a8c0</color>
     <color name="kamcordRed">#b34</color>

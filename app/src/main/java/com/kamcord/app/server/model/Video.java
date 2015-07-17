@@ -1,5 +1,9 @@
 package com.kamcord.app.server.model;
 
+import com.kamcord.app.model.RecordingSession;
+import com.kamcord.app.utils.FileSystemManager;
+
+import java.io.File;
 import java.util.Date;
 
 /**
@@ -41,4 +45,19 @@ public class Video {
     public Game game;
     public User user;
     public Source source;
+
+    public static class Builder {
+        Video video = new Video();
+
+        public Builder fromRecordingSession(RecordingSession session) {
+            video.video_url = new File(FileSystemManager.getRecordingSessionCacheDirectory(session),
+                    FileSystemManager.MERGED_VIDEO_FILENAME).getAbsolutePath();
+            video.title = session.getVideoTitle();
+            return this;
+        }
+
+        public Video build() {
+            return video;
+        }
+    }
 }

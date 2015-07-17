@@ -196,11 +196,6 @@ public class AnalyticsThread extends HandlerThread implements
 
     private void sendEvents() {
         sendingEvents = true;
-        String userRegistrationId = null;
-        Account myAccount = AccountManager.getStoredAccount();
-        if (myAccount != null) {
-            userRegistrationId = myAccount.id;
-        }
 
         TrackEventEntity.Builder builder = new TrackEventEntity.Builder()
                 .setAppDeviceId(DeviceManager.getDeviceToken());
@@ -262,43 +257,27 @@ public class AnalyticsThread extends HandlerThread implements
             Bundle extras = data.getBundle(EXTRAS_KEY);
 
             switch (name) {
-                case UPLOAD_VIDEO: {
+                // Server events
+                case UPLOAD_VIDEO:
+                case FOLLOW_USER:
+                case PROFILE_CREATION:
+                case PROFILE_LOGIN:
                     event.setRequestTimeFromStopTime(when);
-                    if (extras != null) {
-                        event.is_success = extras.getInt(KamcordAnalytics.SUCCESS_KEY, 0);
-                        if (extras.containsKey(KamcordAnalytics.FAILURE_REASON_KEY)) {
-                            event.failure_reason = Event.UploadFailureReason.valueOf(extras.getString(KamcordAnalytics.FAILURE_REASON_KEY));
-                        }
-                        event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
-                        event.was_replayed = extras.getInt(KamcordAnalytics.WAS_REPLAYED_KEY, 0);
-                        event.is_retry = extras.getInt(KamcordAnalytics.IS_UPLOAD_RETRY_KEY, 0);
-                    }
-                }
-                break;
+                    break;
 
-                case KAMCORD_APP_LAUNCH: {
+                // UI view events
+                case KAMCORD_APP_LAUNCH:
+                case REPLAY_VIDEO_VIEW:
+                case VIDEO_DETAIL_VIEW:
+                case STREAM_DETAIL_VIEW:
+                case PROFILE_INTERSTITIAL:
+                case PROFILE_CREATION_VIEW:
+                case PROFILE_LOGIN_VIEW:
                     event.setDurationFromStopTime(when);
-                }
-                break;
-
-                case EXTERNAL_SHARE: {
-                    if (extras != null) {
-                        if( extras.containsKey(KamcordAnalytics.EXTERNAL_NETWORK_KEY) ) {
-                            event.external_network = Event.ExternalNetwork.valueOf(extras.getString(KamcordAnalytics.EXTERNAL_NETWORK_KEY));
-                        }
-                        event.video_global_id = extras.getString(KamcordAnalytics.VIDEO_ID_KEY, null);
-                    }
-                }
-                break;
-
-                case RECORD_VIDEO: {
-                    if( extras != null ) {
-                        event.event_duration = extras.getFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, 0f);
-                        event.game_id = extras.getString(KamcordAnalytics.GAME_ID_KEY, null);
-                    }
-                }
-                break;
+                    break;
             }
+
+            event.completeFromData(extras);
 
             // If they put the app_session_id in themselves, we assume that they know what they're doing.
             if( extras != null && extras.containsKey(KamcordAnalytics.APP_SESSION_ID_KEY) ) {
