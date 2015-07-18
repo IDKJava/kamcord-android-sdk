@@ -303,8 +303,10 @@ public class VideoViewActivity extends AppCompatActivity implements
             playerError = false;
         }
 
-        playerBuffering = false;
-        if( playbackState == Player.STATE_BUFFERING ) {
+        if( playbackState != Player.STATE_BUFFERING && playerBuffering ) {
+            playerBuffering = false;
+            mediaControls.show(3000, true);
+        } else  if( playbackState == Player.STATE_BUFFERING ) {
             mediaControls.show(0, true);
             playerBuffering = true;
         }
