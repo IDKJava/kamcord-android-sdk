@@ -132,10 +132,7 @@ public class LiveMediaControls implements MediaControls {
                 scrubberSeekBar.setSplitTrack(false);
             }
 
-            // We only display the user information if there is a user, and that user is not us.
-            Account myAccount = AccountManager.getStoredAccount();
-
-            if (owner != null && owner.id != null && !(myAccount != null && owner.id.equals(myAccount.id))) {
+            if( owner != null && owner.id != null) {
                 avatarImageView.setVisibility(View.GONE); // TODO: unhide this when we start receiving avatars from server
 
                 usernameTextView.setText(owner.username);
@@ -151,8 +148,11 @@ public class LiveMediaControls implements MediaControls {
                 } catch (Exception e) {
                 }
                 profileLetterTextView.getBackground().setColorFilter(profileColor, PorterDuff.Mode.MULTIPLY);
+            }
 
-                if(owner.is_user_following == null)
+            Account myAccount = AccountManager.getStoredAccount();
+            if (owner != null && owner.id != null && !(myAccount != null && owner.id.equals(myAccount.id))) {
+                if (owner.is_user_following == null)
                     owner.is_user_following = false;
 
                 followButton.setActivated(owner.is_user_following);
@@ -166,7 +166,7 @@ public class LiveMediaControls implements MediaControls {
                 }
             }
             else {
-                ownerContainer.setVisibility(View.GONE);
+                followButton.setVisibility(View.GONE);
             }
 
             if (stream != null) {
@@ -177,6 +177,7 @@ public class LiveMediaControls implements MediaControls {
 
                 scrubberSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     private boolean wasPlaying = false;
+
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
@@ -185,9 +186,9 @@ public class LiveMediaControls implements MediaControls {
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
                         isScrubberTracking = true;
-                        if( playerControl != null ) {
+                        if (playerControl != null) {
                             wasPlaying = playerControl.isPlaying();
-                            if( playerControl.canPause() ) {
+                            if (playerControl.canPause()) {
                                 playerControl.pause();
                             }
                         }
@@ -196,11 +197,11 @@ public class LiveMediaControls implements MediaControls {
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
                         isScrubberTracking = false;
-                        if( playerControl != null ) {
+                        if (playerControl != null) {
                             float percent = (float) scrubberSeekBar.getProgress() / (float) scrubberSeekBar.getMax();
                             int position = (int) ((float) playerControl.getDuration() * percent);
                             playerControl.seekTo(position);
-                            if( wasPlaying) {
+                            if (wasPlaying) {
                                 playerControl.start();
                             }
                         }
