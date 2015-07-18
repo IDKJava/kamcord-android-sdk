@@ -203,7 +203,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .load(video.thumbnails.regular)
                     .into(videoImageView);
         }
-        videoImageView.setOnClickListener(new View.OnClickListener() {
+        viewHolder.getContainer().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 video.views = video.views + 1;
