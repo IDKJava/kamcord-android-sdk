@@ -82,7 +82,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 return new TrendingVideoHeaderViewHolder(itemLayoutView);
             }
             case VIDEO: {
-                itemLayoutView = inflater.inflate(R.layout.fragment_trend_item, parent, false);
+                itemLayoutView = inflater.inflate(R.layout.fragment_trending_video_item, parent, false);
                 return new TrendingVideoItemViewHolder(itemLayoutView);
             }
             case FOOTER:
