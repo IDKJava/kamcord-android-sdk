@@ -322,7 +322,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     .load(stream.thumbnails.medium.unsecure_url)
                     .into(streamImageView);
         }
-        streamImageView.setOnClickListener(new View.OnClickListener() {
+        viewHolder.getContainer().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 stream.current_viewers_count = stream.current_viewers_count + 1;
