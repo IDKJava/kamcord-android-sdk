@@ -205,7 +205,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/kamcordBlue"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -239,8 +239,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
-                        android:textColor="@android:color/white"
-                        android:text="24,399"/>
+                        android:textColor="@android:color/white"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/stream_hearts_container"
@@ -263,8 +262,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
-                        android:textColor="@android:color/white"
-                        android:text="24,399"/>
+                        android:textColor="@android:color/white"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/stream_length_container"
@@ -287,8 +285,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
-                        android:textColor="@android:color/white"
-                        android:text="24,399"/>
+                        android:textColor="@android:color/white"/>
                 </LinearLayout>
             </LinearLayout>
 

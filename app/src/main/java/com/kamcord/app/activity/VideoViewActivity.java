@@ -80,12 +80,10 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Video video = null;
     private Stream stream = null;
-    private int position = -1;
 
     private Player player;
     private boolean playerNeedsPrepare;
     private float qualityMultiplier = 2f;
-    private boolean playerError = false;
 
     private long playerPosition;
 
@@ -94,8 +92,9 @@ public class VideoViewActivity extends AppCompatActivity implements
     private AudioCapabilities audioCapabilities;
 
     private int reconnectAttemptCount = 0;
-    private Handler streamStatusChecker;
-    private boolean streamEnded;
+    private Handler streamStatusHandler;
+    private boolean streamEnded = false;
+    private boolean playerError = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,7 +112,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (intent.hasExtra(ARG_STREAM)) {
             stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
-            streamStatusChecker = new Handler(Looper.getMainLooper());
+            streamStatusHandler = new Handler(Looper.getMainLooper());
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -284,22 +283,6 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
     }
 
-    private void attemptReconnect() {
-        reconnectAttemptCount++;
-
-        if( reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS ) {
-            // If we exceed the maximum number of attempts, we give up and assume the stream has ended.
-            // TODO: show the user the "stream ended" state
-        } else {
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    AppServerClient.getInstance().getStream(stream.stream_id, attemptStreamReconnectCallback);
-                }
-            }, (long) (Math.pow(2.0, reconnectAttemptCount - 1) * 1000));
-        }
-    }
-
     // Player.Listener implementation
 
     @Override
@@ -309,8 +292,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
 
         if( playbackState == Player.STATE_PREPARING  && stream != null ) {
-            streamStatusChecker.removeCallbacks(streamStatusCheckerRunnable);
-            streamStatusChecker.post(streamStatusCheckerRunnable);
+            removeStreamStatusCallbacks();
+            streamStatusHandler.post(checkIsStreamLiveRunnable);
         }
 
         // If we're not preparing or idle, we've successfully connected to the stream/video
@@ -363,8 +346,26 @@ public class VideoViewActivity extends AppCompatActivity implements
         mediaControls.show(0, true);
     }
 
+    private void removeStreamStatusCallbacks() {
+        streamStatusHandler.removeCallbacks(attemptReconnectRunnable);
+        streamStatusHandler.removeCallbacks(checkIsStreamLiveRunnable);
+    }
+
+    private void attemptReconnect() {
+        reconnectAttemptCount++;
+
+        if( reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS ) {
+            streamEnded();
+        } else {
+            removeStreamStatusCallbacks();
+            streamStatusHandler.postDelayed(attemptReconnectRunnable,
+                    (long) (Math.pow(2.0, reconnectAttemptCount - 1) * 1000));
+        }
+    }
+
     private void streamEnded() {
         if( stream != null ) {
+            removeStreamStatusCallbacks();
             releasePlayer();
             ((LiveMediaControls) mediaControls).streamEnded(stream);
             streamEnded = true;
@@ -496,8 +497,8 @@ public class VideoViewActivity extends AppCompatActivity implements
                 stream = streamGenericResponse.response;
                 streamEnded();
             } else {
-                streamStatusChecker.removeCallbacks(streamStatusCheckerRunnable);
-                streamStatusChecker.postDelayed(streamStatusCheckerRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
+                removeStreamStatusCallbacks();
+                streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
             }
         }
 
@@ -507,12 +508,19 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
     };
 
-    private Runnable streamStatusCheckerRunnable = new Runnable() {
+    private Runnable checkIsStreamLiveRunnable = new Runnable() {
         @Override
         public void run() {
             if( stream != null ) {
                 AppServerClient.getInstance().getStream(stream.stream_id, streamStatusCallback);
             }
+        }
+    };
+
+    private Runnable attemptReconnectRunnable = new Runnable() {
+        @Override
+        public void run() {
+            AppServerClient.getInstance().getStream(stream.stream_id, attemptStreamReconnectCallback);
         }
     };
 }
