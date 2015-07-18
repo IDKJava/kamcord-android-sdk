@@ -2,15 +2,12 @@
 <resources>
     <string name="app_name">Kamcord</string>
     <string name="action_settings">Settings</string>
-    <string name="action_request_game">Don\'t see your game?</string>
     <string name="oneOfYourGamesNotListed">One of your games not listed? Let us know!</string>
     <string name="action_signout">Log Out</string>
 
     <!-- UI String-->
     <string name="toolbarTitle">Kamcord</string>
     <string name="stopRecording">Stop Recording</string>
-    <string name="startRecording">Start Recording</string>
-    <string name="recordingPaused">Recording Paused</string>
 
     <!-- Login -->
     <string name="termsAndPolicy">By creating a profile, you are agreeing to Kamcord\'s Terms of Service and Privacy Policy.</string>
@@ -53,22 +50,9 @@
     <string name="paused">Paused</string>
 
     <!-- Activity -->
-    <!-- Not used? -->
-    <string name="selectAGame">Please select a game to record.</string>
-    <string name="pressTheButton">Press the green button to start recording %s!</string>
     <string name="kamcordRecordTab">Record</string>
     <string name="kamcordProfileTab">Profile</string>
     <string name="kamcordHomeTab">Home</string>
-    <string name="kamcordVideoTab">Top Videos</string>
-    <string name="stitchingVideos">Stitching the clips&#8230;</string>
-    <string name="install">Install</string>
-    <string name="shareThisVideo">Share This Video</string>
-
-    <!-- Not used? -->
-    <string name="writeADescription">Write a description&#8230;</string>
-    <string name="processing">Processing&#8230;</string>
-    <!-- Not used? -->
-    <string name="writeATitle">Write a title&#8230;</string>
 
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
     <string name="signInProfilePrompt">You must log in to Kamcord to view your profile.</string>
@@ -100,10 +84,6 @@
         <item quantity="one">Following</item>
         <item quantity="other">Following</item>
     </plurals>
-    <plurals name="videoLikes">
-        <item quantity="one">Like</item>
-        <item quantity="other">Likes</item>
-    </plurals>
 
     <string name="byAuthorGame">%1$s &#183; %2$s</string>
     <string name="author">%1$s</string>
@@ -112,38 +92,24 @@
     <string name="livestreamHeader">Live Streams</string>
     <string name="trendingVideos">Trending Videos</string>
 
-    <plurals name="followersWithCount">
-        <item quantity="one">%s Follower</item>
-        <item quantity="other">%s Followers</item>
-    </plurals>
     <plurals name="videosWithCount">
         <item quantity="one">%s Video</item>
         <item quantity="other">%s Videos</item>
     </plurals>
 
-    <!-- Not used? -->
-    <string name="alreadyRecording">Already Recording!</string>
-    <!-- Not used? -->
-    <string name="youreAlreadyRecording">You\'re already recording %s. Do you want to stop that recording and start another?</string>
-    <!-- Not used? -->
     <string name="nothingRecordedYet">Nothing Recorded Yet!</string>
-    <!-- Not used? -->
     <string name="kamcordHasntRecorded">Kamcord hasn\'t recorded anything from %1$s yet! Do you want to go back to %1$s?</string>
 
     <string name="currentlyUploadingPercent">Currently Uploading (%1$d%%)</string>
     <string name="queuedForUpload">Queued for Upload</string>
     <string name="uploadFailed">Upload Failed</string>
     <string name="processingPullToRefresh">Processing. Pull to Refresh.</string>
-    <string name="retry">Retry</string>
     <string name="delete">Delete</string>
 
-    <!-- Share -->
     <string name="fragmentShare">Share</string>
     <string name="youTubeShare">YouTube</string>
     <string name="twitterShare">Twitter</string>
     <string name="alsoShare">Also share on</string>
-    <!-- Not used? -->
-    <string name="writeYourTitle">Please write a title for your video.</string>
     <string name="myLatestVideo">My latest %1$s video</string>
 
     <string name="timeRecorded">%1$s recorded</string>
