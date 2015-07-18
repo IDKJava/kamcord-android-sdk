@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.adapter.MainViewPagerAdapter;
-import com.kamcord.app.fragment.HomeFragment;
 import com.kamcord.app.fragment.ShareFragment;
 import com.kamcord.app.model.RecordingSession;
 import com.kamcord.app.thread.Uploader;

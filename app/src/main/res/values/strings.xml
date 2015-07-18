@@ -73,6 +73,7 @@
     <string name="youMustBeLoggedIn">You need to be logged in to Kamcord to perform that action.</string>
     <string name="signInProfilePrompt">You must log in to Kamcord to view your profile.</string>
     <string name="swipeToRefreshRecord">Oops! Pull down to refresh games when your network is ready.</string>
+    <string name="errorGettingGameList">Oops! There was an error getting the game list. Please try again later.</string>
 
     <string name="uploading">Uploading&#8230;</string>
     <string name="yourVideoIsUploading">Your video \"%s\" is uploading!</string>
@@ -158,6 +159,9 @@
     <string name="deleteVideo">Delete Video</string>
     <string name="failedToDelete">Failed to delete video. Check your network connection.</string>
     <string name="failedToConnect">Failed to connect. Check your network connection.</string>
+    <string name="doYouContinue">Do you want to continue?</string>
+    <string name="continueUploadVideo">Continue</string>
+    <string name="notConnectToFastNetwork">Your device is not on Wifi. Uploading a video may use a significant amount of data.</string>
 
     <string name="youWillLoseMonster">You will lose your video forever to the video monster!</string>
     <string name="errorPlayingVideo">Error Playing Video</string>

@@ -11,16 +11,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.LoginActivity;
 import com.kamcord.app.activity.RecordActivity;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.StatusCode;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.utils.KeyboardUtils;
 
 import butterknife.ButterKnife;
@@ -43,6 +47,7 @@ public class LoginFragment extends Fragment {
     TextView forgotPasswordTextView;
 
     private boolean viewsAreValid = true;
+    private Toast toast;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +72,18 @@ public class LoginFragment extends Fragment {
         ButterKnife.reset(this);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        KamcordAnalytics.startSession(this, Event.Name.PROFILE_LOGIN_VIEW);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        KamcordAnalytics.endSession(this, Event.Name.PROFILE_LOGIN_VIEW, getArguments());
+    }
+
     private int getContainerViewId() {
         if (getActivity() instanceof LoginActivity) {
             return ((LoginActivity) getActivity()).getContainerViewId();
@@ -81,9 +98,20 @@ public class LoginFragment extends Fragment {
 
     @OnClick(R.id.loginButton)
     public void login() {
-        String username = usernameEditText.getEditableText().toString().trim();
-        String password = passwordEditText.getEditableText().toString();
-        AppServerClient.getInstance().login(username, password, loginCallback);
+        if(Connectivity.isConnected()) {
+            loginButton.setEnabled(false);
+            String username = usernameEditText.getEditableText().toString().trim();
+            String password = passwordEditText.getEditableText().toString();
+            KamcordAnalytics.startSession(loginCallback, Event.Name.PROFILE_LOGIN);
+            AppServerClient.getInstance().login(username, password, loginCallback);
+        } else {
+            if (toast == null) {
+                toast = Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_SHORT);
+            } else {
+                toast.setText(getResources().getString(R.string.failedToConnect));
+            }
+            toast.show();
+        }
     }
 
     @OnClick(R.id.forgotPasswordTextView)
@@ -117,6 +145,12 @@ public class LoginFragment extends Fragment {
     Callback<GenericResponse<Account>> loginCallback = new Callback<GenericResponse<Account>>() {
         @Override
         public void success(GenericResponse<Account> accountWrapper, Response response) {
+            boolean isSuccess = accountWrapper != null && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK);
+            String failureReason = accountWrapper != null && accountWrapper.status != null && !accountWrapper.status.equals(StatusCode.OK)
+                    ? accountWrapper.status.status_reason : null;
+            Bundle extras = analyticsExtras(isSuccess, failureReason);
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_LOGIN, extras);
+
             if (viewsAreValid) {
                 if (accountWrapper != null
                         && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
@@ -130,14 +164,30 @@ public class LoginFragment extends Fragment {
                 } else {
                     handleLoginFailure(accountWrapper);
                 }
+                loginButton.setEnabled(true);
             }
         }
 
         @Override
         public void failure(RetrofitError error) {
+            Bundle extras = analyticsExtras(false, null);
+            KamcordAnalytics.endSession(this, Event.Name.PROFILE_LOGIN, extras);
+
             if (viewsAreValid) {
                 handleLoginFailure(null);
+                loginButton.setEnabled(true);
             }
+        }
+
+        private Bundle analyticsExtras(boolean isSuccess, String failureReason) {
+            Bundle extras = new Bundle();
+
+            extras.putInt(KamcordAnalytics.IS_SUCCESS_KEY, isSuccess ? 1 : 0);
+            extras.putString(KamcordAnalytics.FAILURE_REASON_KEY, failureReason);
+            extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PROFILE_LOGIN_VIEW);
+            extras.putInt(KamcordAnalytics.IS_LOGIN_KEY, 1);
+
+            return extras;
         }
     };
 }
