@@ -19,6 +19,7 @@ public class Stream {
     public Date ended_at;
     public int current_viewers_count;
     public int max_viewers_count;
+    public int total_viewers_count;
     public int heart_count;
     public int message_count;
     public User user;

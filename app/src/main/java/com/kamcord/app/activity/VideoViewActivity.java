@@ -86,6 +86,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private float qualityMultiplier = 2f;
 
     private long playerPosition;
+    private boolean playerBuffering = false;
 
     private MediaControls mediaControls;
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
@@ -301,6 +302,12 @@ public class VideoViewActivity extends AppCompatActivity implements
             reconnectAttemptCount = 0;
             playerError = false;
         }
+
+        playerBuffering = false;
+        if( playbackState == Player.STATE_BUFFERING ) {
+            mediaControls.show(0, true);
+            playerBuffering = true;
+        }
     }
 
     @Override
@@ -335,7 +342,8 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     private void toggleControlsVisibility() {
-        if (mediaControls.isShowing() && !playerError && !streamEnded) {
+        if (mediaControls.isShowing()
+                && !playerError && !streamEnded && !playerBuffering) {
             mediaControls.hide(true);
         } else {
             showControls();

@@ -409,7 +409,7 @@ public class LiveMediaControls implements MediaControls {
 
     public void streamEnded(Stream stream) {
         endedContainer.setVisibility(View.VISIBLE);
-        streamViewsTextView.setText(StringUtils.commatizedCount(stream.max_viewers_count));
+        streamViewsTextView.setText(StringUtils.commatizedCount(stream.total_viewers_count));
         streamHeartsTextView.setText(StringUtils.commatizedCount(stream.heart_count));
         if( stream.ended_at != null && stream.started_at != null ) {
             streamLengthTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, stream.ended_at.getTime() - stream.started_at.getTime()));
