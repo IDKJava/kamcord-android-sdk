@@ -9,25 +9,27 @@
         android:id="@+id/play_button_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/scrubber_container"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/bottom_chrome_container"
         android:background="#3000">
+
         <ImageButton
             android:id="@+id/play_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:minWidth="48dp"
+            android:background="@null"
             android:minHeight="48dp"
-            android:scaleType="centerInside"
-            android:background="@null"/>
+            android:minWidth="48dp"
+            android:scaleType="centerInside" />
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/bottom_chrome_container">
+        android:layout_above="@+id/scrubber_container"
+        android:layout_alignParentTop="true">
+
         <ProgressBar
             android:id="@+id/buffering_progressbar"
             android:layout_width="@dimen/actionbutton_width"
@@ -36,7 +38,7 @@
             android:indeterminate="true"
             android:indeterminateDuration="1000"
             android:progress="100"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </FrameLayout>
 
     <include
@@ -44,8 +46,8 @@
         layout="@layout/live_indicator"
         android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp" />
 
@@ -63,107 +65,101 @@
         android:src="@drawable/ic_share_white" />
 
     <LinearLayout
-        android:id="@+id/bottom_chrome_container"
+        android:id="@+id/owner_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical">
+        android:layout_height="60dp"
+        android:layout_above="@+id/scrubber_container"
+        android:background="#B34F575C"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/owner_container"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="#B34F575C"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/avatar_imageview"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:padding="15dp"
-                    android:src="@drawable/hollow_circle_background" />
-
-                <TextView
-                    android:id="@+id/profile_letter_textview"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="16dp"
-                    android:background="@drawable/solid_white_circle"
-                    android:gravity="center"
-                    android:textColor="#fff"
-                    android:textSize="20sp" />
-            </FrameLayout>
+            <ImageView
+                android:id="@+id/avatar_imageview"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:padding="15dp"
+                android:src="@drawable/hollow_circle_background" />
 
             <TextView
-                android:id="@+id/username_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#fff"
-                android:textSize="18sp" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/follow_button"
-                style="@style/KamcordButton.HollowWhite"
-                android:layout_width="wrap_content"
+                android:id="@+id/profile_letter_textview"
+                android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:layout_marginRight="16dp"
+                android:layout_margin="16dp"
+                android:background="@drawable/solid_white_circle"
                 android:gravity="center"
-                android:paddingRight="8dp"
-                android:paddingLeft="8dp"
-                android:text="@string/videoFollow"
-                android:textSize="16sp" />
-        </LinearLayout>
+                android:textColor="#fff"
+                android:textSize="20sp" />
+        </FrameLayout>
 
-        <LinearLayout
-            android:id="@+id/scrubber_container"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/username_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/follow_button"
+            style="@style/KamcordButton.HollowWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="@string/videoFollow"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/scrubber_container"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="#353e44"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/current_time_textview"
+            android:layout_width="60sp"
             android:layout_height="40dp"
-            android:background="#353e44"
-            android:orientation="horizontal">
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/current_time_textview"
-                android:layout_width="60sp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
+        <SeekBar
+            android:id="@+id/scrubber_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:max="1000"
+            android:maxHeight="6dp"
+            android:minHeight="6dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:progressDrawable="@drawable/scrubber_progress"
+            android:thumb="@drawable/solid_white_circle_24dp" />
 
-            <SeekBar
-                android:id="@+id/scrubber_seekbar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:max="1000"
-                android:maxHeight="6dp"
-                android:minHeight="6dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
-                android:progressDrawable="@drawable/scrubber_progress"
-                android:thumb="@drawable/solid_white_circle_24dp" />
+        <TextView
+            android:id="@+id/total_time_textview"
+            android:layout_width="60sp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/total_time_textview"
-                android:layout_width="60sp"
-                android:layout_height="40dp"
-                android:gravity="center"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-        </LinearLayout>
     </LinearLayout>
 
     <FrameLayout
@@ -179,14 +175,15 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                android:background="@drawable/solid_red_circle"
                 android:gravity="center"
                 android:text="!"
                 android:textColor="@android:color/white"
-                android:textSize="40dp"
-                android:background="@drawable/solid_red_circle"/>
+                android:textSize="40dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -195,7 +192,7 @@
                 android:gravity="center"
                 android:text="@string/weveLostTheStream"
                 android:textColor="@android:color/white"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
         </LinearLayout>
 
     </FrameLayout>
