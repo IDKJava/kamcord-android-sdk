@@ -87,7 +87,9 @@ public class HomeFragment extends Fragment {
             homeFeedRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    homeFeedRefreshLayout.setRefreshing(true);
+                    if( viewsAreValid ) {
+                        homeFeedRefreshLayout.setRefreshing(true);
+                    }
                 }
             });
             AppServerClient.getInstance().getHomeFeed(null, COUNT_PER_PAGE, new GetHomeFeedCallBack());
