@@ -142,7 +142,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
-                Log.d("stream id", stream.stream_id);
                 if (mContext instanceof Activity) {
                     ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
                 } else {

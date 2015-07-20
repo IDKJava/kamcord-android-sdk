@@ -34,7 +34,6 @@ import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
 import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.model.FeedItem;
 import com.kamcord.app.model.RecordingSession;
-import com.kamcord.app.service.RegistrationIntentService;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.StatusCode;
