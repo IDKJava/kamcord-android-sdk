@@ -121,6 +121,59 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.livestreamHeaderTextView, "fonts/proximanova_semibold.otf");
     }
 
+    @TargetApi(21)
+    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream) {
+
+        viewHolder.getStreamItemTitle().setText(stream.name);
+        final TextView streamViewsTextView = viewHolder.getStreamViews();
+        streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+        final TextView streamLengthTextView = viewHolder.getStreamLengthViews();
+        streamLengthTextView.setText(VideoUtils.getStreamDurationString(stream.started_at));
+        final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
+        if (stream.thumbnails != null && stream.thumbnails.medium != null) {
+            Picasso.with(mContext)
+                    .load(stream.thumbnails.medium.unsecure_url)
+                    .into(streamImageView);
+        }
+        streamImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stream.current_viewers_count = stream.current_viewers_count + 1;
+                streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+                Intent intent = new Intent(mContext, VideoViewActivity.class);
+                intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
+                if (mContext instanceof Activity) {
+                    ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
+                } else {
+                    mContext.startActivity(intent);
+                }
+            }
+        });
+
+        final Button streamFollowButton = viewHolder.getStreamFollowButton();
+        if (AccountManager.isLoggedIn() && stream.user != null && stream.user.is_user_following != null) {
+            streamFollowButton.setActivated(stream.user.is_user_following);
+        } else {
+            streamFollowButton.setActivated(false);
+        }
+        streamFollowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleFollowButton(streamFollowButton, stream.user);
+                if (stream.user != null && stream.user.is_user_following != null)
+                    updateItem(stream.user_id, stream.user.is_user_following);
+            }
+        });
+
+        String username = "";
+
+        if (stream.user != null && stream.user.username != null)
+            username = stream.user.username;
+
+        viewHolder.getStreamItemAuthor().setText(String.format(Locale.ENGLISH,
+                mContext.getResources().getString(R.string.author), username));
+    }
+
     private void bindTrendVideoViewHolder(TrendingVideoHeaderViewHolder viewHolder) {
         CalligraphyUtils.applyFontToTextView(mContext, viewHolder.trendvideoHeaderTextView, "fonts/proximanova_semibold.otf");
     }
@@ -158,7 +211,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button trendFollowButton = viewHolder.getTrendFollowButton();
-        if(AccountManager.isLoggedIn() && video.user != null && video.user.is_user_following != null) {
+        if (AccountManager.isLoggedIn() && video.user != null && video.user.is_user_following != null) {
             trendFollowButton.setActivated(video.user.is_user_following);
         } else {
             trendFollowButton.setActivated(false);
@@ -256,60 +309,6 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             Intent intent = new Intent(mContext, LoginActivity.class);
             mContext.startActivity(intent);
         }
-    }
-
-    @TargetApi(21)
-    private void bindStreamVideoItemViewHolder(StreamItemViewHolder viewHolder, final Stream stream) {
-
-        viewHolder.getStreamItemTitle().setText(stream.name);
-        final TextView streamViewsTextView = viewHolder.getStreamViews();
-        streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
-        final TextView streamLengthTextView = viewHolder.getStreamLengthViews();
-        streamLengthTextView.setText(VideoUtils.getStreamDurationString(stream.started_at));
-        final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
-        if (stream.thumbnails != null && stream.thumbnails.medium != null) {
-            Picasso.with(mContext)
-                    .load(stream.thumbnails.medium.unsecure_url)
-                    .into(streamImageView);
-        }
-        viewHolder.getContainer().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stream.current_viewers_count = stream.current_viewers_count + 1;
-                streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
-                Intent intent = new Intent(mContext, VideoViewActivity.class);
-                intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
-
-                if (mContext instanceof Activity) {
-                    ((Activity) mContext).startActivityForResult(intent, RecordActivity.HOME_FRAGMENT_RESULT_CODE);
-                } else {
-                    mContext.startActivity(intent);
-                }
-            }
-        });
-
-        final Button streamFollowButton = viewHolder.getStreamFollowButton();
-        if (AccountManager.isLoggedIn() && stream.user != null && stream.user.is_user_following != null) {
-            streamFollowButton.setActivated(stream.user.is_user_following);
-        } else {
-            streamFollowButton.setActivated(false);
-        }
-        streamFollowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleFollowButton(streamFollowButton, stream.user);
-                if (stream.user != null && stream.user.is_user_following != null)
-                    updateItem(stream.user_id, stream.user.is_user_following);
-            }
-        });
-
-        String username = "";
-
-        if (stream.user != null && stream.user.username != null)
-            username = stream.user.username;
-
-        viewHolder.getStreamItemAuthor().setText(String.format(Locale.ENGLISH,
-                mContext.getResources().getString(R.string.author), username));
     }
 
     public void updateItem(String user_id, boolean is_user_following) {

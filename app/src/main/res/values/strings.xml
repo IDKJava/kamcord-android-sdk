@@ -47,6 +47,7 @@
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>
     <string name="paused">Paused</string>
+    <string name="notifTitle">Kamcord</string>
 
     <!-- Activity -->
     <string name="kamcordRecordTab">Record</string>

@@ -108,8 +108,8 @@ public class VideoViewActivity extends AppCompatActivity implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_video_view);
         ButterKnife.inject(this);
@@ -212,7 +212,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         configureSubtitleView();
 
-        if( player != null ) {
+        if (player != null) {
             shutterView.setVisibility(View.GONE);
         }
 
@@ -226,7 +226,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         if (player != null) {
             audioCapabilitiesReceiver.unregister();
             shutterView.setVisibility(View.VISIBLE);
-            if( player.getPlayerControl().isPlaying() && player.getPlayerControl().canPause() ) {
+            if (player.getPlayerControl().isPlaying() && player.getPlayerControl().canPause()) {
                 player.getPlayerControl().pause();
             }
         }
@@ -264,7 +264,7 @@ public class VideoViewActivity extends AppCompatActivity implements
             preparePlayer();
         } else if (player != null) {
             player.setBackgrounded(false);
-            if( stream != null && stream.live ) {
+            if (stream != null && stream.live) {
                 player.getPlayerControl().start();
             }
         }
@@ -401,7 +401,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private void attemptReconnect() {
         reconnectAttemptCount++;
 
-        if( reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS ) {
+        if (reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS) {
             // If we exceed the maximum number of attempts, we give up and assume the stream has ended.
             // TODO: show the user the "stream ended" state
         } else {
@@ -423,7 +423,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
 
         // If we're not preparing or idle, we've successfully connected to the stream/video
-        if( playbackState != Player.STATE_IDLE && playbackState != Player.STATE_PREPARING ) {
+        if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_PREPARING) {
             reconnectAttemptCount = 0;
             playerError = false;
         }
@@ -450,7 +450,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         showControls();
 
         // Only attempt a reconnect if we're viewing a stream.
-        if( stream != null ) {
+        if (stream != null) {
             attemptReconnect();
         }
     }
@@ -597,12 +597,12 @@ public class VideoViewActivity extends AppCompatActivity implements
     private Callback<GenericResponse<Stream>> attemptStreamReconnectCallback = new Callback<GenericResponse<Stream>>() {
         @Override
         public void success(GenericResponse<Stream> streamGenericResponse, Response response) {
-            if( streamGenericResponse != null && streamGenericResponse.response != null ) {
-                if( !streamGenericResponse.response.live ) {
+            if (streamGenericResponse != null && streamGenericResponse.response != null) {
+                if (!streamGenericResponse.response.live) {
                     // TODO: show the user the "stream ended" state
                 } else {
                     // Try, try again
-                    if( player != null && player.getPlaybackState() == Player.STATE_IDLE ) {
+                    if (player != null && player.getPlaybackState() == Player.STATE_IDLE) {
                         preparePlayer();
                     }
                 }
@@ -612,7 +612,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         @Override
         public void failure(RetrofitError error) {
             // Try, try again
-            if( player != null && player.getPlaybackState() == Player.STATE_IDLE ) {
+            if (player != null && player.getPlaybackState() == Player.STATE_IDLE) {
                 preparePlayer();
             }
         }

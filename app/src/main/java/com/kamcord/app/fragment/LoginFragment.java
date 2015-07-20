@@ -22,6 +22,7 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.StatusCode;
+import com.kamcord.app.service.RegistrationIntentService;
 import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.Connectivity;
@@ -156,6 +157,8 @@ public class LoginFragment extends Fragment {
                         && accountWrapper.status != null && accountWrapper.status.equals(StatusCode.OK)
                         && accountWrapper.response != null) {
                     FlurryAgent.logEvent(getResources().getString(R.string.flurryLogin));
+                    Intent notifIntent = new Intent(getActivity().getApplicationContext(), RegistrationIntentService.class);
+                    getActivity().getApplicationContext().startService(notifIntent);
                     AccountManager.setStoredAccount(accountWrapper.response);
                     Intent intent = new Intent(getActivity(), RecordActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
