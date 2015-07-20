@@ -72,6 +72,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
     private static final int MAX_RECONNECT_ATTEMPTS = 4;
+    private static final long STREAM_STATUS_CHECK_INTERVAL_MS = 30 * 1000;
 
     @InjectView(R.id.surface_view)
     VideoSurfaceView surfaceView;
@@ -82,20 +83,22 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Video video = null;
     private Stream stream = null;
-    private int position = -1;
 
     private Player player;
     private boolean playerNeedsPrepare;
     private float qualityMultiplier = 2f;
-    private boolean playerError = false;
 
     private long playerPosition;
+    private boolean playerBuffering = false;
 
     private MediaControls mediaControls;
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
     private AudioCapabilities audioCapabilities;
 
     private int reconnectAttemptCount = 0;
+    private Handler streamStatusHandler;
+    private boolean streamEnded = false;
+    private boolean playerError = false;
 
     // Analytics counters
     private long totalBufferingTimeMs = 0;
@@ -120,6 +123,7 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (intent.hasExtra(ARG_STREAM)) {
             stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
+            streamStatusHandler = new Handler(Looper.getMainLooper());
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
@@ -398,22 +402,6 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
     }
 
-    private void attemptReconnect() {
-        reconnectAttemptCount++;
-
-        if (reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS) {
-            // If we exceed the maximum number of attempts, we give up and assume the stream has ended.
-            // TODO: show the user the "stream ended" state
-        } else {
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    AppServerClient.getInstance().getStream(stream.stream_id, attemptStreamReconnectCallback);
-                }
-            }, (long) (Math.pow(2.0, reconnectAttemptCount - 1) * 1000));
-        }
-    }
-
     // Player.Listener implementation
 
     @Override
@@ -422,12 +410,26 @@ public class VideoViewActivity extends AppCompatActivity implements
             mediaControls.show(playWhenReady ? 3000 : 0, true);
         }
 
+        if( playbackState == Player.STATE_PREPARING  && stream != null ) {
+            removeStreamStatusCallbacks();
+            streamStatusHandler.post(checkIsStreamLiveRunnable);
+        }
+
         // If we're not preparing or idle, we've successfully connected to the stream/video
         if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_PREPARING) {
             reconnectAttemptCount = 0;
             playerError = false;
         }
 
+        if( playbackState != Player.STATE_BUFFERING && playerBuffering ) {
+            playerBuffering = false;
+            mediaControls.show(3000, true);
+        } else  if( playbackState == Player.STATE_BUFFERING ) {
+            mediaControls.show(0, true);
+            playerBuffering = true;
+        }
+
+        // Increment analytics buffering counter.
         if( playbackState == Player.STATE_BUFFERING ) {
             lastBufferingStart = System.currentTimeMillis();
         } else if( lastBufferingStart > 0 ) {
@@ -475,7 +477,8 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     private void toggleControlsVisibility() {
-        if (mediaControls.isShowing() && !playerError) {
+        if (mediaControls.isShowing()
+                && !playerError && !streamEnded && !playerBuffering) {
             mediaControls.hide(true);
         } else {
             showControls();
@@ -484,6 +487,32 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private void showControls() {
         mediaControls.show(0, true);
+    }
+
+    private void removeStreamStatusCallbacks() {
+        streamStatusHandler.removeCallbacks(attemptReconnectRunnable);
+        streamStatusHandler.removeCallbacks(checkIsStreamLiveRunnable);
+    }
+
+    private void attemptReconnect() {
+        reconnectAttemptCount++;
+
+        if( reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS ) {
+            streamEnded();
+        } else {
+            removeStreamStatusCallbacks();
+            streamStatusHandler.postDelayed(attemptReconnectRunnable,
+                    (long) (Math.pow(2.0, reconnectAttemptCount - 1) * 1000));
+        }
+    }
+
+    private void streamEnded() {
+        if( stream != null ) {
+            removeStreamStatusCallbacks();
+            releasePlayer();
+            ((LiveMediaControls) mediaControls).streamEnded(stream);
+            streamEnded = true;
+        }
     }
 
     // Player.TextListener implementation
@@ -596,10 +625,11 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private Callback<GenericResponse<Stream>> attemptStreamReconnectCallback = new Callback<GenericResponse<Stream>>() {
         @Override
-        public void success(GenericResponse<Stream> streamGenericResponse, Response response) {
-            if (streamGenericResponse != null && streamGenericResponse.response != null) {
-                if (!streamGenericResponse.response.live) {
-                    // TODO: show the user the "stream ended" state
+        public void success(GenericResponse<com.kamcord.app.server.model.Stream> streamGenericResponse, Response response) {
+            if( streamGenericResponse != null && streamGenericResponse.response != null ) {
+                if( !streamGenericResponse.response.live ) {
+                    stream = streamGenericResponse.response;
+                    streamEnded();
                 } else {
                     // Try, try again
                     if (player != null && player.getPlaybackState() == Player.STATE_IDLE) {
@@ -615,6 +645,40 @@ public class VideoViewActivity extends AppCompatActivity implements
             if (player != null && player.getPlaybackState() == Player.STATE_IDLE) {
                 preparePlayer();
             }
+        }
+    };
+
+    private Callback<GenericResponse<Stream>> streamStatusCallback = new Callback<GenericResponse<Stream>>() {
+        @Override
+        public void success(GenericResponse<com.kamcord.app.server.model.Stream> streamGenericResponse, Response response) {
+            if( streamGenericResponse != null && streamGenericResponse.response != null && !streamGenericResponse.response.live ) {
+                stream = streamGenericResponse.response;
+                streamEnded();
+            } else {
+                removeStreamStatusCallbacks();
+                streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
+}
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            streamEnded();
+        }
+    };
+
+    private Runnable checkIsStreamLiveRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if( stream != null ) {
+                AppServerClient.getInstance().getStream(stream.stream_id, streamStatusCallback);
+            }
+        }
+    };
+
+    private Runnable attemptReconnectRunnable = new Runnable() {
+        @Override
+        public void run() {
+            AppServerClient.getInstance().getStream(stream.stream_id, attemptStreamReconnectCallback);
         }
     };
 }

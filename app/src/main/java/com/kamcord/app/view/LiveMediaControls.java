@@ -33,6 +33,7 @@ import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
 import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
+import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.utils.ViewUtils;
 
@@ -60,8 +61,8 @@ public class LiveMediaControls implements MediaControls {
     private MediaController.MediaPlayerControl playerControl;
 
     private boolean isScrubberTracking = false;
-    private boolean isAnchored = false;
     private boolean isEnded = false;
+    private int lastState = -1;
 
     @InjectView(R.id.live_indicator_textview)
     TextView liveIndicatorTextView;
@@ -98,6 +99,21 @@ public class LiveMediaControls implements MediaControls {
     @InjectView(R.id.error_container)
     ViewGroup errorContainer;
 
+    @InjectView(R.id.ended_container)
+    ViewGroup endedContainer;
+    @InjectView(R.id.stream_views)
+    TextView streamViewsTextView;
+    @InjectView(R.id.stream_hearts)
+    TextView streamHeartsTextView;
+    @InjectView(R.id.stream_length)
+    TextView streamLengthTextView;
+    @InjectView(R.id.stream_length_container)
+    ViewGroup streamLengthContainer;
+    @InjectView(R.id.stream_views_container)
+    ViewGroup streamViewsContainer;
+    @InjectView(R.id.stream_hearts_container)
+    ViewGroup streamHeartsContainer;
+
     public LiveMediaControls(Context context, Video video, Stream stream) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
         ButterKnife.inject(this, root);
@@ -119,10 +135,7 @@ public class LiveMediaControls implements MediaControls {
                 scrubberSeekBar.setSplitTrack(false);
             }
 
-            // We only display the user information if there is a user, and that user is not us.
-            Account myAccount = AccountManager.getStoredAccount();
-
-            if (owner != null && owner.id != null && !(myAccount != null && owner.id.equals(myAccount.id))) {
+            if( owner != null && owner.id != null) {
                 avatarImageView.setVisibility(View.GONE); // TODO: unhide this when we start receiving avatars from server
 
                 usernameTextView.setText(owner.username);
@@ -138,8 +151,11 @@ public class LiveMediaControls implements MediaControls {
                 } catch (Exception e) {
                 }
                 profileLetterTextView.getBackground().setColorFilter(profileColor, PorterDuff.Mode.MULTIPLY);
+            }
 
-                if(owner.is_user_following == null)
+            Account myAccount = AccountManager.getStoredAccount();
+            if (owner != null && owner.id != null && !(myAccount != null && owner.id.equals(myAccount.id))) {
+                if (owner.is_user_following == null)
                     owner.is_user_following = false;
 
                 followButton.setActivated(owner.is_user_following);
@@ -153,7 +169,7 @@ public class LiveMediaControls implements MediaControls {
                 }
             }
             else {
-                ownerContainer.setVisibility(View.GONE);
+                followButton.setVisibility(View.GONE);
             }
 
             if (stream != null) {
@@ -164,6 +180,7 @@ public class LiveMediaControls implements MediaControls {
 
                 scrubberSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                     private boolean wasPlaying = false;
+
                     @Override
                     public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                     }
@@ -171,9 +188,9 @@ public class LiveMediaControls implements MediaControls {
                     @Override
                     public void onStartTrackingTouch(SeekBar seekBar) {
                         isScrubberTracking = true;
-                        if( playerControl != null ) {
+                        if (playerControl != null) {
                             wasPlaying = playerControl.isPlaying();
-                            if( playerControl.canPause() ) {
+                            if (playerControl.canPause()) {
                                 playerControl.pause();
                             }
                         }
@@ -182,11 +199,11 @@ public class LiveMediaControls implements MediaControls {
                     @Override
                     public void onStopTrackingTouch(SeekBar seekBar) {
                         isScrubberTracking = false;
-                        if( playerControl != null ) {
+                        if (playerControl != null) {
                             float percent = (float) scrubberSeekBar.getProgress() / (float) scrubberSeekBar.getMax();
                             int position = (int) ((float) playerControl.getDuration() * percent);
                             playerControl.seekTo(position);
-                            if( wasPlaying) {
+                            if (wasPlaying) {
                                 playerControl.start();
                             }
                         }
@@ -400,12 +417,13 @@ public class LiveMediaControls implements MediaControls {
         if( playbackState == Player.STATE_READY ) {
             playButton.setVisibility(View.VISIBLE);
             bufferingProgressBar.setVisibility(View.GONE);
-
             playButton.setImageResource(playWhenReady ? R.drawable.pause_white : R.drawable.play_white);
+
         } else if( playbackState == Player.STATE_BUFFERING
                 || playbackState == Player.STATE_PREPARING ) {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.VISIBLE);
+
         } else if( playbackState == Player.STATE_ENDED ) {
             isEnded = true;
             playButton.setVisibility(View.VISIBLE);
@@ -414,10 +432,13 @@ public class LiveMediaControls implements MediaControls {
             scrubberSeekBar.setProgress(scrubberSeekBar.getMax());
             playButton.setImageResource(R.drawable.replay_white);
             show(0, true);
+
         } else {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.GONE);
         }
+
+        lastState = playbackState;
     }
 
     @Override
@@ -425,6 +446,18 @@ public class LiveMediaControls implements MediaControls {
         if( stream != null ) {
             errorContainer.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void streamEnded(Stream stream) {
+        endedContainer.setVisibility(View.VISIBLE);
+        streamViewsTextView.setText(StringUtils.commatizedCount(stream.total_viewers_count));
+        streamHeartsTextView.setText(StringUtils.commatizedCount(stream.heart_count));
+        if( stream.ended_at != null && stream.started_at != null ) {
+            streamLengthTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, stream.ended_at.getTime() - stream.started_at.getTime()));
+        } else {
+            streamLengthContainer.setVisibility(View.GONE);
+        }
+        show(0, true);
     }
 
     @Override
