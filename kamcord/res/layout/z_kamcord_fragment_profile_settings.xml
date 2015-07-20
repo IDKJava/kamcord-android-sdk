@@ -52,45 +52,6 @@
 
             </LinearLayout>
 
-            <!-- Voice Overlay -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#fff"
-                android:orientation="vertical"
-                android:layout_marginBottom="@dimen/kamcordProfileSettingsSpacing" >
-
-                <LinearLayout 
-                    android:id="@+id/voice_overlay_container"
-                    style="@style/KamcordProfileSettingsItemContainer" >
-
-                    <ImageView
-                        android:src="@drawable/kamcord_mic"
-                        style="@style/KamcordProfileSettingsItemIcon" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical" >
-
-                        <TextView
-                            android:text="@string/kamcordVoiceOverlay"
-                            style="@style/KamcordProfileSettingsNetworkText" />
-
-                        <TextView
-                            android:id="@+id/voice_overlay_status_text"
-                            style="@style/KamcordProfileSettingsUsernameText" />
-                    </LinearLayout>
-
-                    <ToggleButton
-                        android:id="@+id/voice_overlay_button"
-                        style="@style/KamcordButton.Small"
-                        android:textOn="@string/kamcordEnable"
-                        android:textOff="@string/kamcordDisable" />
-                </LinearLayout>
-            </LinearLayout>
-            
             <!-- Terms of Service and Privacy Policy -->
 
             <LinearLayout
