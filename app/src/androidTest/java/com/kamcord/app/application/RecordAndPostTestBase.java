@@ -73,6 +73,10 @@ public abstract class RecordAndPostTestBase extends TestBase {
                                    boolean shortVideo,
                                    boolean checkNotificationStatus) {
         mDevice.waitForIdle(UI_TIMEOUT_MS);
+        findUiObj(R.string.kamcordRecordTab,
+                UiObjIdType.Str,
+                UiObjSelType.Des,
+                UI_TIMEOUT_MS).click();
         sleep(UI_TIMEOUT_MS);
         waitForTileLoad(R.id.recordfragment_refreshlayout, APP_TIMEOUT_MS);
         //find ripples app logo and click
@@ -466,7 +470,7 @@ public abstract class RecordAndPostTestBase extends TestBase {
                 UI_TIMEOUT_MS);
         UiObject2 listItemObj = videoTitleObj.getParent();
         UiObject2 obj = findUiObjInObj(listItemObj,
-                R.id.stream_item_author,
+                R.id.profile_item_author,
                 UiObjIdType.Res,
                 UiObjSelType.Res,
                 UI_TIMEOUT_MS);
