@@ -39,14 +39,12 @@ public class RegistrationIntentService extends IntentService {
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE,
                     null
             );
-            Log.d("Register ID", token);
 
-            // Send Token to Server
             if (token != null) {
                 sendRegistrationToServer(token);
             }
         } catch (Exception e) {
-            Log.d("Registration Service", "onHandleIntent");
+            e.printStackTrace();
         }
     }
 
@@ -63,12 +61,12 @@ public class RegistrationIntentService extends IntentService {
     private class regPushNotifCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
-            Log.d("Push Notif Success", "  " + "Oh hi");
+            Log.e("Notif Registration", "  " + "success");
         }
 
         @Override
         public void failure(RetrofitError error) {
-            Log.e("Push Notif Failure", "  " + error.toString());
+            Log.e("Notif Registration", "  " + error.toString());
         }
     }
 }
