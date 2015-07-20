@@ -10,7 +10,9 @@ import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.gson.Gson;
+import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
+import com.kamcord.app.server.model.GenericResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +28,10 @@ import java.net.URLEncoder;
 import java.util.HashSet;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by pplunkett on 5/13/15.
@@ -124,8 +130,21 @@ public class AccountManager {
                 currentLoginState = isLoggedIn();
                 notifyLoginStateChanged(currentLoginState);
             }
+            AppServerClient.getInstance().unregisterPushNotif(unRegisterNotifCallback);
         }
     }
+
+    private static Callback<GenericResponse<?>> unRegisterNotifCallback = new Callback<GenericResponse<?>>() {
+        @Override
+        public void success(GenericResponse<?> responseWrapper, Response response) {
+            Log.e("Retrofit UnRegister", "  " + "success");
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Log.e("Retrofit Failure", "  " + error.toString());
+        }
+    };
 
     public static class YouTube {
         private static final String YOUTUBE_NAME_KEY = "youtube_name";

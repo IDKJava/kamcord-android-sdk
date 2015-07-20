@@ -63,7 +63,7 @@ public class NotifGcmListenerService extends GcmListenerService {
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         notificationBuilder.setContentIntent(resultPendingIntent);
-        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
+        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID++, notificationBuilder.build());
     }
 
     private class NotificationStreamCallBack implements Callback<GenericResponse<Stream>> {
