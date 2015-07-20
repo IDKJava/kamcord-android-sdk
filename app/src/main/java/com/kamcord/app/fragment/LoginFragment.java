@@ -107,7 +107,7 @@ public class LoginFragment extends Fragment {
             AppServerClient.getInstance().login(username, password, loginCallback);
         } else {
             if (toast == null) {
-                toast = Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_SHORT);
+                toast = Toast.makeText(getActivity().getApplicationContext(), getResources().getString(R.string.failedToConnect), Toast.LENGTH_LONG);
             } else {
                 toast.setText(getResources().getString(R.string.failedToConnect));
             }

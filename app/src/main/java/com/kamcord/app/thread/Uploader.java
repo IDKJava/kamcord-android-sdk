@@ -152,10 +152,10 @@ public class Uploader extends Thread {
             Bundle extra = new Bundle();
             switch( i ) {
                 case R.id.share_twitterbutton:
-                    extra.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, VideoUploadedEntity.ShareSource.TWITTER.name());
+                    extra.putSerializable(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.TWITTER);
                     break;
                 case R.id.share_youtubebutton:
-                    extra.putString(KamcordAnalytics.EXTERNAL_NETWORK_KEY, VideoUploadedEntity.ShareSource.YOUTUBE.name());
+                    extra.putSerializable(KamcordAnalytics.EXTERNAL_NETWORK_KEY, Event.ExternalNetwork.YOUTUBE);
                     break;
             }
             extra.putString(KamcordAnalytics.APP_SESSION_ID_KEY, mRecordingSession.getShareAppSessionId());

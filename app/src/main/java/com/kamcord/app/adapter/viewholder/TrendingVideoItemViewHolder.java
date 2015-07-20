@@ -1,5 +1,6 @@
 package com.kamcord.app.adapter.viewholder;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,8 @@ import butterknife.InjectView;
  */
 public class TrendingVideoItemViewHolder extends RecyclerView.ViewHolder {
 
+    @InjectView(R.id.fragment_trend_item_layout)
+    CardView container;
     @InjectView(R.id.trend_item_title)
     TextView trendItemTitle;
     @InjectView(R.id.trend_item_author)
@@ -37,6 +40,9 @@ public class TrendingVideoItemViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.inject(this, itemLayoutView);
     }
 
+    public CardView getContainer() {
+        return this.container;
+    }
     public TextView getTrendItemTitle() {
         return this.trendItemTitle;
     }

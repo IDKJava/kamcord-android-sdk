@@ -25,6 +25,7 @@
     <color name="kamcordBlue">#00a8c0</color>
     <color name="kamcordRed">#b34</color>
     <color name="kamcordGray">#999999</color>
+    <color name="kamcordDarkGray">#666666</color>
 
     <color name="twitterBlue">#55acee</color>
     <color name="youtubeRed">#cd201f</color>
