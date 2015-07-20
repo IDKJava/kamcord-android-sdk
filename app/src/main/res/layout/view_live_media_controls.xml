@@ -6,29 +6,26 @@
     android:background="@android:color/transparent">
 
     <FrameLayout
-        android:id="@+id/play_button_container"
+        android:id="@+id/non_scrubber_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/scrubber_container"
-        android:layout_alignParentTop="true"
-        android:background="#3000">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/scrubber_container">
 
-        <ImageButton
-            android:id="@+id/play_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@null"
-            android:minHeight="48dp"
-            android:minWidth="48dp"
-            android:scaleType="centerInside" />
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/scrubber_container"
-        android:layout_alignParentTop="true">
+        <FrameLayout
+            android:id="@+id/play_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#3000">
+            <ImageButton
+                android:id="@+id/play_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:minHeight="48dp"
+                android:minWidth="48dp"
+                android:scaleType="centerInside"/>
+        </FrameLayout>
 
         <ProgressBar
             android:id="@+id/buffering_progressbar"
@@ -36,7 +33,6 @@
             android:layout_height="@dimen/actionbutton_width"
             android:layout_gravity="center"
             android:indeterminate="true"
-            android:indeterminateDuration="1000"
             android:progress="100"
             android:visibility="gone" />
     </FrameLayout>
@@ -68,7 +64,7 @@
         android:id="@+id/owner_container"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_above="@+id/scrubber_container"
+        android:layout_alignBottom="@id/non_scrubber_container"
         android:background="#B34F575C"
         android:gravity="center_vertical"
         android:orientation="horizontal">
