@@ -23,14 +23,8 @@ import retrofit.client.Response;
 
 public class NotifGcmListenerService extends GcmListenerService {
 
-    private static int NOTIFICATION_ID = 3141592;
+    private static int NOTIFICATION_ID = 6253589;
     private static Notification.Builder notificationBuilder;
-    private final static String STREAM_ID = "streamId";
-    private final static String VIDEO_ID = "videoId";
-    private final static String NOTIF_TEXT = "text";
-    private final static String NOTIF_TITLE = "Kamcord";
-    private final static String NOTIF_CATEGORY = "category";
-    private final static String NOTIF_USER_ID = "userId";
     private String streamID = "";
     private String videoID = "";
     private String notifText = "";
@@ -38,14 +32,14 @@ public class NotifGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         if (data != null) {
-            streamID = data.getString(STREAM_ID);
-            videoID = data.getString(VIDEO_ID);
-            notifText = data.getString(NOTIF_TEXT);
+            streamID = data.getString(getResources().getString(R.string.streamID));
+            videoID = data.getString(getResources().getString(R.string.videoID));
+            notifText = data.getString(getResources().getString(R.string.notifText));
         }
         if (streamID != null) {
-            AppServerClient.getInstance().getStream(streamID, new notificationStreamCallBack());
-        } else {
-            AppServerClient.getInstance().getVideoInfo(videoID, new notificationVideoCallback());
+            AppServerClient.getInstance().getStream(streamID, new NotificationStreamCallBack());
+        } else if(videoID != null){
+            AppServerClient.getInstance().getVideoInfo(videoID, new NotificationVideoCallback());
         }
     }
 
@@ -54,7 +48,7 @@ public class NotifGcmListenerService extends GcmListenerService {
     /* 2. */
     public void sendNotification(Object object, String text) {
         notificationBuilder = new Notification.Builder(this)
-                .setContentTitle(NOTIF_TITLE)
+                .setContentTitle(getResources().getString(R.string.notifTitle))
                 .setContentText(text)
                 .setSmallIcon(R.drawable.notif_logo_small)
                 .setDefaults(Notification.DEFAULT_SOUND)
@@ -72,7 +66,7 @@ public class NotifGcmListenerService extends GcmListenerService {
         ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
-    private class notificationStreamCallBack implements Callback<GenericResponse<Stream>> {
+    private class NotificationStreamCallBack implements Callback<GenericResponse<Stream>> {
         @Override
         public void success(GenericResponse<Stream> streamGenericResponse, Response response) {
             if (streamGenericResponse != null && streamGenericResponse.response != null) {
@@ -92,7 +86,7 @@ public class NotifGcmListenerService extends GcmListenerService {
         }
     }
 
-    private class notificationVideoCallback implements Callback<GenericResponse<Video>> {
+    private class NotificationVideoCallback implements Callback<GenericResponse<Video>> {
         @Override
         public void success(GenericResponse<Video> streamGenericResponse, Response response) {
             if (streamGenericResponse != null && streamGenericResponse.response != null) {

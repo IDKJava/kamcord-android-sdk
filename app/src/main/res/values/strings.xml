@@ -47,6 +47,12 @@
     <string name="idle">Idle</string>
     <string name="recording">Recording</string>
     <string name="paused">Paused</string>
+    <string name="streamID">streamId</string>
+    <string name="videoID">videoId</string>
+    <string name="notifText">text</string>
+    <string name="notifTitle">Kamcord</string>
+    <string name="notifCategory">category</string>
+    <string name="notifUserID">userId</string>
 
     <!-- Activity -->
     <string name="kamcordRecordTab">Record</string>

@@ -55,10 +55,10 @@ public class RegistrationIntentService extends IntentService {
     }
 
     public void sendRegistrationToServer(String token) {
-        AppServerClient.getInstance().registerPushNotif(token, new regPushNotifCallback());
+        AppServerClient.getInstance().registerPushNotif(token, new RegPushNotifCallback());
     }
 
-    private class regPushNotifCallback implements Callback<GenericResponse<?>> {
+    private class RegPushNotifCallback implements Callback<GenericResponse<?>> {
         @Override
         public void success(GenericResponse<?> responseWrapper, Response response) {
             Log.e("Notif Registration", "  " + "success");
