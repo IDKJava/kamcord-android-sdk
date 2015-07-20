@@ -239,7 +239,9 @@ public class HomeFragment extends Fragment {
                 mStreamAdapter.notifyDataSetChanged();
                 homeFeedPromptContainer.setVisibility(View.GONE);
             }
-            homeFeedRefreshLayout.setRefreshing(false);
+            if( viewsAreValid ) {
+                homeFeedRefreshLayout.setRefreshing(false);
+            }
         }
 
         @Override

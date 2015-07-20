@@ -1,5 +1,6 @@
 package com.kamcord.app.adapter.viewholder;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,8 @@ import butterknife.InjectView;
  */
 public class StreamItemViewHolder extends RecyclerView.ViewHolder {
 
+    @InjectView(R.id.fragment_stream_item_layout)
+    CardView container;
     @InjectView(R.id.stream_item_title)
     TextView streamItemTitle;
     @InjectView(R.id.stream_item_author)
@@ -34,6 +37,9 @@ public class StreamItemViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.inject(this, itemLayoutView);
     }
 
+    public CardView getContainer() {
+        return this.container;
+    }
     public TextView getStreamItemTitle() {
         return this.streamItemTitle;
     }
