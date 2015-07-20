@@ -39,7 +39,7 @@ public class RegistrationIntentService extends IntentService {
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE,
                     null
             );
-
+            
             if (token != null) {
                 sendRegistrationToServer(token);
             }
