@@ -26,6 +26,11 @@ public class NotifGcmListenerService extends GcmListenerService {
 
     private static int NOTIFICATION_ID = 6253589;
     private static Notification.Builder notificationBuilder;
+    private final static String STREAM_ID = "streamId";
+    private final static String VIDEO_ID = "videoId";
+    private final static String NOTIF_TEXT = "text";
+    private final static String NOTIF_CATEGORY = "category";
+    private final static String NOTIF_USER_ID = "userId";
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
@@ -34,10 +39,10 @@ public class NotifGcmListenerService extends GcmListenerService {
         String notifText = "";
         String userID = "";
         if (data != null) {
-            userID = data.getString(getResources().getString(R.string.notifUserID));
-            streamID = data.getString(getResources().getString(R.string.streamID));
-            videoID = data.getString(getResources().getString(R.string.videoID));
-            notifText = data.getString(getResources().getString(R.string.notifText));
+            userID = data.getString(NOTIF_USER_ID);
+            streamID = data.getString(STREAM_ID);
+            videoID = data.getString(VIDEO_ID);
+            notifText = data.getString(NOTIF_TEXT);
         }
         if (streamID != null
                 && AccountManager.isLoggedIn()
