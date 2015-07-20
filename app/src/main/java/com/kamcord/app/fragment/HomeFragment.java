@@ -87,14 +87,11 @@ public class HomeFragment extends Fragment {
             homeFeedRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    if( viewsAreValid ) {
-                        homeFeedRefreshLayout.setRefreshing(true);
-                    }
+                    possiblySetRefreshing(true);
                 }
             });
             AppServerClient.getInstance().getHomeFeed(null, COUNT_PER_PAGE, new GetHomeFeedCallBack());
         } else {
-            homeFeedRefreshLayout.setEnabled(false);
             homeFeedPromptContainer.setVisibility(View.VISIBLE);
         }
 
@@ -153,6 +150,13 @@ public class HomeFragment extends Fragment {
         AppServerClient.getInstance().getHomeFeed(nextPage, COUNT_PER_PAGE, new GetHomeFeedCallBack());
     }
 
+    private void possiblySetRefreshing(boolean refreshing) {
+        if( viewsAreValid ) {
+            homeFeedRefreshLayout.setRefreshing(refreshing);
+            homeFeedRefreshLayout.setEnabled(!refreshing);
+        }
+    }
+
     private class SwipeToRefreshHomeFeedCallBack implements Callback<GenericResponse<CardList>> {
         @Override
         public void success(GenericResponse<CardList> homeFeedGenericResponse, Response response) {
@@ -190,15 +194,13 @@ public class HomeFragment extends Fragment {
                 footerVisible = false;
                 mStreamAdapter.notifyDataSetChanged();
             }
-            homeFeedRefreshLayout.setRefreshing(false);
+            possiblySetRefreshing(false);
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if (viewsAreValid) {
-                homeFeedRefreshLayout.setRefreshing(false);
-            }
+            possiblySetRefreshing(false);
         }
     }
 
@@ -241,17 +243,13 @@ public class HomeFragment extends Fragment {
                 mStreamAdapter.notifyDataSetChanged();
                 homeFeedPromptContainer.setVisibility(View.GONE);
             }
-            if( viewsAreValid ) {
-                homeFeedRefreshLayout.setRefreshing(false);
-            }
+            possiblySetRefreshing(false);
         }
 
         @Override
         public void failure(RetrofitError error) {
             Log.e(TAG, "  " + error.toString());
-            if (viewsAreValid) {
-                homeFeedRefreshLayout.setRefreshing(false);
-            }
+            possiblySetRefreshing(false);
         }
     }
 
