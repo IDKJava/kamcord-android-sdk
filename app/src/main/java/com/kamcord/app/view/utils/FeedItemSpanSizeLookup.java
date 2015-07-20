@@ -8,10 +8,10 @@ import com.kamcord.app.model.FeedItem;
 /**
  * Created by pplunkett on 6/5/15.
  */
-public class ProfileLayoutSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+public class FeedItemSpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
     private RecyclerView recyclerView;
 
-    public ProfileLayoutSpanSizeLookup(RecyclerView recyclerView) {
+    public FeedItemSpanSizeLookup(RecyclerView recyclerView) {
         this.recyclerView = recyclerView;
     }
 
@@ -27,6 +27,8 @@ public class ProfileLayoutSpanSizeLookup extends GridLayoutManager.SpanSizeLooku
                 case HEADER:
                 case FOOTER:
                 case UPLOAD_PROGRESS:
+                case LIVESTREAM_HEADER:
+                case TRENDVIDEO_HEADER:
                     spanSize = ((GridLayoutManager) layoutManager).getSpanCount();
                     break;
                 default:

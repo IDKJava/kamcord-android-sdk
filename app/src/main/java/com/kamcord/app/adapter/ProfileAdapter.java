@@ -48,7 +48,7 @@ import com.kamcord.app.utils.FileSystemManager;
 import com.kamcord.app.utils.StringUtils;
 import com.kamcord.app.utils.VideoUtils;
 import com.kamcord.app.utils.ViewUtils;
-import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
+import com.kamcord.app.view.utils.FeedItemSpanSizeLookup;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -215,19 +215,19 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 // Add analytics extras
                 intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.VIDEO_LIST_VIEW);
                 intent.putExtra(KamcordAnalytics.VIDEO_LIST_TYPE_KEY, Event.ListType.PROFILE);
-                if( mRecyclerView.getLayoutManager() instanceof GridLayoutManager ) {
+                if (mRecyclerView.getLayoutManager() instanceof GridLayoutManager) {
                     GridLayoutManager gridLayoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
                     int spanCount = gridLayoutManager.getSpanCount();
-                    if( gridLayoutManager.getSpanSizeLookup() instanceof ProfileLayoutSpanSizeLookup ) {
-                        ProfileLayoutSpanSizeLookup lookup = (ProfileLayoutSpanSizeLookup) gridLayoutManager.getSpanSizeLookup();
+                    if (gridLayoutManager.getSpanSizeLookup() instanceof FeedItemSpanSizeLookup) {
+                        FeedItemSpanSizeLookup lookup = (FeedItemSpanSizeLookup) gridLayoutManager.getSpanSizeLookup();
 
                         intent.putExtra(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
-                                lookup.getSpanGroupIndex(position, spanCount)+1);
+                                lookup.getSpanGroupIndex(position, spanCount) + 1);
                         intent.putExtra(KamcordAnalytics.VIDEO_LIST_COL_KEY,
-                                lookup.getSpanIndex(position, spanCount)+1);
+                                lookup.getSpanIndex(position, spanCount) + 1);
                     }
                 }
-                if( owner != null ) {
+                if (owner != null) {
                     intent.putExtra(KamcordAnalytics.PROFILE_USER_ID_KEY, owner.id);
                 }
 
@@ -285,8 +285,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 if( mRecyclerView.getLayoutManager() instanceof GridLayoutManager ) {
                                     GridLayoutManager gridLayoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
                                     int spanCount = gridLayoutManager.getSpanCount();
-                                    if( gridLayoutManager.getSpanSizeLookup() instanceof ProfileLayoutSpanSizeLookup ) {
-                                        ProfileLayoutSpanSizeLookup lookup = (ProfileLayoutSpanSizeLookup) gridLayoutManager.getSpanSizeLookup();
+                                    if( gridLayoutManager.getSpanSizeLookup() instanceof FeedItemSpanSizeLookup) {
+                                        FeedItemSpanSizeLookup lookup = (FeedItemSpanSizeLookup) gridLayoutManager.getSpanSizeLookup();
 
                                         extras.putInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
                                                 lookup.getSpanGroupIndex(position, spanCount)+1);
