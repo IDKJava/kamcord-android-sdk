@@ -392,10 +392,18 @@ public class RecordFragment extends Fragment implements
         boolean didChange = false;
         for (Game game : mGameList) {
             boolean installed = isAppInstalled(game.play_store_id);
-            if( game.isInstalled != installed ) {
-                game.isInstalled = installed;
+            if( game.isInstalled && !installed ) {
+                game.isInstalled = false;
+                mInstalledGameList.remove(game);
+                didChange = true;
+            } else if( !game.isInstalled && installed ) {
+                game.isInstalled = true;
+                mInstalledGameList.add(game);
                 didChange = true;
             }
+        }
+        if( didChange ) {
+            GameListUtils.saveInstalledGameList(mInstalledGameList);
         }
         mRecyclerAdapter.addGames(mGameList);
     }
