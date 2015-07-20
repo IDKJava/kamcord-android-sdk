@@ -49,6 +49,9 @@ public class NotifGcmListenerService extends GcmListenerService {
         }
     }
 
+    /* Notification Specification */
+    /* 1. To display each notification seperately, use different Notification ID */
+    /* 2. */
     public void sendNotification(Object object, String text) {
         notificationBuilder = new Notification.Builder(this)
                 .setContentTitle(NOTIF_TITLE)
