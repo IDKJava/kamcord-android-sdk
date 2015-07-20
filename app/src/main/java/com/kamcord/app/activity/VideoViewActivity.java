@@ -436,7 +436,6 @@ public class VideoViewActivity extends AppCompatActivity implements
             totalBufferingTimeMs += System.currentTimeMillis() - lastBufferingStart;
             lastBufferingStart = 0;
         }
-    }
 
         if( playbackState == Player.STATE_READY && playWhenReady ) {
             lastPlayStart = System.currentTimeMillis();
