@@ -159,6 +159,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+        removeStreamStatusCallbacks();
         releasePlayer();
     }
 
