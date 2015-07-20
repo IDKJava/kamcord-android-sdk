@@ -1,5 +1,6 @@
 package com.kamcord.app.adapter.viewholder;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,8 @@ import butterknife.InjectView;
  */
 public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
 
+    @InjectView(R.id.fragment_profile_item_layout)
+    CardView container;
     @InjectView(R.id.profile_item_title)
     TextView profileItemTitle;
     @InjectView(R.id.profile_item_author)
@@ -36,6 +39,10 @@ public class ProfileVideoItemViewHolder extends RecyclerView.ViewHolder {
     public ProfileVideoItemViewHolder(final View itemLayoutView) {
         super(itemLayoutView);
         ButterKnife.inject(this, itemLayoutView);
+    }
+
+    public CardView getContainer() {
+        return this.container;
     }
 
     public TextView getProfileItemTitle() {

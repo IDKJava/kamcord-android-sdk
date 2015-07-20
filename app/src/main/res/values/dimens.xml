@@ -1,32 +1,23 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="grid_margin">8dp</dimen>
     <dimen name="card_margin">8dp</dimen>
-    <dimen name="cardCornerRadius">2dp</dimen>
     <dimen name="tabIconPadding">12dp</dimen>
     <dimen name="tabsHeight">56dp</dimen>
     <dimen name="refreshEnd">100dp</dimen>
     <dimen name="uploadProgressSize">3dp</dimen>
     <dimen name="griditem_width">320dp</dimen>
-    <dimen name="suggest_item_margin">5dp</dimen>
 
     <dimen name="cardview_standardmargin">16dp</dimen>
     <dimen name="cardview_lightermargin">8dp</dimen>
-    <dimen name="cardview_actionsize">24dp</dimen>
     <dimen name="cardview_elevation">3dp</dimen>
-    <dimen name="cardview_actionheight">32dp</dimen>
-    <dimen name="cardview_actionwidth">80dp</dimen>
 
     <dimen name="edittext_extraspace">10dp</dimen>
     <dimen name="view_extraspace">30dp</dimen>
 
     <dimen name="actionbutton_width">100dp</dimen>
     <dimen name="materialDefaultButtonHeight">36dp</dimen>
-    <dimen name="button_gap">1dp</dimen>
     <dimen name="shareButtonHeight">56dp</dimen>
-    <dimen name="buttonPadding">16dp</dimen>
 
     <dimen name="subtitle_minimum_font_size">24sp</dimen>
 

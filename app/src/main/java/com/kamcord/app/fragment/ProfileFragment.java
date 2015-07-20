@@ -34,7 +34,7 @@ import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.ActiveRecordingSessionManager;
 import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.view.DynamicRecyclerView;
-import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
+import com.kamcord.app.view.utils.FeedItemSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
 
 import java.util.ArrayList;
@@ -144,7 +144,7 @@ public class ProfileFragment extends Fragment implements AccountListener, Upload
                     .build()); // TODO: change this to the user passed into the intent, once we start doing that.
         }
         profileRecyclerView.setAdapter(mProfileAdapter);
-        profileRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(profileRecyclerView));
+        profileRecyclerView.setSpanSizeLookup(new FeedItemSpanSizeLookup(profileRecyclerView));
         profileRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
         videoFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));

@@ -5,17 +5,6 @@
     <string name="flurryLogin">Successful Login</string>
     <string name="flurryCreateProfile">Successful Create Profile</string>
     <string name="flurryRecordStarted">Record Started</string>
-    <string name="flurryVideoShare">Video_Share</string>
-    <string name="flurryUploadDuration">Upload Duration</string>
     <string name="flurryReplayShareView">Replay on Share View</string>
-    <string name="flurryGameName">GameName</string>
-    <string name="flurryGameID">GameID</string>
-    <string name="flurryVideoID">VideoID</string>
-    <string name="flurryUserName">UserName</string>
-    <string name="flurryUserID">UserID</string>
-    <string name="flurryDuration">Duration</string>
-    <string name="flurrySuccess">Success</string>
-    <string name="flurryTrue">true</string>
-    <string name="flurryFalse">false</string>
 
 </resources>

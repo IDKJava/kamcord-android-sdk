@@ -53,7 +53,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:text="@string/byAuthorGame"
-                    android:textColor="@color/kamcordLightText"
+                    android:textColor="@color/kamcordDarkGray"
                     android:textSize="16sp" />
             </LinearLayout>
 

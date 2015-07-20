@@ -1,5 +1,7 @@
 package com.kamcord.app.server.client;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -127,6 +129,13 @@ public class AppServerClient {
         @DELETE("/app/v3/videos/{videoId}")
         void deleteVideo(@Path("videoId") String videoId, Callback<GenericResponse<?>> cb);
 
+        @FormUrlEncoded
+        @POST("/app/v4/account/token/set")
+        void registerPushNotif(@Field("token") String registerToken, Callback<GenericResponse<?>> cb);
+
+        @POST("/app/v4/account/token/delete")
+        void unregisterPushNotif(Callback<GenericResponse<?>> cb);
+
         @POST("/app/v3/users/{userId}/follow")
         void follow(@Path("userId") String userId, Callback<GenericResponse<?>> cb);
 
@@ -142,15 +151,18 @@ public class AppServerClient {
         @Override
         public void intercept(RequestFacade request) {
             request.addHeader("user-agent", "android_app_" + BuildConfig.VERSION_NAME);
+            Log.d("user-agent: ", "android_app_" + BuildConfig.VERSION_NAME);
 
             Account account = AccountManager.getStoredAccount();
             if (account != null) {
                 request.addHeader("user-token", account.token);
+                Log.d("user-token: ", account.token);
             }
 
             String deviceToken = DeviceManager.getDeviceToken();
             if (deviceToken != null && !deviceToken.isEmpty()) {
                 request.addHeader("device-token", DeviceManager.getDeviceToken());
+                Log.d("device-token: ", DeviceManager.getDeviceToken());
             }
         }
     };

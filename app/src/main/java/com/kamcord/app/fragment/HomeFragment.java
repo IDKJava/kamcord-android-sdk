@@ -23,7 +23,7 @@ import com.kamcord.app.server.model.CardList;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.view.DynamicRecyclerView;
-import com.kamcord.app.view.utils.ProfileLayoutSpanSizeLookup;
+import com.kamcord.app.view.utils.FeedItemSpanSizeLookup;
 import com.kamcord.app.view.utils.ProfileViewItemDecoration;
 
 import java.util.ArrayList;
@@ -98,7 +98,7 @@ public class HomeFragment extends Fragment {
 
         mStreamAdapter = new StreamListAdapter(getActivity(), mFeedItemList);
         homeRecyclerView.setAdapter(mStreamAdapter);
-        homeRecyclerView.setSpanSizeLookup(new ProfileLayoutSpanSizeLookup(homeRecyclerView));
+        homeRecyclerView.setSpanSizeLookup(new FeedItemSpanSizeLookup(homeRecyclerView));
         homeRecyclerView.addItemDecoration(new ProfileViewItemDecoration(getResources().getDimensionPixelSize(R.dimen.grid_margin)));
 
         homeFeedRefreshLayout.setProgressViewOffset(false, 0, getResources().getDimensionPixelSize(R.dimen.refreshEnd));
@@ -239,7 +239,9 @@ public class HomeFragment extends Fragment {
                 mStreamAdapter.notifyDataSetChanged();
                 homeFeedPromptContainer.setVisibility(View.GONE);
             }
-            homeFeedRefreshLayout.setRefreshing(false);
+            if( viewsAreValid ) {
+                homeFeedRefreshLayout.setRefreshing(false);
+            }
         }
 
         @Override
