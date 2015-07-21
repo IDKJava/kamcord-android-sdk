@@ -456,6 +456,11 @@ public class LiveMediaControls implements MediaControls {
         show(0, true);
     }
 
+    public void streamResumed(Stream stream) {
+        endedContainer.setVisibility(View.GONE);
+        show(0, true);
+    }
+
     @Override
     public void onVideoSizeChanged(int width, int height, float pixelWidthHeightRatio) {
     }
