@@ -160,6 +160,7 @@
 
     <FrameLayout
         android:id="@+id/error_container"
+        android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#333"
@@ -198,6 +199,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/kamcordBlue"
+        android:clickable="true"
         android:visibility="gone">
 
         <LinearLayout
@@ -229,29 +231,6 @@
 
                     <TextView
                         android:id="@+id/stream_views"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textColor="@android:color/white"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/stream_hearts_container"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:padding="16dp"
-                    android:orientation="vertical"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_margin="8dp"
-                        android:src="@drawable/heart_white_24dp"
-                        android:background="@drawable/solid_green_circle"
-                        android:scaleType="center"/>
-
-                    <TextView
-                        android:id="@+id/stream_hearts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
