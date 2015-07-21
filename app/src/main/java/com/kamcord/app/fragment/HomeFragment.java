@@ -144,7 +144,7 @@ public class HomeFragment extends Fragment {
 
     public void loadMoreItems() {
         footerVisible = true;
-        mFeedItemList.add(new FeedItem<>(FeedItem.Type.FOOTER, null));
+        mFeedItemList.add(new FeedItem<>(FeedItem.Type.FETCH_MORE, null));
         mStreamAdapter.notifyItemInserted(mStreamAdapter.getItemCount());
         AppServerClient.getInstance().getHomeFeed(nextPage, COUNT_PER_PAGE, new GetHomeFeedCallBack());
     }
@@ -212,7 +212,7 @@ public class HomeFragment extends Fragment {
                     && homeFeedGenericResponse.response.card_model_list != null
                     && viewsAreValid) {
                 nextPage = homeFeedGenericResponse.response.next_page;
-                if (mFeedItemList.size() > 0 && (mFeedItemList.get(mStreamAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
+                if (mFeedItemList.size() > 0 && (mFeedItemList.get(mStreamAdapter.getItemCount() - 1).getType() == FeedItem.Type.FETCH_MORE)) {
                     mFeedItemList.remove(mStreamAdapter.getItemCount() - 1);
                 }
                 for (Card card : homeFeedGenericResponse.response.card_model_list) {

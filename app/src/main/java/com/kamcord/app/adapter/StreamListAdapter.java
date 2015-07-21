@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +22,6 @@ import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.adapter.viewholder.FooterViewHolder;
 import com.kamcord.app.adapter.viewholder.LiveStreamHeaderViewHolder;
-import com.kamcord.app.adapter.viewholder.NotInstalledHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.StreamItemViewHolder;
 import com.kamcord.app.adapter.viewholder.TrendingVideoHeaderViewHolder;
 import com.kamcord.app.adapter.viewholder.TrendingVideoItemViewHolder;
@@ -85,9 +85,10 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 itemLayoutView = inflater.inflate(R.layout.fragment_trending_video_item, parent, false);
                 return new TrendingVideoItemViewHolder(itemLayoutView);
             }
-            case FOOTER:
-                itemLayoutView = inflater.inflate(R.layout.view_game_item_not_installed_header, null);
-                return new NotInstalledHeaderViewHolder(itemLayoutView);
+            case FETCH_MORE:
+                ProgressBar progressSpinner = new ProgressBar(parent.getContext());
+                progressSpinner.setIndeterminate(true);
+                return new RecyclerView.ViewHolder(progressSpinner) {};
 
             default:
                 break;
