@@ -28,6 +28,7 @@ import com.kamcord.app.server.callbacks.FollowCallback;
 import com.kamcord.app.server.callbacks.UnfollowCallback;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
+import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.User;
 import com.kamcord.app.server.model.Video;
@@ -43,6 +44,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit.Callback;
+import retrofit.client.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils;
 
 /**
@@ -234,7 +236,13 @@ public class LiveMediaControls implements MediaControls {
                 followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
                 callback = new FollowCallback(owner.id,
                         video != null ? video.video_id : null,
-                        video != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.STREAM_DETAIL_VIEW);
+                        video != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.STREAM_DETAIL_VIEW) {
+                    @Override
+                    public void success(GenericResponse<?> responseWrapper, Response response) {
+                        super.success(responseWrapper, response);
+                        show(3000, true);
+                    }
+                };
                 AppServerClient.getInstance().follow(owner.id, (FollowCallback) callback);
             }
             KamcordAnalytics.startSession(callback, Event.Name.FOLLOW_USER);
@@ -320,6 +328,11 @@ public class LiveMediaControls implements MediaControls {
     @Override
     public void show(int timeoutMs, boolean fade) {
         removeAllVisibilityCallbacks();
+
+        if( owner != null && !owner.is_user_following ) {
+            timeoutMs = 0;
+        }
+
         root.post(fade ? fadeInRunnable : showRunnable);
         if (timeoutMs > 0) {
             root.postDelayed(fade ? fadeOutRunnable : hideRunnable, timeoutMs);
