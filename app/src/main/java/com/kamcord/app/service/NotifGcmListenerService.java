@@ -9,16 +9,19 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoViewActivity;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
 
 import retrofit.Callback;
@@ -79,8 +82,9 @@ public class NotifGcmListenerService extends GcmListenerService {
             resultIntent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(object));
         }
         resultIntent.putExtra(VideoViewActivity.ARG_NOTIF_ID, NOTIFICATION_ID);
+        resultIntent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PUSH_NOTIFICATION);
+        // TODO: add notification id when we start getting them from server.
 
-        // Add Analysis.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(RecordActivity.class);
         stackBuilder.addNextIntent(resultIntent);
