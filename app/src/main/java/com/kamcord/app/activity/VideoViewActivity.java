@@ -496,8 +496,10 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     private void removeStreamStatusCallbacks() {
-        streamStatusHandler.removeCallbacks(attemptReconnectRunnable);
-        streamStatusHandler.removeCallbacks(checkIsStreamLiveRunnable);
+        if( streamStatusHandler != null ) {
+            streamStatusHandler.removeCallbacks(attemptReconnectRunnable);
+            streamStatusHandler.removeCallbacks(checkIsStreamLiveRunnable);
+        }
     }
 
     private void attemptReconnect() {
