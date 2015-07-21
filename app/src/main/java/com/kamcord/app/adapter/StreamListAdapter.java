@@ -151,11 +151,16 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
 
         final Button streamFollowButton = viewHolder.getStreamFollowButton();
-        if (AccountManager.isLoggedIn() && stream.user != null && stream.user.is_user_following != null) {
-            streamFollowButton.setActivated(stream.user.is_user_following);
-        } else {
-            streamFollowButton.setActivated(false);
+        boolean followingState = false;
+        if (AccountManager.isLoggedIn() ) {
+            if (stream.user != null && AccountManager.getStoredAccount().id.equals(stream.user.id)) {
+                streamFollowButton.setVisibility(View.GONE);
+            } else if (stream.user != null && stream.user.is_user_following != null ) {
+                followingState = stream.user.is_user_following;
+            }
         }
+        streamFollowButton.setActivated(followingState);
+
         streamFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,11 +216,16 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         /*viewHolder.getVideoComments().setText(StringUtils.abbreviatedCount(video.comments));*/
 
         final Button trendFollowButton = viewHolder.getTrendFollowButton();
-        if (AccountManager.isLoggedIn() && video.user != null && video.user.is_user_following != null) {
-            trendFollowButton.setActivated(video.user.is_user_following);
-        } else {
-            trendFollowButton.setActivated(false);
+        boolean followingState = false;
+        if (AccountManager.isLoggedIn() ) {
+            if (video.user != null && AccountManager.getStoredAccount().id.equals(video.user.id)) {
+                trendFollowButton.setVisibility(View.GONE);
+            } else if (video.user != null && video.user.is_user_following != null ) {
+                followingState = video.user.is_user_following;
+            }
         }
+        trendFollowButton.setActivated(followingState);
+
         trendFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
