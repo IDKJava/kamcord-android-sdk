@@ -22,8 +22,8 @@ import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.Account;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.StatusCode;
-import com.kamcord.app.service.RegistrationIntentService;
 import com.kamcord.app.server.model.analytics.Event;
+import com.kamcord.app.service.RegistrationIntentService;
 import com.kamcord.app.utils.AccountManager;
 import com.kamcord.app.utils.Connectivity;
 import com.kamcord.app.utils.KeyboardUtils;
@@ -35,6 +35,11 @@ import butterknife.OnFocusChange;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import rx.Observable;
+import rx.Observer;
+import rx.android.widget.OnTextChangeEvent;
+import rx.android.widget.WidgetObservable;
+import rx.functions.Func2;
 
 public class LoginFragment extends Fragment {
 
@@ -63,7 +68,42 @@ public class LoginFragment extends Fragment {
                 KeyboardUtils.showSoftKeyboard(usernameEditText, getActivity());
             }
         }, 50);
+        validateLogin();
         return root;
+    }
+
+    public void validateLogin() {
+        final Observable<OnTextChangeEvent> usernameField = WidgetObservable.text(usernameEditText);
+        final Observable<OnTextChangeEvent> passwordField = WidgetObservable.text(passwordEditText);
+
+        final Observable<Boolean> isFieldsValid = Observable.combineLatest(usernameField, passwordField,
+                new Func2<OnTextChangeEvent, OnTextChangeEvent, Boolean>() {
+                    @Override
+                    public Boolean call(OnTextChangeEvent onTextChangeEvent, OnTextChangeEvent onTextChangeEvent2) {
+                        return usernameEditText.getText().length() != 0
+                                && passwordEditText.getText().length() != 0;
+                    }
+                });
+
+        isFieldsValid.subscribe(new Observer<Boolean>() {
+            @Override
+            public void onNext(final Boolean isValid) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loginButton.setActivated(isValid);
+                    }
+                });
+            }
+
+            @Override
+            public void onCompleted() {
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+        });
     }
 
     @Override
@@ -99,7 +139,7 @@ public class LoginFragment extends Fragment {
 
     @OnClick(R.id.loginButton)
     public void login() {
-        if(Connectivity.isConnected()) {
+        if (Connectivity.isConnected()) {
             loginButton.setEnabled(false);
             String username = usernameEditText.getEditableText().toString().trim();
             String password = passwordEditText.getEditableText().toString();
