@@ -32,9 +32,7 @@
             android:layout_width="@dimen/actionbutton_width"
             android:layout_height="@dimen/actionbutton_width"
             android:layout_gravity="center"
-            android:indeterminate="true"
-            android:progress="100"
-            android:visibility="gone" />
+            android:indeterminate="true" />
     </FrameLayout>
 
     <include

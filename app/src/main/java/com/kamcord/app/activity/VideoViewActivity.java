@@ -90,6 +90,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private long playerPosition;
     private boolean playerBuffering = false;
+    private boolean playerDidStart = false;
 
     private MediaControls mediaControls;
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
@@ -377,6 +378,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private void preparePlayer() {
         if (player == null) {
             player = new Player(getRendererBuilder());
+            playerDidStart = false;
             player.addListener(this);
             player.addListener(mediaControls);
             player.setTextListener(this);
@@ -407,6 +409,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == Player.STATE_READY) {
+            playerDidStart = true;
             mediaControls.show(playWhenReady ? 3000 : 0, true);
         }
 
@@ -478,7 +481,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private void toggleControlsVisibility() {
         if (mediaControls.isShowing()
-                && !playerError && !streamEnded && !playerBuffering) {
+                && !playerError && !streamEnded && !playerBuffering && playerDidStart) {
             mediaControls.hide(true);
         } else {
             showControls();
