@@ -411,15 +411,9 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
-        boolean shouldDismissAfterDelay = playWhenReady
-                && ((stream != null && stream.user != null &&
-                stream.user.is_user_following != null && stream.user.is_user_following)
-                || (video != null && video.user != null &&
-                video.user.is_user_following != null && video.user.is_user_following));
-
         if (playbackState == Player.STATE_READY) {
             playerDidStart = true;
-            mediaControls.show(shouldDismissAfterDelay ? 3000 : 0, true);
+            mediaControls.show(playWhenReady ? 3000 : 0, true);
         }
 
         if( playbackState == Player.STATE_PREPARING  && stream != null ) {
@@ -435,7 +429,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         if( playbackState != Player.STATE_BUFFERING && playerBuffering ) {
             playerBuffering = false;
-            mediaControls.show(shouldDismissAfterDelay ? 3000 : 0, true);
+            mediaControls.show(3000, true);
         } else  if( playbackState == Player.STATE_BUFFERING ) {
             mediaControls.show(0, true);
             playerBuffering = true;
