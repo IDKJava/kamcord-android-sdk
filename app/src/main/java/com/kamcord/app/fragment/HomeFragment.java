@@ -50,9 +50,9 @@ public class HomeFragment extends Fragment {
     private List<FeedItem> mFeedItemList = new ArrayList<>();
     private StreamListAdapter mStreamAdapter;
     private String nextPage;
-    private int totalItems = 0;
     private boolean footerVisible = false;
     private boolean viewsAreValid = false;
+    private boolean trendingHeader = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -133,8 +133,7 @@ public class HomeFragment extends Fragment {
                     homeFeedRefreshLayout.setEnabled(true);
                 }
 
-                if ((mFeedItemList.size() - 1) < totalItems
-                        && nextPage != null
+                if (nextPage != null
                         && ((GridLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition() == (mFeedItemList.size() - 1)
                         && !footerVisible) {
                     loadMoreItems();
@@ -170,6 +169,7 @@ public class HomeFragment extends Fragment {
                     iterator.remove();
                 }
                 boolean trendHeader = false;
+                nextPage = homeFeedGenericResponse.response.next_page;
                 for (Card card : homeFeedGenericResponse.response.card_model_list) {
                     if (mFeedItemList.size() == 0) {
                         FeedItem liveStreamHeaderModel = new FeedItem<>(FeedItem.Type.LIVESTREAM_HEADER, card.stream);
@@ -215,7 +215,6 @@ public class HomeFragment extends Fragment {
                 if (mFeedItemList.size() > 0 && (mFeedItemList.get(mStreamAdapter.getItemCount() - 1).getType() == FeedItem.Type.FOOTER)) {
                     mFeedItemList.remove(mStreamAdapter.getItemCount() - 1);
                 }
-                boolean trendHeader = false;
                 for (Card card : homeFeedGenericResponse.response.card_model_list) {
                     if (card.stream != null) {
                         if (mFeedItemList.size() == 0) {
@@ -225,7 +224,7 @@ public class HomeFragment extends Fragment {
                         FeedItem profileViewModel = new FeedItem<>(FeedItem.Type.STREAM, card.stream);
                         mFeedItemList.add(profileViewModel);
                     } else if (card.video != null) {
-                        if (!trendHeader) {
+                        if (!trendingHeader) {
                             if (mFeedItemList.size() != 0
                                     && mFeedItemList.get(0).getType() == FeedItem.Type.LIVESTREAM_HEADER
                                     && mFeedItemList.size() == 1) {
@@ -233,7 +232,7 @@ public class HomeFragment extends Fragment {
                             }
                             FeedItem trendingHeaderModel = new FeedItem<>(FeedItem.Type.TRENDVIDEO_HEADER, card.stream);
                             mFeedItemList.add(trendingHeaderModel);
-                            trendHeader = true;
+                            trendingHeader = true;
                         }
                         FeedItem videoFeedItem = new FeedItem<>(FeedItem.Type.VIDEO, card.video);
                         mFeedItemList.add(videoFeedItem);
