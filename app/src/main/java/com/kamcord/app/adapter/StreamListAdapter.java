@@ -127,7 +127,7 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         viewHolder.getStreamItemTitle().setText(stream.name);
         final TextView streamViewsTextView = viewHolder.getStreamViews();
-        streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+        streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.total_viewers_count));
         final TextView streamLengthTextView = viewHolder.getStreamLengthViews();
         streamLengthTextView.setText(VideoUtils.getStreamDurationString(stream.started_at));
         final ImageView streamImageView = viewHolder.getStreamItemThumbnail();
@@ -139,8 +139,8 @@ public class StreamListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         viewHolder.getContainer().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stream.current_viewers_count = stream.current_viewers_count + 1;
-                streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.current_viewers_count));
+                stream.total_viewers_count = stream.total_viewers_count + 1;
+                streamViewsTextView.setText(StringUtils.abbreviatedCount(stream.total_viewers_count));
                 Intent intent = new Intent(mContext, VideoViewActivity.class);
                 intent.putExtra(VideoViewActivity.ARG_STREAM, new Gson().toJson(stream));
                 if (mContext instanceof Activity) {
