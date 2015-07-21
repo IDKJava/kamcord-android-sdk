@@ -415,6 +415,7 @@ public class LiveMediaControls implements MediaControls {
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         isEnded = false;
         if( playbackState == Player.STATE_READY ) {
+            errorContainer.setVisibility(View.GONE);
             playButton.setVisibility(View.VISIBLE);
             bufferingProgressBar.setVisibility(View.GONE);
             playButton.setImageResource(playWhenReady ? R.drawable.pause_white : R.drawable.play_white);
