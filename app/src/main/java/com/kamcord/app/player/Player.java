@@ -19,18 +19,30 @@ import com.google.android.exoplayer.chunk.MultiTrackChunkSource;
 import com.google.android.exoplayer.drm.StreamingDrmSessionManager;
 import com.google.android.exoplayer.hls.HlsSampleSource;
 import com.google.android.exoplayer.metadata.MetadataTrackRenderer;
+import com.google.android.exoplayer.text.Cue;
 import com.google.android.exoplayer.text.TextRenderer;
+import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.util.PlayerControl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Player implements ExoPlayer.Listener, ChunkSampleSource.EventListener,
         HlsSampleSource.EventListener, DefaultBandwidthMeter.EventListener,
         MediaCodecVideoTrackRenderer.EventListener, MediaCodecAudioTrackRenderer.EventListener,
-        StreamingDrmSessionManager.EventListener, TextRenderer {
+        StreamingDrmSessionManager.EventListener, TextRenderer, MetadataTrackRenderer.MetadataRenderer<Map<String, Object>> {
+
+    @Override
+    public void onCues(List<Cue> list) {
+    }
+
+    @Override
+    public void onMetadata(Map<String, Object> stringObjectMap) {
+
+    }
 
     public interface RendererBuilder {
         void buildRenderers(Player player, RendererBuilderCallback callback);
@@ -38,7 +50,7 @@ public class Player implements ExoPlayer.Listener, ChunkSampleSource.EventListen
 
     public interface RendererBuilderCallback {
         void onRenderers(String[][] trackNames, MultiTrackChunkSource[] multiTrackSources,
-                         TrackRenderer[] renderers);
+                         TrackRenderer[] renderers, BandwidthMeter bandwidthMeter);
         void onRenderersError(Exception e);
     }
 
@@ -430,11 +442,6 @@ public class Player implements ExoPlayer.Listener, ChunkSampleSource.EventListen
         }
     }
 
-    @Override
-    public void onText(String text) {
-        processText(text);
-    }
-
     /* package */ MetadataTrackRenderer.MetadataRenderer<Map<String, Object>>
     getId3MetadataRenderer() {
         return new MetadataTrackRenderer.MetadataRenderer<Map<String, Object>>() {
@@ -548,8 +555,7 @@ public class Player implements ExoPlayer.Listener, ChunkSampleSource.EventListen
         }
 
         @Override
-        public void onRenderers(String[][] trackNames, MultiTrackChunkSource[] multiTrackSources,
-                                TrackRenderer[] renderers) {
+        public void onRenderers(String[][] trackNames, MultiTrackChunkSource[] multiTrackSources, TrackRenderer[] renderers, BandwidthMeter bandwidthMeter) {
             if (!canceled) {
                 Player.this.onRenderers(trackNames, multiTrackSources, renderers);
             }

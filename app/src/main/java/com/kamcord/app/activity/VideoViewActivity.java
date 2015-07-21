@@ -20,11 +20,12 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.accessibility.CaptioningManager;
 
-import com.google.android.exoplayer.VideoSurfaceView;
+import com.google.android.exoplayer.AspectRatioFrameLayout;
 import com.google.android.exoplayer.audio.AudioCapabilities;
 import com.google.android.exoplayer.audio.AudioCapabilitiesReceiver;
 import com.google.android.exoplayer.extractor.mp4.Mp4Extractor;
@@ -32,7 +33,7 @@ import com.google.android.exoplayer.metadata.GeobMetadata;
 import com.google.android.exoplayer.metadata.PrivMetadata;
 import com.google.android.exoplayer.metadata.TxxxMetadata;
 import com.google.android.exoplayer.text.CaptionStyleCompat;
-import com.google.android.exoplayer.text.SubtitleView;
+import com.google.android.exoplayer.text.SubtitleLayout;
 import com.google.android.exoplayer.util.Util;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
@@ -60,7 +61,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class VideoViewActivity extends AppCompatActivity implements
         SurfaceHolder.Callback,
         Player.Listener,
-        Player.TextListener,
         Player.Id3MetadataListener,
         AudioCapabilitiesReceiver.Listener,
         MediaControls.ControlButtonClickListener {
@@ -76,12 +76,14 @@ public class VideoViewActivity extends AppCompatActivity implements
     private static final int MAX_RECONNECT_ATTEMPTS = 4;
     private static final long STREAM_STATUS_CHECK_INTERVAL_MS = 30 * 1000;
 
+    @InjectView(R.id.root)
+    AspectRatioFrameLayout aspectRatioFrameLayout;
     @InjectView(R.id.surface_view)
-    VideoSurfaceView surfaceView;
+    SurfaceView surfaceView;
     @InjectView(R.id.shutter)
     View shutterView;
     @InjectView(R.id.subtitles)
-    SubtitleView subtitleView;
+    SubtitleLayout subtitleView;
 
     private Video video = null;
     private Stream stream = null;
@@ -388,7 +390,6 @@ public class VideoViewActivity extends AppCompatActivity implements
             playerDidStart = false;
             player.addListener(this);
             player.addListener(mediaControls);
-            player.setTextListener(this);
             player.setMetadataListener(this);
             player.seekTo(playerPosition);
             playerNeedsPrepare = true;
@@ -472,7 +473,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onVideoSizeChanged(int width, int height, float pixelWidthAspectRatio) {
         shutterView.setVisibility(View.GONE);
-        surfaceView.setVideoWidthHeightRatio(
+        aspectRatioFrameLayout.setAspectRatio(
                 height == 0 ? 1 : (width * pixelWidthAspectRatio) / height);
 
         int currentOrientation = getRequestedOrientation();
@@ -527,18 +528,6 @@ public class VideoViewActivity extends AppCompatActivity implements
             ((LiveMediaControls) mediaControls).streamEnded(stream);
             streamEnded = true;
             streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
-        }
-    }
-
-    // Player.TextListener implementation
-
-    @Override
-    public void onText(String text) {
-        if (TextUtils.isEmpty(text)) {
-            subtitleView.setVisibility(View.INVISIBLE);
-        } else {
-            subtitleView.setVisibility(View.VISIBLE);
-            subtitleView.setText(text);
         }
     }
 
@@ -612,7 +601,6 @@ public class VideoViewActivity extends AppCompatActivity implements
             captionStyle = CaptionStyleCompat.DEFAULT;
         }
         subtitleView.setStyle(captionStyle);
-        subtitleView.setTextSize(captionTextSize);
     }
 
     private float getCaptionFontSize() {
