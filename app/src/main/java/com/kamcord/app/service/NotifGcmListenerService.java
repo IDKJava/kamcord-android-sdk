@@ -70,7 +70,7 @@ public class NotifGcmListenerService extends GcmListenerService {
                 .setContentText(text)
                 .setSmallIcon(R.drawable.notif_logo_small)
                 .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.app_icon))
-                .setDefaults(Notification.DEFAULT_ALL);
+                .setDefaults(~Notification.DEFAULT_VIBRATE);
 
         Intent resultIntent = new Intent(this, VideoViewActivity.class);
         if (object instanceof Stream) {
