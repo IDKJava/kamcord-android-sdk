@@ -104,8 +104,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:7.5.0'
 
     // Exoplayer
-    // TODO: revert to this when ExoPlayer releases a stable version with MpegAudioReader
-    // TODO: compile 'com.google.android.exoplayer:exoplayer:r1.3.3'
+    compile 'com.google.android.exoplayer:exoplayer:r1.4.1'
 
     // Testing-only dependencies
     androidTestCompile 'com.android.support.test:runner:0.2'

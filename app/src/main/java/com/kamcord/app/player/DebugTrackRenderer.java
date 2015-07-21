@@ -87,11 +87,6 @@ import com.google.android.exoplayer.chunk.Format;
     }
 
     @Override
-    protected long getCurrentPositionUs() {
-        return currentPositionUs;
-    }
-
-    @Override
     protected long getDurationUs() {
         return TrackRenderer.MATCH_LONGEST_US;
     }

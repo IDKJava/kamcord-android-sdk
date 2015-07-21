@@ -10,7 +10,9 @@ import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.TrackRenderer;
 import com.google.android.exoplayer.extractor.Extractor;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
+import com.google.android.exoplayer.upstream.BandwidthMeter;
 import com.google.android.exoplayer.upstream.DataSource;
+import com.google.android.exoplayer.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 
 public class ExtractorRendererBuilder implements Player.RendererBuilder {
@@ -34,6 +36,7 @@ public class ExtractorRendererBuilder implements Player.RendererBuilder {
 
     @Override
     public void buildRenderers(Player player, Player.RendererBuilderCallback callback) {
+
         // Build the video and audio renderers.
         DataSource dataSource = new DefaultUriDataSource(context, userAgent);
         ExtractorSampleSource sampleSource = new ExtractorSampleSource(uri, dataSource, extractor, 2,
@@ -53,7 +56,7 @@ public class ExtractorRendererBuilder implements Player.RendererBuilder {
         renderers[Player.TYPE_VIDEO] = videoRenderer;
         renderers[Player.TYPE_AUDIO] = audioRenderer;
         renderers[Player.TYPE_DEBUG] = debugRenderer;
-        callback.onRenderers(null, null, renderers);
+        callback.onRenderers(null, null, renderers, new DefaultBandwidthMeter());
     }
 
 }
