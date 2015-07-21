@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -323,6 +324,7 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void show(int timeoutMs, boolean fade) {
+        Log.v("FindMe", "show(" + timeoutMs + ", " + fade + ")");
         removeAllVisibilityCallbacks();
         root.post(fade ? fadeInRunnable : showRunnable);
         if (timeoutMs > 0) {
