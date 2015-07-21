@@ -5,11 +5,15 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
 import com.kamcord.app.R;
+import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoViewActivity;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
@@ -24,8 +28,8 @@ import retrofit.client.Response;
 
 public class NotifGcmListenerService extends GcmListenerService {
 
-    private static int NOTIFICATION_ID = 6253589;
-    private static Notification.Builder notificationBuilder;
+    private static int NOTIFICATION_ID = 1;
+    private static NotificationCompat.Builder notificationBuilder;
     private final static String STREAM_ID = "streamId";
     private final static String VIDEO_ID = "videoId";
     private final static String NOTIF_TEXT = "text";
@@ -61,12 +65,12 @@ public class NotifGcmListenerService extends GcmListenerService {
     /* Notification Specification */
     /* 1. To display each notification seperately, use different Notification ID */
     public void sendNotification(Object object, String text) {
-        notificationBuilder = new Notification.Builder(this)
+        notificationBuilder = new NotificationCompat.Builder(this)
                 .setContentTitle(getResources().getString(R.string.notifTitle))
                 .setContentText(text)
                 .setSmallIcon(R.drawable.notif_logo_small)
-                .setDefaults(Notification.DEFAULT_SOUND)
-                .setAutoCancel(true);
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.app_icon))
+                .setDefaults(Notification.DEFAULT_ALL);
 
         Intent resultIntent = new Intent(this, VideoViewActivity.class);
         if (object instanceof Stream) {
@@ -74,16 +78,23 @@ public class NotifGcmListenerService extends GcmListenerService {
         } else if (object instanceof Video) {
             resultIntent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(object));
         }
+        resultIntent.putExtra(VideoViewActivity.ARG_NOTIF_ID, NOTIFICATION_ID);
 
-        // Add notification in the future for Analysis.
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        // Add Analysis.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(RecordActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder.setContentIntent(resultPendingIntent);
-        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID++, notificationBuilder.build());
+        Notification notif = notificationBuilder.build();
+        notif.flags |= Notification.FLAG_AUTO_CANCEL;
+        ((NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE)).notify(NOTIFICATION_ID++, notif);
     }
 
     private class NotificationStreamCallBack implements Callback<GenericResponse<Stream>> {
 
         String notifText = "";
+
         NotificationStreamCallBack(String notifMessage) {
             this.notifText = notifMessage;
         }
@@ -106,6 +117,7 @@ public class NotifGcmListenerService extends GcmListenerService {
     private class NotificationVideoCallback implements Callback<GenericResponse<Video>> {
 
         String notifText = "";
+
         NotificationVideoCallback(String notifMessage) {
             this.notifText = notifMessage;
         }
