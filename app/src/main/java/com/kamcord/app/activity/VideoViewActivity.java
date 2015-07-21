@@ -388,6 +388,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (playerNeedsPrepare) {
             player.prepare();
+            streamEnded = false;
+            ((LiveMediaControls) mediaControls).streamResumed(stream);
             playerNeedsPrepare = false;
         }
         player.setSurface(surfaceView.getHolder().getSurface());
@@ -512,6 +514,7 @@ public class VideoViewActivity extends AppCompatActivity implements
             releasePlayer();
             ((LiveMediaControls) mediaControls).streamEnded(stream);
             streamEnded = true;
+            streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
         }
     }
 
@@ -654,10 +657,15 @@ public class VideoViewActivity extends AppCompatActivity implements
             if( streamGenericResponse != null && streamGenericResponse.response != null && !streamGenericResponse.response.live ) {
                 stream = streamGenericResponse.response;
                 streamEnded();
+            } else if( streamGenericResponse != null && streamGenericResponse.response != null ) {
+                stream = streamGenericResponse.response;
+                preparePlayer();
+                removeStreamStatusCallbacks();
+                streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
             } else {
                 removeStreamStatusCallbacks();
                 streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
-}
+            }
         }
 
         @Override
