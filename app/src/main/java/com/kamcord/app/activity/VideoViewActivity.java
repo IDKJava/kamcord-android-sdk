@@ -90,6 +90,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private long playerPosition;
     private boolean playerBuffering = false;
+    private boolean playerDidStart = false;
 
     private MediaControls mediaControls;
     private AudioCapabilitiesReceiver audioCapabilitiesReceiver;
@@ -159,6 +160,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     @Override
     public void onDestroy() {
         super.onDestroy();
+        removeStreamStatusCallbacks();
         releasePlayer();
     }
 
@@ -166,13 +168,13 @@ public class VideoViewActivity extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
-        if (this.video != null) {
-            if (this.video.user != null) {
+        if( this.video != null ) {
+            if( this.video.user != null ) {
                 KamcordAnalytics.startSession(this, Event.Name.VIDEO_DETAIL_VIEW);
             } else {
                 KamcordAnalytics.startSession(this, Event.Name.REPLAY_VIDEO_VIEW);
             }
-        } else if (this.stream != null && this.stream.user != null) {
+        } else if( this.stream != null && this.stream.user != null ) {
             KamcordAnalytics.startSession(this, Event.Name.STREAM_DETAIL_VIEW);
         }
     }
@@ -183,13 +185,13 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         Bundle extras = endSessionAnalyticsExtras();
 
-        if (this.video != null) {
-            if (this.video.user != null) {
+        if( this.video != null ) {
+            if( this.video.user != null ) {
                 KamcordAnalytics.endSession(this, Event.Name.VIDEO_DETAIL_VIEW, extras);
             } else {
                 KamcordAnalytics.endSession(this, Event.Name.REPLAY_VIDEO_VIEW, extras);
             }
-        } else if (this.stream != null && this.stream.user != null) {
+        } else if( this.stream != null && this.stream.user != null ) {
             KamcordAnalytics.endSession(this, Event.Name.STREAM_DETAIL_VIEW, extras);
         }
     }
@@ -281,18 +283,18 @@ public class VideoViewActivity extends AppCompatActivity implements
 
         extras.putInt(KamcordAnalytics.NUM_PLAY_STARTS_KEY, playStarts);
 
-        if (lastPlayStart > 0) {
+        if( lastPlayStart > 0 ) {
             totalPlayTimeMs += System.currentTimeMillis() - lastPlayStart;
         }
-        if (lastBufferingStart > 0) {
+        if( lastBufferingStart > 0 ) {
             totalBufferingTimeMs += System.currentTimeMillis() - lastBufferingStart;
         }
         extras.putFloat(KamcordAnalytics.BUFFERING_DURATION_KEY, (float) totalBufferingTimeMs / 1000f);
         extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_WATCHED_KEY, (float) totalPlayTimeMs / 1000f);
 
-        if (player != null) {
+        if( player != null ) {
             long videoLengthMs = player.getDuration();
-            if (videoLengthMs > 0) {
+            if( videoLengthMs > 0 ) {
                 extras.putFloat(KamcordAnalytics.VIDEO_LENGTH_KEY, (float) videoLengthMs / 1000f);
             }
         }
@@ -303,19 +305,19 @@ public class VideoViewActivity extends AppCompatActivity implements
         lastBufferingStart = 0;
         playStarts = 1;
 
-        if (this.video != null && this.video.user != null) {
+        if( this.video != null && this.video.user != null ) {
             transferViewSourceExtras(extras);
-            if (getIntent().getExtras().containsKey(KamcordAnalytics.PROFILE_USER_ID_KEY)) {
+            if( getIntent().getExtras().containsKey(KamcordAnalytics.PROFILE_USER_ID_KEY) ) {
                 extras.putString(KamcordAnalytics.PROFILE_USER_ID_KEY,
                         getIntent().getExtras().getString(KamcordAnalytics.PROFILE_USER_ID_KEY));
             }
             extras.putString(KamcordAnalytics.VIDEO_ID_KEY, this.video.video_id);
 
-        } else if (this.stream != null && this.stream.user != null) {
+        } else if( this.stream != null && this.stream.user != null ) {
             transferViewSourceExtras(extras);
             extras.putString(KamcordAnalytics.STREAM_USER_ID_KEY, this.stream.user.id);
             extras.putInt(KamcordAnalytics.IS_LIVE_KEY, this.stream.live ? 1 : 0);
-            if (!this.stream.live) {
+            if( !this.stream.live ) {
                 extras.putString(KamcordAnalytics.VIDEO_ID_KEY, this.stream.video_id);
             }
         }
@@ -325,27 +327,27 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private void transferViewSourceExtras(Bundle extras) {
         Bundle myExtras = getIntent().getExtras();
-        if (myExtras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY)) {
+        if( myExtras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
             extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY,
                     myExtras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY));
         }
-        if (myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY)) {
+        if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
             extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY,
                     myExtras.getSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY));
-            if (myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY)) {
+            if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_ROW_KEY) ) {
                 extras.putInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY,
                         myExtras.getInt(KamcordAnalytics.VIDEO_LIST_ROW_KEY));
             }
-            if (myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY)) {
+            if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_COL_KEY) ) {
                 extras.putInt(KamcordAnalytics.VIDEO_LIST_COL_KEY,
                         myExtras.getInt(KamcordAnalytics.VIDEO_LIST_COL_KEY));
             }
         }
-        if (myExtras.containsKey(KamcordAnalytics.FEED_ID_KEY)) {
+        if( myExtras.containsKey(KamcordAnalytics.FEED_ID_KEY) ) {
             extras.putString(KamcordAnalytics.FEED_ID_KEY,
                     myExtras.getString(KamcordAnalytics.FEED_ID_KEY));
         }
-        if (myExtras.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY)) {
+        if( myExtras.containsKey(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY) ) {
             extras.putString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY,
                     myExtras.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY));
         }
@@ -377,6 +379,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private void preparePlayer() {
         if (player == null) {
             player = new Player(getRendererBuilder());
+            playerDidStart = false;
             player.addListener(this);
             player.addListener(mediaControls);
             player.setTextListener(this);
@@ -388,6 +391,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (playerNeedsPrepare) {
             player.prepare();
+            streamEnded = false;
+            ((LiveMediaControls) mediaControls).streamResumed(stream);
             playerNeedsPrepare = false;
         }
         player.setSurface(surfaceView.getHolder().getSurface());
@@ -413,10 +418,11 @@ public class VideoViewActivity extends AppCompatActivity implements
                 video.user.is_user_following != null && video.user.is_user_following));
 
         if (playbackState == Player.STATE_READY) {
+            playerDidStart = true;
             mediaControls.show(shouldDismissAfterDelay ? 3000 : 0, true);
         }
 
-        if (playbackState == Player.STATE_PREPARING && stream != null) {
+        if( playbackState == Player.STATE_PREPARING  && stream != null ) {
             removeStreamStatusCallbacks();
             streamStatusHandler.post(checkIsStreamLiveRunnable);
         }
@@ -427,25 +433,25 @@ public class VideoViewActivity extends AppCompatActivity implements
             playerError = false;
         }
 
-        if (playbackState != Player.STATE_BUFFERING && playerBuffering) {
+        if( playbackState != Player.STATE_BUFFERING && playerBuffering ) {
             playerBuffering = false;
             mediaControls.show(shouldDismissAfterDelay ? 3000 : 0, true);
-        } else if (playbackState == Player.STATE_BUFFERING) {
+        } else  if( playbackState == Player.STATE_BUFFERING ) {
             mediaControls.show(0, true);
             playerBuffering = true;
         }
 
         // Increment analytics buffering counter.
-        if (playbackState == Player.STATE_BUFFERING) {
+        if( playbackState == Player.STATE_BUFFERING ) {
             lastBufferingStart = System.currentTimeMillis();
-        } else if (lastBufferingStart > 0) {
+        } else if( lastBufferingStart > 0 ) {
             totalBufferingTimeMs += System.currentTimeMillis() - lastBufferingStart;
             lastBufferingStart = 0;
         }
 
-        if (playbackState == Player.STATE_READY && playWhenReady) {
+        if( playbackState == Player.STATE_READY && playWhenReady ) {
             lastPlayStart = System.currentTimeMillis();
-        } else if (lastPlayStart > 0) {
+        } else if( lastPlayStart > 0 ) {
             totalPlayTimeMs += System.currentTimeMillis() - lastPlayStart;
             lastPlayStart = 0;
         }
@@ -484,7 +490,7 @@ public class VideoViewActivity extends AppCompatActivity implements
 
     private void toggleControlsVisibility() {
         if (mediaControls.isShowing()
-                && !playerError && !streamEnded && !playerBuffering) {
+                && !playerError && !streamEnded && !playerBuffering && playerDidStart) {
             mediaControls.hide(true);
         } else {
             showControls();
@@ -503,7 +509,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private void attemptReconnect() {
         reconnectAttemptCount++;
 
-        if (reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS) {
+        if( reconnectAttemptCount > MAX_RECONNECT_ATTEMPTS ) {
             streamEnded();
         } else {
             removeStreamStatusCallbacks();
@@ -513,11 +519,12 @@ public class VideoViewActivity extends AppCompatActivity implements
     }
 
     private void streamEnded() {
-        if (stream != null) {
+        if( stream != null ) {
             removeStreamStatusCallbacks();
             releasePlayer();
             ((LiveMediaControls) mediaControls).streamEnded(stream);
             streamEnded = true;
+            streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
         }
     }
 
@@ -632,8 +639,8 @@ public class VideoViewActivity extends AppCompatActivity implements
     private Callback<GenericResponse<Stream>> attemptStreamReconnectCallback = new Callback<GenericResponse<Stream>>() {
         @Override
         public void success(GenericResponse<com.kamcord.app.server.model.Stream> streamGenericResponse, Response response) {
-            if (streamGenericResponse != null && streamGenericResponse.response != null) {
-                if (!streamGenericResponse.response.live) {
+            if( streamGenericResponse != null && streamGenericResponse.response != null ) {
+                if( !streamGenericResponse.response.live ) {
                     stream = streamGenericResponse.response;
                     streamEnded();
                 } else {
@@ -657,9 +664,14 @@ public class VideoViewActivity extends AppCompatActivity implements
     private Callback<GenericResponse<Stream>> streamStatusCallback = new Callback<GenericResponse<Stream>>() {
         @Override
         public void success(GenericResponse<com.kamcord.app.server.model.Stream> streamGenericResponse, Response response) {
-            if (streamGenericResponse != null && streamGenericResponse.response != null && !streamGenericResponse.response.live) {
+            if( streamGenericResponse != null && streamGenericResponse.response != null && !streamGenericResponse.response.live ) {
                 stream = streamGenericResponse.response;
                 streamEnded();
+            } else if( streamGenericResponse != null && streamGenericResponse.response != null ) {
+                stream = streamGenericResponse.response;
+                preparePlayer();
+                removeStreamStatusCallbacks();
+                streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
             } else {
                 removeStreamStatusCallbacks();
                 streamStatusHandler.postDelayed(checkIsStreamLiveRunnable, STREAM_STATUS_CHECK_INTERVAL_MS);
@@ -675,7 +687,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     private Runnable checkIsStreamLiveRunnable = new Runnable() {
         @Override
         public void run() {
-            if (stream != null) {
+            if( stream != null ) {
                 AppServerClient.getInstance().getStream(stream.stream_id, streamStatusCallback);
             }
         }

@@ -56,8 +56,11 @@ public class VideoUtils {
     }
 
     public static String getStreamDurationString(Date date) {
-        Date endDate = Calendar.getInstance().getTime();
-        long duration = endDate.getTime() - date.getTime();
+        long duration = 0;
+        if (date != null) {
+            Date endDate = Calendar.getInstance().getTime();
+            duration = endDate.getTime() - date.getTime();
+        }
 
         return VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, duration);
     }
