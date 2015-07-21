@@ -103,16 +103,12 @@ public class LiveMediaControls implements MediaControls {
     ViewGroup endedContainer;
     @InjectView(R.id.stream_views)
     TextView streamViewsTextView;
-    @InjectView(R.id.stream_hearts)
-    TextView streamHeartsTextView;
     @InjectView(R.id.stream_length)
     TextView streamLengthTextView;
     @InjectView(R.id.stream_length_container)
     ViewGroup streamLengthContainer;
     @InjectView(R.id.stream_views_container)
     ViewGroup streamViewsContainer;
-    @InjectView(R.id.stream_hearts_container)
-    ViewGroup streamHeartsContainer;
 
     public LiveMediaControls(Context context, Video video, Stream stream) {
         root = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.view_live_media_controls, null);
@@ -451,7 +447,6 @@ public class LiveMediaControls implements MediaControls {
     public void streamEnded(Stream stream) {
         endedContainer.setVisibility(View.VISIBLE);
         streamViewsTextView.setText(StringUtils.commatizedCount(stream.total_viewers_count));
-        streamHeartsTextView.setText(StringUtils.commatizedCount(stream.heart_count));
         if( stream.ended_at != null && stream.started_at != null ) {
             streamLengthTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, stream.ended_at.getTime() - stream.started_at.getTime()));
         } else {
