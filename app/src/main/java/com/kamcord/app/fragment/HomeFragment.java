@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment {
     DynamicRecyclerView homeRecyclerView;
 
     private static final String TAG = HomeFragment.class.getSimpleName();
-    private static final String COUNT_PER_PAGE = "5";
+    private static final String COUNT_PER_PAGE = "20";
     private List<FeedItem> mFeedItemList = new ArrayList<>();
     private StreamListAdapter mStreamAdapter;
     private String nextPage;
