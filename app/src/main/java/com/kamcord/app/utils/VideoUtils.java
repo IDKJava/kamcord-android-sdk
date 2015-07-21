@@ -56,9 +56,13 @@ public class VideoUtils {
     }
 
     public static String getStreamDurationString(Date date) {
+        long duration;
         Date endDate = Calendar.getInstance().getTime();
-        long duration = endDate.getTime() - date.getTime();
-
+        if (date != null && date.getTime() != 0L) {
+            duration = endDate.getTime() - date.getTime();
+        } else {
+            duration = 0;
+        }
         return VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, duration);
     }
 
@@ -68,7 +72,7 @@ public class VideoUtils {
         long hours = unit.toHours(duration);
         long mins = unit.toMinutes(duration) % 60;
         long secs = unit.toSeconds(duration) % 60;
-        if(hours == 0) {
+        if (hours == 0) {
             time = String.format("%02d:%02d", mins, secs);
         } else {
             time = String.format("%02d:%02d:%02d", hours, mins, secs);
@@ -82,7 +86,7 @@ public class VideoUtils {
         File thumbnailFile = new File(sessionCache, FileSystemManager.THUMBNAIL_FILENAME);
 
         // Lazily create the thumbnail.
-        if( !thumbnailFile.exists() ) {
+        if (!thumbnailFile.exists()) {
             File videoFile = new File(sessionCache, FileSystemManager.MERGED_VIDEO_FILENAME);
             Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(videoFile.getAbsolutePath(), MediaStore.Images.Thumbnails.MINI_KIND);
             FileOutputStream out = null;

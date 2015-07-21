@@ -2,6 +2,7 @@ package com.kamcord.app.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -69,6 +70,7 @@ public class VideoViewActivity extends AppCompatActivity implements
     public static final String ARG_STREAM = "arg_stream";
     public static final String ARG_USER_ID = "arg_user_id";
     public static final String ARG_FOLLOWED = "arg_followed";
+    public static final String ARG_NOTIF_ID = "arg_notif_id";
 
     private static final float CAPTION_LINE_HEIGHT_RATIO = 0.0533f;
     private static final int MAX_RECONNECT_ATTEMPTS = 4;
@@ -120,6 +122,10 @@ public class VideoViewActivity extends AppCompatActivity implements
         }
         if (intent.hasExtra(ARG_STREAM)) {
             stream = new Gson().fromJson(intent.getStringExtra(ARG_STREAM), Stream.class);
+        }
+        if(intent.hasExtra(ARG_NOTIF_ID)) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(intent.getIntExtra(ARG_NOTIF_ID, 0));
         }
 
         audioCapabilitiesReceiver = new AudioCapabilitiesReceiver(getApplicationContext(), this);
