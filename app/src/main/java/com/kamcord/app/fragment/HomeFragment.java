@@ -50,7 +50,6 @@ public class HomeFragment extends Fragment {
     private List<FeedItem> mFeedItemList = new ArrayList<>();
     private StreamListAdapter mStreamAdapter;
     private String nextPage;
-    private int totalItems = 0;
     private boolean footerVisible = false;
     private boolean viewsAreValid = false;
     private boolean trendingHeader = false;
