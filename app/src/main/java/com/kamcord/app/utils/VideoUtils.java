@@ -147,15 +147,15 @@ public class VideoUtils {
             String externalShareText = null;
             if (stream.name != null) {
                 externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextStream),
-                        stream.name, streamLink);
+                        stream.user.username, stream.name, streamLink);
                 int diff = externalShareText.length() - MAX_EXTERNAL_SHARE_TEXT_LENGTH;
                 if (diff > 0) {
                     String truncatedTitle = StringUtils.ellipsize(stream.name, stream.name.length() - diff);
                     externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextStream),
-                            truncatedTitle, streamLink);
+                           stream.user.username, truncatedTitle, streamLink);
                 }
             } else {
-                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextNoTitleStream),
+                externalShareText = String.format(Locale.ENGLISH, activity.getString(R.string.externalShareTextNoTitleStream), stream.user.username,
                         streamLink);
             }
             externalShareText = StringUtils.ellipsize(externalShareText, MAX_EXTERNAL_SHARE_TEXT_LENGTH);

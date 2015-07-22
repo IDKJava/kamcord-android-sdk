@@ -117,8 +117,8 @@
     <string name="shareTo">Share to&#8230;</string>
     <string name="externalShareText">%1$s %2$s Recorded with Kamcord for Android</string>
     <string name="externalShareTextNoTitle">%1$s Recorded with Kamcord for Android</string>
-    <string name="externalShareTextStream">%1$s %2$s</string>
-    <string name="externalShareTextNoTitleStream">%1$s</string>
+    <string name="externalShareTextStream">Watch %1$s LIVE on #Kamcord. %2$s: %3$s</string>
+    <string name="externalShareTextNoTitleStream">Watch %1$s LIVE on #Kamcord. %2$s</string>
 
     <string name="areYouSure">Are you sure?</string>
     <string name="ifYouDeleteThis">If you delete this video, the world will never see it again! :( Delete your awesome vid?</string>
@@ -135,7 +135,7 @@
     <string name="thereWasAnErrorProfile">There was an error fetching your profile information.</string>
     <string name="live">LIVE</string>
     <string name="weveLostTheStream">We\'ve lost the stream. Stand by&#8230;</string>
-    <string name="thankYouForWatching">Thank you for watching this live stream. The stream has ended!</string>
+    <string name="thankYouForWatching">Thank you for watching this Live stream. The stream has ended!</string>
     <string name="videoFollow">+ Follow</string>
     <string name="videoFollowing">Following</string>
 </resources>
