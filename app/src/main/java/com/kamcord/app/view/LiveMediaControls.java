@@ -133,7 +133,7 @@ public class LiveMediaControls implements MediaControls {
                 scrubberSeekBar.setSplitTrack(false);
             }
 
-            if( owner != null && owner.id != null) {
+            if (owner != null && owner.id != null) {
                 avatarImageView.setVisibility(View.GONE); // TODO: unhide this when we start receiving avatars from server
 
                 usernameTextView.setText(owner.username);
@@ -157,16 +157,14 @@ public class LiveMediaControls implements MediaControls {
                     owner.is_user_following = false;
 
                 followButton.setActivated(owner.is_user_following);
-                if(owner.is_user_following)
-                {
+                if (owner.is_user_following) {
                     followButton.setText(root.getContext().getResources().getString(R.string.videoFollowing));
-                }
-                else
-                {
+                } else {
                     followButton.setText(root.getContext().getResources().getString(R.string.videoFollow));
                 }
-            }
-            else {
+            } else {
+                if(owner != null && owner.id != null && myAccount != null && owner.id.equals(myAccount.id))
+                    owner.is_user_following = true;
                 followButton.setVisibility(View.GONE);
             }
 
@@ -209,7 +207,7 @@ public class LiveMediaControls implements MediaControls {
                 });
             }
 
-            if( (video == null || video.video_site_watch_page == null) && (stream == null || stream.user == null || stream.user.username == null)) {
+            if ((video == null || video.video_site_watch_page == null) && (stream == null || stream.user == null || stream.user.username == null)) {
                 shareButton.setVisibility(View.GONE);
             }
         }
@@ -247,15 +245,14 @@ public class LiveMediaControls implements MediaControls {
             }
             KamcordAnalytics.startSession(callback, Event.Name.FOLLOW_USER);
             ViewUtils.buttonCircularReveal(followButton);
-        }
-        else {
+        } else {
             Toast.makeText(root.getContext(), root.getContext().getResources().getString(R.string.youMustBeLoggedIn), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(root.getContext(), LoginActivity.class);
             Event.ViewSource source = video != null ?
                     (video.video_id != null ? Event.ViewSource.VIDEO_DETAIL_VIEW : Event.ViewSource.REPLAY_VIDEO_VIEW)
                     : Event.ViewSource.STREAM_DETAIL_VIEW;
             intent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, source);
-            if( source == Event.ViewSource.VIDEO_DETAIL_VIEW ) {
+            if (source == Event.ViewSource.VIDEO_DETAIL_VIEW) {
                 intent.putExtra(KamcordAnalytics.VIDEO_ID_KEY, video.video_id);
             }
             intent.putExtra(KamcordAnalytics.INDUCING_ACTION_KEY, Event.InducingAction.FOLLOW_USER);
@@ -278,7 +275,7 @@ public class LiveMediaControls implements MediaControls {
         } else if (stream != null) {
             VideoUtils.doExternalShare(root.getContext(), stream);
             extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.STREAM_DETAIL_VIEW);
-            if( stream.user != null ) {
+            if (stream.user != null) {
                 extras.putString(KamcordAnalytics.STREAM_USER_ID_KEY, stream.user.id);
             }
         }
@@ -287,22 +284,22 @@ public class LiveMediaControls implements MediaControls {
 
     @OnClick(R.id.play_button)
     public void onPlayButtonClick() {
-        if( playerControl != null ) {
-            if( isEnded ) {
+        if (playerControl != null) {
+            if (isEnded) {
                 playerControl.seekTo(0);
                 playerControl.start();
-                if( controlButtonClickListener != null ) {
+                if (controlButtonClickListener != null) {
                     controlButtonClickListener.onReplayButtonClicked();
                 }
             } else {
                 if (playerControl.isPlaying() && playerControl.canPause()) {
                     playerControl.pause();
-                    if( controlButtonClickListener != null ) {
+                    if (controlButtonClickListener != null) {
                         controlButtonClickListener.onPauseButtonClicked();
                     }
                 } else {
                     playerControl.start();
-                    if( controlButtonClickListener != null ) {
+                    if (controlButtonClickListener != null) {
                         controlButtonClickListener.onPlayButtonClicked();
                     }
                 }
@@ -329,7 +326,8 @@ public class LiveMediaControls implements MediaControls {
     public void show(int timeoutMs, boolean fade) {
         removeAllVisibilityCallbacks();
 
-        if( owner != null && !owner.is_user_following ) {
+        if (owner != null && !owner.is_user_following)
+        {
             timeoutMs = 0;
         }
 
@@ -397,15 +395,16 @@ public class LiveMediaControls implements MediaControls {
 
     private Runnable updateScrubberRunnable = new Runnable() {
         private static final int UPDATE_FREQUENCY_MS = 200;
+
         @Override
         public void run() {
-            if( playerControl != null ) {
-                if( !isScrubberTracking ) {
+            if (playerControl != null) {
+                if (!isScrubberTracking) {
                     int durationMs = playerControl.getDuration();
                     int currentPositionMs = playerControl.getCurrentPosition();
 
                     totalTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, durationMs));
-                    if( !isEnded ) {
+                    if (!isEnded) {
                         currentTimeTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, currentPositionMs));
 
                         int progress = (int) ((float) scrubberSeekBar.getMax() * ((float) currentPositionMs / (float) durationMs));
@@ -423,18 +422,18 @@ public class LiveMediaControls implements MediaControls {
     @Override
     public void onStateChanged(boolean playWhenReady, int playbackState) {
         isEnded = false;
-        if( playbackState == Player.STATE_READY ) {
+        if (playbackState == Player.STATE_READY) {
             errorContainer.setVisibility(View.GONE);
             playButton.setVisibility(View.VISIBLE);
             bufferingProgressBar.setVisibility(View.GONE);
             playButton.setImageResource(playWhenReady ? R.drawable.pause_white : R.drawable.play_white);
 
-        } else if( playbackState == Player.STATE_BUFFERING
-                || playbackState == Player.STATE_PREPARING ) {
+        } else if (playbackState == Player.STATE_BUFFERING
+                || playbackState == Player.STATE_PREPARING) {
             playButton.setVisibility(View.GONE);
             bufferingProgressBar.setVisibility(View.VISIBLE);
 
-        } else if( playbackState == Player.STATE_ENDED ) {
+        } else if (playbackState == Player.STATE_ENDED) {
             isEnded = true;
             playButton.setVisibility(View.VISIBLE);
             bufferingProgressBar.setVisibility(View.GONE);
@@ -453,7 +452,7 @@ public class LiveMediaControls implements MediaControls {
 
     @Override
     public void onError(Exception e) {
-        if( stream != null ) {
+        if (stream != null) {
             errorContainer.setVisibility(View.VISIBLE);
         }
     }
@@ -461,7 +460,7 @@ public class LiveMediaControls implements MediaControls {
     public void streamEnded(Stream stream) {
         endedContainer.setVisibility(View.VISIBLE);
         streamViewsTextView.setText(StringUtils.commatizedCount(stream.total_viewers_count));
-        if( stream.ended_at != null && stream.started_at != null ) {
+        if (stream.ended_at != null && stream.started_at != null) {
             streamLengthTextView.setText(VideoUtils.videoDurationString(TimeUnit.MILLISECONDS, stream.ended_at.getTime() - stream.started_at.getTime()));
         } else {
             streamLengthContainer.setVisibility(View.GONE);
