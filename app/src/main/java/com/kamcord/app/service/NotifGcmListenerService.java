@@ -15,10 +15,12 @@ import com.google.gson.Gson;
 import com.kamcord.app.R;
 import com.kamcord.app.activity.RecordActivity;
 import com.kamcord.app.activity.VideoViewActivity;
+import com.kamcord.app.analytics.KamcordAnalytics;
 import com.kamcord.app.server.client.AppServerClient;
 import com.kamcord.app.server.model.GenericResponse;
 import com.kamcord.app.server.model.Stream;
 import com.kamcord.app.server.model.Video;
+import com.kamcord.app.server.model.analytics.Event;
 import com.kamcord.app.utils.AccountManager;
 
 import retrofit.Callback;
@@ -33,6 +35,7 @@ public class NotifGcmListenerService extends GcmListenerService {
     private final static String STREAM_ID = "streamId";
     private final static String VIDEO_ID = "videoId";
     private final static String NOTIF_TEXT = "text";
+    private final static String SERVER_NOTIF_ID = "notificationId";
     private final static String NOTIF_CATEGORY = "category";
     private final static String NOTIF_USER_ID = "userId";
 
@@ -40,6 +43,7 @@ public class NotifGcmListenerService extends GcmListenerService {
     public void onMessageReceived(String from, Bundle data) {
         String streamID = "";
         String videoID = "";
+        String serverNotifId = null;
         String notifText = "";
         String userID = "";
         if (data != null) {
@@ -47,24 +51,25 @@ public class NotifGcmListenerService extends GcmListenerService {
             streamID = data.getString(STREAM_ID);
             videoID = data.getString(VIDEO_ID);
             notifText = data.getString(NOTIF_TEXT);
+            serverNotifId = data.getString(SERVER_NOTIF_ID);
         }
         if (streamID != null
                 && AccountManager.isLoggedIn()
                 && AccountManager.getStoredAccount() != null
                 && AccountManager.getStoredAccount().id.equals(userID)) {
 
-            AppServerClient.getInstance().getStream(streamID, new NotificationStreamCallBack(notifText));
+            AppServerClient.getInstance().getStream(streamID, new NotificationStreamCallBack(notifText, serverNotifId));
         } else if (videoID != null
                 && AccountManager.isLoggedIn()
                 && AccountManager.getStoredAccount() != null
                 && AccountManager.getStoredAccount().id.equals(userID)) {
-            AppServerClient.getInstance().getVideoInfo(videoID, new NotificationVideoCallback(notifText));
+            AppServerClient.getInstance().getVideoInfo(videoID, new NotificationVideoCallback(notifText, serverNotifId));
         }
     }
 
     /* Notification Specification */
     /* 1. To display each notification seperately, use different Notification ID */
-    public void sendNotification(Object object, String text) {
+    public void sendNotification(Object object, String text, String serverNotifId) {
         notificationBuilder = new NotificationCompat.Builder(this)
                 .setContentTitle(getResources().getString(R.string.notifTitle))
                 .setContentText(text)
@@ -79,8 +84,9 @@ public class NotifGcmListenerService extends GcmListenerService {
             resultIntent.putExtra(VideoViewActivity.ARG_VIDEO, new Gson().toJson(object));
         }
         resultIntent.putExtra(VideoViewActivity.ARG_NOTIF_ID, NOTIFICATION_ID);
+        resultIntent.putExtra(KamcordAnalytics.VIEW_SOURCE_KEY, Event.ViewSource.PUSH_NOTIFICATION);
+        resultIntent.putExtra(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY, serverNotifId);
 
-        // Add Analysis.
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(RecordActivity.class);
         stackBuilder.addNextIntent(resultIntent);
@@ -94,9 +100,11 @@ public class NotifGcmListenerService extends GcmListenerService {
     private class NotificationStreamCallBack implements Callback<GenericResponse<Stream>> {
 
         String notifText = "";
+        String serverNotifId = null;
 
-        NotificationStreamCallBack(String notifMessage) {
+        NotificationStreamCallBack(String notifMessage, String serverNotifId) {
             this.notifText = notifMessage;
+            this.serverNotifId = serverNotifId;
         }
 
         @Override
@@ -104,7 +112,7 @@ public class NotifGcmListenerService extends GcmListenerService {
             if (streamGenericResponse != null && streamGenericResponse.response != null) {
                 if (streamGenericResponse.response.live) {
                     Stream stream = streamGenericResponse.response;
-                    sendNotification(stream, notifText);
+                    sendNotification(stream, notifText, serverNotifId);
                 }
             }
         }
@@ -117,16 +125,18 @@ public class NotifGcmListenerService extends GcmListenerService {
     private class NotificationVideoCallback implements Callback<GenericResponse<Video>> {
 
         String notifText = "";
+        String serverNotifId = null;
 
-        NotificationVideoCallback(String notifMessage) {
+        NotificationVideoCallback(String notifMessage, String serverNotifId) {
             this.notifText = notifMessage;
+            this.serverNotifId = serverNotifId;
         }
 
         @Override
         public void success(GenericResponse<Video> streamGenericResponse, Response response) {
             if (streamGenericResponse != null && streamGenericResponse.response != null) {
                 Video video = streamGenericResponse.response;
-                sendNotification(video, notifText);
+                sendNotification(video, notifText, serverNotifId);
             }
         }
 

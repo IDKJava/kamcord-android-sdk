@@ -338,6 +338,8 @@ public class VideoViewActivity extends AppCompatActivity implements
         if( myExtras.containsKey(KamcordAnalytics.VIEW_SOURCE_KEY) ) {
             extras.putSerializable(KamcordAnalytics.VIEW_SOURCE_KEY,
                     myExtras.getSerializable(KamcordAnalytics.VIEW_SOURCE_KEY));
+            extras.putString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY,
+                    myExtras.getString(KamcordAnalytics.NOTIFICATION_SENT_ID_KEY));
         }
         if( myExtras.containsKey(KamcordAnalytics.VIDEO_LIST_TYPE_KEY) ) {
             extras.putSerializable(KamcordAnalytics.VIDEO_LIST_TYPE_KEY,
